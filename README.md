@@ -1,12 +1,33 @@
 # FinSafe CLI (public releases)
 
+**中文：** [README-zh.md](README-zh.md)
+
 FinSafe is a host execution boundary toolkit: namespaces, cgroup limits, syscall filtering (Linux), path restrictions, and Seatbelt-backed profiles (macOS), with auditable outcomes. The **`finsafe`** command-line tool is the operator front door for **local wrapper** workflows (`run`, `self-confine`, `probe`, `doctor`, and related helpers).
 
 This repository holds **public release binaries** and **end-user documentation** only. It does **not** contain FinSafe engine source code.
 
 ## Install a release
 
-1. Open [**Releases**](https://github.com/finogeeks/finsafe/releases) and pick a version tag (for example `v0.1.1`).
+### One-liner (recommended)
+
+Needs **`curl`**, **`tar`**, and **`zstd`** (or a `tar` with `--zstd`). Verifies **`SHA256SUMS`** unless you opt out.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh | sh
+```
+
+Pin a version or install directory:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh | env FINSAFE_VERSION=0.1.2 FINSAFE_INSTALL_DIR="$HOME/.local/bin" sh
+curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh | sh -s -- --version 0.1.2
+```
+
+See **`install.sh --help`** (after downloading the script) for all environment variables.
+
+### Manual download
+
+1. Open [**Releases**](https://github.com/finogeeks/finsafe/releases) and pick a version tag (for example `v0.1.2`).
 2. Download the archive for your platform:
    - Linux x86_64: `finsafe-v<version>-x86_64-unknown-linux-gnu.tar.zst`
    - macOS Apple Silicon: `finsafe-v<version>-aarch64-apple-darwin.tar.zst`
@@ -15,7 +36,7 @@ This repository holds **public release binaries** and **end-user documentation**
 4. Verify and extract:
 
 ```bash
-VERSION=0.1.1   # replace with the release you downloaded
+VERSION=0.1.2   # replace with the release you downloaded
 shasum -a 256 -c SHA256SUMS
 tar -xvf "finsafe-v${VERSION}-<target>.tar.zst"
 # Binary path: finsafe-v<version>-<target>/finsafe
