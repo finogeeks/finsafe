@@ -1,0 +1,18 @@
+# Short-lived smoke: one-shot CLI under FinSafe wrapper (example).
+# Replace `run echo "hello"` with your real command; paths below are typical for Linux strict layouts.
+schema_version: 1
+kind: local-wrapper
+program_mode: short-lived
+degrade:
+  allow_fallback: true
+audit:
+  require_policy_digest: true
+  require_resolved_posture: true
+network: host
+resources:
+  memory_max: "512M"
+  pids_max: "64"
+  cpu_max: "100000 100000"
+filesystem:
+  read_only_paths: ["/usr", "/lib", "/lib64", "/bin", "/sbin"]
+  read_write_paths: ["./workspace"]
