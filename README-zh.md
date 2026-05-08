@@ -55,6 +55,38 @@ finsafe --help
 
 部分发行版附带 **`release.json`**：列出资源 URL 与 SHA-256 摘要的小型清单，便于自动化下载脚本使用，而无需写死文件名。
 
+## 快速上手（Hermes）
+
+以下假设 **`hermes`** 已在 **`PATH`** 中（请自行安装）。示例策略使用当前目录下的 **`./workspace`** —— 执行前先 **`mkdir -p workspace`**，或修改 YAML 中的路径。
+
+**方式 A — 只下载策略文件**（YAML 落在当前目录）：
+
+```bash
+curl -fsSL -O https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/hermes-version-smoke.yaml
+curl -fsSL -O https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/hermes-oneshot-query.yaml
+curl -fsSL -O https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/hermes-interactive.yaml
+mkdir -p workspace
+finsafe --policy ./hermes-version-smoke.yaml run hermes --version
+finsafe --policy ./hermes-oneshot-query.yaml run hermes chat -q "用一句话说你好。"
+finsafe --policy ./hermes-interactive.yaml self-confine hermes   # 需要真实 TTY
+```
+
+**方式 B — 克隆本仓库**，在仓库根目录执行：
+
+```bash
+git clone https://github.com/finogeeks/finsafe.git && cd finsafe
+mkdir -p workspace
+finsafe --policy ./examples/wrapper-policies/hermes-version-smoke.yaml run hermes --version
+finsafe --policy ./examples/wrapper-policies/hermes-oneshot-query.yaml run hermes chat -q "用一句话说你好。"
+finsafe --policy ./examples/wrapper-policies/hermes-interactive.yaml self-confine hermes   # 需要真实 TTY
+```
+
+- **`run`** → 策略须为 **`program_mode: short-lived`**（一次性 / 批处理）。  
+- **`self-confine`** → 策略须为 **`program_mode: interactive`**（长期交互 REPL）；请在真实终端中使用。  
+- 错误搭配（例如对交互策略用 `run`）会被 CLI 拒绝。
+
+更多说明：[USER-GUIDE-zh.md](docs/USER-GUIDE-zh.md)、[POLICY-QUICKREF-zh.md](docs/POLICY-QUICKREF-zh.md)。
+
 ## 文档
 
 | 文档 | 说明 |

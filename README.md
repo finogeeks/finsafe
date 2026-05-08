@@ -55,6 +55,38 @@ finsafe --help
 
 Each release may include **`release.json`**: a small manifest listing asset URLs and SHA-256 digests for automation. Use it if you script downloads instead of hard-coding filenames.
 
+## Quick start (Hermes)
+
+These examples assume **`hermes`** is on your **`PATH`** (install Hermes separately). Example policies use **`./workspace`** under your **current working directory** — run `mkdir -p workspace` before the commands below, or edit the YAML.
+
+**Option A — download policies** (files land in the current directory):
+
+```bash
+curl -fsSL -O https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/hermes-version-smoke.yaml
+curl -fsSL -O https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/hermes-oneshot-query.yaml
+curl -fsSL -O https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/hermes-interactive.yaml
+mkdir -p workspace
+finsafe --policy ./hermes-version-smoke.yaml run hermes --version
+finsafe --policy ./hermes-oneshot-query.yaml run hermes chat -q "Say hello in one sentence."
+finsafe --policy ./hermes-interactive.yaml self-confine hermes   # TTY required
+```
+
+**Option B — clone this repo** and run from the repository root:
+
+```bash
+git clone https://github.com/finogeeks/finsafe.git && cd finsafe
+mkdir -p workspace
+finsafe --policy ./examples/wrapper-policies/hermes-version-smoke.yaml run hermes --version
+finsafe --policy ./examples/wrapper-policies/hermes-oneshot-query.yaml run hermes chat -q "Say hello in one sentence."
+finsafe --policy ./examples/wrapper-policies/hermes-interactive.yaml self-confine hermes   # TTY required
+```
+
+- **`run`** → policy **`program_mode: short-lived`** (one-shot / batch).  
+- **`self-confine`** → policy **`program_mode: interactive`** (long-lived REPL); use a real terminal.  
+- Mixing these (e.g. `run` with an `interactive` policy) is rejected.
+
+More detail: [USER-GUIDE.md](docs/USER-GUIDE.md), [POLICY-QUICKREF.md](docs/POLICY-QUICKREF.md).
+
 ## Documentation
 
 | Document | Description |
