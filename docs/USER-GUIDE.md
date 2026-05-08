@@ -51,6 +51,50 @@ Summary of important fields:
 
 ---
 
+## Specifying policy on the command line
+
+FinSafe exposes several policy grammars; **most local operators only need the wrapper policy** (`kind: local-wrapper`).
+
+### 1. Wrapper policy (recommended)
+
+Put **`--policy`** on the **global** argv **before** the subcommand:
+
+```bash
+finsafe --policy <PATH> run <program> [args...]
+finsafe --policy <PATH> self-confine <broker> [args...]
+```
+
+`<PATH>` may be absolute or **relative to your current shell working directory** (it is not relative to the `finsafe` binary). Fields such as `filesystem.read_write_paths: ["./workspace"]` are resolved against the same cwd unless the YAML uses anchored paths.
+
+Copy-paste examples from this repository (clone or browse on GitHub) — see [examples/README.md](../examples/README.md):
+
+| Goal | Policy file | Example |
+|------|-------------|---------|
+| Short-lived wrapper smoke | [examples/wrapper-policies/hermes-version-smoke.yaml](../examples/wrapper-policies/hermes-version-smoke.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-version-smoke.yaml run echo hello` |
+| One-shot broker / query style | [examples/wrapper-policies/hermes-oneshot-query.yaml](../examples/wrapper-policies/hermes-oneshot-query.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-oneshot-query.yaml run hermes chat -q "…"` |
+| Interactive broker (TTY) | [examples/wrapper-policies/hermes-interactive.yaml](../examples/wrapper-policies/hermes-interactive.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-interactive.yaml self-confine hermes` |
+| Interactive broker + deny outbound TCP port 80 (Seatbelt) | [examples/wrapper-policies/hermes-interactive-deny-http.yaml](../examples/wrapper-policies/hermes-interactive-deny-http.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-interactive-deny-http.yaml self-confine hermes` |
+
+Wrapper field reference: [POLICY-QUICKREF.md](POLICY-QUICKREF.md).
+
+### 2. High-level intent policy
+
+Use **`finsafe run --high-level`** with YAML from [examples/high-level-policies/](../examples/high-level-policies/) (intent / router schema — **not** `kind: local-wrapper`). **Do not combine** global `finsafe --policy <wrapper.yaml>…` with `run --high-level`; the CLI treats them as mutually exclusive.
+
+```bash
+finsafe run --high-level <PATH> -- <program> [args...]
+```
+
+Optional **`--server`** and identity flags apply only on this path; see `finsafe --help` for your build.
+
+**Sample file:** [examples/high-level-policies/python-no-network.yaml](../examples/high-level-policies/python-no-network.yaml) (sandboxed Python, **no** network).
+
+### 3. Legacy execution spec (JSON)
+
+Some integrations still use **`finsafe run --policy spec.json`** where `spec.json` is **`ExecutionSpecV1`**, not wrapper YAML. That **`--policy`** sits **after** `run` and is unrelated to **`finsafe --policy wrapper.yaml run …`**. You cannot pass both the global wrapper `--policy` and the per-subcommand legacy `--policy` at once.
+
+---
+
 ## When to use `run` vs `self-confine`
 
 | Verb | Use when | Mechanism |

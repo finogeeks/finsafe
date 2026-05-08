@@ -51,6 +51,50 @@ finsafe doctor
 
 ---
 
+## 命令行如何指定策略
+
+FinSafe 支持多种策略输入形态；**多数本地运维只需「包装策略」**（`kind: local-wrapper`）。
+
+### 1. 包装策略（推荐）
+
+将 **`--policy`** 放在**子命令之前**（全局位置）：
+
+```bash
+finsafe --policy <PATH> run <program> [参数...]
+finsafe --policy <PATH> self-confine <broker> [参数...]
+```
+
+`<PATH>` 可为绝对路径，或相对于**当前 shell 工作目录**的相对路径（**不**相对于 `finsafe` 可执行文件本身）。YAML 中的路径（例如 `./workspace`）一般也按当前工作目录解析，除非使用根路径等锚定写法。
+
+下列示例可复制使用 —— 克隆本仓库或直接在 GitHub 浏览；完整索引见 [examples/README.md](../examples/README.md)：
+
+| 用途 | 策略文件 | 示例命令 |
+|------|----------|----------|
+| 短命任务冒烟 | [examples/wrapper-policies/hermes-version-smoke.yaml](../examples/wrapper-policies/hermes-version-smoke.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-version-smoke.yaml run echo hello` |
+| 一次性查询 / 短命令风格 | [examples/wrapper-policies/hermes-oneshot-query.yaml](../examples/wrapper-policies/hermes-oneshot-query.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-oneshot-query.yaml run hermes chat -q "…"` |
+| 交互式 Broker（需 TTY） | [examples/wrapper-policies/hermes-interactive.yaml](../examples/wrapper-policies/hermes-interactive.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-interactive.yaml self-confine hermes` |
+| 同上，且在 Seatbelt 下拒绝出站 TCP 80 | [examples/wrapper-policies/hermes-interactive-deny-http.yaml](../examples/wrapper-policies/hermes-interactive-deny-http.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-interactive-deny-http.yaml self-confine hermes` |
+
+字段含义见 [POLICY-QUICKREF.md](POLICY-QUICKREF.md)。
+
+### 2. 高层意图策略
+
+使用 **`finsafe run --high-level`**，YAML 形态见 [examples/high-level-policies/](../examples/high-level-policies/)（**意图 / 路由** 模式，**不是** `kind: local-wrapper`）。**不要**同时使用「全局 `finsafe --policy <包装.yaml> …`」与 `run --high-level`，CLI 会将二者视为互斥。
+
+```bash
+finsafe run --high-level <PATH> -- <program> [参数...]
+```
+
+**`--server`** 及身份类参数仅在该路径下有意义；具体以本机 **`finsafe --help`** 为准。
+
+**示例文件：** [examples/high-level-policies/python-no-network.yaml](../examples/high-level-policies/python-no-network.yaml)（无网络的 Python 沙箱意图；需与实际启动的程序、目录布局匹配）。
+
+### 3. 旧版执行规格（JSON）
+
+部分集成仍使用 **`finsafe run --policy spec.json`**，其中 `spec.json` 为 **`ExecutionSpecV1`**，**不是** 包装 YAML。此处的 **`--policy`** 写在 **`run` 之后**，与 **`finsafe --policy wrapper.yaml run …`** 是两套语法，**不可同时出现**（全局包装 `--policy` 与 `run --policy` 混用会被拒绝）。
+
+---
+
 ## 何时使用 `run` 与 `self-confine`
 
 | 子命令 | 适用场景 | 机制 |

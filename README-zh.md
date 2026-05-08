@@ -62,7 +62,8 @@ finsafe --help
 | [docs/USER-GUIDE.md](docs/USER-GUIDE.md) | 英文运维指南（`run` 与 `self-confine`、策略 YAML 概述、退出码）。 |
 | [docs/USER-GUIDE-zh.md](docs/USER-GUIDE-zh.md) | 中文用户指南。 |
 | [docs/POLICY-QUICKREF.md](docs/POLICY-QUICKREF.md) | Wrapper 策略（`kind: local-wrapper`）字段速查。 |
-| [examples/hermes-version-smoke.yaml](examples/hermes-version-smoke.yaml) | 最小化的短期 wrapper 策略示例。 |
+| [examples/README.md](examples/README.md) | 策略示例索引（`high-level-policies/`、`wrapper-policies/`）。 |
+| [examples/wrapper-policies/hermes-version-smoke.yaml](examples/wrapper-policies/hermes-version-smoke.yaml) | 最小化的短期 wrapper 策略示例。 |
 
 ## 安全
 
