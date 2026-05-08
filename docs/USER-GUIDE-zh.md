@@ -80,7 +80,7 @@ finsafe --help
 ```bash
 mkdir -p my-workspace/workspace
 cd my-workspace
-finsafe --policy ./examples/hermes-version-smoke.yaml run echo "hello"
+finsafe --policy ./examples/wrapper-policies/hermes-version-smoke.yaml run echo "hello"
 ```
 
 （请将 `--policy` 指到你保存 YAML 的路径；本仓库 [examples](../examples/) 下有示例策略。）

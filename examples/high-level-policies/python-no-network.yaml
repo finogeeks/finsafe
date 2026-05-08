@@ -1,0 +1,33 @@
+schema_version: 1
+policy_id: enterprise-python-no-network-v1
+
+filesystem:
+  read_only_paths:
+    - /usr
+    - /lib
+    - /lib64
+    - /etc/ssl
+  read_write_paths:
+    - /workspace
+
+resources:
+  memory_max: "536870912"     # 512 MiB
+  pids_max: "128"
+  cpu_max: "100000 100000"    # one core
+  timeout_ms: 30000
+
+network:
+  mode: deny
+
+syscalls: no_network
+
+identity:
+  use_user_namespace: true
+
+environment:
+  passthrough:
+    - PATH
+    - HOME
+    - TMPDIR
+  set:
+    - { name: PYTHONDONTWRITEBYTECODE, value: "1" }

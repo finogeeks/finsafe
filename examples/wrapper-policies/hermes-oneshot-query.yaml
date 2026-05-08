@@ -1,0 +1,31 @@
+# Wrap a short-lived `hermes chat -q "..."` oneshot query in a FinSAFE sandbox.
+# Proves FinSAFE confinement is applied while Hermes operates normally (LLM call + response).
+# On macOS: sandbox-exec (Seatbelt) confinement.
+# On Linux strict: bubblewrap + cgroup v2 + Landlock.
+schema_version: 1
+kind: local-wrapper
+program_mode: short-lived
+degrade:
+  allow_fallback: true
+audit:
+  require_policy_digest: true
+  require_resolved_posture: true
+# Preserve normal Hermes CLI/TTY behavior in text-mode wrapper runs.
+# `finsafe --json` still defaults to capture for machine-readable audit output.
+stdio:
+  mode: inherit
+# host: hermes needs outbound HTTPS for LLM API calls
+network: host
+resources:
+  memory_max: "1G"
+  pids_max: "256"
+  cpu_max: "100000 100000"
+  timeout_ms: 60000
+filesystem:
+  read_only_paths: ["/usr", "/lib", "/lib64", "/bin", "/sbin"]
+  read_write_paths: ["./workspace"]
+  # Optional compiler fields (protected paths, globs): see docs/POLICY-QUICKREF.md
+  # protected_read_only_paths: []
+  # skip_default_protected_paths: false
+  # deny_read_globs: ["*.env", "**/*.env"]
+  # glob_scan_max_depth: 8

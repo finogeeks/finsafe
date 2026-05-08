@@ -80,7 +80,7 @@ If policy uses `read_write_paths: ["./workspace"]`, create that directory first:
 ```bash
 mkdir -p my-workspace/workspace
 cd my-workspace
-finsafe --policy ./examples/hermes-version-smoke.yaml run echo "hello"
+finsafe --policy ./examples/wrapper-policies/hermes-version-smoke.yaml run echo "hello"
 ```
 
 (Adjust `--policy` to the path where you stored your YAML; the [examples](../examples/) folder in this repo includes a starter policy.)

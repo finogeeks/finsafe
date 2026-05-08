@@ -1,0 +1,25 @@
+# Wrap interactive Hermes while allowing normal HTTPS LLM calls but denying outbound HTTP.
+# Use with:
+#   finsafe --policy examples/wrapper-policies/hermes-interactive-deny-http.yaml self-confine hermes
+# macOS Seatbelt note: this is port-based, not domain-based. It denies outbound port 80.
+schema_version: 1
+kind: local-wrapper
+program_mode: interactive
+degrade:
+  allow_fallback: true
+audit:
+  require_policy_digest: true
+  require_resolved_posture: true
+stdio:
+  mode: inherit
+macos_seatbelt:
+  deny_outbound_ports: [80]
+# host keeps HTTPS model-provider calls available; macos_seatbelt above denies the test port.
+network: host
+resources:
+  memory_max: "1G"
+  pids_max: "256"
+  cpu_max: "100000 100000"
+filesystem:
+  read_only_paths: ["/usr", "/lib", "/lib64", "/bin", "/sbin"]
+  read_write_paths: ["./workspace"]

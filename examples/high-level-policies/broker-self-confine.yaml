@@ -1,0 +1,35 @@
+schema_version: 1
+policy_id: broker-self-confine-v1
+
+filesystem:
+  read_only_paths:
+    - /usr
+    - /lib
+    - /lib64
+    - /etc
+  read_write_paths:
+    - /workspace
+    - /var/run/finsafe
+
+resources:
+  memory_max: "2147483648"    # 2 GiB
+  pids_max: "1024"
+  cpu_max: "200000 100000"    # two cores
+  # No timeout: long-lived broker.
+
+network:
+  mode: host
+
+syscalls: default
+
+identity:
+  use_user_namespace: false
+
+environment:
+  passthrough:
+    - PATH
+    - HOME
+    - LANG
+    - LC_ALL
+    - FINSAFE_HELPER_PATH
+    - FINSAFE_SUPERVISOR_PATH

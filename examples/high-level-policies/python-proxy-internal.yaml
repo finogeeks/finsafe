@@ -1,0 +1,35 @@
+schema_version: 1
+policy_id: enterprise-python-proxy-internal-v1
+
+filesystem:
+  read_only_paths:
+    - /usr
+    - /lib
+    - /lib64
+    - /etc/ssl
+  read_write_paths:
+    - /workspace
+
+resources:
+  memory_max: "1073741824"    # 1 GiB
+  pids_max: "256"
+  cpu_max: "200000 100000"    # two cores
+  timeout_ms: 60000
+
+network:
+  mode: proxy
+  proxy_profile: internal-egress
+
+syscalls: default
+
+identity:
+  use_user_namespace: true
+
+environment:
+  passthrough:
+    - PATH
+    - HOME
+    - TMPDIR
+    - HTTP_PROXY
+    - HTTPS_PROXY
+    - NO_PROXY
