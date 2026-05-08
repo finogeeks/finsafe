@@ -1,6 +1,6 @@
 # FinSafe 用户指南
 
-本指南面向通过预构建的 **`finsafe` CLI** 在 FinSafe **隔离边界内**运行程序或 Broker 的**运维人员与开发者**。完整包装策略字段见本仓库中的 [POLICY-QUICKREF.md](POLICY-QUICKREF.md)。
+本指南面向通过预构建的 **`finsafe` CLI** 在 FinSafe **隔离边界内**运行程序或 Broker 的**运维人员与开发者**。完整包装策略字段见 [POLICY-QUICKREF-zh.md](POLICY-QUICKREF-zh.md)（英文：[POLICY-QUICKREF.md](POLICY-QUICKREF.md)）。
 
 ## FinSafe 能做什么
 
@@ -47,7 +47,7 @@ finsafe doctor
 - **`macos_seatbelt.deny_outbound_ports`**（可选，macOS）：在 **`network: host`** 时按端口拒绝出站 TCP。
 - **`resources`：** 内存、pids、cgroup CPU 配额；短命 **`run`** 可用 **`timeout_ms`** 限制墙上时钟。
 
-**可选的 `filesystem` 编译项：** 包装器可能在 Landlock 只读层合并默认受保护子目录，并按 **`deny_read_globs`** 等配置扩展规则。不写这些键的**旧策略仍然有效**。详见 [POLICY-QUICKREF.md](POLICY-QUICKREF.md)。
+**可选的 `filesystem` 编译项：** 包装器可能在 Landlock 只读层合并默认受保护子目录，并按 **`deny_read_globs`** 等配置扩展规则。不写这些键的**旧策略仍然有效**。详见 [POLICY-QUICKREF-zh.md](POLICY-QUICKREF-zh.md)。
 
 ---
 
@@ -75,7 +75,7 @@ finsafe --policy <PATH> self-confine <broker> [参数...]
 | 交互式 Broker（需 TTY） | [examples/wrapper-policies/hermes-interactive.yaml](../examples/wrapper-policies/hermes-interactive.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-interactive.yaml self-confine hermes` |
 | 同上，且在 Seatbelt 下拒绝出站 TCP 80 | [examples/wrapper-policies/hermes-interactive-deny-http.yaml](../examples/wrapper-policies/hermes-interactive-deny-http.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-interactive-deny-http.yaml self-confine hermes` |
 
-字段含义见 [POLICY-QUICKREF.md](POLICY-QUICKREF.md)。
+字段含义见 [POLICY-QUICKREF-zh.md](POLICY-QUICKREF-zh.md)。
 
 ### 2. 高层意图策略
 
@@ -196,5 +196,6 @@ macOS **不可**与 Linux「完全等价隔离」：
 
 ## 延伸阅读（本仓库）
 
-- [POLICY-QUICKREF.md](POLICY-QUICKREF.md) — 包装策略字段参考（英文）  
+- [POLICY-QUICKREF-zh.md](POLICY-QUICKREF-zh.md) — 包装策略字段速查（中文）  
+- [POLICY-QUICKREF.md](POLICY-QUICKREF.md) — Wrapper policy field reference (English)  
 - [USER-GUIDE.md](USER-GUIDE.md) — English user guide

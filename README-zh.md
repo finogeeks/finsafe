@@ -61,14 +61,15 @@ finsafe --help
 |------|------|
 | [docs/USER-GUIDE.md](docs/USER-GUIDE.md) | 英文运维指南（`run` 与 `self-confine`、策略 YAML 概述、退出码）。 |
 | [docs/USER-GUIDE-zh.md](docs/USER-GUIDE-zh.md) | 中文用户指南。 |
-| [docs/POLICY-QUICKREF.md](docs/POLICY-QUICKREF.md) | Wrapper 策略（`kind: local-wrapper`）字段速查。 |
+| [docs/POLICY-QUICKREF-zh.md](docs/POLICY-QUICKREF-zh.md) | 包装策略（`kind: local-wrapper`）字段速查（中文）。 |
+| [docs/POLICY-QUICKREF.md](docs/POLICY-QUICKREF.md) | 同上（英文）。 |
 | [examples/README.md](examples/README.md) | 策略示例索引（`high-level-policies/`、`wrapper-policies/`）。 |
 | [examples/wrapper-policies/hermes-version-smoke.yaml](examples/wrapper-policies/hermes-version-smoke.yaml) | 最小化的短期 wrapper 策略示例。 |
 
 ## 安全
 
 - 解压或执行下载的二进制前，请先校验 **`SHA256SUMS`**。
-- Wrapper 策略为**声明式**：通过 **`--policy`** 传入 YAML；CLI 按当前主机应用相应的隔离。上线生产前请阅读 [POLICY-QUICKREF.md](docs/POLICY-QUICKREF.md)。
+- Wrapper 策略为**声明式**：通过 **`--policy`** 传入 YAML；CLI 按当前主机应用相应的隔离。上线生产前请阅读 [POLICY-QUICKREF-zh.md](docs/POLICY-QUICKREF-zh.md)（或英文 [POLICY-QUICKREF.md](docs/POLICY-QUICKREF.md)）。
 
 ## 许可
 

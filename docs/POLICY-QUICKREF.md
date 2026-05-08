@@ -1,5 +1,7 @@
 # Wrapper policy quick reference (`kind: local-wrapper`)
 
+**中文:** [POLICY-QUICKREF-zh.md](POLICY-QUICKREF-zh.md)
+
 Operators pass a **wrapper policy** YAML file to **`finsafe --policy`**. This page summarizes **Stage 1** fields. The CLI compiles this document into host-specific execution configuration; you normally do **not** author internal execution JSON by hand.
 
 ## Minimal skeleton

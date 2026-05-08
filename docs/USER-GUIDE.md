@@ -1,6 +1,6 @@
 # FinSafe User Guide
 
-This guide is for **operators and developers** who run programs and agent brokers under FinSafe confinement using the prebuilt **`finsafe`** CLI. For the full wrapper policy field list, see [POLICY-QUICKREF.md](POLICY-QUICKREF.md) in this repository.
+This guide is for **operators and developers** who run programs and agent brokers under FinSafe confinement using the prebuilt **`finsafe`** CLI. For the full wrapper policy field list, see [POLICY-QUICKREF.md](POLICY-QUICKREF.md) ([Chinese](POLICY-QUICKREF-zh.md)) in this repository.
 
 ## What FinSafe does
 
@@ -47,7 +47,7 @@ Summary of important fields:
 - **`macos_seatbelt.deny_outbound_ports`** (optional, macOS): Block specific outbound TCP ports when `network: host`.
 - **`resources`:** Memory, PIDs, CPU cgroup strings; optional `timeout_ms` for wall-clock limits on **`run`**.
 
-**Optional compiler `filesystem` fields:** The wrapper may merge default protected subtrees (for example `.git` / `.finsafe` under writable roots) and expand optional globs such as **`deny_read_globs`** into Landlock-oriented read-only rules. Omitting those keys keeps older policies valid. See [POLICY-QUICKREF.md](POLICY-QUICKREF.md).
+**Optional compiler `filesystem` fields:** The wrapper may merge default protected subtrees (for example `.git` / `.finsafe` under writable roots) and expand optional globs such as **`deny_read_globs`** into Landlock-oriented read-only rules. Omitting those keys keeps older policies valid. See [POLICY-QUICKREF.md](POLICY-QUICKREF.md) ([Chinese](POLICY-QUICKREF-zh.md)).
 
 ---
 
@@ -75,7 +75,7 @@ Copy-paste examples from this repository (clone or browse on GitHub) — see [ex
 | Interactive broker (TTY) | [examples/wrapper-policies/hermes-interactive.yaml](../examples/wrapper-policies/hermes-interactive.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-interactive.yaml self-confine hermes` |
 | Interactive broker + deny outbound TCP port 80 (Seatbelt) | [examples/wrapper-policies/hermes-interactive-deny-http.yaml](../examples/wrapper-policies/hermes-interactive-deny-http.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-interactive-deny-http.yaml self-confine hermes` |
 
-Wrapper field reference: [POLICY-QUICKREF.md](POLICY-QUICKREF.md).
+Wrapper field reference: [POLICY-QUICKREF.md](POLICY-QUICKREF.md) · [POLICY-QUICKREF-zh.md](POLICY-QUICKREF-zh.md).
 
 ### 2. High-level intent policy
 
@@ -199,4 +199,5 @@ Typical meanings (see `finsafe --help` for the authoritative list for your versi
 ## Further reading (this repository)
 
 - [POLICY-QUICKREF.md](POLICY-QUICKREF.md) — wrapper policy field reference  
+- [POLICY-QUICKREF-zh.md](POLICY-QUICKREF-zh.md) — 包装策略字段速查（中文）  
 - [USER-GUIDE-zh.md](USER-GUIDE-zh.md) — 中文用户指南
