@@ -1,16 +1,18 @@
 #!/usr/bin/env sh
 # Install finsafe from GitHub releases published in finogeeks/finsafe.
+# Installs `finsafe` into FINSAFE_INSTALL_DIR; when the release archive bundles
+# `finsafe-landlock-shim` (Linux), installs it alongside for Landlock-capable runs.
 # Intended usage:
 #   curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh | sh
 # With explicit version and/or install location:
-#   curl -fsSL .../install.sh | env FINSAFE_VERSION=0.1.2 FINSAFE_INSTALL_DIR="$HOME/.local/bin" sh
+#   curl -fsSL .../install.sh | env FINSAFE_VERSION=0.1.3 FINSAFE_INSTALL_DIR="$HOME/.local/bin" sh
 
 set -eu
 
 REPO_DEFAULT="finogeeks/finsafe"
 REPO="${FINSAFE_REPO:-$REPO_DEFAULT}"
 
-# Version without a leading "v" (e.g. 0.1.2). If empty, use GitHub "latest" release.
+# Version without a leading "v" (e.g. 0.1.3). If empty, use GitHub "latest" release.
 VERSION_RAW="${FINSAFE_VERSION:-}"
 
 # Where to place the `finsafe` binary. Default matches README guidance.
@@ -43,21 +45,21 @@ Usage:
   install.sh [--version <x.y.z|vx.y.z>]
 
 Environment:
-  FINSAFE_VERSION                 Install this version (e.g. 0.1.2). If unset, uses latest.
+  FINSAFE_VERSION                 Install this version (e.g. 0.1.3). If unset, uses latest.
   FINSAFE_INSTALL_DIR             Install directory (default: $HOME/.local/bin)
   FINSAFE_REPO                    GitHub "owner/name" (default: finogeeks/finsafe)
   FINSAFE_INSECURE_SKIP_CHECKSUM  Set to 1 to skip SHA256 verification (not recommended)
 
 Examples:
   curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh | sh
-  curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh | sh -s -- --version 0.1.2
-  FINSAFE_VERSION=0.1.2 sh install.sh
+  curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh | sh -s -- --version 0.1.3
+  FINSAFE_VERSION=0.1.3 sh install.sh
 EOF
 }
 
 # Minimal argv parsing: forward compatibility with "curl | sh" one-liner.
 # Supports:
-#   sh -s -- --version 0.1.2
+#   sh -s -- --version 0.1.3
 while [ "$#" -gt 0 ]; do
   case "$1" in
     -h|--help)
@@ -213,6 +215,15 @@ mkdir -p "$INSTALL_DIR" || die "could not create install dir: $INSTALL_DIR"
 
 cp -f "$inner_dir/finsafe" "$INSTALL_DIR/finsafe"
 chmod 0755 "$INSTALL_DIR/finsafe"
+
+# Linux release archives also ship `finsafe-landlock-shim` next to `finsafe` so
+# Landlock-bound runs work without `--landlock-shim` (same-dir auto-discovery).
+shim_src="$inner_dir/finsafe-landlock-shim"
+if [ -f "$shim_src" ]; then
+  cp -f "$shim_src" "$INSTALL_DIR/finsafe-landlock-shim"
+  chmod 0755 "$INSTALL_DIR/finsafe-landlock-shim"
+  info "installed landlock shim: $INSTALL_DIR/finsafe-landlock-shim"
+fi
 
 cp_path="$INSTALL_DIR/finsafe"
 if command -v finsafe >/dev/null 2>&1; then
