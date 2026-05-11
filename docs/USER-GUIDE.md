@@ -16,6 +16,9 @@ FinSafe constrains **how** code runs on a host: namespaces, cgroup limits, sysca
 ### Install the CLI
 
 Use [GitHub Releases](https://github.com/finogeeks/finsafe/releases), verify `SHA256SUMS`, and extract the archive. See the [top-level README](../README.md).
+Linux archives include `finsafe-helper`, `finsafe-supervisor`, and
+`finsafe-landlock-shim` in addition to `finsafe`; keep them in the same
+directory (the installer does this automatically).
 
 ### Host expectations
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 # Install finsafe from GitHub releases published in finogeeks/finsafe.
-# Installs `finsafe` into FINSAFE_INSTALL_DIR; when the release archive bundles
-# `finsafe-landlock-shim` (Linux), installs it alongside for Landlock-capable runs.
+# Installs `finsafe` into FINSAFE_INSTALL_DIR; when Linux release archives
+# bundle runtime companions, installs them alongside for auto-discovery.
 # Intended usage:
 #   curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh | sh
 # With explicit version and/or install location:
@@ -216,14 +216,16 @@ mkdir -p "$INSTALL_DIR" || die "could not create install dir: $INSTALL_DIR"
 cp -f "$inner_dir/finsafe" "$INSTALL_DIR/finsafe"
 chmod 0755 "$INSTALL_DIR/finsafe"
 
-# Linux release archives also ship `finsafe-landlock-shim` next to `finsafe` so
-# Landlock-bound runs work without `--landlock-shim` (same-dir auto-discovery).
-shim_src="$inner_dir/finsafe-landlock-shim"
-if [ -f "$shim_src" ]; then
-  cp -f "$shim_src" "$INSTALL_DIR/finsafe-landlock-shim"
-  chmod 0755 "$INSTALL_DIR/finsafe-landlock-shim"
-  info "installed landlock shim: $INSTALL_DIR/finsafe-landlock-shim"
-fi
+# Linux release archives also ship runtime companions next to `finsafe` so
+# cgroup/Landlock-bound runs work without path flags (same-dir auto-discovery).
+for tool in finsafe-landlock-shim finsafe-helper finsafe-supervisor; do
+  tool_src="$inner_dir/$tool"
+  if [ -f "$tool_src" ]; then
+    cp -f "$tool_src" "$INSTALL_DIR/$tool"
+    chmod 0755 "$INSTALL_DIR/$tool"
+    info "installed $tool: $INSTALL_DIR/$tool"
+  fi
+done
 
 cp_path="$INSTALL_DIR/finsafe"
 if command -v finsafe >/dev/null 2>&1; then

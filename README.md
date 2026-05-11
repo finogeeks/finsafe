@@ -40,9 +40,12 @@ VERSION=0.1.3   # replace with the release you downloaded
 shasum -a 256 -c SHA256SUMS
 tar -xvf "finsafe-v${VERSION}-<target>.tar.zst"
 # Binary path: finsafe-v<version>-<target>/finsafe
+# Linux archives also include finsafe-helper, finsafe-supervisor, and
+# finsafe-landlock-shim; keep them next to finsafe for auto-discovery.
 ```
 
-Optional: copy `finsafe` into a directory on your `PATH`.
+Optional: copy `finsafe` into a directory on your `PATH`. On Linux, copy the
+three companion binaries beside it as well.
 
 5. Confirm:
 

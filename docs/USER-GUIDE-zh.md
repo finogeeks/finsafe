@@ -16,6 +16,8 @@ FinSafe 约束的是 **代码如何运行**：命名空间、cgroup、seccomp（
 ### 安装 CLI
 
 从 [GitHub Releases](https://github.com/finogeeks/finsafe/releases) 下载、校验 **`SHA256SUMS`** 并解压，步骤见仓库 [README.md](../README.md)。
+Linux 发行包除 `finsafe` 外还包含 `finsafe-helper`、`finsafe-supervisor`
+和 `finsafe-landlock-shim`；安装时请与 `finsafe` 放在同一目录（安装脚本会自动这样做）。
 
 ### 对不同操作系统的期望
 

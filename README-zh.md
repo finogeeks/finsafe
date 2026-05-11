@@ -40,9 +40,12 @@ VERSION=0.1.3   # 改为你下载的版本号
 shasum -a 256 -c SHA256SUMS
 tar -xvf "finsafe-v${VERSION}-<target>.tar.zst"
 # 二进制路径：finsafe-v<version>-<target>/finsafe
+# Linux 压缩包还包含 finsafe-helper、finsafe-supervisor 和
+# finsafe-landlock-shim；请与 finsafe 放在同一目录，便于自动发现。
 ```
 
-可将 `finsafe` 复制到 **`PATH`** 中的任意目录。
+可将 `finsafe` 复制到 **`PATH`** 中的任意目录。Linux 上也请把三个伴随
+二进制一起复制到同一目录。
 
 5. 确认：
 
