@@ -1,6 +1,7 @@
 # Wrap a long-lived interactive `hermes` broker in FinSAFE self-confine mode.
 # Use with:
-#   finsafe --policy examples/wrapper-policies/hermes-interactive.yaml self-confine hermes
+#   finsafe --policy examples/wrapper-policies/hermes-interactive.yaml self-confine /usr/bin/env HOME=/Users/cliang PATH=/Users/cliang/.local/bin:/usr/bin:/bin hermes
+# Replace `/Users/cliang` with your local home path; wrapper policies do not expand `~` or `${HOME}` today.
 # On macOS: FinSAFE emits a pre-exec audit envelope, then execs Hermes via sandbox-exec (Seatbelt).
 # On Linux strict: FinSAFE applies cgroup v2 + Landlock + seccomp to itself, then execs Hermes.
 schema_version: 1
@@ -21,5 +22,18 @@ resources:
   pids_max: "256"
   cpu_max: "100000 100000"
 filesystem:
-  read_only_paths: ["/usr", "/lib", "/lib64", "/bin", "/sbin"]
-  read_write_paths: ["./workspace"]
+  # macOS deny-default Seatbelt requires every needed local path to be declared.
+  # `.` lets Hermes inspect the current working directory; the user-local paths
+  # cover the Hermes launcher and uv-managed Python runtime used by this install.
+  read_only_paths:
+    - "."
+    - "/usr"
+    - "/lib"
+    - "/lib64"
+    - "/bin"
+    - "/sbin"
+    - "/Users/cliang/.local/bin"
+    - "/Users/cliang/.local/share/uv/python"
+  read_write_paths:
+    - "./workspace"
+    - "/Users/cliang/.hermes"

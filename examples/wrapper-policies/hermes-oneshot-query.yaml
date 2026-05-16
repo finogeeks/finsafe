@@ -1,5 +1,8 @@
 # Wrap a short-lived `hermes chat -q "..."` oneshot query in a FinSAFE sandbox.
 # Proves FinSAFE confinement is applied while Hermes operates normally (LLM call + response).
+# On macOS deny-default Seatbelt, invoke with explicit HOME/PATH, for example:
+#   finsafe --policy examples/wrapper-policies/hermes-oneshot-query.yaml run --json /usr/bin/env HOME=/Users/cliang PATH=/Users/cliang/.local/bin:/usr/bin:/bin hermes chat -q "Reply with exactly: ok" -Q --source tool
+# Replace `/Users/cliang` with your local home path; wrapper policies do not expand `~` or `${HOME}` today.
 # On macOS: sandbox-exec (Seatbelt) confinement.
 # On Linux strict: bubblewrap + cgroup v2 + Landlock.
 schema_version: 1
@@ -22,9 +25,22 @@ resources:
   cpu_max: "100000 100000"
   timeout_ms: 60000
 filesystem:
-  read_only_paths: ["/usr", "/lib", "/lib64", "/bin", "/sbin"]
-  read_write_paths: ["./workspace"]
-  # Optional compiler fields (protected paths, globs): see docs/POLICY-QUICKREF.md
+  # macOS deny-default Seatbelt requires every needed local path to be declared.
+  # `.` lets Hermes inspect the current working directory; the user-local paths
+  # cover the Hermes launcher and uv-managed Python runtime used by this install.
+  read_only_paths:
+    - "."
+    - "/usr"
+    - "/lib"
+    - "/lib64"
+    - "/bin"
+    - "/sbin"
+    - "/Users/cliang/.local/bin"
+    - "/Users/cliang/.local/share/uv/python"
+  read_write_paths:
+    - "./workspace"
+    - "/Users/cliang/.hermes"
+  # Optional (policy compiler): extra read-only carveouts, skip default .git/.finsafe protection, or mask secrets via globs — see docs/design/finsafe-sandbox-design.md
   # protected_read_only_paths: []
   # skip_default_protected_paths: false
   # deny_read_globs: ["*.env", "**/*.env"]

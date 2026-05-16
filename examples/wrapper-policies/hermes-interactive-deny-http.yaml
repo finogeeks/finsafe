@@ -1,6 +1,7 @@
 # Wrap interactive Hermes while allowing normal HTTPS LLM calls but denying outbound HTTP.
 # Use with:
-#   finsafe --policy examples/wrapper-policies/hermes-interactive-deny-http.yaml self-confine hermes
+#   finsafe --policy examples/wrapper-policies/hermes-interactive-deny-http.yaml self-confine /usr/bin/env HOME=/Users/cliang PATH=/Users/cliang/.local/bin:/usr/bin:/bin hermes
+# Replace `/Users/cliang` with your local home path; wrapper policies do not expand `~` or `${HOME}` today.
 # macOS Seatbelt note: this is port-based, not domain-based. It denies outbound port 80.
 schema_version: 1
 kind: local-wrapper
@@ -21,5 +22,18 @@ resources:
   pids_max: "256"
   cpu_max: "100000 100000"
 filesystem:
-  read_only_paths: ["/usr", "/lib", "/lib64", "/bin", "/sbin"]
-  read_write_paths: ["./workspace"]
+  # macOS deny-default Seatbelt requires every needed local path to be declared.
+  # `.` lets Hermes inspect the current working directory; the user-local paths
+  # cover the Hermes launcher and uv-managed Python runtime used by this install.
+  read_only_paths:
+    - "."
+    - "/usr"
+    - "/lib"
+    - "/lib64"
+    - "/bin"
+    - "/sbin"
+    - "/Users/cliang/.local/bin"
+    - "/Users/cliang/.local/share/uv/python"
+  read_write_paths:
+    - "./workspace"
+    - "/Users/cliang/.hermes"

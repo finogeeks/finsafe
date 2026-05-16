@@ -19,15 +19,15 @@ curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh |
 固定版本或安装目录：
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh | env FINSAFE_VERSION=0.1.3 FINSAFE_INSTALL_DIR="$HOME/.local/bin" sh
-curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh | sh -s -- --version 0.1.3
+curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh | env FINSAFE_VERSION=0.2.0 FINSAFE_INSTALL_DIR="$HOME/.local/bin" sh
+curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh | sh -s -- --version 0.2.0
 ```
 
 下载脚本后可执行 **`install.sh --help`**，查看全部环境变量说明。
 
 ### 手动下载
 
-1. 打开 [**Releases**](https://github.com/finogeeks/finsafe/releases)，选择某个版本标签（例如 `v0.1.3`）。
+1. 打开 [**Releases**](https://github.com/finogeeks/finsafe/releases)，选择某个版本标签（例如 `v0.2.0`）。
 2. 下载对应平台的压缩包：
    - Linux x86_64：`finsafe-v<version>-x86_64-unknown-linux-gnu.tar.zst`
    - macOS Apple 芯片：`finsafe-v<version>-aarch64-apple-darwin.tar.zst`
@@ -36,7 +36,7 @@ curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh |
 4. 校验并解压：
 
 ```bash
-VERSION=0.1.3   # 改为你下载的版本号
+VERSION=0.2.0   # 改为你下载的版本号
 shasum -a 256 -c SHA256SUMS
 tar -xvf "finsafe-v${VERSION}-<target>.tar.zst"
 # 二进制路径：finsafe-v<version>-<target>/finsafe

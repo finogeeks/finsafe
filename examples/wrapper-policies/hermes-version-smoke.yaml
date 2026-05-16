@@ -1,4 +1,7 @@
 # Short-lived smoke: wrap `hermes --version` (or similar one-shot Hermes CLI).
+# On macOS deny-default Seatbelt, invoke with explicit HOME/PATH, for example:
+#   finsafe --policy examples/wrapper-policies/hermes-version-smoke.yaml run --json /usr/bin/env HOME=/Users/cliang PATH=/Users/cliang/.local/bin:/usr/bin:/bin hermes --version
+# Replace `/Users/cliang` with your local home path; wrapper policies do not expand `~` or `${HOME}` today.
 # On Linux strict + bwrap/Landlock, FinSAFE invokes the child inside the sandbox.
 # On macOS, FinSAFE runs the child via `sandbox-exec` (Seatbelt MVP) under `mac-seatbelt`.
 schema_version: 1
@@ -15,5 +18,18 @@ resources:
   pids_max: "64"
   cpu_max: "100000 100000"
 filesystem:
-  read_only_paths: ["/usr", "/lib", "/lib64", "/bin", "/sbin"]
-  read_write_paths: ["./workspace"]
+  # macOS deny-default Seatbelt requires every needed local path to be declared.
+  # `.` lets Hermes inspect the current working directory; the user-local paths
+  # cover the Hermes launcher and uv-managed Python runtime used by this install.
+  read_only_paths:
+    - "."
+    - "/usr"
+    - "/lib"
+    - "/lib64"
+    - "/bin"
+    - "/sbin"
+    - "/Users/cliang/.local/bin"
+    - "/Users/cliang/.local/share/uv/python"
+  read_write_paths:
+    - "./workspace"
+    - "/Users/cliang/.hermes"

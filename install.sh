@@ -5,14 +5,14 @@
 # Intended usage:
 #   curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh | sh
 # With explicit version and/or install location:
-#   curl -fsSL .../install.sh | env FINSAFE_VERSION=0.1.3 FINSAFE_INSTALL_DIR="$HOME/.local/bin" sh
+#   curl -fsSL .../install.sh | env FINSAFE_VERSION=0.2.0 FINSAFE_INSTALL_DIR="$HOME/.local/bin" sh
 
 set -eu
 
 REPO_DEFAULT="finogeeks/finsafe"
 REPO="${FINSAFE_REPO:-$REPO_DEFAULT}"
 
-# Version without a leading "v" (e.g. 0.1.3). If empty, use GitHub "latest" release.
+# Version without a leading "v" (e.g. 0.2.0). If empty, use GitHub "latest" release.
 VERSION_RAW="${FINSAFE_VERSION:-}"
 
 # Where to place the `finsafe` binary. Default matches README guidance.
@@ -45,21 +45,21 @@ Usage:
   install.sh [--version <x.y.z|vx.y.z>]
 
 Environment:
-  FINSAFE_VERSION                 Install this version (e.g. 0.1.3). If unset, uses latest.
+  FINSAFE_VERSION                 Install this version (e.g. 0.2.0). If unset, uses latest.
   FINSAFE_INSTALL_DIR             Install directory (default: $HOME/.local/bin)
   FINSAFE_REPO                    GitHub "owner/name" (default: finogeeks/finsafe)
   FINSAFE_INSECURE_SKIP_CHECKSUM  Set to 1 to skip SHA256 verification (not recommended)
 
 Examples:
   curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh | sh
-  curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh | sh -s -- --version 0.1.3
-  FINSAFE_VERSION=0.1.3 sh install.sh
+  curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh | sh -s -- --version 0.2.0
+  FINSAFE_VERSION=0.2.0 sh install.sh
 EOF
 }
 
 # Minimal argv parsing: forward compatibility with "curl | sh" one-liner.
 # Supports:
-#   sh -s -- --version 0.1.3
+#   sh -s -- --version 0.2.0
 while [ "$#" -gt 0 ]; do
   case "$1" in
     -h|--help)
