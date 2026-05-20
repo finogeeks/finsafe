@@ -20,7 +20,7 @@
 |------|----------|------|
 | **0 — 单元** | JWS 校验、过期、宽限期、特性、席位计数 | `cargo test -p finsafe-license -p finsafe-authority` |
 | **1 — HTTP 门禁** | 无许可证 `402`；有许可证 `200`；席位上限 | `./scripts/managed-mode/license-suite.sh …` |
-| **2 — macOS 完整 E2E** | 构建、签发开发许可证、双 authority、托管运行 | `./scripts/managed-mode/e2e-licensing-macos.sh` |
+| **2 — macOS 完整 E2E** | 构建、加载开发用 `license.jws`、双 authority、托管运行 | `./scripts/managed-mode/e2e-licensing-macos.sh` |
 | **3 — Linux 对齐** | Landlock、`run-suite.sh`、`tamper-suite.sh` | OrbStack 虚拟机或 CI；见 [managed-mode-matrix-zh.md](./managed-mode-matrix-zh.md) |
 | **4 — 试点** | 双机、真实 MDM、生产 JWKS | [enterprise-deployment-runbook-zh.md](../enterprise-deployment-runbook-zh.md) |
 
@@ -48,8 +48,8 @@
 
 脚本将：
 
-1. 构建企业版二进制（`finsafe`、`finsafe-agent`、`finsafe-authority-http`、`finsafe-bundlectl`）及内部工具 `finsafe-licensectl`。
-2. 使用临时签名密钥签发**开发许可证**（`max_devices=2`，约 1 年有效期）。
+1. 构建企业版二进制（`finsafe`、`finsafe-agent`、`finsafe-authority-http`、`finsafe-bundlectl`）。
+2. 为 E2E authority 准备**开发用** `license.jws`（`max_devices=2`，约 1 年有效期；不可用于生产）。
 3. 在 `127.0.0.1:8091` 启动**无许可证** authority → 执行 `license-suite.sh missing`。
 4. 在 `127.0.0.1:8090` 启动**有许可证** authority → 执行 `licensed` 与 `seat-limit`。
 5. 用**全新数据库**重启有许可证的 authority，发布 smoke bundle，在隔离状态目录中注册 agent，执行 `finsafe run --json -- /usr/bin/true`。
@@ -136,18 +136,8 @@ export FINSAFE_AUTHORITY_URL=http://127.0.0.1:8090
 | `FINSAFE_AUTHORITY_URL` | _(由脚本设置)_ | `license-suite.sh` 的目标 URL |
 | `FINSAFE_LICENSE_PATH` | 生产默认 `/etc/finsafe/license.jws` | authority 读取的 JWS 路径 |
 | `FINSAFE_LICENSE_VERIFY_PUBKEY_FILE` | 发行版内置公钥 | E2E 使用临时校验公钥覆盖 |
-| `FINSAFE_LICENSE_SIGNING_KEY` | _(仅 E2E)_ | 开发签发私钥；**不得**交付客户 |
 
-生产环境使用 Finogeeks 签发的 `license.jws` 与内置校验公钥，见 [authority-deployment-zh.md](../authority-deployment-zh.md)。
-
-内部签发工具（仅开发/CI）：
-
-```bash
-FINSAFE_BUILD_LICENSE_ISSUER=1 ./scripts/build-finsafe-enterprise.sh
-finsafe-licensectl keygen --out /tmp/license-signing.bin
-finsafe-licensectl issue --customer-id acme --subject pilot --max-devices 100 \
-  --expires-at 2027-01-01T00:00:00Z --out /tmp/license.jws
-```
+生产环境使用 Finogeeks 签发的 `license.jws` 与内置校验公钥，见 [authority-deployment-zh.md](../authority-deployment-zh.md)。完整 E2E 脚本会自行生成开发用许可证文件；勿将该文件用于生产。
 
 ---
 
@@ -157,7 +147,7 @@ finsafe-licensectl issue --customer-id acme --subject pilot --max-devices 100 \
 |------|----------|------|
 | `authority did not become healthy` | 端口占用或启动崩溃 | 查看 `FINSAFE_E2E_DIR` 下 `authority-*.log`；更换绑定端口 |
 | `admin-devices code=`（非 `LICENSE_MISSING`） | 「无许可证」实例仍加载了旧许可证 | E2E 使用不存在的 `no-license.jws`；确认 `FINSAFE_LICENSE_PATH` |
-| `seat-limit: license has no max_devices` | 许可证未设置席位上限 | 使用 `--max-devices N` 重新签发 |
+| `seat-limit: license has no max_devices` | 许可证未设置席位上限 | 使用包含 `max_devices` 的 `license.jws`（E2E 脚本为 `max_devices=2`） |
 | `MANAGED_DAEMON_UNREACHABLE: no active bundle` | 未发布 bundle | 在 agent 前执行 bundlectl publish（完整 E2E 已包含） |
 | `enrolled.json missing` | agent 无法连接 authority 或 token 无效 | 查看 `$E2E_DIR/desktop/agent.log` |
 | `managed run: unexpected output` | agent 已退出或策略拒绝 | 设置 `FINSAFE_E2E_DIR_REUSE=1` 与相同 `FINSAFE_E2E_DIR` 后重跑 |
@@ -182,8 +172,6 @@ cargo clippy -p finsafe-license -p finsafe-authority -- -D warnings
 cargo test -p finsafe-license -p finsafe-authority
 ./scripts/managed-mode/e2e-licensing-macos.sh
 ```
-
-公开发布包中**不得**包含 `finsafe-licensectl`；见 `scripts/assert-public-release-archive.sh`。
 
 ---
 

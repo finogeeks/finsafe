@@ -13,7 +13,9 @@ FinSafe 是一套**主机执行边界**工具集：Linux 命名空间、cgroup �
 | **个人 / local wrapper** | 在本机使用 `finsafe --policy …` 的开发者 | **免费** — 公开发行的 `finsafe` CLI 无需商业许可证 |
 | **托管舰队** | 部署 `finsafe-authority-http`、`finsafe-agent` 与 MDM 策略的 IT 团队 | **商业许可** — 由 Finogeeks 签发 `license.jws` 并安装在 Policy Authority 上 |
 
-GitHub [Releases](https://github.com/finogeeks/finsafe/releases) 提供个人 CLI（`finsafe-v*`）、托管舰队（`finsafe-fleet-v*`）与 authority 管理包（`finsafe-admin-v*`）。**`install.sh` 仅安装个人 CLI**；舰队与 authority 请从同一 Release 页面手动下载。详见 **[binary-reference-zh.md](docs/binary-reference-zh.md)**。Authority 与 `license.jws`：[authority-deployment-zh.md](docs/authority-deployment-zh.md)。
+GitHub [Releases](https://github.com/finogeeks/finsafe/releases) 提供个人 CLI（`finsafe-v*`）、托管舰队（`finsafe-fleet-v*`）、authority 服务（`finsafe-admin-server-v*`）与运维 CLI（`finsafe-bundlectl-v*`，Linux + macOS）。**`install.sh` 仅安装个人 CLI**；其余包请从同一 Release 页面手动下载。详见 **[binary-reference-zh.md](docs/binary-reference-zh.md)**。Authority 与 `license.jws`：[authority-deployment-zh.md](docs/authority-deployment-zh.md)。
+
+**供 AI Agent 使用的运维技能：** [finsafe-bundlectl 技能](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL-zh.md)（自包含；仅需二进制 + 技能文件）。
 
 ## 企业 IT 全景（推荐）
 
@@ -90,7 +92,8 @@ finsafe --help
 | 发行包 | 内容 |
 |--------|------|
 | **`finsafe-fleet-v<version>-<target>.tar.zst`** | 托管 `finsafe` + `finsafe-agent`（Linux 另含 helper、supervisor、landlock shim） |
-| **`finsafe-admin-v<version>-x86_64-unknown-linux-gnu.tar.zst`** | `finsafe-authority-http`、`finsafe-bundlectl` |
+| **`finsafe-admin-server-v<version>-x86_64-unknown-linux-gnu.tar.zst`** | `finsafe-authority-http`（Linux authority 主机） |
+| **`finsafe-bundlectl-v<version>-<target>.tar.zst`** | `finsafe-bundlectl`（运维工作站；target 与桌面包相同） |
 | **`finsafe-v<version>-<target>.tar.zst`** | 个人模式 `finsafe`（`install.sh`） |
 
 `license.jws` 由 Finogeeks 单独提供（不在 GitHub）。安装后再开启注册与管理 API：[authority-deployment-zh.md](docs/authority-deployment-zh.md) · [enterprise-deployment-runbook-zh.md](docs/enterprise-deployment-runbook-zh.md)。

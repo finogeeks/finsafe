@@ -22,7 +22,7 @@ Scripts live in the FinSAFE source repo: [`scripts/managed-mode/`](../../../../s
 |-------|----------------|---------|
 | **0 — Unit** | JWS verify, expiry, grace, features, seat math | `cargo test -p finsafe-license -p finsafe-authority` |
 | **1 — HTTP gates** | `402` without license; `200` with license; seat cap | `./scripts/managed-mode/license-suite.sh …` |
-| **2 — Full macOS E2E** | Build, issue dev license, both authorities, managed run | `./scripts/managed-mode/e2e-licensing-macos.sh` |
+| **2 — Full macOS E2E** | Build, load dev `license.jws`, both authorities, managed run | `./scripts/managed-mode/e2e-licensing-macos.sh` |
 | **3 — Linux parity** | Landlock, `run-suite.sh`, `tamper-suite.sh` | OrbStack VM or CI; see [managed-mode-matrix.md](./managed-mode-matrix.md) |
 | **4 — Pilot** | Two hosts, real MDM, production JWKS | [enterprise-deployment-runbook.md](../enterprise-deployment-runbook.md) |
 
@@ -50,8 +50,8 @@ From the repository root:
 
 The script:
 
-1. Builds enterprise binaries (`finsafe`, `finsafe-agent`, `finsafe-authority-http`, `finsafe-bundlectl`) and internal `finsafe-licensectl`.
-2. Issues a **dev** license (`max_devices=2`, ~1 year expiry) with a temp signing keypair.
+1. Builds enterprise binaries (`finsafe`, `finsafe-agent`, `finsafe-authority-http`, `finsafe-bundlectl`).
+2. Prepares a **dev** `license.jws` (`max_devices=2`, ~1 year expiry) for the E2E authority (not for production).
 3. Starts **unlicensed** authority on `127.0.0.1:8091` → runs `license-suite.sh missing`.
 4. Starts **licensed** authority on `127.0.0.1:8090` → runs `licensed` and `seat-limit`.
 5. Restarts licensed authority with a **fresh DB**, publishes a smoke bundle, enrolls agent in an isolated state dir, runs `finsafe run --json -- /usr/bin/true`.
@@ -138,18 +138,8 @@ Without a published bundle, managed run fails with `MANAGED_DAEMON_UNREACHABLE: 
 | `FINSAFE_AUTHORITY_URL` | _(script sets)_ | Target for `license-suite.sh` |
 | `FINSAFE_LICENSE_PATH` | `/etc/finsafe/license.jws` in prod | JWS path for authority process |
 | `FINSAFE_LICENSE_VERIFY_PUBKEY_FILE` | embedded key in release | E2E overrides with temp verifying key |
-| `FINSAFE_LICENSE_SIGNING_KEY` | _(E2E only)_ | Dev issuer key; **never** ship to customers |
 
-Production authorities use Finogeeks-issued `license.jws` and the embedded verifying key; see [authority-deployment.md](../authority-deployment.md).
-
-Internal issuer (dev/CI only):
-
-```bash
-FINSAFE_BUILD_LICENSE_ISSUER=1 ./scripts/build-finsafe-enterprise.sh
-finsafe-licensectl keygen --out /tmp/license-signing.bin
-finsafe-licensectl issue --customer-id acme --subject pilot --max-devices 100 \
-  --expires-at 2027-01-01T00:00:00Z --out /tmp/license.jws
-```
+Production authorities use Finogeeks-issued `license.jws` and the embedded verifying key; see [authority-deployment.md](../authority-deployment.md). The full E2E script generates its own dev license file; do not use that file in production.
 
 ---
 
@@ -159,7 +149,7 @@ finsafe-licensectl issue --customer-id acme --subject pilot --max-devices 100 \
 |---------|----------------|-----|
 | `authority did not become healthy` | Port in use or crash on start | Read `authority-*.log` under `FINSAFE_E2E_DIR`; change bind ports |
 | `admin-devices code=` (not `LICENSE_MISSING`) | Stale license file on “unlicensed” instance | E2E uses nonexistent `no-license.jws`; ensure `FINSAFE_LICENSE_PATH` points there |
-| `seat-limit: license has no max_devices` | License without seat cap | Re-issue with `--max-devices N` |
+| `seat-limit: license has no max_devices` | License without seat cap | Use a `license.jws` that includes `max_devices` (E2E script sets `max_devices=2`) |
 | `MANAGED_DAEMON_UNREACHABLE: no active bundle` | No bundle published | Run bundlectl publish before agent (full E2E does this automatically) |
 | `enrolled.json missing` | Agent cannot reach authority or bad enroll token | Inspect `$E2E_DIR/desktop/agent.log` |
 | `managed run: unexpected output` | Agent stopped or policy deny | Re-run with `FINSAFE_E2E_DIR_REUSE=1` and same `FINSAFE_E2E_DIR` to inspect logs |
@@ -184,8 +174,6 @@ cargo clippy -p finsafe-license -p finsafe-authority -- -D warnings
 cargo test -p finsafe-license -p finsafe-authority
 ./scripts/managed-mode/e2e-licensing-macos.sh
 ```
-
-Public release archives must **not** contain `finsafe-licensectl`; see `scripts/assert-public-release-archive.sh`.
 
 ---
 

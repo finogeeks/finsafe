@@ -15,34 +15,37 @@
 - 提供**管理 UI** 与 JSON API 供运维人员使用。
 - 发布 agent 用于验证 bundle 签名的 **JWKS**。
 
-`finsafe-bundlectl` 是配套的运维 CLI，用于构建、签名和发布 bundle 及 managed-required 哨兵。二者均在**管理发行包**中（与公开桌面 CLI 包分开）。完整二进制清单与平台对照见 [binary-reference-zh.md](./binary-reference-zh.md)。
+`finsafe-bundlectl` 是配套的运维 CLI，用于构建、签名和发布 bundle 及 managed-required 哨兵。运维 CLI 在 **`finsafe-bundlectl-v*`**（Linux + macOS）；authority HTTP 服务在 **`finsafe-admin-server-v*`**（Linux）。完整二进制清单见 [binary-reference-zh.md](./binary-reference-zh.md)。
 
 ---
 
 ## 1. 获取二进制
 
-管理二进制（`finsafe-authority-http` 与 `finsafe-bundlectl`）作为独立的**管理发行包**发布在 [Releases](https://github.com/finogeeks/finsafe/releases) 中：
+Policy Authority 与运维 CLI 在 [Releases](https://github.com/finogeeks/finsafe/releases) 中分为**两个**发行包：
 
-```
-finsafe-admin-v<version>-x86_64-unknown-linux-gnu.tar.zst
-```
+| 发行包 | 安装位置 |
+|--------|----------|
+| `finsafe-admin-server-v<version>-x86_64-unknown-linux-gnu.tar.zst` | Linux authority 主机 — `finsafe-authority-http` |
+| `finsafe-bundlectl-v<version>-<target>.tar.zst` | 运维工作站 — `finsafe-bundlectl`（Linux 或 macOS） |
 
 校验并解压（方式与桌面发行包相同）：
 
 ```bash
 VERSION=0.2.0
 shasum -a 256 -c SHA256SUMS
-tar -xvf "finsafe-admin-v${VERSION}-x86_64-unknown-linux-gnu.tar.zst"
-# 内容：finsafe-authority-http  finsafe-bundlectl
-```
 
-安装到固定路径：
+# Authority 主机（Linux 服务器）
+tar -xvf "finsafe-admin-server-v${VERSION}-x86_64-unknown-linux-gnu.tar.zst"
+sudo cp finsafe-admin-server-v${VERSION}-x86_64-unknown-linux-gnu/finsafe-authority-http /usr/local/bin/
 
-```bash
-sudo cp finsafe-authority-http finsafe-bundlectl /usr/local/bin/
+# 运维 Mac 或 Linux（从 Release 页选择匹配的 <target>）
+tar -xvf "finsafe-bundlectl-v${VERSION}-aarch64-apple-darwin.tar.zst"
+sudo cp finsafe-bundlectl-v${VERSION}-aarch64-apple-darwin/finsafe-bundlectl /usr/local/bin/
 ```
 
 **桌面发行包**（`finsafe`、`finsafe-agent` 及辅助二进制）是独立的，见 [顶层 README](../README.md)。
+
+**AI Agent：** 自包含 bundlectl 技能（仅需二进制 + 技能文件）：https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL-zh.md
 
 ---
 
@@ -170,7 +173,78 @@ open "$AUTHORITY/admin/"
 
 ## 6. 使用 finsafe-bundlectl 管理策略 bundle
 
-`finsafe-bundlectl` 是创建和推送策略 bundle 的运维工具。请在**安全的运维工作站**上运行，该工作站需能访问签名密钥（不在终端用户机器上运行）。
+`finsafe-bundlectl` 是创建和推送策略 bundle 的运维工具。请在**安全的运维工作站**上运行，该工作站需能访问签名密钥（不在终端用户机器上运行）。它通过 HTTP 与 authority 协作，**不能**替代 authority 进程本身。
+
+可复制粘贴的命令序列与 Agent 向故障排查（自包含）见 https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL-zh.md
+
+### bundlectl 与 authority 如何配合
+
+| 组件 | 职责 |
+|------|------|
+| **`finsafe-bundlectl`** | 构建 bundle 草稿、本地签名（审阅）、向 authority **发布** bundle JSON、为 MDM 签名 **managed-required** 哨兵 JWS |
+| **`finsafe-authority-http`** | SQLite 存储、对发布的 bundle **重新签名并持久化**、提供 `GET /v1/bundles/current`、JWKS、注册、心跳、管理 UI |
+| **`finsafe-agent`** | 从 authority 拉取最新 bundle JWS，用 JWKS 校验，缓存策略并通过 UDS 供 `finsafe` 使用 |
+
+```mermaid
+flowchart LR
+  subgraph ops [运维工作站]
+    BC[finsafe-bundlectl]
+    KEY[(签名密钥)]
+    BC --> KEY
+  end
+
+  subgraph server [Policy Authority]
+    AH[finsafe-authority-http]
+    DB[(SQLite bundles/devices)]
+    JWKS[/.well-known/finsafe/jwks.json]
+    AH --> DB
+    AH --> JWKS
+  end
+
+  subgraph provision [舰队交付]
+    MDM[MDM / 配置管理]
+  end
+
+  subgraph fleet [托管桌面]
+    AG[finsafe-agent]
+    FS[finsafe CLI]
+    AG --> FS
+  end
+
+  BC -->|POST /v1/admin/bundles| AH
+  BC -->|sentinel sign| MDM
+  MDM -->|managed-required.jws| AG
+  AG -->|GET bundles/current + JWKS| AH
+```
+
+**策略 bundle 路径（集中下发）：**
+
+```text
+运维（bundlectl）                      Authority                          舰队桌面
+────────────────                      ─────────                          ────────
+
+bundle build  → 未签名 BundleV1 JSON
+bundle sign   → bundle.jws（本地审阅；与 authority 共用签名密钥）
+bundle publish --in bundle.jws --authority <URL>
+       │
+       │  POST /v1/admin/bundles  { "bundle": <BundleV1> }
+       ▼
+                         校验 license.jws（缺失则 402）
+                         用 authority 密钥重新签名
+                         写入 bundles 表（version → jws）
+                         通知 agent（bundle-rotated）
+                                                               agent: GET JWKS
+                                                               agent: GET /v1/bundles/current
+                                                               校验 JWS → 缓存 → finsafe run
+```
+
+发布时 authority **不会原样存储**运维机上的 JWS：它解析已校验的 bundle 载荷，用 **authority 密钥再次签名** 后入库。Agent 只信任 authority 主机上 `/.well-known/finsafe/jwks.json` 中的公钥。请在 bundlectl 工作站与 authority 服务器上使用**同一** `FINSAFE_AUTHORITY_SIGNING_KEY`。
+
+**managed-required 哨兵（与 bundle 发布分开）：** `finsafe-bundlectl sentinel sign` 生成供 MDM 部署的 JWS（例如 `/etc/finsafe/managed-required.json`），其中包含 `authority_url` 与 JWKS 指纹；**不会**通过 authority HTTP API 上传。策略**内容**仍经 `bundle publish` → `GET /v1/bundles/current` 下发。
+
+**由 authority 处理（非 bundlectl）：** 一次性注册令牌（`POST /v1/enroll/token`）、设备注册/吊销、kill switch、审计入库及 `/admin/` UI。
+
+### 运维命令
 
 一次性配置环境变量：
 

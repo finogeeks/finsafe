@@ -18,7 +18,7 @@
 | `finsafe-authority-http` | JWKS、bundle 分发、注册、心跳、审计上报、管理 API |
 | `finsafe-agent` | 注册、bundle 校验与缓存、UDS 协议、心跳、审计 spool 上传 |
 | `finsafe` | 托管时从 agent 解析策略；仅当策略允许时可用 `--personal` 退出 |
-| `finsafe-bundlectl` | 构建/签名/发布 bundle 与 managed-required 哨兵 |
+| `finsafe-bundlectl` | 构建/签名/发布 bundle 与 managed-required 哨兵 — 见 [authority-deployment-zh.md](./authority-deployment-zh.md#6-使用-finsafe-bundlectl-管理策略-bundle) |
 | `finsafe-helper`、`finsafe-supervisor`、`finsafe-landlock-shim` | **仅 Linux** — 与 `finsafe` 同目录，用于 bubblewrap/cgroup/Landlock（macOS 不交付） |
 
 ## 路径（Linux 默认）
@@ -42,7 +42,7 @@ cargo run -p finsafe-authority --bin finsafe-authority-http
 # 终端 2 — 构建并发布 bundle
 finsafe-bundlectl bundle build --from examples/wrapper-policy.yaml --out /tmp/bundle.json
 finsafe-bundlectl bundle sign --in /tmp/bundle.json --out /tmp/bundle.jws
-finsafe-bundlectl bundle publish --jws /tmp/bundle.jws --authority http://127.0.0.1:8090
+finsafe-bundlectl bundle publish --in /tmp/bundle.jws --authority http://127.0.0.1:8090
 
 # 终端 3 — agent（引导注册）
 sudo mkdir -p /etc/finsafe /var/lib/finsafe

@@ -19,6 +19,13 @@
 | [POLICY-QUICKREF.md](./POLICY-QUICKREF.md) | Wrapper policy field reference |
 | [POLICY-QUICKREF-zh.md](./POLICY-QUICKREF-zh.md) | 包装策略字段速查 |
 
+## Operator skills (AI agents)
+
+| Skill | Description |
+|-------|-------------|
+| [SKILL.md](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL.md) · [SKILL-zh.md](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL-zh.md) | **`finsafe-bundlectl`**: self-contained; binary + skill only |
+| [../skills/README.md](../skills/README.md) | Index of public operator skills |
+
 ## For enterprise administrators (managed fleet)
 
 Deploy **Policy Authority**, **finsafe-agent**, and signed bundles to employee desktops. End users run `finsafe run -- <program>` without supplying their own policy files.

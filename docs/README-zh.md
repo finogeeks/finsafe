@@ -19,6 +19,13 @@
 | [POLICY-QUICKREF-zh.md](./POLICY-QUICKREF-zh.md) | 包装策略字段速查 |
 | [POLICY-QUICKREF.md](./POLICY-QUICKREF.md) | Wrapper policy field reference (English) |
 
+## 运维技能（AI Agent）
+
+| 技能 | 说明 |
+|------|------|
+| [SKILL-zh.md](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL-zh.md) · [English](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL.md) | **`finsafe-bundlectl`**：自包含；仅需二进制 + 技能文件 |
+| [../skills/README-zh.md](../skills/README-zh.md) | 公开运维技能索引 |
+
 ## 企业管理员（托管舰队）
 
 向员工桌面部署 **Policy Authority**、**finsafe-agent** 与已签名 bundle。终端用户运行 `finsafe run -- <program>`，无需自备策略文件。

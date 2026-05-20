@@ -19,34 +19,38 @@ see [managed-mode.md](./managed-mode.md). For phased fleet rollout, see the
 - Publishes **JWKS** used by agents to verify bundle signatures.
 
 `finsafe-bundlectl` is the companion operator CLI for building, signing, and publishing
-bundles and managed-required sentinels. Both ship in the **admin archive** (separate from
-the public desktop CLI archive). For the full binary suite and platform matrix, see
-[binary-reference.md](./binary-reference.md).
+bundles and managed-required sentinels. It ships in **`finsafe-bundlectl-v*`** (Linux + macOS);
+the authority HTTP service ships in **`finsafe-admin-server-v*`** (Linux). For the full binary
+suite and platform matrix, see [binary-reference.md](./binary-reference.md).
+
+**AI agents:** a self-contained bundlectl skill (binary + skill file only; no local doc checkout):
+https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL.md
 
 ---
 
 ## 1. Obtain binaries
 
-Admin binaries (`finsafe-authority-http` and `finsafe-bundlectl`) are distributed in a
-separate **admin archive** from [Releases](https://github.com/finogeeks/finsafe/releases):
+Policy Authority and operator CLI ship in **separate** release archives from
+[Releases](https://github.com/finogeeks/finsafe/releases):
 
-```
-finsafe-admin-v<version>-x86_64-unknown-linux-gnu.tar.zst
-```
+| Archive | Install on |
+|---------|------------|
+| `finsafe-admin-server-v<version>-x86_64-unknown-linux-gnu.tar.zst` | Linux authority server — `finsafe-authority-http` |
+| `finsafe-bundlectl-v<version>-<target>.tar.zst` | Operator workstation — `finsafe-bundlectl` (Linux or macOS) |
 
-Verify and extract (same pattern as the desktop archive):
+Verify and extract (same pattern as the desktop archives):
 
 ```bash
 VERSION=0.2.0
 shasum -a 256 -c SHA256SUMS
-tar -xvf "finsafe-admin-v${VERSION}-x86_64-unknown-linux-gnu.tar.zst"
-# Contents: finsafe-authority-http  finsafe-bundlectl
-```
 
-Install to a stable path:
+# Authority host (Linux server)
+tar -xvf "finsafe-admin-server-v${VERSION}-x86_64-unknown-linux-gnu.tar.zst"
+sudo cp finsafe-admin-server-v${VERSION}-x86_64-unknown-linux-gnu/finsafe-authority-http /usr/local/bin/
 
-```bash
-sudo cp finsafe-authority-http finsafe-bundlectl /usr/local/bin/
+# Operator Mac or Linux (pick the matching <target> from the release page)
+tar -xvf "finsafe-bundlectl-v${VERSION}-aarch64-apple-darwin.tar.zst"
+sudo cp finsafe-bundlectl-v${VERSION}-aarch64-apple-darwin/finsafe-bundlectl /usr/local/bin/
 ```
 
 The **desktop archive** (`finsafe`, `finsafe-agent`, helpers) is separate—see the
@@ -196,7 +200,87 @@ with `LICENSE_MISSING`. End-to-end pilot checks (authority + desktop): [binary-r
 
 `finsafe-bundlectl` is the operator tool for creating and pushing policy bundles. Run it
 on a **secure operator workstation** that has access to the signing key (not on end-user
-machines).
+machines). It talks to the authority over HTTP; it does not replace the authority process.
+
+For copy-paste command sequences and agent-oriented troubleshooting (self-contained), use
+https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL.md
+
+### How bundlectl fits with the authority
+
+| Component | Role |
+|-----------|------|
+| **`finsafe-bundlectl`** | Build draft bundles, sign locally (review), **publish** bundle JSON to the authority, sign **managed-required** sentinel JWS for MDM |
+| **`finsafe-authority-http`** | SQLite store, **re-sign and persist** published bundles, serve `GET /v1/bundles/current`, JWKS, enroll, heartbeats, admin UI |
+| **`finsafe-agent`** | Pull latest bundle JWS from the authority, verify with JWKS, cache policy for `finsafe` over UDS |
+
+```mermaid
+flowchart LR
+  subgraph ops [Operator workstation]
+    BC[finsafe-bundlectl]
+    KEY[(signing key)]
+    BC --> KEY
+  end
+
+  subgraph server [Policy Authority]
+    AH[finsafe-authority-http]
+    DB[(SQLite bundles/devices)]
+    JWKS[/.well-known/finsafe/jwks.json]
+    AH --> DB
+    AH --> JWKS
+  end
+
+  subgraph provision [Fleet provisioning]
+    MDM[MDM / config management]
+  end
+
+  subgraph fleet [Managed desktops]
+    AG[finsafe-agent]
+    FS[finsafe CLI]
+    AG --> FS
+  end
+
+  BC -->|POST /v1/admin/bundles| AH
+  BC -->|sentinel sign| MDM
+  MDM -->|managed-required.jws| AG
+  AG -->|GET bundles/current + JWKS| AH
+```
+
+**Policy bundle path (central distribution):**
+
+```text
+Operator (bundlectl)                 Authority                         Fleet desktops
+────────────────────                 ─────────                         ──────────────
+
+bundle build  → unsigned BundleV1 JSON
+bundle sign   → bundle.jws (local review; same signing key as authority)
+bundle publish --in bundle.jws --authority URL
+       │
+       │  POST /v1/admin/bundles  { "bundle": <BundleV1> }
+       ▼
+                         license check (402 if license.jws missing)
+                         re-sign with authority FileSigner
+                         INSERT bundles (version → jws)
+                         notify agents (bundle-rotated event)
+                                                               agent: GET JWKS
+                                                               agent: GET /v1/bundles/current
+                                                               verify JWS → cache → finsafe run
+```
+
+On publish, the authority **does not store your client JWS as-is**. It parses the verified
+bundle payload, **signs again** with the authority key, and stores that JWS. Agents only
+trust keys from `/.well-known/finsafe/jwks.json` on the authority host. Use the **same**
+`FINSAFE_AUTHORITY_SIGNING_KEY` on the bundlectl workstation and the authority server.
+
+**Managed-required sentinel (separate from bundle publish):** `finsafe-bundlectl sentinel sign`
+writes a JWS file for MDM (for example `/etc/finsafe/managed-required.json`). That file
+points desktops at your `authority_url` and expected JWKS thumbprint; it is **not** uploaded
+via the authority HTTP API. Policy **content** still flows through `bundle publish` →
+`GET /v1/bundles/current`.
+
+**Handled by the authority (not bundlectl):** one-time enroll tokens (`POST /v1/enroll/token`),
+device enroll/revoke, kill switch, audit ingestion, and the `/admin/` UI.
+
+### Operator commands
 
 Set up environment once:
 

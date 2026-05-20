@@ -18,7 +18,7 @@ Full binary list, release archives, and Linux-only companions: [binary-reference
 | `finsafe-authority-http` | JWKS, bundle distribution, enrollment, heartbeats, audit ingest, admin API |
 | `finsafe-agent` | Enrollment, bundle verify+cache, UDS protocol, heartbeat, audit spool upload |
 | `finsafe` | Resolves policy from agent when managed; `--personal` opts out only if policy allows |
-| `finsafe-bundlectl` | Build/sign/publish bundles and managed-required sentinels |
+| `finsafe-bundlectl` | Build/sign/publish bundles and managed-required sentinels — see [authority-deployment.md](./authority-deployment.md#6-managing-policy-bundles-with-finsafe-bundlectl) |
 | `finsafe-helper`, `finsafe-supervisor`, `finsafe-landlock-shim` | **Linux only** — siblings of `finsafe` for bubblewrap/cgroup/Landlock (not shipped on macOS) |
 
 ## Paths (Linux defaults)
@@ -42,7 +42,7 @@ cargo run -p finsafe-authority --bin finsafe-authority-http
 # Terminal 2 — build & publish a bundle
 finsafe-bundlectl bundle build --from examples/wrapper-policy.yaml --out /tmp/bundle.json
 finsafe-bundlectl bundle sign --in /tmp/bundle.json --out /tmp/bundle.jws
-finsafe-bundlectl bundle publish --jws /tmp/bundle.jws --authority http://127.0.0.1:8090
+finsafe-bundlectl bundle publish --in /tmp/bundle.jws --authority http://127.0.0.1:8090
 
 # Terminal 3 — agent (bootstrap enrollment)
 sudo mkdir -p /etc/finsafe /var/lib/finsafe

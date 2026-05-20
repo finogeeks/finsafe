@@ -22,8 +22,8 @@ This document lists **every operator-facing binary** in a FinSAFE deployment, wh
 
 | Role | Binaries | Typical host |
 |------|----------|--------------|
-| **Policy Authority** | `finsafe-authority-http` | Linux server (x86_64 admin archive today) |
-| **Policy signing / publish** | `finsafe-bundlectl` | Secure operator workstation |
+| **Policy Authority** | `finsafe-authority-http` | Linux server (`finsafe-admin-server-v*`) |
+| **Policy signing / publish** | `finsafe-bundlectl` | Secure operator workstation (`finsafe-bundlectl-v*`, Linux + macOS) |
 | **Commercial license** | `license.jws` (JWS file) | Authority server `/etc/finsafe/` |
 | **Managed desktop** | `finsafe`, `finsafe-agent` | Every enrolled laptop/workstation |
 | **Linux confinement helpers** | `finsafe-helper`, `finsafe-supervisor`, `finsafe-landlock-shim` | Same Linux desktops as `finsafe` (fixed paths) |
@@ -32,22 +32,22 @@ This document lists **every operator-facing binary** in a FinSAFE deployment, wh
 
 ## Release archives (what IT downloads)
 
-Public [GitHub Releases](https://github.com/finogeeks/finsafe/releases) ship three archive families on the same version tag. Verify **`SHA256SUMS`** before install. **`install.sh`** downloads only the personal **`finsafe-v*`** archives.
+Public [GitHub Releases](https://github.com/finogeeks/finsafe/releases) ship **four archive families** on the same version tag. Verify **`SHA256SUMS`** before install. **`install.sh`** downloads only the personal **`finsafe-v*`** archives.
 
 | Archive | Platforms | Contents |
 |---------|-----------|----------|
 | **`finsafe-v<version>-<target>.tar.zst`** | Linux x86_64, macOS Intel, macOS Apple Silicon | Personal-mode `finsafe` (+ Linux companions); see platform table below |
 | **`finsafe-fleet-v<version>-<target>.tar.zst`** | Same three targets | Managed `finsafe` + `finsafe-agent` (+ Linux companions on Linux) |
-| **`finsafe-admin-v<version>-x86_64-unknown-linux-gnu.tar.zst`** | Linux x86_64 (authority host) | `finsafe-authority-http`, `finsafe-bundlectl` |
+| **`finsafe-admin-server-v<version>-x86_64-unknown-linux-gnu.tar.zst`** | Linux x86_64 (authority host) | `finsafe-authority-http` only |
+| **`finsafe-bundlectl-v<version>-<target>.tar.zst`** | Same three targets as desktop | `finsafe-bundlectl` only (operator workstation) |
 
 **Not in any public archive:**
 
 | Name | Why |
 |------|-----|
 | `license.jws` | Commercial entitlement; issued by Finogeeks (required to operate managed authority APIs) |
-| `finsafe-licensectl` | Finogeeks internal license issuance only |
 
-CI checks each archive family: personal **`finsafe-v*`** must exclude agent/authority binaries; **`finsafe-fleet-v*`** must include `finsafe` and `finsafe-agent`; **`finsafe-admin-v*`** must include authority binaries only.
+CI checks each archive family: personal **`finsafe-v*`** must exclude agent/authority binaries; **`finsafe-fleet-v*`** must include `finsafe` and `finsafe-agent`; **`finsafe-admin-server-v*`** must include only `finsafe-authority-http`; **`finsafe-bundlectl-v*`** must include only `finsafe-bundlectl`.
 
 ---
 
@@ -60,8 +60,8 @@ CI checks each archive family: personal **`finsafe-v*`** must exclude agent/auth
 | **`finsafe-helper`** | ✓ | — | Privileged helper for cgroup/overlay operations (Linux bubblewrap path) |
 | **`finsafe-supervisor`** | ✓ | — | Attach-before-exec for cgroup limits (preferred over shell wrapper) |
 | **`finsafe-landlock-shim`** | ✓ | — | Applies Landlock policy inside the sandbox before payload `exec` |
-| **`finsafe-authority-http`** | ✓ (admin archive) | — (build from source possible) | Central Policy Authority HTTP service |
-| **`finsafe-bundlectl`** | ✓ (admin archive) | — (build from source possible) | Build / sign / publish bundles and managed-required sentinel |
+| **`finsafe-authority-http`** | ✓ (`finsafe-admin-server-v*`) | — | Central Policy Authority HTTP service |
+| **`finsafe-bundlectl`** | ✓ (`finsafe-bundlectl-v*`) | ✓ (`finsafe-bundlectl-v*`) | Build / sign / publish bundles and managed-required sentinel |
 
 **macOS note:** Managed mode on Mac uses **Seatbelt** (`sandbox-exec`) inside `finsafe`; there is no `finsafe-landlock-shim` on Darwin. Linux managed desktops need all four Linux user-facing binaries (`finsafe` + three companions) on a **fixed path** (recommended `/usr/local/bin/`) so auto-discovery and heartbeat digests stay stable.
 
@@ -90,14 +90,15 @@ CI checks each archive family: personal **`finsafe-v*`** must exclude agent/auth
 - **Install path:** `/usr/local/bin/finsafe-authority-http` on authority host
 - **Requires:** Valid `license.jws` at `FINSAFE_LICENSE_PATH` for admin, enroll, bundle, and fleet audit APIs
 - **Data:** `FINSAFE_AUTHORITY_DB`, `FINSAFE_AUTHORITY_SIGNING_KEY`, `FINSAFE_AUTHORITY_PUBLIC_URL`
-- **Archive:** `finsafe-admin-v*` (Linux x86_64)
+- **Archive:** `finsafe-admin-server-v*` (Linux x86_64)
 
 ### `finsafe-bundlectl`
 
 - **Audience:** Security / platform operators (not end users)
 - **Commands:** `bundle build|sign|publish`, `sentinel sign`
-- **Run on:** Locked operator workstation with access to authority signing key
-- **Archive:** `finsafe-admin-v*` (Linux x86_64)
+- **Run on:** Locked operator workstation with access to authority signing key (Mac or Linux)
+- **Archive:** `finsafe-bundlectl-v*` (Linux x86_64, macOS Intel, macOS Apple Silicon)
+- **Agent skill (self-contained):** https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL.md
 
 ### `finsafe-helper` (Linux only)
 
@@ -116,12 +117,6 @@ CI checks each archive family: personal **`finsafe-v*`** must exclude agent/auth
 - **Audience:** Runs inside bubblewrap sandbox when policy uses Landlock `path` mode
 - **Install:** Sibling of `finsafe` on Linux fleet hosts
 - **Archive:** Inside public Linux `finsafe-v*` archive
-
-### `finsafe-licensectl` (internal)
-
-- **Audience:** Finogeeks operations only — issues `license.jws`
-- **Never** ship to customers or include in public/admin release archives
-- **Build:** `FINSAFE_BUILD_LICENSE_ISSUER=1 ./scripts/build-finsafe-enterprise.sh` (source repo only)
 
 ---
 
@@ -142,7 +137,6 @@ These exist in the FinSAFE source tree for adapters, tests, or future platform A
 
 ```text
 /usr/local/bin/finsafe-authority-http
-/usr/local/bin/finsafe-bundlectl          # operator workstation may copy here too
 /etc/finsafe/license.jws
 /var/lib/finsafe-authority/authority.db
 /var/lib/finsafe-authority/signing_key.bin

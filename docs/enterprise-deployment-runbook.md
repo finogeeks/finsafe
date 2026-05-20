@@ -57,7 +57,7 @@ See [authority-deployment.md](./authority-deployment.md) for the full authority 
 
 Summary:
 
-1. Install **`finsafe-authority-http`** and **`finsafe-bundlectl`** from the **admin archive** (`finsafe-admin-v*…tar.zst`) on a hardened Linux host (see [README](../README.md#enterprise-admin-binaries)).
+1. Install **`finsafe-authority-http`** from **`finsafe-admin-server-v*…tar.zst`** on a hardened Linux authority host; install **`finsafe-bundlectl`** from **`finsafe-bundlectl-v*…tar.zst`** on the operator workstation (Linux or macOS). See [README](../README.md#enterprise-admin-binaries).
 2. Install **commercial `license.jws`** on the authority host before enabling fleet enroll or admin APIs — [authority-deployment.md §2.1](./authority-deployment.md#21-commercial-license-managed-mode).
 3. Set environment:
 
@@ -85,7 +85,7 @@ finsafe-bundlectl bundle build \
   --out /secure/bundles/draft-v1.json
 
 finsafe-bundlectl bundle sign --in /secure/bundles/draft-v1.json --out /secure/bundles/bundle-v1.jws
-finsafe-bundlectl bundle publish --jws /secure/bundles/bundle-v1.jws --authority "$FINSAFE_AUTHORITY_PUBLIC_URL"
+finsafe-bundlectl bundle publish --in /secure/bundles/bundle-v1.jws --authority "$FINSAFE_AUTHORITY_PUBLIC_URL"
 ```
 
 Record: `bundle_id`, `version`, digest, and JWKS thumbprint from `/.well-known/finsafe/jwks.json`.

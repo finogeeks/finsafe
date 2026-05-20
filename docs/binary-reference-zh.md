@@ -22,8 +22,8 @@
 
 | 角色 | 二进制 | 典型主机 |
 |------|--------|----------|
-| **Policy Authority** | `finsafe-authority-http` | Linux 服务器（当前管理包为 x86_64） |
-| **策略签名 / 发布** | `finsafe-bundlectl` | 安全运维工作站 |
+| **Policy Authority** | `finsafe-authority-http` | Linux 服务器（`finsafe-admin-server-v*`） |
+| **策略签名 / 发布** | `finsafe-bundlectl` | 安全运维工作站（`finsafe-bundlectl-v*`，Linux + macOS） |
 | **商业许可证** | `license.jws`（JWS 文件） | Authority 服务器 `/etc/finsafe/` |
 | **托管桌面** | `finsafe`、`finsafe-agent` | 每台已注册终端 |
 | **Linux 隔离辅助** | `finsafe-helper`、`finsafe-supervisor`、`finsafe-landlock-shim` | 与 `finsafe` 同机的 Linux 桌面（固定路径） |
@@ -32,22 +32,22 @@
 
 ## 发行包（IT 下载内容）
 
-公开 [GitHub Releases](https://github.com/finogeeks/finsafe/releases) 在同一版本标签下提供三类发行包。安装前请校验 **`SHA256SUMS`**。**`install.sh`** 仅下载个人模式 **`finsafe-v*`** 包。
+公开 [GitHub Releases](https://github.com/finogeeks/finsafe/releases) 在同一版本标签下提供**四类**发行包。安装前请校验 **`SHA256SUMS`**。**`install.sh`** 仅下载个人模式 **`finsafe-v*`** 包。
 
 | 发行包 | 平台 | 内容 |
 |--------|------|------|
 | **`finsafe-v<version>-<target>.tar.zst`** | Linux x86_64、macOS Intel、macOS Apple Silicon | 个人模式 `finsafe`（Linux 含配套二进制）；见下方平台表 |
 | **`finsafe-fleet-v<version>-<target>.tar.zst`** | 同上三个 target | 托管 `finsafe` + `finsafe-agent`（Linux 另含三个配套二进制） |
-| **`finsafe-admin-v<version>-x86_64-unknown-linux-gnu.tar.zst`** | Linux x86_64（authority 主机） | `finsafe-authority-http`、`finsafe-bundlectl` |
+| **`finsafe-admin-server-v<version>-x86_64-unknown-linux-gnu.tar.zst`** | Linux x86_64（authority 主机） | 仅 `finsafe-authority-http` |
+| **`finsafe-bundlectl-v<version>-<target>.tar.zst`** | 同上三个 target | 仅 `finsafe-bundlectl`（运维工作站） |
 
 **不会出现在任何公开发布包中：**
 
 | 名称 | 原因 |
 |------|------|
 | `license.jws` | 商业授权文件；由 Finogeeks 签发（运营托管 authority API 所必需） |
-| `finsafe-licensectl` | Finogeeks 内部签发工具 |
 
-CI 按发行包族校验：个人 **`finsafe-v*`** 不得含 agent/authority；**`finsafe-fleet-v*`** 须含 `finsafe` 与 `finsafe-agent`；**`finsafe-admin-v*`** 仅含 authority 二进制。
+CI 按发行包族校验：个人 **`finsafe-v*`** 不得含 agent/authority；**`finsafe-fleet-v*`** 须含 `finsafe` 与 `finsafe-agent`；**`finsafe-admin-server-v*`** 仅含 `finsafe-authority-http`；**`finsafe-bundlectl-v*`** 仅含 `finsafe-bundlectl`。
 
 ---
 
@@ -60,8 +60,8 @@ CI 按发行包族校验：个人 **`finsafe-v*`** 不得含 agent/authority；*
 | **`finsafe-helper`** | ✓ | — | 特权辅助进程（Linux bubblewrap 路径下的 cgroup/overlay） |
 | **`finsafe-supervisor`** | ✓ | — | cgroup 限制 attach-before-exec（优于 shell 包装） |
 | **`finsafe-landlock-shim`** | ✓ | — | 在沙箱内应用 Landlock 后再 exec 负载 |
-| **`finsafe-authority-http`** | ✓（管理包） | —（可从源码构建） | 中央 Policy Authority HTTP 服务 |
-| **`finsafe-bundlectl`** | ✓（管理包） | —（可从源码构建） | 构建 / 签名 / 发布 bundle 与 managed-required 哨兵 |
+| **`finsafe-authority-http`** | ✓（`finsafe-admin-server-v*`） | — | 中央 Policy Authority HTTP 服务 |
+| **`finsafe-bundlectl`** | ✓（`finsafe-bundlectl-v*`） | ✓（`finsafe-bundlectl-v*`） | 构建 / 签名 / 发布 bundle 与 managed-required 哨兵 |
 
 **macOS 说明：** Mac 托管模式在 `finsafe` 内使用 **Seatbelt**（`sandbox-exec`），无 `finsafe-landlock-shim`。Linux 托管桌面需将 **四个** 面向用户的二进制（`finsafe` + 三个 companion）放在**同一路径**（建议 `/usr/local/bin/`），以便自动发现与心跳摘要一致。
 
@@ -90,14 +90,15 @@ CI 按发行包族校验：个人 **`finsafe-v*`** 不得含 agent/authority；*
 - **路径：** Authority 主机 `/usr/local/bin/finsafe-authority-http`
 - **依赖：** `FINSAFE_LICENSE_PATH` 处有效的 `license.jws`，否则管理/注册/bundle/审计 API 返回 402
 - **数据：** `FINSAFE_AUTHORITY_DB`、`FINSAFE_AUTHORITY_SIGNING_KEY`、`FINSAFE_AUTHORITY_PUBLIC_URL`
-- **发行包：** `finsafe-admin-v*`（Linux x86_64）
+- **发行包：** `finsafe-admin-server-v*`（Linux x86_64）
 
 ### `finsafe-bundlectl`
 
 - **对象：** 安全 / 平台运维（非终端用户）
 - **命令：** `bundle build|sign|publish`、`sentinel sign`
-- **运行位置：** 可访问 authority 签名密钥的锁定运维机
-- **发行包：** `finsafe-admin-v*`（Linux x86_64）
+- **运行位置：** 可访问 authority 签名密钥的锁定运维机（Mac 或 Linux）
+- **发行包：** `finsafe-bundlectl-v*`（Linux x86_64、macOS Intel、macOS Apple Silicon）
+- **Agent 技能（自包含）：** https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL-zh.md
 
 ### `finsafe-helper`（仅 Linux）
 
@@ -116,12 +117,6 @@ CI 按发行包族校验：个人 **`finsafe-v*`** 不得含 agent/authority；*
 - **对象：** 策略使用 Landlock `path` 模式时在 bubblewrap 沙箱内运行
 - **安装：** Linux 舰队主机上作为 `finsafe` 的兄弟二进制
 - **发行包：** 公开 Linux `finsafe-v*` 包内
-
-### `finsafe-licensectl`（内部）
-
-- **对象：** 仅 Finogeeks 运维 — 签发 `license.jws`
-- **禁止** 交付客户或打入公开/管理发行包
-- **构建：** `FINSAFE_BUILD_LICENSE_ISSUER=1 ./scripts/build-finsafe-enterprise.sh`（仅源码仓库）
 
 ---
 
@@ -142,7 +137,6 @@ CI 按发行包族校验：个人 **`finsafe-v*`** 不得含 agent/authority；*
 
 ```text
 /usr/local/bin/finsafe-authority-http
-/usr/local/bin/finsafe-bundlectl          # 运维工作站亦可安装于此
 /etc/finsafe/license.jws
 /var/lib/finsafe-authority/authority.db
 /var/lib/finsafe-authority/signing_key.bin

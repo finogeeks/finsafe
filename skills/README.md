@@ -1,0 +1,26 @@
+# FinSAFE operator skills (for AI agents)
+
+**中文：** [README-zh.md](./README-zh.md)
+
+Each skill under this directory is **self-contained**: an operator can use it with only the
+`finsafe-bundlectl` binary (from [GitHub Releases](https://github.com/finogeeks/finsafe/releases))
+and the skill file — no local checkout of the documentation tree is required.
+
+## How to use with an agent
+
+1. Give the agent the skill file (for example copy `finsafe-bundlectl/SKILL.md` into your agent’s skill path, or attach it to the session).
+2. Ensure `finsafe-bundlectl` is on `PATH` and environment variables from the skill are set.
+3. The skill includes install steps, commands, troubleshooting, and a minimal policy YAML example.
+
+## Available skills
+
+| Skill | File | Use when |
+|-------|------|----------|
+| **finsafe-bundlectl** | [SKILL.md](./finsafe-bundlectl/SKILL.md) · [SKILL-zh.md](./finsafe-bundlectl/SKILL-zh.md) | Build / sign / publish policy bundles; MDM managed-required sentinel |
+
+## Optional deeper reading (online only)
+
+Skills intentionally avoid relative links to other repo files. If needed, full URLs:
+
+- https://github.com/finogeeks/finsafe/releases
+- https://github.com/finogeeks/finsafe/tree/main/docs
