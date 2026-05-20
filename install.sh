@@ -238,3 +238,4 @@ else
 fi
 
 info "done"
+info "managed fleet and policy authority archives (finsafe-fleet-v*, finsafe-admin-v*) are on the same GitHub release; see README.md"

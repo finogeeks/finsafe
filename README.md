@@ -6,6 +6,15 @@ FinSafe is a host execution boundary toolkit: namespaces, cgroup limits, syscall
 
 This repository holds **public release binaries** and **end-user documentation** only. It does **not** contain FinSafe engine source code.
 
+## Personal vs managed (licensing)
+
+| Mode | Who | License |
+|------|-----|---------|
+| **Personal / local wrapper** | Developers and power users running `finsafe --policy …` on their own machine | **Free** — public `finsafe` CLI releases include no commercial license file |
+| **Managed fleet** | IT teams running `finsafe-authority-http`, `finsafe-agent`, and MDM-delivered policy | **Commercial** — Finogeeks issues a signed `license.jws` installed on the Policy Authority |
+
+Public [GitHub Releases](https://github.com/finogeeks/finsafe/releases) ship **three archive families** on the same tag: personal CLI (`finsafe-v*`), managed fleet (`finsafe-fleet-v*`), and policy authority (`finsafe-admin-v*`). **`install.sh` installs only `finsafe-v*`.** Commercial `license.jws` is issued by Finogeeks (not on GitHub). See [binary-reference.md](docs/binary-reference.md) and [authority-deployment.md](docs/authority-deployment.md).
+
 ## Install a release
 
 ### One-liner (recommended)
@@ -58,6 +67,18 @@ finsafe --help
 
 Each release may include **`release.json`**: a small manifest listing asset URLs and SHA-256 digests for automation. Use it if you script downloads instead of hard-coding filenames.
 
+### Enterprise binaries (same GitHub Release)
+
+Managed fleet and policy authority archives ship on the **same** [Releases](https://github.com/finogeeks/finsafe/releases) page as the personal CLI. **`install.sh` does not install them** — download and unpack manually (or script via `release.json`). See **[docs/binary-reference.md](docs/binary-reference.md)** for the full matrix.
+
+| Archive | Contents |
+|---------|----------|
+| **`finsafe-fleet-v<version>-<target>.tar.zst`** | Managed `finsafe` + `finsafe-agent` (Linux also includes helper, supervisor, landlock shim) |
+| **`finsafe-admin-v<version>-x86_64-unknown-linux-gnu.tar.zst`** | `finsafe-authority-http`, `finsafe-bundlectl` |
+| **`finsafe-v<version>-<target>.tar.zst`** | Personal-mode `finsafe` only (`install.sh`) |
+
+Install authority binaries on the policy server; run `finsafe-bundlectl` from a secure operator workstation. Install **`license.jws`** (from Finogeeks, not on GitHub) before enroll or admin APIs. Setup: [docs/authority-deployment.md](docs/authority-deployment.md) · fleet rollout: [docs/enterprise-deployment-runbook.md](docs/enterprise-deployment-runbook.md).
+
 ## Quick start (Hermes)
 
 These examples assume **`hermes`** is on your **`PATH`** (install Hermes separately). Example policies use **`./workspace`** under your **current working directory** — run `mkdir -p workspace` before the commands below, or edit the YAML.
@@ -92,6 +113,8 @@ More detail: [USER-GUIDE.md](docs/USER-GUIDE.md), [POLICY-QUICKREF.md](docs/POLI
 
 ## Documentation
 
+### End users and operators (local `--policy`)
+
 | Document | Description |
 |----------|-------------|
 | [docs/USER-GUIDE.md](docs/USER-GUIDE.md) | English operator guide (`run` vs `self-confine`, policy YAML overview, exit codes). |
@@ -100,6 +123,27 @@ More detail: [USER-GUIDE.md](docs/USER-GUIDE.md), [POLICY-QUICKREF.md](docs/POLI
 | [docs/POLICY-QUICKREF-zh.md](docs/POLICY-QUICKREF-zh.md) | 包装策略字段速查（中文）. |
 | [examples/README.md](examples/README.md) | Index of policy examples (`high-level-policies/`, `wrapper-policies/`). |
 | [examples/wrapper-policies/hermes-version-smoke.yaml](examples/wrapper-policies/hermes-version-smoke.yaml) | Minimal short-lived wrapper policy example. |
+
+### Enterprise administrators (managed fleet)
+
+Central policy authority, `finsafe-agent`, MDM deployment, and fleet enforcement (no local `--policy` override on enrolled machines).
+
+| Document | Description |
+|----------|-------------|
+| [docs/product-one-pager.md](docs/product-one-pager.md) · [docs/product-one-pager-zh.md](docs/product-one-pager-zh.md) | **Product one-pager** (positioning, AI pain points, technology comparison). |
+| [docs/enterprise-it-overview.md](docs/enterprise-it-overview.md) · [docs/enterprise-it-overview-zh.md](docs/enterprise-it-overview-zh.md) | **Enterprise IT panorama** (personal vs managed, Hermes, governability, MDM). |
+| [docs/binary-reference.md](docs/binary-reference.md) · [docs/binary-reference-zh.md](docs/binary-reference-zh.md) | **All binaries**, release archives, Linux companions, admin verify checklist |
+| [docs/authority-deployment.md](docs/authority-deployment.md) | Installing and running `finsafe-authority-http`; license; `finsafe-bundlectl` reference. |
+| [docs/admin-ui.md](docs/admin-ui.md) | Admin console reference (devices, enrollment tokens, kill switch). |
+| [docs/managed-mode.md](docs/managed-mode.md) · [docs/managed-mode-zh.md](docs/managed-mode-zh.md) | Managed mode architecture, paths, CLI errors. |
+| [docs/enterprise-deployment-runbook.md](docs/enterprise-deployment-runbook.md) · [docs/enterprise-deployment-runbook-zh.md](docs/enterprise-deployment-runbook-zh.md) | Phased IT runbook: authority, packages, sentinel, enrollment, operations. |
+| [docs/mdm/vendor-neutral-checklist.md](docs/mdm/vendor-neutral-checklist.md) · [docs/mdm/vendor-neutral-checklist-zh.md](docs/mdm/vendor-neutral-checklist-zh.md) | Fleet checklist for **any** deployment tool (not only Jamf/Intune). |
+| [docs/mdm/jamf.md](docs/mdm/jamf.md) · [docs/mdm/jamf-zh.md](docs/mdm/jamf-zh.md) | Jamf Pro deployment. |
+| [docs/mdm/intune.md](docs/mdm/intune.md) · [docs/mdm/intune-zh.md](docs/mdm/intune-zh.md) | Microsoft Intune deployment. |
+| [docs/mdm/ansible.md](docs/mdm/ansible.md) · [docs/mdm/ansible-zh.md](docs/mdm/ansible-zh.md) | Ansible / config management (Linux). |
+| [docs/testing/managed-mode-matrix.md](docs/testing/managed-mode-matrix.md) · [docs/testing/managed-mode-matrix-zh.md](docs/testing/managed-mode-matrix-zh.md) | Acceptance test matrix (pilot → production). |
+| [docs/testing/licensing-e2e-macos.md](docs/testing/licensing-e2e-macos.md) · [docs/testing/licensing-e2e-macos-zh.md](docs/testing/licensing-e2e-macos-zh.md) | macOS licensing + managed smoke E2E (`e2e-licensing-macos.sh`). |
+| [packaging/](packaging/) | systemd / LaunchDaemon units and MDM example scripts |
 
 ## Security
 

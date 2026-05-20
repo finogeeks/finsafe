@@ -1,6 +1,6 @@
 # Wrapper policy examples
 
-`kind: local-wrapper` YAML for **`finsafe run`** (short-lived) and **`finsafe self-confine`** (interactive). Commands in file comments assume this repository root, for example:
+`kind: local-wrapper` YAML for **`finsafe run`** (short-lived) and **`finsafe self-confine`** (interactive). Hermes-facing samples use **`${HOME}` / `${XDG_CONFIG_HOME}`** placeholders so checked-in policies stay portable; see the quick-ref for substitution rules vs `policy_digest`. Commands in file comments assume this repository root, for example:
 
 ```bash
 finsafe --policy examples/wrapper-policies/hermes-version-smoke.yaml run your-command

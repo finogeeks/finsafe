@@ -1,8 +1,11 @@
 # Wrap a short-lived `hermes chat -q "..."` oneshot query in a FinSAFE sandbox.
 # Proves FinSAFE confinement is applied while Hermes operates normally (LLM call + response).
-# On macOS deny-default Seatbelt, invoke with explicit HOME/PATH, for example:
-#   finsafe --policy examples/wrapper-policies/hermes-oneshot-query.yaml run --json /usr/bin/env HOME=/Users/cliang PATH=/Users/cliang/.local/bin:/usr/bin:/bin hermes chat -q "Reply with exactly: ok" -Q --source tool
-# Replace `/Users/cliang` with your local home path; wrapper policies do not expand `~` or `${HOME}` today.
+# On macOS deny-default Seatbelt, invoke with explicit HOME/PATH. The policy
+# defaults to stdio inherit for clean one-shot terminal output, for example:
+#   finsafe --policy examples/wrapper-policies/hermes-oneshot-query.yaml run \\
+#       /usr/bin/env HOME="$HOME" PATH="/opt/homebrew/bin:$HOME/.local/bin:/usr/bin:/bin" \\
+#           hermes chat -q "Reply with exactly: ok" -Q --source tool
+# Paths under `filesystem` use ${HOME} and ${XDG_CONFIG_HOME}; FinSAFE expands these when the policy loads. Tilde (~) inside YAML paths is not expanded.
 # On macOS: sandbox-exec (Seatbelt) confinement.
 # On Linux strict: bubblewrap + cgroup v2 + Landlock.
 schema_version: 1
@@ -13,7 +16,7 @@ degrade:
 audit:
   require_policy_digest: true
   require_resolved_posture: true
-# Preserve normal Hermes CLI/TTY behavior in text-mode wrapper runs.
+# Preserve clean one-shot Hermes terminal output by default.
 # `finsafe --json` still defaults to capture for machine-readable audit output.
 stdio:
   mode: inherit
@@ -26,8 +29,10 @@ resources:
   timeout_ms: 60000
 filesystem:
   # macOS deny-default Seatbelt requires every needed local path to be declared.
-  # `.` lets Hermes inspect the current working directory; the user-local paths
-  # cover the Hermes launcher and uv-managed Python runtime used by this install.
+  # `.` lets Hermes inspect the current working directory; the `${HOME}` / `${XDG_CONFIG_HOME}`
+  # entries keep the examples portable. Homebrew distributes `gh` as a symlink; allowing
+  # `/opt/homebrew/bin` is usually enough alongside the explicit `/opt/homebrew/bin/gh` entrypoint
+  # reference (narrower than exposing an entire Formula Cellar tree).
   read_only_paths:
     - "."
     - "/usr"
@@ -35,11 +40,15 @@ filesystem:
     - "/lib64"
     - "/bin"
     - "/sbin"
-    - "/Users/cliang/.local/bin"
-    - "/Users/cliang/.local/share/uv/python"
+    - "${HOME}/.local/bin"
+    - "${HOME}/.local/share/uv/python"
+    - "/opt/homebrew/bin"
+    - "/opt/homebrew/bin/gh"
+    # Intel Homebrew (uncomment if needed): "/usr/local/bin" and "/usr/local/bin/gh"
+    - "${XDG_CONFIG_HOME}/gh"
   read_write_paths:
     - "./workspace"
-    - "/Users/cliang/.hermes"
+    - "${HOME}/.hermes"
   # Optional (policy compiler): extra read-only carveouts, skip default .git/.finsafe protection, or mask secrets via globs — see docs/design/finsafe-sandbox-design.md
   # protected_read_only_paths: []
   # skip_default_protected_paths: false

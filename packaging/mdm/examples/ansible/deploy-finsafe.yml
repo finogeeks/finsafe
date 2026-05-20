@@ -1,0 +1,85 @@
+---
+# Example playbook: deploy FinSAFE managed mode on Linux.
+# Usage:
+#   ansible-playbook -i inventory.ini deploy-finsafe.yml \
+#     -e finsafe_sentinel_jws="$(cat /secure/managed-required.jws)" \
+#     -e finsafe_enroll_token="OPTIONAL_ONE_TIME_TOKEN"
+- name: Deploy FinSAFE agent and sentinel
+  hosts: finsafe_managed
+  become: true
+  vars:
+    finsafe_authority_url: "https://gov.example.com/policy-authority"
+    finsafe_device_id: "{{ ansible_hostname }}"
+    finsafe_sentinel_jws: ""  # required: set via -e or vault
+    finsafe_enroll_token: ""
+
+  tasks:
+    - name: Require sentinel JWS
+      ansible.builtin.assert:
+        that: finsafe_sentinel_jws | length > 0
+        fail_msg: Set finsafe_sentinel_jws from finsafe-bundlectl sentinel sign
+
+    - name: Ensure directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+      loop:
+        - /etc/finsafe
+        - /var/lib/finsafe
+        - /var/lib/finsafe/cache
+        - /var/lib/finsafe/audit
+
+    - name: Deploy sentinel
+      ansible.builtin.copy:
+        content: "{{ finsafe_sentinel_jws }}\n"
+        dest: /etc/finsafe/managed-required.json
+        mode: "0644"
+
+    - name: Install systemd unit
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/finsafe-agent.service
+        mode: "0644"
+        content: |
+          [Unit]
+          Description=FinSAFE managed-mode policy agent
+          After=network-online.target
+          Wants=network-online.target
+
+          [Service]
+          Type=simple
+          ExecStart=/usr/local/bin/finsafe-agent
+          Restart=on-failure
+          RestartSec=5
+          RuntimeDirectory=finsafe
+          RuntimeDirectoryMode=0755
+          Environment=FINSAFE_AUTHORITY_URL={{ finsafe_authority_url }}
+
+          [Install]
+          WantedBy=multi-user.target
+      notify: Restart finsafe-agent
+
+    - name: Enroll drop-in
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/finsafe-agent.service.d/enroll.conf
+        mode: "0644"
+        content: |
+          [Service]
+          Environment=FINSAFE_AGENT_BOOTSTRAP_DEVICE_ID={{ finsafe_device_id }}
+          Environment=FINSAFE_ENROLL_TOKEN={{ finsafe_enroll_token }}
+      when: finsafe_enroll_token | length > 0
+      notify: Restart finsafe-agent
+
+    - name: Enable agent
+      ansible.builtin.systemd:
+        name: finsafe-agent
+        enabled: true
+        state: started
+        daemon_reload: true
+
+  handlers:
+    - name: Restart finsafe-agent
+      ansible.builtin.systemd:
+        name: finsafe-agent
+        state: restarted
+        daemon_reload: true

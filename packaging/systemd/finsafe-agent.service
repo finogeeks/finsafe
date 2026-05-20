@@ -1,0 +1,19 @@
+[Unit]
+Description=FinSAFE managed-mode policy agent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/finsafe-agent
+Restart=on-failure
+RestartSec=5
+RuntimeDirectory=finsafe
+RuntimeDirectoryMode=0755
+Environment=FINSAFE_AUTHORITY_URL=https://gov.example.com/policy-authority
+# Enrollment: set once via MDM, then remove.
+# Environment=FINSAFE_ENROLL_TOKEN=
+# Environment=FINSAFE_AGENT_BOOTSTRAP_DEVICE_ID=
+
+[Install]
+WantedBy=multi-user.target

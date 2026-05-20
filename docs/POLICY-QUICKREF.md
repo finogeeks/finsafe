@@ -51,6 +51,15 @@ filesystem:
 | `filesystem.deny_read_globs` | Optional suffix glob list (`*.ext`, `**/*.ext`). Matches under writable roots are added to read-only restrictions (writes blocked). Unsupported patterns are skipped with log lines in derivation output. |
 | `filesystem.glob_scan_max_depth` | Maximum directory depth when expanding `deny_read_globs` (compiler default `8` if omitted). |
 
+### Path templates (`${HOME}`, `${XDG_CONFIG_HOME}`, `${USERPROFILE}`)
+
+String entries inside `filesystem.*_paths` (including `protected_read_only_paths`) treat **braced placeholders** strictly as `${HOME}`, `${XDG_CONFIG_HOME}`, or `${USERPROFILE}`:
+
+- Substitution runs when FinSAFE parses the YAML/JSON (the **`finsafe` process environment** — not implicitly from the eventual child `argv`).
+- **`policy_digest`** is still computed over the **raw policy file bytes**. Templates are deliberate portability affordances without changing offline digest equality.
+- Tilde-only paths like `~/bin` remain **unsupported** inside wrapper policy YAML; use `${HOME}/bin`.
+- **`${XDG_CONFIG_HOME}`** falls back to `${HOME}/.config` when the variable is absent (POSIX desktop convention). Set `GH_CONFIG_DIR` in the Hermes/GitHub CLI process if auth files live elsewhere (point your policy paths at that resolved directory literal or export `XDG_CONFIG_HOME` accordingly before launching `finsafe`).
+
 ## Declarative rule
 
 The wrapper policy names **intent** (network posture, path classes, resources)—not individual kernel mechanisms. The CLI and runtime map intent to Bubblewrap, cgroup, seccomp, Landlock, or Seatbelt as appropriate for the host.

@@ -1,0 +1,24 @@
+[Unit]
+Description=FinSAFE Policy Authority HTTP server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/finsafe-authority-http
+Restart=on-failure
+RestartSec=5
+StateDirectory=finsafe-authority
+StateDirectoryMode=0700
+Environment=FINSAFE_AUTHORITY_BIND=127.0.0.1:8090
+Environment=FINSAFE_AUTHORITY_DB=/var/lib/finsafe-authority/authority.db
+Environment=FINSAFE_AUTHORITY_SIGNING_KEY=/var/lib/finsafe-authority/signing_key.bin
+# Required for managed mode: Finogeeks-issued commercial license JWS.
+Environment=FINSAFE_LICENSE_PATH=/etc/finsafe/license.jws
+# Required: set to the HTTPS URL reachable by enrolled desktops.
+Environment=FINSAFE_AUTHORITY_PUBLIC_URL=https://gov.example.com/policy-authority
+# Optional: set to 1 to flag devices missing the managed-required sentinel.
+# Environment=FINSAFE_AUTHORITY_REQUIRE_SENTINEL=1
+
+[Install]
+WantedBy=multi-user.target

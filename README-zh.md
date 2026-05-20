@@ -6,6 +6,31 @@ FinSafe 是一套**主机执行边界**工具集：Linux 命名空间、cgroup �
 
 本仓库仅提供**公开发行的二进制文件**与**终端用户文档**，**不包含** FinSafe 引擎源码。
 
+## 个人模式 vs 托管模式（许可）
+
+| 模式 | 适用对象 | 许可证 |
+|------|----------|--------|
+| **个人 / local wrapper** | 在本机使用 `finsafe --policy …` 的开发者 | **免费** — 公开发行的 `finsafe` CLI 无需商业许可证 |
+| **托管舰队** | 部署 `finsafe-authority-http`、`finsafe-agent` 与 MDM 策略的 IT 团队 | **商业许可** — 由 Finogeeks 签发 `license.jws` 并安装在 Policy Authority 上 |
+
+GitHub [Releases](https://github.com/finogeeks/finsafe/releases) 提供个人 CLI（`finsafe-v*`）、托管舰队（`finsafe-fleet-v*`）与 authority 管理包（`finsafe-admin-v*`）。**`install.sh` 仅安装个人 CLI**；舰队与 authority 请从同一 Release 页面手动下载。详见 **[binary-reference-zh.md](docs/binary-reference-zh.md)**。Authority 与 `license.jws`：[authority-deployment-zh.md](docs/authority-deployment-zh.md)。
+
+## 企业 IT 全景（推荐）
+
+面向 **舰队部署、MDM、安全运营与平台架构** 人员：说明 FinSAFE **中心 Sandbox-as-a-Service**（server、scheduler、router）与 **桌面边缘**（个人 / 托管模式）两条路径、市场与技术对比、Hermes 示例，以及对 **分布式智能体** 的可治理性价值。
+
+| 文档 | 说明 |
+|------|------|
+| **[docs/product-one-pager-zh.md](docs/product-one-pager-zh.md)** | **产品一页纸**（定位、痛点、与 Docker/云沙箱对比、适用场景） |
+| **[docs/enterprise-it-overview-zh.md](docs/enterprise-it-overview-zh.md)** | 企业 IT 全景（首选阅读） |
+| [docs/binary-reference-zh.md](docs/binary-reference-zh.md) | 全部二进制与发行包对照 |
+| [docs/authority-deployment-zh.md](docs/authority-deployment-zh.md) | Authority 安装与商业许可证 |
+| [docs/managed-mode-zh.md](docs/managed-mode-zh.md) | 托管模式组件与 CLI 错误码 |
+| [docs/enterprise-deployment-runbook-zh.md](docs/enterprise-deployment-runbook-zh.md) | 分阶段部署与运维 |
+| [docs/mdm/vendor-neutral-checklist-zh.md](docs/mdm/vendor-neutral-checklist-zh.md) | MDM 交付检查清单 |
+
+公开发行的 `curl \| sh` 安装包默认 **不含** 托管特性（适合个人试用）；舰队请使用带 **managed** 特性的企业构建，见 [packaging/README.md](packaging/README.md)。
+
 ## 安装发行版
 
 ### 一行命令（推荐）
@@ -58,6 +83,18 @@ finsafe --help
 
 部分发行版附带 **`release.json`**：列出资源 URL 与 SHA-256 摘要的小型清单，便于自动化下载脚本使用，而无需写死文件名。
 
+### 企业二进制（同一 GitHub Release）
+
+托管舰队与 Policy Authority 与个人 CLI 在**同一** [Releases](https://github.com/finogeeks/finsafe/releases) 页面发布。**`install.sh` 不会安装它们**。详见 **[docs/binary-reference-zh.md](docs/binary-reference-zh.md)**。
+
+| 发行包 | 内容 |
+|--------|------|
+| **`finsafe-fleet-v<version>-<target>.tar.zst`** | 托管 `finsafe` + `finsafe-agent`（Linux 另含 helper、supervisor、landlock shim） |
+| **`finsafe-admin-v<version>-x86_64-unknown-linux-gnu.tar.zst`** | `finsafe-authority-http`、`finsafe-bundlectl` |
+| **`finsafe-v<version>-<target>.tar.zst`** | 个人模式 `finsafe`（`install.sh`） |
+
+`license.jws` 由 Finogeeks 单独提供（不在 GitHub）。安装后再开启注册与管理 API：[authority-deployment-zh.md](docs/authority-deployment-zh.md) · [enterprise-deployment-runbook-zh.md](docs/enterprise-deployment-runbook-zh.md)。
+
 ## 快速上手（Hermes）
 
 以下假设 **`hermes`** 已在 **`PATH`** 中（请自行安装）。示例策略使用当前目录下的 **`./workspace`** —— 执行前先 **`mkdir -p workspace`**，或修改 YAML 中的路径。
@@ -92,6 +129,8 @@ finsafe --policy ./examples/wrapper-policies/hermes-interactive.yaml self-confin
 
 ## 文档
 
+### 终端用户与本地运维（`--policy`）
+
 | 文档 | 说明 |
 |------|------|
 | [docs/USER-GUIDE.md](docs/USER-GUIDE.md) | 英文运维指南（`run` 与 `self-confine`、策略 YAML 概述、退出码）。 |
@@ -100,6 +139,25 @@ finsafe --policy ./examples/wrapper-policies/hermes-interactive.yaml self-confin
 | [docs/POLICY-QUICKREF.md](docs/POLICY-QUICKREF.md) | 同上（英文）。 |
 | [examples/README.md](examples/README.md) | 策略示例索引（`high-level-policies/`、`wrapper-policies/`）。 |
 | [examples/wrapper-policies/hermes-version-smoke.yaml](examples/wrapper-policies/hermes-version-smoke.yaml) | 最小化的短期 wrapper 策略示例。 |
+
+### 企业管理员（托管模式 / 舰队部署）
+
+策略集中下发、`finsafe-agent` 守护进程、MDM 部署与强制托管（已纳管设备上不可使用本地 `--policy` 覆盖）。
+
+| 文档 | 说明 |
+|------|------|
+| [docs/product-one-pager-zh.md](docs/product-one-pager-zh.md) · [docs/product-one-pager.md](docs/product-one-pager.md) | **产品一页纸**（市场定位、技术对比、适用场景）。 |
+| [docs/enterprise-it-overview-zh.md](docs/enterprise-it-overview-zh.md) · [docs/enterprise-it-overview.md](docs/enterprise-it-overview.md) | **企业 IT 全景**（个人 / 托管、Hermes、可治理性、MDM 路径）。 |
+| [docs/binary-reference-zh.md](docs/binary-reference-zh.md) · [docs/binary-reference.md](docs/binary-reference.md) | 全部二进制、发行包、管理员验证清单 |
+| [docs/authority-deployment-zh.md](docs/authority-deployment-zh.md) · [docs/authority-deployment.md](docs/authority-deployment.md) | 安装 `finsafe-authority-http`、许可证、`finsafe-bundlectl` |
+| [docs/managed-mode-zh.md](docs/managed-mode-zh.md) · [docs/managed-mode.md](docs/managed-mode.md) | 托管模式架构、路径、CLI 错误码。 |
+| [docs/enterprise-deployment-runbook-zh.md](docs/enterprise-deployment-runbook-zh.md) · [docs/enterprise-deployment-runbook.md](docs/enterprise-deployment-runbook.md) | 分阶段部署与运维手册。 |
+| [docs/mdm/vendor-neutral-checklist-zh.md](docs/mdm/vendor-neutral-checklist-zh.md) · [docs/mdm/vendor-neutral-checklist.md](docs/mdm/vendor-neutral-checklist.md) | 与 MDM 产品无关的舰队检查清单。 |
+| [docs/mdm/jamf-zh.md](docs/mdm/jamf-zh.md) · [docs/mdm/intune-zh.md](docs/mdm/intune-zh.md) · [docs/mdm/ansible-zh.md](docs/mdm/ansible-zh.md) | 各平台部署指南（中文）；[英文索引](docs/mdm/README.md) |
+| [docs/testing/managed-mode-matrix-zh.md](docs/testing/managed-mode-matrix-zh.md) · [docs/testing/managed-mode-matrix.md](docs/testing/managed-mode-matrix.md) | 验收测试矩阵。 |
+| [docs/testing/licensing-e2e-macos-zh.md](docs/testing/licensing-e2e-macos-zh.md) · [docs/testing/licensing-e2e-macos.md](docs/testing/licensing-e2e-macos.md) | macOS 许可证与托管冒烟 E2E（`e2e-licensing-macos.sh`）。 |
+| [docs/README-zh.md](docs/README-zh.md) | 完整文档索引（中文） |
+| [packaging/](packaging/) | systemd / LaunchDaemon 单元与 MDM 示例脚本 |
 
 ## 安全
 

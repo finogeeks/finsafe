@@ -51,6 +51,15 @@ filesystem:
 | `filesystem.deny_read_globs` | 可选：后缀 glob 列表（如 `*.ext`、`**/*.ext`）。在可写根下匹配到的路径加入只读限制（禁止写入）。不支持的图案会在派生日志中跳过。 |
 | `filesystem.glob_scan_max_depth` | 展开 `deny_read_globs` 时的最大目录深度（省略时编译器默认 `8`）。 |
 
+### 路径占位符（`${HOME}` / `${XDG_CONFIG_HOME}` / `${USERPROFILE}`）
+
+`filesystem` 下任意 `*_paths` 字符串条目（含 `protected_read_only_paths`）支持的 **括号占位符** 仅为 `${HOME}`、`${XDG_CONFIG_HOME}`、`${USERPROFILE}`：
+
+- **替换发生在 FinSAFE 解析 YAML/JSON 时**，环境取自 **`finsafe` 自身进程**，不会自动从你包裹的子进程 argv 推导。
+- **`policy_digest`** 仍对磁盘上的原始策略字节做摘要；占位符不会改变离线哈希比对语义。
+- 形如 `~/bin` 的波浪号前缀在 YAML 中 **不会做展开**；请写 `${HOME}/bin`。
+- **`${XDG_CONFIG_HOME}`** 未设置时会回退到 `${HOME}/.config`。若 Hermes/GitHub CLI 的配置不在默认位置，可先导出 `GH_CONFIG_DIR` / `XDG_CONFIG_HOME`，再启动 `finsafe`，或在策略中写明绝对路径。
+
 ## 声明式原则
 
 包装策略描述的是 **意图**（网络姿态、路径类别、资源），而非逐个内核机制名。CLI 与运行时会按主机将意图映射到 Bubblewrap、cgroup、seccomp、Landlock 或 Seatbelt。

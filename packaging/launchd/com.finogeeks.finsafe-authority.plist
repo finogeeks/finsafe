@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>com.finogeeks.finsafe-authority</string>
+    <key>ProgramArguments</key>
+    <array>
+      <string>/usr/local/bin/finsafe-authority-http</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>EnvironmentVariables</key>
+    <dict>
+      <key>FINSAFE_AUTHORITY_BIND</key>
+      <string>127.0.0.1:8090</string>
+      <key>FINSAFE_AUTHORITY_DB</key>
+      <string>/var/lib/finsafe-authority/authority.db</string>
+      <key>FINSAFE_AUTHORITY_SIGNING_KEY</key>
+      <string>/var/lib/finsafe-authority/signing_key.bin</string>
+      <!-- Required: replace with your production HTTPS URL. -->
+      <key>FINSAFE_AUTHORITY_PUBLIC_URL</key>
+      <string>https://gov.example.com/policy-authority</string>
+    </dict>
+    <key>StandardOutPath</key>
+    <string>/var/log/finsafe-authority.log</string>
+    <key>StandardErrorPath</key>
+    <string>/var/log/finsafe-authority.log</string>
+  </dict>
+</plist>
