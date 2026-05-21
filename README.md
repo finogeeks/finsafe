@@ -13,7 +13,7 @@ This repository holds **public release binaries** and **end-user documentation**
 | **Personal / local wrapper** | Developers and power users running `finsafe --policy …` on their own machine | **Free** — public `finsafe` CLI releases include no commercial license file |
 | **Managed fleet** | IT teams running `finsafe-authority-http`, `finsafe-agent`, and MDM-delivered policy | **Commercial** — Finogeeks issues a signed `license.jws` installed on the Policy Authority |
 
-Public [GitHub Releases](https://github.com/finogeeks/finsafe/releases) ship **four archive families** on the same tag: personal CLI (`finsafe-v*`), managed fleet (`finsafe-fleet-v*`), policy authority server (`finsafe-admin-server-v*`), and operator CLI (`finsafe-bundlectl-v*`, Linux + macOS). **`install.sh` installs only `finsafe-v*`.** Commercial `license.jws` is issued by Finogeeks (not on GitHub). See [binary-reference.md](docs/binary-reference.md) and [authority-deployment.md](docs/authority-deployment.md).
+Public [GitHub Releases](https://github.com/finogeeks/finsafe/releases) ship **four archive families** on the same tag: personal CLI (`finsafe-v*`), managed fleet (`finsafe-fleet-v*`), policy authority server (`finsafe-admin-server-v*`, Linux + macOS), and operator CLI (`finsafe-bundlectl-v*`, Linux + macOS). **`install.sh` installs only `finsafe-v*`.** Commercial `license.jws` is issued by Finogeeks (not on GitHub). See [binary-reference.md](docs/binary-reference.md) and [authority-deployment.md](docs/authority-deployment.md).
 
 **Operator skills for AI agents:** [finsafe-bundlectl skill](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL.md) (self-contained; binary + skill file only).
 
@@ -76,7 +76,7 @@ Managed fleet and policy authority archives ship on the **same** [Releases](http
 | Archive | Contents |
 |---------|----------|
 | **`finsafe-fleet-v<version>-<target>.tar.zst`** | Managed `finsafe` + `finsafe-agent` (Linux also includes helper, supervisor, landlock shim) |
-| **`finsafe-admin-server-v<version>-x86_64-unknown-linux-gnu.tar.zst`** | `finsafe-authority-http` (Linux authority host) |
+| **`finsafe-admin-server-v<version>-<target>.tar.zst`** | `finsafe-authority-http` (Linux production; macOS for local dev / pilot) |
 | **`finsafe-bundlectl-v<version>-<target>.tar.zst`** | `finsafe-bundlectl` (operator workstation; same targets as desktop) |
 | **`finsafe-v<version>-<target>.tar.zst`** | Personal-mode `finsafe` only (`install.sh`) |
 

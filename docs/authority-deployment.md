@@ -20,7 +20,7 @@ see [managed-mode.md](./managed-mode.md). For phased fleet rollout, see the
 
 `finsafe-bundlectl` is the companion operator CLI for building, signing, and publishing
 bundles and managed-required sentinels. It ships in **`finsafe-bundlectl-v*`** (Linux + macOS);
-the authority HTTP service ships in **`finsafe-admin-server-v*`** (Linux). For the full binary
+the authority HTTP service ships in **`finsafe-admin-server-v*`** (Linux + macOS). For the full binary
 suite and platform matrix, see [binary-reference.md](./binary-reference.md).
 
 **AI agents:** a self-contained bundlectl skill (binary + skill file only; no local doc checkout):
@@ -35,18 +35,24 @@ Policy Authority and operator CLI ship in **separate** release archives from
 
 | Archive | Install on |
 |---------|------------|
-| `finsafe-admin-server-v<version>-x86_64-unknown-linux-gnu.tar.zst` | Linux authority server — `finsafe-authority-http` |
+| `finsafe-admin-server-v<version>-x86_64-unknown-linux-gnu.tar.zst` | Linux production authority host |
+| `finsafe-admin-server-v<version>-aarch64-apple-darwin.tar.zst` | macOS Apple Silicon (dev / pilot) |
+| `finsafe-admin-server-v<version>-x86_64-apple-darwin.tar.zst` | macOS Intel (dev / pilot) |
 | `finsafe-bundlectl-v<version>-<target>.tar.zst` | Operator workstation — `finsafe-bundlectl` (Linux or macOS) |
 
 Verify and extract (same pattern as the desktop archives):
 
 ```bash
-VERSION=0.2.0
+VERSION=0.4.1
 shasum -a 256 -c SHA256SUMS
 
 # Authority host (Linux server)
 tar -xvf "finsafe-admin-server-v${VERSION}-x86_64-unknown-linux-gnu.tar.zst"
 sudo cp finsafe-admin-server-v${VERSION}-x86_64-unknown-linux-gnu/finsafe-authority-http /usr/local/bin/
+
+# macOS dev / pilot (pick the matching <target> from the release page)
+tar -xvf "finsafe-admin-server-v${VERSION}-aarch64-apple-darwin.tar.zst"
+sudo cp finsafe-admin-server-v${VERSION}-aarch64-apple-darwin/finsafe-authority-http /usr/local/bin/
 
 # Operator Mac or Linux (pick the matching <target> from the release page)
 tar -xvf "finsafe-bundlectl-v${VERSION}-aarch64-apple-darwin.tar.zst"
@@ -145,6 +151,20 @@ sudo systemctl status finsafe-authority
 ```
 
 ### macOS (LaunchDaemon)
+
+Use a **native** `finsafe-authority-http` from `finsafe-admin-server-v*-apple-darwin.tar.zst` (not the Linux archive). For quick local testing without LaunchDaemon:
+
+```bash
+export FINSAFE_AUTHORITY_BIND=127.0.0.1:8090
+export FINSAFE_AUTHORITY_PUBLIC_URL=http://127.0.0.1:8090
+export FINSAFE_AUTHORITY_DB="$HOME/.finsafe-authority/authority.db"
+export FINSAFE_AUTHORITY_SIGNING_KEY="$HOME/.finsafe-authority/signing_key.bin"
+export FINSAFE_LICENSE_PATH=/path/to/license.jws
+mkdir -p "$(dirname "$FINSAFE_AUTHORITY_DB")"
+finsafe-authority-http
+```
+
+Production-style daemon install:
 
 ```bash
 sudo cp packaging/launchd/com.finogeeks.finsafe-authority.plist \

@@ -57,7 +57,7 @@ See [authority-deployment.md](./authority-deployment.md) for the full authority 
 
 Summary:
 
-1. Install **`finsafe-authority-http`** from **`finsafe-admin-server-v*…tar.zst`** on a hardened Linux authority host; install **`finsafe-bundlectl`** from **`finsafe-bundlectl-v*…tar.zst`** on the operator workstation (Linux or macOS). See [README](../README.md#enterprise-admin-binaries).
+1. Install **`finsafe-authority-http`** from **`finsafe-admin-server-v*…tar.zst`** on a hardened Linux authority host (macOS archives are for local dev / pilot); install **`finsafe-bundlectl`** from **`finsafe-bundlectl-v*…tar.zst`** on the operator workstation (Linux or macOS). See [README](../README.md#enterprise-admin-binaries).
 2. Install **commercial `license.jws`** on the authority host before enabling fleet enroll or admin APIs — [authority-deployment.md §2.1](./authority-deployment.md#21-commercial-license-managed-mode).
 3. Set environment:
 

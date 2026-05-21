@@ -57,7 +57,7 @@
 
 概要：
 
-1. 在加固 Linux authority 主机安装 **`finsafe-authority-http`**（**`finsafe-admin-server-v*…tar.zst`**）；在运维工作站安装 **`finsafe-bundlectl`**（**`finsafe-bundlectl-v*…tar.zst`**，Linux 或 macOS）。见 [README](../README-zh.md) 企业管理员二进制。
+1. 在加固 Linux authority 主机安装 **`finsafe-authority-http`**（**`finsafe-admin-server-v*…tar.zst`**；macOS 包用于本地开发 / 试点）；在运维工作站安装 **`finsafe-bundlectl`**（**`finsafe-bundlectl-v*…tar.zst`**，Linux 或 macOS）。见 [README](../README-zh.md) 企业管理员二进制。
 2. 在开启舰队注册与管理 API 前，在 authority 主机安装商业 **`license.jws`** — [authority-deployment-zh.md §2.1](./authority-deployment-zh.md#21-商业许可证托管模式)。
 3. 设置环境变量：
 

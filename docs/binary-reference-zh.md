@@ -22,7 +22,7 @@
 
 | 角色 | 二进制 | 典型主机 |
 |------|--------|----------|
-| **Policy Authority** | `finsafe-authority-http` | Linux 服务器（`finsafe-admin-server-v*`） |
+| **Policy Authority** | `finsafe-authority-http` | Linux 服务器或 macOS 开发机（`finsafe-admin-server-v*`） |
 | **策略签名 / 发布** | `finsafe-bundlectl` | 安全运维工作站（`finsafe-bundlectl-v*`，Linux + macOS） |
 | **商业许可证** | `license.jws`（JWS 文件） | Authority 服务器 `/etc/finsafe/` |
 | **托管桌面** | `finsafe`、`finsafe-agent` | 每台已注册终端 |
@@ -38,7 +38,7 @@
 |--------|------|------|
 | **`finsafe-v<version>-<target>.tar.zst`** | Linux x86_64、macOS Intel、macOS Apple Silicon | 个人模式 `finsafe`（Linux 含配套二进制）；见下方平台表 |
 | **`finsafe-fleet-v<version>-<target>.tar.zst`** | 同上三个 target | 托管 `finsafe` + `finsafe-agent`（Linux 另含三个配套二进制） |
-| **`finsafe-admin-server-v<version>-x86_64-unknown-linux-gnu.tar.zst`** | Linux x86_64（authority 主机） | 仅 `finsafe-authority-http` |
+| **`finsafe-admin-server-v<version>-<target>.tar.zst`** | Linux x86_64、macOS Intel、macOS Apple Silicon | 仅 `finsafe-authority-http` |
 | **`finsafe-bundlectl-v<version>-<target>.tar.zst`** | 同上三个 target | 仅 `finsafe-bundlectl`（运维工作站） |
 
 **不会出现在任何公开发布包中：**
@@ -60,7 +60,7 @@ CI 按发行包族校验：个人 **`finsafe-v*`** 不得含 agent/authority；*
 | **`finsafe-helper`** | ✓ | — | 特权辅助进程（Linux bubblewrap 路径下的 cgroup/overlay） |
 | **`finsafe-supervisor`** | ✓ | — | cgroup 限制 attach-before-exec（优于 shell 包装） |
 | **`finsafe-landlock-shim`** | ✓ | — | 在沙箱内应用 Landlock 后再 exec 负载 |
-| **`finsafe-authority-http`** | ✓（`finsafe-admin-server-v*`） | — | 中央 Policy Authority HTTP 服务 |
+| **`finsafe-authority-http`** | ✓（`finsafe-admin-server-v*`） | ✓（`finsafe-admin-server-v*`） | 中央 Policy Authority HTTP 服务 |
 | **`finsafe-bundlectl`** | ✓（`finsafe-bundlectl-v*`） | ✓（`finsafe-bundlectl-v*`） | 构建 / 签名 / 发布 bundle 与 managed-required 哨兵 |
 
 **macOS 说明：** Mac 托管模式在 `finsafe` 内使用 **Seatbelt**（`sandbox-exec`），无 `finsafe-landlock-shim`。Linux 托管桌面需将 **四个** 面向用户的二进制（`finsafe` + 三个 companion）放在**同一路径**（建议 `/usr/local/bin/`），以便自动发现与心跳摘要一致。
@@ -90,7 +90,7 @@ CI 按发行包族校验：个人 **`finsafe-v*`** 不得含 agent/authority；*
 - **路径：** Authority 主机 `/usr/local/bin/finsafe-authority-http`
 - **依赖：** `FINSAFE_LICENSE_PATH` 处有效的 `license.jws`，否则管理/注册/bundle/审计 API 返回 402
 - **数据：** `FINSAFE_AUTHORITY_DB`、`FINSAFE_AUTHORITY_SIGNING_KEY`、`FINSAFE_AUTHORITY_PUBLIC_URL`
-- **发行包：** `finsafe-admin-server-v*`（Linux x86_64）
+- **发行包：** `finsafe-admin-server-v*`（生产环境 Linux x86_64；macOS 用于本地开发 / 试点）
 
 ### `finsafe-bundlectl`
 

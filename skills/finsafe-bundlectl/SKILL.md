@@ -66,7 +66,7 @@ finsafe-bundlectl                  finsafe-authority-http               finsafe-
 3. Extract and install:
 
 ```bash
-VERSION=0.4.0   # match your release
+VERSION=0.4.1   # match your release
 TARGET=aarch64-apple-darwin   # or x86_64-unknown-linux-gnu / x86_64-apple-darwin
 tar -xvf "finsafe-bundlectl-v${VERSION}-${TARGET}.tar.zst"
 sudo cp "finsafe-bundlectl-v${VERSION}-${TARGET}/finsafe-bundlectl" /usr/local/bin/

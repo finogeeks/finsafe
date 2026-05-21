@@ -15,7 +15,7 @@
 - 提供**管理 UI** 与 JSON API 供运维人员使用。
 - 发布 agent 用于验证 bundle 签名的 **JWKS**。
 
-`finsafe-bundlectl` 是配套的运维 CLI，用于构建、签名和发布 bundle 及 managed-required 哨兵。运维 CLI 在 **`finsafe-bundlectl-v*`**（Linux + macOS）；authority HTTP 服务在 **`finsafe-admin-server-v*`**（Linux）。完整二进制清单见 [binary-reference-zh.md](./binary-reference-zh.md)。
+`finsafe-bundlectl` 是配套的运维 CLI，用于构建、签名和发布 bundle 及 managed-required 哨兵。运维 CLI 在 **`finsafe-bundlectl-v*`**（Linux + macOS）；authority HTTP 服务在 **`finsafe-admin-server-v*`**（Linux + macOS）。完整二进制清单见 [binary-reference-zh.md](./binary-reference-zh.md)。
 
 ---
 
@@ -25,18 +25,24 @@ Policy Authority 与运维 CLI 在 [Releases](https://github.com/finogeeks/finsa
 
 | 发行包 | 安装位置 |
 |--------|----------|
-| `finsafe-admin-server-v<version>-x86_64-unknown-linux-gnu.tar.zst` | Linux authority 主机 — `finsafe-authority-http` |
+| `finsafe-admin-server-v<version>-x86_64-unknown-linux-gnu.tar.zst` | Linux 生产 authority 主机 |
+| `finsafe-admin-server-v<version>-aarch64-apple-darwin.tar.zst` | macOS Apple Silicon（开发 / 试点） |
+| `finsafe-admin-server-v<version>-x86_64-apple-darwin.tar.zst` | macOS Intel（开发 / 试点） |
 | `finsafe-bundlectl-v<version>-<target>.tar.zst` | 运维工作站 — `finsafe-bundlectl`（Linux 或 macOS） |
 
 校验并解压（方式与桌面发行包相同）：
 
 ```bash
-VERSION=0.2.0
+VERSION=0.4.1
 shasum -a 256 -c SHA256SUMS
 
 # Authority 主机（Linux 服务器）
 tar -xvf "finsafe-admin-server-v${VERSION}-x86_64-unknown-linux-gnu.tar.zst"
 sudo cp finsafe-admin-server-v${VERSION}-x86_64-unknown-linux-gnu/finsafe-authority-http /usr/local/bin/
+
+# macOS 开发 / 试点（从 Release 页选择匹配的 <target>）
+tar -xvf "finsafe-admin-server-v${VERSION}-aarch64-apple-darwin.tar.zst"
+sudo cp finsafe-admin-server-v${VERSION}-aarch64-apple-darwin/finsafe-authority-http /usr/local/bin/
 
 # 运维 Mac 或 Linux（从 Release 页选择匹配的 <target>）
 tar -xvf "finsafe-bundlectl-v${VERSION}-aarch64-apple-darwin.tar.zst"
@@ -121,6 +127,20 @@ sudo systemctl status finsafe-authority
 ```
 
 ### macOS（LaunchDaemon）
+
+请使用 **`finsafe-admin-server-v*-apple-darwin.tar.zst`** 中的原生二进制（不要用 Linux 包）。本地快速测试（无需 LaunchDaemon）：
+
+```bash
+export FINSAFE_AUTHORITY_BIND=127.0.0.1:8090
+export FINSAFE_AUTHORITY_PUBLIC_URL=http://127.0.0.1:8090
+export FINSAFE_AUTHORITY_DB="$HOME/.finsafe-authority/authority.db"
+export FINSAFE_AUTHORITY_SIGNING_KEY="$HOME/.finsafe-authority/signing_key.bin"
+export FINSAFE_LICENSE_PATH=/path/to/license.jws
+mkdir -p "$(dirname "$FINSAFE_AUTHORITY_DB")"
+finsafe-authority-http
+```
+
+生产级守护进程安装：
 
 ```bash
 sudo cp packaging/launchd/com.finogeeks.finsafe-authority.plist \
