@@ -100,7 +100,6 @@ sudo chmod 0640 /etc/finsafe/license.jws
 | `FINSAFE_AUTHORITY_REQUIRE_SENTINEL` | _未设置_ | 设为 `1` 时，将缺少哨兵的设备心跳标记为 `tamper_suspected`。 |
 | `FINSAFE_ADMIN_UI_DIR` | _内置_ | 覆盖静态管理 UI 目录，通常不需要。 |
 | `FINSAFE_LICENSE_PATH` | `/etc/finsafe/license.jws` | 托管/管理 API 所需的商业许可证 JWS。 |
-| `FINSAFE_LICENSE_VERIFY_PUBKEY_FILE` | _内置_ | 可选：32 字节 Ed25519 公钥文件，用于校验许可证（Finogeeks 运维）。 |
 
 **务必将 `FINSAFE_AUTHORITY_PUBLIC_URL` 设置**为已注册桌面可访问的 HTTPS URL。Agent 在注册时会将此 URL 写入 `/etc/finsafe/enrolled.json`。
 

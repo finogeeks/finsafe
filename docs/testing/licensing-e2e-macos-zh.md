@@ -135,7 +135,6 @@ export FINSAFE_AUTHORITY_URL=http://127.0.0.1:8090
 | `FINSAFE_E2E_DIR_REUSE` | _(未设置)_ | 与 `FINSAFE_E2E_DIR` 一起使用时复用目录 |
 | `FINSAFE_AUTHORITY_URL` | _(由脚本设置)_ | `license-suite.sh` 的目标 URL |
 | `FINSAFE_LICENSE_PATH` | 生产默认 `/etc/finsafe/license.jws` | authority 读取的 JWS 路径 |
-| `FINSAFE_LICENSE_VERIFY_PUBKEY_FILE` | 发行版内置公钥 | E2E 使用临时校验公钥覆盖 |
 
 生产环境使用 Finogeeks 签发的 `license.jws` 与内置校验公钥，见 [authority-deployment-zh.md](../authority-deployment-zh.md)。完整 E2E 脚本会自行生成开发用许可证文件；勿将该文件用于生产。
 

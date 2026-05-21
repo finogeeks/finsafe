@@ -123,7 +123,6 @@ completed.
 | `FINSAFE_AUTHORITY_REQUIRE_SENTINEL` | _(unset)_ | Set to `1` to flag heartbeats from devices without a sentinel as `tamper_suspected`. |
 | `FINSAFE_ADMIN_UI_DIR` | _(bundled)_ | Override the static admin UI directory. Rarely needed. |
 | `FINSAFE_LICENSE_PATH` | `/etc/finsafe/license.jws` | Commercial license JWS for managed/admin APIs. |
-| `FINSAFE_LICENSE_VERIFY_PUBKEY_FILE` | _(embedded)_ | Optional override: 32-byte Ed25519 public key file for license verification (Finogeeks ops). |
 
 **Always set `FINSAFE_AUTHORITY_PUBLIC_URL`** to the HTTPS URL that enrolled desktops
 can reach. Agents write this URL into `/etc/finsafe/enrolled.json` at enrollment time.

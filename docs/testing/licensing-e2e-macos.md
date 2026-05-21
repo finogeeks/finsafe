@@ -137,7 +137,6 @@ Without a published bundle, managed run fails with `MANAGED_DAEMON_UNREACHABLE: 
 | `FINSAFE_E2E_DIR_REUSE` | _(unset)_ | With `FINSAFE_E2E_DIR`, reuse paths instead of `mktemp` |
 | `FINSAFE_AUTHORITY_URL` | _(script sets)_ | Target for `license-suite.sh` |
 | `FINSAFE_LICENSE_PATH` | `/etc/finsafe/license.jws` in prod | JWS path for authority process |
-| `FINSAFE_LICENSE_VERIFY_PUBKEY_FILE` | embedded key in release | E2E overrides with temp verifying key |
 
 Production authorities use Finogeeks-issued `license.jws` and the embedded verifying key; see [authority-deployment.md](../authority-deployment.md). The full E2E script generates its own dev license file; do not use that file in production.
 
