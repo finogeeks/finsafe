@@ -1,14 +1,16 @@
 # Managed mode — macOS manual runbook
 
-Scriptable Linux checks live in [`scripts/managed-mode/`](../../../../scripts/managed-mode/). On macOS, run these steps before production rollout (maps to [managed-mode-matrix.md](./managed-mode-matrix.md)).
+**中文：** See [managed-mode-matrix-zh.md](./managed-mode-matrix-zh.md) and [enterprise-deployment-runbook-zh.md](../enterprise-deployment-runbook-zh.md).
 
-For **commercial license gates** and a one-command smoke path (`e2e-licensing-macos.sh`), see [licensing-e2e-macos.md](./licensing-e2e-macos.md).
+> **Audience:** Customer IT pilots and Finogeeks engineers validating macOS fleet rollout. Automated Linux harness scripts (`scripts/managed-mode/*`) exist only in the **private FinSAFE source repository** — not on [finogeeks/finsafe](https://github.com/finogeeks/finsafe). Use this runbook for **manual** steps (maps to [managed-mode-matrix.md](./managed-mode-matrix.md)).
+
+For **commercial license gates**, see [licensing-e2e-macos.md — customer pilot](./licensing-e2e-macos.md#customer-pilot-verification). Full setup chain: [finsafe-enterprise-setup skill](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-enterprise-setup/SKILL.md).
 
 ## Prerequisites
 
-- Enterprise build: `./scripts/build-finsafe-enterprise.sh` (enables `managed` feature).
-- Jamf or manual install: binaries in `/usr/local/bin`, LaunchDaemon from [`packaging/launchd/`](../../packaging/launchd/).
-- Policy Authority reachable from the Mac (VPN or split tunnel).
+- **Managed binaries** from [GitHub Releases](https://github.com/finogeeks/finsafe/releases): unpack `finsafe-fleet-v<version>-<target>.tar.zst` and install `finsafe` + `finsafe-agent` to `/usr/local/bin` (do **not** use personal-mode `install.sh` alone for fleet enforcement).
+- Jamf or manual install: LaunchDaemon from [packaging/launchd/](https://github.com/finogeeks/finsafe/tree/main/packaging/launchd/).
+- Policy Authority reachable from the Mac (VPN or split tunnel), with **Finogeeks-issued** `license.jws` installed — [authority-deployment.md](../authority-deployment.md).
 
 ## 1. Install and start agent
 
@@ -16,7 +18,10 @@ For **commercial license gates** and a one-command smoke path (`e2e-licensing-ma
 sudo install -d -m 755 /etc/finsafe /var/lib/finsafe
 # Deploy signed sentinel (see finsafe-bundlectl sentinel sign)
 sudo cp managed-required.jws /etc/finsafe/managed-required.json
-sudo cp packaging/launchd/com.finogeeks.finsafe-agent.plist /Library/LaunchDaemons/
+# Copy plist from your packaging checkout or:
+# curl -fsSL -o /tmp/com.finogeeks.finsafe-agent.plist \
+#   https://raw.githubusercontent.com/finogeeks/finsafe/main/packaging/launchd/com.finogeeks.finsafe-agent.plist
+sudo cp /path/to/com.finogeeks.finsafe-agent.plist /Library/LaunchDaemons/
 sudo launchctl bootstrap system /Library/LaunchDaemons/com.finogeeks.finsafe-agent.plist
 ```
 
@@ -25,7 +30,10 @@ sudo launchctl bootstrap system /Library/LaunchDaemons/com.finogeeks.finsafe-age
 ```bash
 export FINSAFE_ENROLL_TOKEN="<one-time-token>"
 export FINSAFE_AGENT_BOOTSTRAP_DEVICE_ID="$(system_profiler SPHardwareDataType | awk '/UUID/ {print $3}')"
-sudo -E packaging/mdm/examples/jamf/enroll-once.sh
+# Download enroll script from public repo if needed:
+# curl -fsSL -o /tmp/enroll-once.sh \
+#   https://raw.githubusercontent.com/finogeeks/finsafe/main/packaging/mdm/examples/jamf/enroll-once.sh
+sudo -E /path/to/enroll-once.sh
 test -f /etc/finsafe/enrolled.json && echo enrolled-ok
 ```
 

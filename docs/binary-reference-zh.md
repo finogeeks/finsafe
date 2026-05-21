@@ -81,6 +81,7 @@ CI 按发行包族校验：个人 **`finsafe-v*`** 不得含 agent/authority；*
 - **对象：** IT 通过系统服务部署于托管桌面
 - **路径：** `/usr/local/bin/finsafe-agent` + systemd/LaunchDaemon（见 [packaging/](../packaging/)）
 - **关键环境变量：** `FINSAFE_AUTHORITY_URL`、`FINSAFE_ENROLL_TOKEN`（一次性）、`FINSAFE_AGENT_BOOTSTRAP_DEVICE_ID`
+- **Authority 迁移：** 若在 agent 服务环境中设置了 `FINSAFE_AUTHORITY_URL`，运行时会覆盖 `/etc/finsafe/enrolled.json` 中的 `authority_url`（心跳、拉取 bundle、JWKS）。Authority 更换 IP/域名时可在 MDM 中更新该变量，无需重新注册设备。
 - **写入：** `/etc/finsafe/enrolled.json`、`/var/lib/finsafe/cache/`、`/var/lib/finsafe/audit/`、`/run/finsafe-agent.sock`
 - **发行包：** `finsafe-fleet-v*`（各桌面平台）
 
@@ -173,7 +174,7 @@ CI 按发行包族校验：个人 **`finsafe-v*`** 不得含 agent/authority；*
 4. **签发 managed-required 哨兵** → 手册 Phase A.3  
 5. **打包桌面：** `finsafe` + `finsafe-agent`（Linux 另加三个 companion）→ 手册 Phase B  
 6. **下发哨兵、注册 agent、测试** `finsafe run` → 手册 Phase C–D  
-7. **脚本冒烟（开发/CI）：** [licensing-e2e-macos-zh.md](./testing/licensing-e2e-macos-zh.md)
+7. **试点验收：** [licensing-e2e-macos-zh — 客户节](./testing/licensing-e2e-macos-zh.md#客户试点验收) 或 [finsafe-enterprise-setup 技能](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-enterprise-setup/SKILL-zh.md)
 
 ---
 

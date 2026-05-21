@@ -2,9 +2,9 @@
 
 **中文：** [README-zh.md](./README-zh.md)
 
-Each skill under this directory is **self-contained**: an operator can use it with only the
-`finsafe-bundlectl` binary (from [GitHub Releases](https://github.com/finogeeks/finsafe/releases))
-and the skill file — no local checkout of the documentation tree is required.
+Each skill under this directory is **self-contained**: an operator can use it with release
+binaries from [GitHub Releases](https://github.com/finogeeks/finsafe/releases) and the skill
+file — no local checkout of the documentation tree is required.
 
 ## How to use with an agent
 
@@ -16,6 +16,7 @@ and the skill file — no local checkout of the documentation tree is required.
 
 | Skill | File | Use when |
 |-------|------|----------|
+| **finsafe-enterprise-setup** | [SKILL.md](./finsafe-enterprise-setup/SKILL.md) · [SKILL-zh.md](./finsafe-enterprise-setup/SKILL-zh.md) | End-to-end managed fleet: authority, Finogeeks `license.jws`, MDM, pilot checks |
 | **finsafe-bundlectl** | [SKILL.md](./finsafe-bundlectl/SKILL.md) · [SKILL-zh.md](./finsafe-bundlectl/SKILL-zh.md) | Build / sign / publish policy bundles; MDM managed-required sentinel |
 
 ## Optional deeper reading (online only)

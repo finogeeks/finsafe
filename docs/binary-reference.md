@@ -81,6 +81,7 @@ CI checks each archive family: personal **`finsafe-v*`** must exclude agent/auth
 - **Audience:** IT-deployed system service on managed desktops
 - **Install path:** `/usr/local/bin/finsafe-agent` + systemd/LaunchDaemon unit ([packaging/](../packaging/))
 - **Key env:** `FINSAFE_AUTHORITY_URL`, `FINSAFE_ENROLL_TOKEN` (one-time), `FINSAFE_AGENT_BOOTSTRAP_DEVICE_ID`
+- **Authority relocation:** When `FINSAFE_AUTHORITY_URL` is set in the agent service environment, it overrides the `authority_url` stored in `/etc/finsafe/enrolled.json` at runtime (heartbeats, bundle pull, JWKS). Use this when the policy authority moves to a new host, IP, or domain without re-enrolling devices.
 - **Writes:** `/etc/finsafe/enrolled.json`, `/var/lib/finsafe/cache/`, `/var/lib/finsafe/audit/`, `/run/finsafe-agent.sock`
 - **Archive:** `finsafe-fleet-v*` (all supported desktop targets)
 
@@ -173,7 +174,7 @@ These exist in the FinSAFE source tree for adapters, tests, or future platform A
 4. **Sign managed-required sentinel** → runbook Phase A.3  
 5. **Package desktops:** `finsafe` + `finsafe-agent` (+ Linux companions) → runbook Phase B  
 6. **Deploy sentinel, enroll agents, test** `finsafe run` → runbook Phases C–D  
-7. **Scripted smoke (dev/CI):** [licensing-e2e-macos.md](./testing/licensing-e2e-macos.md)
+7. **Pilot verification:** [licensing-e2e-macos.md — customer section](./testing/licensing-e2e-macos.md#customer-pilot-verification) or [finsafe-enterprise-setup skill](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-enterprise-setup/SKILL.md)
 
 ---
 

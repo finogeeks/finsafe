@@ -23,7 +23,8 @@
 
 | 技能 | 说明 |
 |------|------|
-| [SKILL-zh.md](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL-zh.md) · [English](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL.md) | **`finsafe-bundlectl`**：自包含；仅需二进制 + 技能文件 |
+| [finsafe-enterprise-setup/SKILL-zh.md](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-enterprise-setup/SKILL-zh.md) · [English](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-enterprise-setup/SKILL.md) | **`finsafe-enterprise-setup`**：托管舰队端到端（仅发行包 + Finogeeks 许可证） |
+| [finsafe-bundlectl/SKILL-zh.md](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL-zh.md) · [English](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL.md) | **`finsafe-bundlectl`**：bundle 发布 + MDM 哨兵 |
 | [../skills/README-zh.md](../skills/README-zh.md) | 公开运维技能索引 |
 
 ## 企业管理员（托管舰队）
@@ -39,7 +40,7 @@
 | [mdm/vendor-neutral-checklist-zh.md](./mdm/vendor-neutral-checklist-zh.md) | 适用于任意 MDM 或配置工具的检查清单 |
 | [mdm/README-zh.md](./mdm/README-zh.md) | Jamf、Intune、Ansible 手册 |
 | [testing/managed-mode-matrix-zh.md](./testing/managed-mode-matrix-zh.md) | 生产前验收测试 |
-| [testing/licensing-e2e-macos-zh.md](./testing/licensing-e2e-macos-zh.md) · [licensing-e2e-macos.md](./testing/licensing-e2e-macos.md) | macOS 许可证与托管冒烟 E2E 脚本 |
+| [testing/licensing-e2e-macos-zh.md](./testing/licensing-e2e-macos-zh.md) · [licensing-e2e-macos.md](./testing/licensing-e2e-macos.md) | macOS 许可证与托管冒烟（**客户 curl 清单** + Finogeeks harness 说明） |
 
 建议阅读顺序：**[enterprise-it-overview-zh.md](./enterprise-it-overview-zh.md)** → **[enterprise-deployment-runbook-zh.md](./enterprise-deployment-runbook-zh.md)**。
 

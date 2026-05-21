@@ -15,7 +15,10 @@ FinSafe 是一套**主机执行边界**工具集：Linux 命名空间、cgroup �
 
 GitHub [Releases](https://github.com/finogeeks/finsafe/releases) 提供个人 CLI（`finsafe-v*`）、托管舰队（`finsafe-fleet-v*`）、authority 服务（`finsafe-admin-server-v*`，Linux + macOS）与运维 CLI（`finsafe-bundlectl-v*`，Linux + macOS）。**`install.sh` 仅安装个人 CLI**；其余包请从同一 Release 页面手动下载。详见 **[binary-reference-zh.md](docs/binary-reference-zh.md)**。Authority 与 `license.jws`：[authority-deployment-zh.md](docs/authority-deployment-zh.md)。
 
-**供 AI Agent 使用的运维技能：** [finsafe-bundlectl 技能](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL-zh.md)（自包含；仅需二进制 + 技能文件）。
+**供 AI Agent 使用的运维技能：**
+
+- [finsafe-enterprise-setup](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-enterprise-setup/SKILL-zh.md) — 托管舰队端到端（发行包 + Finogeeks `license.jws`）
+- [finsafe-bundlectl](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL-zh.md) — 策略包发布 + MDM 哨兵
 
 ## 企业 IT 全景（推荐）
 

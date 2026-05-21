@@ -15,7 +15,10 @@ This repository holds **public release binaries** and **end-user documentation**
 
 Public [GitHub Releases](https://github.com/finogeeks/finsafe/releases) ship **four archive families** on the same tag: personal CLI (`finsafe-v*`), managed fleet (`finsafe-fleet-v*`), policy authority server (`finsafe-admin-server-v*`, Linux + macOS), and operator CLI (`finsafe-bundlectl-v*`, Linux + macOS). **`install.sh` installs only `finsafe-v*`.** Commercial `license.jws` is issued by Finogeeks (not on GitHub). See [binary-reference.md](docs/binary-reference.md) and [authority-deployment.md](docs/authority-deployment.md).
 
-**Operator skills for AI agents:** [finsafe-bundlectl skill](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL.md) (self-contained; binary + skill file only).
+**Operator skills for AI agents:**
+
+- [finsafe-enterprise-setup](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-enterprise-setup/SKILL.md) — managed fleet end-to-end (releases + Finogeeks `license.jws`)
+- [finsafe-bundlectl](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL.md) — policy bundle publish + MDM sentinel
 
 ## Install a release
 

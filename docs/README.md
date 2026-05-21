@@ -23,7 +23,8 @@
 
 | Skill | Description |
 |-------|-------------|
-| [SKILL.md](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL.md) · [SKILL-zh.md](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL-zh.md) | **`finsafe-bundlectl`**: self-contained; binary + skill only |
+| [finsafe-enterprise-setup/SKILL.md](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-enterprise-setup/SKILL.md) · [SKILL-zh.md](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-enterprise-setup/SKILL-zh.md) | **`finsafe-enterprise-setup`**: managed fleet end-to-end (releases + Finogeeks license only) |
+| [finsafe-bundlectl/SKILL.md](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL.md) · [SKILL-zh.md](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL-zh.md) | **`finsafe-bundlectl`**: bundle publish + MDM sentinel |
 | [../skills/README.md](../skills/README.md) | Index of public operator skills |
 
 ## For enterprise administrators (managed fleet)
@@ -40,7 +41,7 @@ Deploy **Policy Authority**, **finsafe-agent**, and signed bundles to employee d
 | [mdm/vendor-neutral-checklist.md](./mdm/vendor-neutral-checklist.md) · [vendor-neutral-checklist-zh.md](./mdm/vendor-neutral-checklist-zh.md) | Checklist for any MDM or config tool |
 | [mdm/README.md](./mdm/README.md) · [README-zh.md](./mdm/README-zh.md) | Jamf, Intune, Ansible playbooks |
 | [testing/managed-mode-matrix.md](./testing/managed-mode-matrix.md) · [managed-mode-matrix-zh.md](./testing/managed-mode-matrix-zh.md) | Acceptance tests before production |
-| [testing/licensing-e2e-macos.md](./testing/licensing-e2e-macos.md) · [licensing-e2e-macos-zh.md](./testing/licensing-e2e-macos-zh.md) | macOS scriptable licensing + managed smoke E2E |
+| [testing/licensing-e2e-macos.md](./testing/licensing-e2e-macos.md) · [licensing-e2e-macos-zh.md](./testing/licensing-e2e-macos-zh.md) | macOS licensing + managed smoke (**customer curl checklist** + Finogeeks harness note) |
 
 Read order: **[enterprise-it-overview.md](./enterprise-it-overview.md)** → **[enterprise-deployment-runbook.md](./enterprise-deployment-runbook.md)**.
 
