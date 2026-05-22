@@ -8,6 +8,8 @@
 
 **不在范围内：** 未纳管笔记本上使用个人 `finsafe run --policy file.yaml` 的开发者（行为不变）。
 
+**先选部署路径：** [endpoint-deployment-options-zh.md](./endpoint-deployment-options-zh.md) — 运营模式（托管桌面 vs 仅中心侧）、交付工具（Jamf、Intune、Ansible、黄金镜像、SSH）、Authority 绑定、管理端 `sentinel_present` 含义。
+
 ---
 
 ## 1. 架构回顾
@@ -184,7 +186,7 @@ finsafe run --personal -- /usr/bin/true 2>&1 | grep -q MANAGED_FORCED_BY_POLICY
 curl -s -X POST "$FINSAFE_AUTHORITY_PUBLIC_URL/v1/enroll/token"
 ```
 
-复制 `token`（短生命周期 JWS）。视为机密；每台设备或每批窗口单次使用。
+复制 `token`（短生命周期 JWS）。视为机密；每个 token 会在首次成功注册后被消费，因此应按设备签发。
 
 ### D.2 将 token 交付给 agent（MDM，仅首次启动）
 
@@ -196,6 +198,8 @@ curl -s -X POST "$FINSAFE_AUTHORITY_PUBLIC_URL/v1/enroll/token"
 | `FINSAFE_ENROLL_TOKEN` | D.1 的 token |
 
 重启 `finsafe-agent`。成功后会写入 `/etc/finsafe/enrolled.json`。
+Authority 会将该 `device_id` 绑定到 agent 的本地设备密钥；其他机器复用相同
+`device_id` 会被拒绝。
 
 ### D.3 从 MDM 移除 token
 

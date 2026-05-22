@@ -6,6 +6,7 @@ Platform-specific steps for distributing FinSAFE and enforcing managed mode. Sta
 
 | Guide | Use when |
 |-------|----------|
+| **[endpoint-deployment-options.md](../endpoint-deployment-options.md)** · [中文](../endpoint-deployment-options-zh.md) | **Choose deployment path** — Jamf, Intune, Ansible, image, SSH, or central-only |
 | **[vendor-neutral-checklist.md](./vendor-neutral-checklist.md)** · [中文](./vendor-neutral-checklist-zh.md) | **Any tool** (Ansible, Kandji, golden image, SSH)—no Jamf/Intune required |
 | [jamf.md](./jamf.md) · [中文](./jamf-zh.md) | Jamf Pro (macOS fleet) |
 | [intune.md](./intune.md) · [中文](./intune-zh.md) | Microsoft Intune (macOS + Linux) |

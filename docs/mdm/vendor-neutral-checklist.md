@@ -6,7 +6,7 @@ FinSAFE managed mode does **not** depend on a specific MDM product. Any tool—o
 
 Use this checklist when your customer uses **Ansible, Chef, Puppet, Kandji, Workspace ONE, golden images, SSH + scripts**, or internal packaging only.
 
-**Related:** [binary reference](../binary-reference.md) · [enterprise deployment runbook](../enterprise-deployment-runbook.md) · [managed-mode.md](../managed-mode.md) · [example scripts](../../packaging/mdm/examples/)
+**Related:** [endpoint deployment options](../endpoint-deployment-options.md) · [binary reference](../binary-reference.md) · [enterprise deployment runbook](../enterprise-deployment-runbook.md) · [managed-mode.md](../managed-mode.md) · [example scripts](../../packaging/mdm/examples/)
 
 ---
 
@@ -89,10 +89,14 @@ finsafe run --personal -- /usr/bin/true 2>&1 | grep -q MANAGED_FORCED_BY_POLICY 
 ## Enrollment token workflow (all vendors)
 
 1. IT: `POST /v1/enroll/token` on authority (or admin UI).
-2. Deploy token **only** to agent service env (never user shell profile).
+2. Deploy a unique token **only** to one agent service env (never user shell profile).
 3. Restart agent; confirm `/etc/finsafe/enrolled.json` exists.
 4. **Revoke token from all profiles** (MDM revision, Ansible var cleared, etc.).
 5. Confirm agent still runs and pulls bundles without token in env.
+
+Enrollment binds `FINSAFE_AGENT_BOOTSTRAP_DEVICE_ID` to the agent's local device
+key. If a second machine tries to enroll with the same `device_id`, the authority
+rejects it unless it proves the same device key.
 
 Example scripts (adapt parameter names to your tool):
 

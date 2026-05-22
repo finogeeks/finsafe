@@ -9,6 +9,7 @@
 | [product-one-pager-zh.md](./product-one-pager-zh.md) | **产品一页纸**：功能、市场定位、AI 痛点、与 Docker/MicroVM/云沙箱对比 |
 | [enterprise-it-overview-zh.md](./enterprise-it-overview-zh.md) | **个人 vs 托管**、产品背景、Hermes 示例、托管防篡改、分布式智能体可治理性、MDM 路径 |
 | [enterprise-it-overview.md](./enterprise-it-overview.md) | English stub → 完整中文版 |
+| [endpoint-deployment-options-zh.md](./endpoint-deployment-options-zh.md) · [endpoint-deployment-options.md](./endpoint-deployment-options.md) | **部署方式选型**：MDM/Ansible/镜像/SSH/仅中心侧；Authority 绑定；哨兵 vs 注册 |
 
 ## 运维人员（单机、本地策略）
 
@@ -36,13 +37,14 @@
 | [binary-reference-zh.md](./binary-reference-zh.md) · [binary-reference.md](./binary-reference.md) | **全部二进制**、发行包、Linux 配套、管理员验证清单 |
 | [authority-deployment-zh.md](./authority-deployment-zh.md) · [authority-deployment.md](./authority-deployment.md) | Authority 安装、商业许可证、`finsafe-bundlectl` |
 | [managed-mode-zh.md](./managed-mode-zh.md) | 概述、组件、路径、CLI 错误 |
+| [endpoint-deployment-options-zh.md](./endpoint-deployment-options-zh.md) · [endpoint-deployment-options.md](./endpoint-deployment-options.md) | 部署路径决策（不强制 MDM） |
 | [enterprise-deployment-runbook-zh.md](./enterprise-deployment-runbook-zh.md) | 完整分阶段部署与运维 |
 | [mdm/vendor-neutral-checklist-zh.md](./mdm/vendor-neutral-checklist-zh.md) | 适用于任意 MDM 或配置工具的检查清单 |
 | [mdm/README-zh.md](./mdm/README-zh.md) | Jamf、Intune、Ansible 手册 |
 | [testing/managed-mode-matrix-zh.md](./testing/managed-mode-matrix-zh.md) | 生产前验收测试 |
 | [testing/licensing-e2e-macos-zh.md](./testing/licensing-e2e-macos-zh.md) · [licensing-e2e-macos.md](./testing/licensing-e2e-macos.md) | macOS 许可证与托管冒烟（**客户 curl 清单** + Finogeeks harness 说明） |
 
-建议阅读顺序：**[enterprise-it-overview-zh.md](./enterprise-it-overview-zh.md)** → **[enterprise-deployment-runbook-zh.md](./enterprise-deployment-runbook-zh.md)**。
+建议阅读顺序：**[enterprise-it-overview-zh.md](./enterprise-it-overview-zh.md)** → **[endpoint-deployment-options-zh.md](./endpoint-deployment-options-zh.md)** → **[enterprise-deployment-runbook-zh.md](./enterprise-deployment-runbook-zh.md)**。
 
 ## 部署制品（脚本与服务单元）
 

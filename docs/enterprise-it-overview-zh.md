@@ -4,7 +4,7 @@
 
 **采购 / 架构速览：** [产品一页纸](./product-one-pager-zh.md)（含中心 Sandbox-as-a-Service 与桌面边缘部署）
 
-本文面向 **企业 IT、终端管理（MDM）与安全运营** 人员，重点说明 FinSAFE 在 **员工桌面（边缘）** 上的两种运行形态——**个人模式（Personal）** 与 **托管模式（Managed）**——以及它们如何与 **中心执行平面**（`finsafe-server`、Policy Router、Execution Scheduler，常部署于 Kubernetes）配合。中心侧可提供多租户 **Sandbox-as-a-Service**；边缘侧解决「分布式智能体」本机运行时的舰队治理。部署实操请接续阅读 [企业部署手册](./enterprise-deployment-runbook-zh.md) 与 [MDM 检查清单](./mdm/vendor-neutral-checklist-zh.md)。中心 API 与 K8s 映射见仓库内 [finsafe-server API](../../../docs/api/finsafe-server.md)、[Kubernetes 架构](../../../docs/design/finsafe-kubernetes-architecture.md)。
+本文面向 **企业 IT、终端管理（MDM）与安全运营** 人员，重点说明 FinSAFE 在 **员工桌面（边缘）** 上的两种运行形态——**个人模式（Personal）** 与 **托管模式（Managed）**——以及它们如何与 **中心执行平面**（`finsafe-server`、Policy Router、Execution Scheduler，常部署于 Kubernetes）配合。中心侧可提供多租户 **Sandbox-as-a-Service**；边缘侧解决「分布式智能体」本机运行时的舰队治理。部署实操请先在 [终端部署方式选型](./endpoint-deployment-options-zh.md) 选定路径，再按 [企业部署手册](./enterprise-deployment-runbook-zh.md) 与 [MDM 检查清单](./mdm/vendor-neutral-checklist-zh.md) 执行。中心 API 与 K8s 映射见仓库内 [finsafe-server API](../../../docs/api/finsafe-server.md)、[Kubernetes 架构](../../../docs/design/finsafe-kubernetes-architecture.md)。
 
 ---
 

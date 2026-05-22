@@ -10,4 +10,4 @@ This page is the **entry point for enterprise IT, MDM, and security operations**
 - Strategic value for **fleet governability** of decentralized agent workloads
 - **MDM deployment** panorama and links to the [enterprise deployment runbook](./enterprise-deployment-runbook.md)
 
-For hands-on deployment, continue with [enterprise-deployment-runbook.md](./enterprise-deployment-runbook.md) and the [vendor-neutral MDM checklist](./mdm/vendor-neutral-checklist.md).
+For hands-on deployment, choose a path in [endpoint-deployment-options.md](./endpoint-deployment-options.md), then follow [enterprise-deployment-runbook.md](./enterprise-deployment-runbook.md) and the [vendor-neutral MDM checklist](./mdm/vendor-neutral-checklist.md).

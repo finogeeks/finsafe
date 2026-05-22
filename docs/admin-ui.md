@@ -70,6 +70,11 @@ Issues a **one-time enrollment token** (JWS, 15-minute TTL). Copy the `token` va
 and supply it to the `finsafe-agent` service environment as `FINSAFE_ENROLL_TOKEN`
 during the device's first boot.
 
+The token is consumed by the first successful enrollment. During enrollment, the
+authority also pins `FINSAFE_AGENT_BOOTSTRAP_DEVICE_ID` to the agent's local
+device key. A later enrollment with the same `device_id` but a different device
+key is rejected with `DEVICE_ID_ALREADY_BOUND`.
+
 After enrollment succeeds, remove the token from the agent's environment profile (see
 [enterprise-deployment-runbook.md Phase D.3](./enterprise-deployment-runbook.md#d3-remove-token-from-mdm)).
 

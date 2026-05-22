@@ -58,6 +58,10 @@ curl -sf "$AUTHORITY/v1/admin/devices" | jq .
 
 签发一个**一次性注册 token**（JWS，有效期 15 分钟）。复制 `token` 值，在设备首次启动时通过 `FINSAFE_ENROLL_TOKEN` 环境变量传给 `finsafe-agent` 服务。
 
+该 token 会在首次成功注册后被消费。注册时，authority 还会把
+`FINSAFE_AGENT_BOOTSTRAP_DEVICE_ID` 绑定到 agent 的本地设备密钥；后续若其他设备使用相同
+`device_id` 但设备密钥不同，将返回 `DEVICE_ID_ALREADY_BOUND`。
+
 注册成功后，从 agent 的服务环境配置中删除该 token（见 [企业部署手册 Phase D.3](./enterprise-deployment-runbook-zh.md#d3-从-mdm-移除-token)）。
 
 **等效 API：**

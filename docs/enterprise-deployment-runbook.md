@@ -8,6 +8,8 @@ This runbook is for IT / security operators rolling out FinSAFE fleet-wide. It c
 
 **Out of scope:** developers using personal `finsafe run --policy file.yaml` on unmanaged laptops (unchanged).
 
+**Choose your path first:** [endpoint-deployment-options.md](./endpoint-deployment-options.md) — operating model (managed desktop vs central-only), delivery tool (Jamf, Intune, Ansible, golden image, SSH), authority binding, and `sentinel_present` in the admin UI.
+
 ---
 
 ## 1. Architecture recap
@@ -184,7 +186,8 @@ finsafe run --personal -- /usr/bin/true 2>&1 | grep -q MANAGED_FORCED_BY_POLICY
 curl -s -X POST "$FINSAFE_AUTHORITY_PUBLIC_URL/v1/enroll/token"
 ```
 
-Copy `token` (short-lived JWS). Treat as a secret; single use per device or batch window.
+Copy `token` (short-lived JWS). Treat as a secret; each token is consumed by the
+first successful enrollment, so issue one token per device.
 
 ### D.2 Deliver token to agent (MDM, first boot only)
 
@@ -196,6 +199,8 @@ Set on the **agent service** environment (not user shell profile):
 | `FINSAFE_ENROLL_TOKEN` | Token from D.1 |
 
 Restart `finsafe-agent`. On success it writes `/etc/finsafe/enrolled.json`.
+The authority pins this `device_id` to the agent's local device key; reusing the
+same `device_id` from a different machine is rejected.
 
 ### D.3 Remove token from MDM
 

@@ -6,7 +6,7 @@ FinSAFE 托管模式 **不依赖** 特定 MDM 产品。只要能安装 root 拥�
 
 **English:** [vendor-neutral-checklist.md](./vendor-neutral-checklist.md)
 
-**相关文档：** [二进制参考](../binary-reference-zh.md) · [企业部署手册](../enterprise-deployment-runbook-zh.md) · [托管模式](../managed-mode-zh.md) · [示例脚本](../../packaging/mdm/examples/)
+**相关文档：** [终端部署方式选型](../endpoint-deployment-options-zh.md) · [二进制参考](../binary-reference-zh.md) · [企业部署手册](../enterprise-deployment-runbook-zh.md) · [托管模式](../managed-mode-zh.md) · [示例脚本](../../packaging/mdm/examples/)
 
 ---
 
@@ -89,10 +89,13 @@ finsafe run --personal -- /usr/bin/true 2>&1 | grep -q MANAGED_FORCED_BY_POLICY 
 ## 注册 token 工作流（所有厂商通用）
 
 1. IT：在 authority 上 `POST /v1/enroll/token`（或管理 UI）。
-2. 将 token **仅** 部署到 agent 服务环境（不要写入用户 shell 配置）。
+2. 将唯一 token **仅** 部署到一个 agent 服务环境（不要写入用户 shell 配置）。
 3. 重启 agent；确认存在 `/etc/finsafe/enrolled.json`。
 4. **从所有描述文件中撤销 token**（MDM 修订、Ansible 变量清空等）。
 5. 确认 agent 在无 token 环境变量时仍能运行并拉取 bundle。
+
+注册会把 `FINSAFE_AGENT_BOOTSTRAP_DEVICE_ID` 绑定到 agent 的本地设备密钥。第二台机器若尝试使用相同
+`device_id` 注册，除非能证明持有同一个设备密钥，否则会被 authority 拒绝。
 
 示例脚本（按工具调整参数名）：
 

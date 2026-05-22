@@ -106,6 +106,25 @@ finsafe run --high-level <PATH> -- <program> [参数...]
 
 **不要随意对调：** Broker 用 `run` 会破坏交互 IO；脚本滥用 `self-confine` 会偏离正确的生命周期与审计形态。
 
+### 在 `run` 内运行交互式 CLI（Linux，PTY 模式）
+
+部分短命任务仍需要在沙箱内拥有 **controlling terminal**——例如 `vim`、`less`、`nano`，或会打开 `/dev/tty` 的脚本。在 Linux 上，**`stdio: mode: inherit`**（或未设置时的默认行为）**不会**让 bubblewrap 内的 `/dev/tty` 可用，可能出现 *Inappropriate ioctl for device* 或 *No such device or address*。
+
+在包装策略中使用 **`pty`**，或在命令行覆盖：
+
+```yaml
+stdio:
+  mode: pty
+```
+
+```bash
+finsafe --policy ./policy.yaml run --stdio pty -- vim /path/in/workspace/file.txt
+```
+
+PTY 模式在沙箱内使用**虚拟**终端（非宿主机 `/dev/tty` 直通），可降低宿主机终端注入风险。非 capture 的 **`--json`** 与 PTY 组合时，子进程输出经 PTY master 中继。
+
+在启用 argv 加固的部署配置下，可为沙箱 PID 命名空间提供私有 **`/proc`**；并非所有默认 `finsafe run` 姿态都会自动挂载。
+
 ---
 
 ## 快速上手
@@ -193,6 +212,7 @@ macOS **不可**与 Linux「完全等价隔离」：
 | **`program_mode` 不匹配** | **`short-lived`** 须配 **`run`**，**`interactive`** 须配 **`self-confine`**。 |
 | **`network: none` 下无法访问 API** | 若需出站 HTTPS，在威胁模型允许时使用 **`network: host`**。 |
 | macOS 上路径访问被拒 | 放宽 **`read_only_paths` / `read_write_paths`**，确认 **`./workspace`** 等存在，结合 **`run --json`** 佐证字段排查。 |
+| Linux **`run` 内 `/dev/tty` 失败** | 策略设 **`stdio: pty`** 或使用 **`finsafe run --stdio pty`**；勿指望 **`inherit`** 在 bubblewrap 内提供 controlling terminal。 |
 
 ---
 

@@ -138,6 +138,7 @@ Central policy authority, `finsafe-agent`, MDM deployment, and fleet enforcement
 |----------|-------------|
 | [docs/product-one-pager.md](docs/product-one-pager.md) · [docs/product-one-pager-zh.md](docs/product-one-pager-zh.md) | **Product one-pager** (positioning, AI pain points, technology comparison). |
 | [docs/enterprise-it-overview.md](docs/enterprise-it-overview.md) · [docs/enterprise-it-overview-zh.md](docs/enterprise-it-overview-zh.md) | **Enterprise IT panorama** (personal vs managed, Hermes, governability, MDM). |
+| [docs/endpoint-deployment-options.md](docs/endpoint-deployment-options.md) · [docs/endpoint-deployment-options-zh.md](docs/endpoint-deployment-options-zh.md) | **Deployment path guide** (MDM optional; Ansible/image/SSH; authority binding; sentinel). |
 | [docs/binary-reference.md](docs/binary-reference.md) · [docs/binary-reference-zh.md](docs/binary-reference-zh.md) | **All binaries**, release archives, Linux companions, admin verify checklist |
 | [docs/authority-deployment.md](docs/authority-deployment.md) | Installing and running `finsafe-authority-http`; license; `finsafe-bundlectl` reference. |
 | [docs/admin-ui.md](docs/admin-ui.md) | Admin console reference (devices, enrollment tokens, kill switch). |

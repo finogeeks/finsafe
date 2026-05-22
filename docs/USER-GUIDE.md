@@ -107,6 +107,25 @@ Some integrations still use **`finsafe run --policy spec.json`** where `spec.jso
 
 **Do not swap them:** wrapping a broker with `run` breaks normal interactive IO; wrapping a one-shot script with `self-confine` is the wrong lifecycle and audit shape.
 
+### Interactive CLI tools inside `run` (Linux, PTY mode)
+
+Some short-lived commands still need a **controlling terminal** inside the sandbox—for example `vim`, `less`, `nano`, or scripts that open `/dev/tty`. On Linux, **`stdio: mode: inherit`** (or the default when unset) does **not** make `/dev/tty` work under bubblewrap; you may see errors such as *Inappropriate ioctl for device* or *No such device or address*.
+
+Use **`pty`** in the wrapper policy or override on the command line:
+
+```yaml
+stdio:
+  mode: pty
+```
+
+```bash
+finsafe --policy ./policy.yaml run --stdio pty -- vim /path/in/workspace/file.txt
+```
+
+PTY mode uses a **virtual** terminal inside the sandbox (not direct host `/dev/tty` passthrough), which avoids host-terminal injection risks. **`--json`** with PTY relays child output through the PTY master when not using machine-readable capture mode.
+
+Private `/proc` for the sandbox PID namespace is available when argv hardening is enabled in your deployment configuration—not on every default `finsafe run` without that posture.
+
 ---
 
 ## Getting started
@@ -196,6 +215,7 @@ Typical meanings (see `finsafe --help` for the authoritative list for your versi
 | **`program_mode` mismatch** | Policy **`short-lived`** must pair with **`run`**; **`interactive`** with **`self-confine`**. |
 | **No network** under `network: none` | Use **`network: host`** if the workload needs outbound HTTPS (subject to your threat model). |
 | **Paths denied on macOS** | Widen **`read_only_paths`** / **`read_write_paths`**, ensure declared directories exist, inspect **`--json`** attestation fields. |
+| **`/dev/tty` fails inside Linux `run`** | Use **`stdio: pty`** in policy or **`finsafe run --stdio pty`**. Do not expect **`inherit`** to provide a controlling terminal under bubblewrap. |
 
 ---
 

@@ -39,13 +39,13 @@ filesystem:
 | `degrade.prompt_on_macos_arm64_missing_apple_container` | **Deprecated / ignored** for native macOS Seatbelt wrapper flows; omit in new files. Legacy files may still include it. |
 | `audit.require_policy_digest` | Refuse to start unless the wrapper policy digest is recorded in the audit envelope. |
 | `audit.require_resolved_posture` | Refuse to start unless resolved host posture is recorded. |
-| `stdio.mode` | Child stdio for **`run`**: `capture`, `inherit`, `null`, or `pty`. Text-mode runs default from this when set; `--json` often implies capture unless overridden. |
+| `stdio.mode` | Child stdio for **`run`**: `capture`, `inherit`, `null`, or `pty`. Text-mode runs default from this when set; `--json` often implies capture unless overridden. On **Linux**, **`pty`** allocates a virtual pseudo-terminal so tools that open **`/dev/tty`** (for example `vim`, `less`, password prompts, or Git hooks) work inside the sandbox without host TTY passthrough. Override per invocation with **`finsafe run --stdio pty`**. **`inherit`** on Linux does not grant a controlling terminal inside bubblewrap. |
 | `macos_seatbelt.deny_outbound_ports` | Optional list of TCP ports to deny in the Seatbelt profile even when `network: host` (coarse control; not per-domain filtering). |
 | `network` | `none` or `host` (Stage 1). |
 | `resources.memory_max` / `pids_max` / `cpu_max` | cgroup v2-style resource strings where the Linux strict path applies. |
 | `resources.timeout_ms` | Optional wall-clock ceiling for a **`run`** invocation. |
-| `filesystem.read_only_paths` | Read-only scope (mounts / Landlock read layer where supported). |
-| `filesystem.read_write_paths` | Writable scope. |
+| `filesystem.read_only_paths` | Read-only scope (mounts / Landlock read layer where supported). **Only paths that exist on the host when `finsafe run` compiles the policy** are applied; missing entries are omitted and logged in derivation output (`read_only landlock skipped (path missing)`). |
+| `filesystem.read_write_paths` | Writable scope. Same **existence-at-compile-time** rule as `read_only_paths`; missing entries are omitted (`read_write landlock skipped (path missing)`). Creating a directory later in the same run does not add it—you must re-run `finsafe run` after the path exists on the host. |
 | `filesystem.protected_read_only_paths` | Optional extra paths forced into a **read-only** layer (carveouts under writable roots). Relative paths resolve against the process working directory. |
 | `filesystem.skip_default_protected_paths` | Default `false`: compiler may add `.git` / `.finsafe` under each `read_write_paths` entry when they exist on disk. Set `true` to skip that merge. |
 | `filesystem.deny_read_globs` | Optional suffix glob list (`*.ext`, `**/*.ext`). Matches under writable roots are added to read-only restrictions (writes blocked). Unsupported patterns are skipped with log lines in derivation output. |

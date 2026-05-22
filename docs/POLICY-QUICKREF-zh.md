@@ -39,13 +39,13 @@ filesystem:
 | `degrade.prompt_on_macos_arm64_missing_apple_container` | 原生 macOS Seatbelt 包装流程下 **已弃用 / 忽略**；新文件请省略。旧文件若仍含此项可保留。 |
 | `audit.require_policy_digest` | 若审计信封中未记录包装策略摘要，则拒绝启动。 |
 | `audit.require_resolved_posture` | 若未记录解析后的主机姿态，则拒绝启动。 |
-| `stdio.mode` | 子进程标准 IO，用于 **`run`**：`capture`、`inherit`、`null` 或 `pty`。文本模式运行通常受此控制；`--json` 往往在未覆盖时偏向 capture。 |
+| `stdio.mode` | 子进程标准 IO，用于 **`run`**：`capture`、`inherit`、`null` 或 `pty`。文本模式运行通常受此控制；`--json` 往往在未覆盖时偏向 capture。在 **Linux** 上，**`pty`** 会分配虚拟伪终端，使在沙箱内打开 **`/dev/tty`** 的工具（如 `vim`、`less`、密码提示或 Git 钩子）可正常工作，且无需直通宿主机 TTY。单次覆盖：**`finsafe run --stdio pty`**。Linux 上 **`inherit`** 不会在 bubblewrap 内提供 controlling terminal。 |
 | `macos_seatbelt.deny_outbound_ports` | 可选：在 `network: host` 时于 Seatbelt 配置中按 **TCP 端口** 拒绝出站（粗粒度；非按域名）。 |
 | `network` | `none` 或 `host`（Stage 1）。 |
 | `resources.memory_max` / `pids_max` / `cpu_max` | 在 Linux 严格栈下为 cgroup v2 风格的资源字符串。 |
 | `resources.timeout_ms` | 可选：**`run`** 调用的墙上时钟上限。 |
-| `filesystem.read_only_paths` | 只读范围（在支持处参与挂载 / Landlock 只读层）。 |
-| `filesystem.read_write_paths` | 可写范围。 |
+| `filesystem.read_only_paths` | 只读范围（在支持处参与挂载 / Landlock 只读层）。**仅在 `finsafe run` 编译策略时宿主机上已存在的路径**会生效；缺失项会被省略并在派生日志中记录（`read_only landlock skipped (path missing)`）。 |
+| `filesystem.read_write_paths` | 可写范围。与 `read_only_paths` 相同：**编译时须已存在**；缺失项会被省略（`read_write landlock skipped (path missing)`）。同一次运行中事后 `mkdir` 不会自动加入，须在路径存在后重新执行 `finsafe run`。 |
 | `filesystem.protected_read_only_paths` | 可选：在可写根下额外强制 **只读** 的路径（雕刻）。相对路径相对 **进程工作目录** 解析。 |
 | `filesystem.skip_default_protected_paths` | 默认 `false`：若磁盘上存在，编译器可能在每个 `read_write_paths` 条目下合并 `.git` / `.finsafe`。设为 `true` 则跳过该合并。 |
 | `filesystem.deny_read_globs` | 可选：后缀 glob 列表（如 `*.ext`、`**/*.ext`）。在可写根下匹配到的路径加入只读限制（禁止写入）。不支持的图案会在派生日志中跳过。 |
