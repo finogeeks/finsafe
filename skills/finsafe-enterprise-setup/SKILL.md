@@ -23,7 +23,7 @@ This skill is **self-contained** (full `https://` links only). No checkout of th
 | In scope | Out of scope |
 |----------|----------------|
 | Release downloads, authority install, license file | Issuing `license.jws` (`finsafe-licensectl` — Finogeeks only) |
-| Pilot verification (`curl`, Admin UI) | `scripts/managed-mode/*` (private source repo / Finogeeks CI) |
+| Pilot verification (`curl`, Admin UI) | [`scripts/check-authority-health.sh`](scripts/check-authority-health.sh); Finogeeks CI: `scripts/tests/managed-mode/*` (private monorepo) |
 | MDM fleet phases (high level) | Personal-mode `install.sh` only workflow |
 | Hand-off to bundlectl skill for publish/sentinel | Rust `cargo build` from source |
 
@@ -75,7 +75,7 @@ Binary matrix: [binary-reference.md](https://github.com/finogeeks/finsafe/blob/m
 Example (Linux authority + macOS operator):
 
 ```bash
-VERSION=0.4.6
+VERSION=0.4.7
 shasum -a 256 -c SHA256SUMS
 
 tar -xvf "finsafe-admin-server-v${VERSION}-x86_64-unknown-linux-gnu.tar.zst"
@@ -174,7 +174,7 @@ Use the matrix as a **checklist**, not as shell commands: [managed-mode-matrix.m
 | Tamper: local `--policy` | Expect `MANAGED_POLICY_LOCAL_OVERRIDE` when sentinel present |
 | Admin operations | [admin-ui.md](https://github.com/finogeeks/finsafe/blob/main/docs/admin-ui.md) |
 
-Automated `scripts/managed-mode/*` harnesses are **Finogeeks engineering only** (private monorepo).
+Automated `scripts/tests/managed-mode/*` harnesses are **Finogeeks engineering only** (private monorepo).
 
 ## Key docs (bookmark list)
 

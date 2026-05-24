@@ -249,15 +249,23 @@ finsafe run -- /path/to/runtime "$@"
 
 ### 8.2 Kill switch
 
-管理 UI 或：
+使用管理 UI **设置 → Kill switch**（全舰队、按分组或按 device_id）。说明见
+[admin-ui-zh.md § Kill switch](./admin-ui-zh.md#设置--kill-switch)。
 
 ```bash
+curl -sf -H "X-Admin-Token: $TOKEN" \
+  "$FINSAFE_AUTHORITY_PUBLIC_URL/v1/admin/kill-switch" | jq .
+
 curl -X POST "$FINSAFE_AUTHORITY_PUBLIC_URL/v1/admin/kill-switch" \
   -H 'Content-Type: application/json' \
-  -d '{"until":"2026-12-31T23:59:59Z"}'
-```
+  -H "X-Admin-Token: $TOKEN" \
+  -d '{"until":"2026-12-31T23:59:59Z","scope":{"kind":"all"}}'
 
-清除：`{"until":null}`。
+curl -X POST "$FINSAFE_AUTHORITY_PUBLIC_URL/v1/admin/kill-switch" \
+  -H 'Content-Type: application/json' \
+  -H "X-Admin-Token: $TOKEN" \
+  -d '{"until":null,"scope":{"kind":"all"}}'
+```
 
 ### 8.3 撤销设备
 

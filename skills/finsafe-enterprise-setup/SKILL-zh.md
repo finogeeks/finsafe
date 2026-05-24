@@ -21,7 +21,7 @@ description: >-
 | 范围内 | 范围外 |
 |--------|--------|
 | 发行包下载、authority 安装、许可证文件 | 签发 `license.jws`（`finsafe-licensectl` — 仅 Finogeeks） |
-| 试点验收（`curl`、Admin UI） | `scripts/managed-mode/*`（私有源码仓 / Finogeeks CI） |
+| 试点验收（`curl`、Admin UI） | `scripts/tests/managed-mode/*`（私有源码仓 / Finogeeks CI） |
 | MDM 舰队阶段（概要） | 仅 `install.sh` 的个人模式工作流 |
 | 移交 bundlectl 技能做 publish/sentinel | 从源码 `cargo build` |
 
@@ -158,7 +158,7 @@ finsafe-bundlectl sentinel sign --out /secure/mdm/managed-required.jws
 | 篡改：本地 `--policy` | 有 sentinel 时应为 `MANAGED_POLICY_LOCAL_OVERRIDE` |
 | 管理操作 | [admin-ui-zh.md](https://github.com/finogeeks/finsafe/blob/main/docs/admin-ui-zh.md) |
 
-自动化 `scripts/managed-mode/*` 仅供 **Finogeeks 工程**（私有 monorepo）。
+自动化 `scripts/tests/managed-mode/*` 仅供 **Finogeeks 工程**（私有 monorepo）。
 
 ## 关键文档
 

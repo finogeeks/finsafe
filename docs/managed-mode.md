@@ -4,6 +4,8 @@
 
 Enterprise desktops run FinSAFE under **managed mode**: policy is distributed as signed JWS bundles from a central **Policy Authority**, cached and enforced by **`finsafe-agent`**, and consumed by the existing **`finsafe`** CLI over a Unix-domain socket.
 
+For the administrator mental model—bundles as signed policy sets, deterministic groups, first-class assignments, rollout on assignments, and conflict handling—see the [FinSAFE sandbox management model](./sandbox-management-model.md).
+
 Personal / developer use is unchanged when no enrollment marker and no `managed-required` sentinel are present.
 
 **Enterprise IT:** start with the [enterprise deployment runbook](./enterprise-deployment-runbook.md). Fleet install: [vendor-neutral checklist](./mdm/vendor-neutral-checklist.md) (any MDM or config management), or [Jamf](./mdm/jamf.md) / [Intune](./mdm/intune.md) / [Ansible](./mdm/ansible.md).

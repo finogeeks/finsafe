@@ -33,7 +33,7 @@ Policy Authority 与运维 CLI 在 [Releases](https://github.com/finogeeks/finsa
 校验并解压（方式与桌面发行包相同）：
 
 ```bash
-VERSION=0.4.6
+VERSION=0.4.7
 shasum -a 256 -c SHA256SUMS
 
 # Authority 主机（Linux 服务器）
@@ -194,15 +194,17 @@ open "$AUTHORITY/admin/"
 
 `finsafe-bundlectl` 是创建和推送策略 bundle 的运维工具。请在**安全的运维工作站**上运行，该工作站需能访问签名密钥（不在终端用户机器上运行）。它通过 HTTP 与 authority 协作，**不能**替代 authority 进程本身。
 
+**Bundle 发布创建策略内容；Assignment 控制哪些设备收到该 bundle。** 发布 bundle 后，通过管理 UI **Assignments** 页或 `/v1/admin/assignments`、`/v1/admin/assignments/preview` 创建或更新 Assignment。详见 [沙箱管理模型](./sandbox-management-model-zh.md)。
+
 可复制粘贴的命令序列与 Agent 向故障排查（自包含）见 https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL-zh.md
 
 ### bundlectl 与 authority 如何配合
 
 | 组件 | 职责 |
 |------|------|
-| **`finsafe-bundlectl`** | 构建 bundle 草稿、本地签名（审阅）、向 authority **发布** bundle JSON、为 MDM 签名 **managed-required** 哨兵 JWS |
-| **`finsafe-authority-http`** | SQLite 存储、对发布的 bundle **重新签名并持久化**、提供 `GET /v1/bundles/current`、JWKS、注册、心跳、管理 UI |
-| **`finsafe-agent`** | 从 authority 拉取最新 bundle JWS，用 JWKS 校验，缓存策略并通过 UDS 供 `finsafe` 使用 |
+| **`finsafe-bundlectl`** | 构建 bundle 草稿、本地签名（审阅）、向 authority **发布** bundle JSON（策略内容）、为 MDM 签名 **managed-required** 哨兵 JWS |
+| **`finsafe-authority-http`** | SQLite 存储、对发布的 bundle **重新签名并持久化**、提供 `GET /v1/bundles/current`（存在 Assignment 时按 Assignment 解析）、JWKS、注册、心跳、管理 UI、**Assignment API** |
+| **`finsafe-agent`** | 从 authority 拉取有效 bundle JWS，用 JWKS 校验，缓存策略并通过 UDS 供 `finsafe` 使用 |
 
 ```mermaid
 flowchart LR
@@ -261,7 +263,7 @@ bundle publish --in bundle.jws --authority <URL>
 
 **managed-required 哨兵（与 bundle 发布分开）：** `finsafe-bundlectl sentinel sign` 生成供 MDM 部署的 JWS（例如 `/etc/finsafe/managed-required.json`），其中包含 `authority_url` 与 JWKS 指纹；**不会**通过 authority HTTP API 上传。策略**内容**仍经 `bundle publish` → `GET /v1/bundles/current` 下发。
 
-**由 authority 处理（非 bundlectl）：** 一次性注册令牌（`POST /v1/enroll/token`）、设备注册/吊销、kill switch、审计入库及 `/admin/` UI。
+**由 authority 处理（非 bundlectl）：** 一次性注册令牌（`POST /v1/enroll/token`）、设备注册/吊销、kill switch、审计入库、**bundle 到分组的 Assignment**（`GET/POST /v1/admin/assignments`、`POST /v1/admin/assignments/preview`）及 `/admin/` UI。
 
 ### 运维命令
 
@@ -323,6 +325,7 @@ finsafe-bundlectl sentinel sign --out /tmp/managed-required.jws
 
 ## 相关文档
 
+- [sandbox-management-model-zh.md](./sandbox-management-model-zh.md) — Bundle、Group、Assignment 与 rollout
 - [binary-reference-zh.md](./binary-reference-zh.md) — 完整二进制套件、发行包、平台对照
 - [managed-mode-zh.md](./managed-mode-zh.md) — 架构概览与 CLI 错误码
 - [admin-ui-zh.md](./admin-ui-zh.md) — 管理控制台参考

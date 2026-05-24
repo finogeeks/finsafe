@@ -35,6 +35,7 @@ Deploy **Policy Authority**, **finsafe-agent**, and signed bundles to employee d
 | Document | Description |
 |----------|-------------|
 | [binary-reference.md](./binary-reference.md) · [binary-reference-zh.md](./binary-reference-zh.md) | All shipped binaries, release archives, admin verification checklist |
+| [sandbox-management-model.md](./sandbox-management-model.md) · [sandbox-management-model-zh.md](./sandbox-management-model-zh.md) | **Sandbox management model**: bundles as policy sets, groups, assignments, rollout, and conflict handling |
 | [authority-deployment.md](./authority-deployment.md) · [authority-deployment-zh.md](./authority-deployment-zh.md) | Installing and running `finsafe-authority-http`, license, env vars, `finsafe-bundlectl` |
 | [admin-ui.md](./admin-ui.md) · [admin-ui-zh.md](./admin-ui-zh.md) | Admin console reference (devices, enrollment tokens, kill switch, API equivalents) |
 | [managed-mode.md](./managed-mode.md) · [managed-mode-zh.md](./managed-mode-zh.md) | Overview, components, paths, CLI errors |

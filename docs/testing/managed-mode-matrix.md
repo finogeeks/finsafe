@@ -7,11 +7,11 @@ Manual run book for managed-mode acceptance.
 > | You are | How to use this matrix |
 > |---------|------------------------|
 > | **Customer IT / pilot** | Treat rows as a **checklist** during pilot sign-off. Follow [finsafe-enterprise-setup skill](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-enterprise-setup/SKILL.md), [enterprise-deployment-runbook.md](../enterprise-deployment-runbook.md), and [licensing-e2e-macos.md](./licensing-e2e-macos.md#customer-pilot-verification). |
-> | **Finogeeks engineering** | Use the **Automation** column in the **private FinSAFE source repository** (`scripts/managed-mode/*`, `cargo test`). |
+> | **Finogeeks engineering** | Use the **Automation** column in the **private FinSAFE source repository** (`scripts/tests/managed-mode/*`, `cargo test`). |
 
 | # | Scenario | Expected | Automation (Finogeeks private repo) | Customer pilot |
 |---|----------|----------|--------------------------------------|----------------|
-| 1 | Fresh enroll + pull | Agent writes `enrolled.json`, serves policy on UDS | `scripts/managed-mode/run-suite.sh enroll` | Enroll once script + `test -f /etc/finsafe/enrolled.json` |
+| 1 | Fresh enroll + pull | Agent writes `enrolled.json`, serves policy on UDS | `scripts/tests/managed-mode/run-suite.sh enroll` | Enroll once script + `test -f /etc/finsafe/enrolled.json` |
 | 2 | Managed `finsafe run -- true` | Exit 0, managed audit metadata when enrolled | `run-suite.sh run` | `finsafe run --json -- /usr/bin/true` |
 | 3 | `--policy` while enrolled | `MANAGED_POLICY_LOCAL_OVERRIDE` | `tamper-suite.sh local-policy` | Manual: pass `--policy` on fleet binary |
 | 4 | `--personal` with sentinel | `MANAGED_FORCED_BY_POLICY` | `tamper-suite.sh personal-flag` | Manual |
@@ -43,13 +43,13 @@ Scripts use an isolated tree when `FINSAFE_MANAGED_STATE_DIR` is set (default: t
 
 Build targets (private monorepo only):
 
-- **Public / developer:** `scripts/build-finsafe-personal.sh` → `cargo build --no-default-features`
-- **Enterprise fleet:** `scripts/build-finsafe-enterprise.sh` → `cargo build --features managed`
+- **Public / developer:** `scripts/dev/build-finsafe-personal.sh` → `cargo build --no-default-features`
+- **Enterprise fleet:** `scripts/dev/build-finsafe-enterprise.sh` → `cargo build --features managed`
 
 ```bash
-./scripts/build-finsafe-enterprise.sh
-./scripts/managed-mode/tamper-suite.sh all
-./scripts/managed-mode/run-suite.sh all   # needs authority on :8090 for enroll
+./scripts/dev/build-finsafe-enterprise.sh
+./scripts/tests/managed-mode/tamper-suite.sh all
+./scripts/tests/managed-mode/run-suite.sh all   # needs authority on :8090 for enroll
 ```
 
 ## macOS
@@ -61,7 +61,7 @@ See [managed-mode-macos-runbook.md](./managed-mode-macos-runbook.md) and [packag
 Confirms local wrapper contract on Linux (engineering):
 
 ```bash
-./scripts/verify-local-program-wrapper-smoke.sh
+./scripts/tests/verify-local-program-wrapper-smoke.sh
 ```
 
 Customer personal-mode smoke: [USER-GUIDE.md](../USER-GUIDE.md).

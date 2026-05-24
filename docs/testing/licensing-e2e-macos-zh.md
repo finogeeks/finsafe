@@ -76,9 +76,9 @@ macOS 验证许可证**不需要 Docker**；Landlock 或 Linux 专用脚本时�
 | 层级 | 内容 | 命令（私有仓库） |
 |------|------|------------------|
 | **0 — 单元** | JWS、过期、宽限期、席位 | `cargo test -p finsafe-license -p finsafe-authority` |
-| **1 — HTTP** | 无证 `402`、有证 `200`、席位 | `scripts/managed-mode/license-suite.sh …` |
-| **2 — macOS E2E** | 开发 `license.jws`、双 authority、托管运行 | `scripts/managed-mode/e2e-licensing-macos.sh` |
-| **2b — Hermes** | licensectl + bundlectl + Hermes | `scripts/managed-mode/e2e-mac-authority-hermes.sh` |
+| **1 — HTTP** | 无证 `402`、有证 `200`、席位 | `scripts/tests/managed-mode/license-suite.sh …` |
+| **2 — macOS E2E** | 开发 `license.jws`、双 authority、托管运行 | `scripts/tests/managed-mode/e2e-licensing-macos.sh` |
+| **2b — Hermes** | licensectl + bundlectl + Hermes | `scripts/tests/managed-mode/e2e-mac-authority-hermes.sh` |
 | **3 — Linux** | Landlock、tamper | 见 [managed-mode-matrix-zh.md](./managed-mode-matrix-zh.md) |
 | **4 — 试点** | 真实 MDM | [enterprise-deployment-runbook-zh.md](../enterprise-deployment-runbook-zh.md) |
 
@@ -87,7 +87,7 @@ macOS 验证许可证**不需要 Docker**；Landlock 或 Linux 专用脚本时�
 在私有仓库根目录：
 
 ```bash
-./scripts/managed-mode/e2e-licensing-macos.sh
+./scripts/tests/managed-mode/e2e-licensing-macos.sh
 ```
 
 ### CI（工程）
@@ -96,7 +96,7 @@ macOS 验证许可证**不需要 Docker**；Landlock 或 Linux 专用脚本时�
 cargo fmt --all -- --check
 cargo clippy -p finsafe-license -p finsafe-authority -- -D warnings
 cargo test -p finsafe-license -p finsafe-authority
-./scripts/managed-mode/e2e-licensing-macos.sh
+./scripts/tests/managed-mode/e2e-licensing-macos.sh
 ```
 
 ---

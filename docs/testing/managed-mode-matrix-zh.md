@@ -7,7 +7,7 @@
 > | 角色 | 用法 |
 > |------|------|
 > | **客户 IT / 试点** | 将各行作为**检查清单**。[finsafe-enterprise-setup 技能](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-enterprise-setup/SKILL-zh.md)、[enterprise-deployment-runbook-zh.md](../enterprise-deployment-runbook-zh.md)、[licensing-e2e-macos-zh.md](./licensing-e2e-macos-zh.md#客户试点验收)。 |
-> | **Finogeeks 工程** | 使用**私有源码仓库**中的 **Automation** 列（`scripts/managed-mode/*`、`cargo test`）。 |
+> | **Finogeeks 工程** | 使用**私有源码仓库**中的 **Automation** 列（`scripts/tests/managed-mode/*`、`cargo test`）。 |
 
 **English:** [managed-mode-matrix.md](./managed-mode-matrix.md)
 
@@ -43,13 +43,13 @@
 
 构建（仅私有仓库）：
 
-- 个人：`scripts/build-finsafe-personal.sh`
-- 企业：`scripts/build-finsafe-enterprise.sh`
+- 个人：`scripts/dev/build-finsafe-personal.sh`
+- 企业：`scripts/dev/build-finsafe-enterprise.sh`
 
 ```bash
-./scripts/build-finsafe-enterprise.sh
-./scripts/managed-mode/tamper-suite.sh all
-./scripts/managed-mode/run-suite.sh all
+./scripts/dev/build-finsafe-enterprise.sh
+./scripts/tests/managed-mode/tamper-suite.sh all
+./scripts/tests/managed-mode/run-suite.sh all
 ```
 
 ## macOS

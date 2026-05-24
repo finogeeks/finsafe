@@ -76,9 +76,9 @@ Docker is **not** required for licensing on macOS; use OrbStack or Linux only fo
 | Layer | What it proves | Command (private repo) |
 |-------|----------------|------------------------|
 | **0 — Unit** | JWS verify, expiry, grace, features, seat math | `cargo test -p finsafe-license -p finsafe-authority` |
-| **1 — HTTP gates** | `402` without license; `200` with license; seat cap | `scripts/managed-mode/license-suite.sh …` |
-| **2 — Full macOS E2E** | Build, dev `license.jws`, both authorities, managed run | `scripts/managed-mode/e2e-licensing-macos.sh` |
-| **2b — macOS managed + Hermes** | licensectl + bundlectl + enroll + Hermes under Seatbelt | `scripts/managed-mode/e2e-mac-authority-hermes.sh` |
+| **1 — HTTP gates** | `402` without license; `200` with license; seat cap | `scripts/tests/managed-mode/license-suite.sh …` |
+| **2 — Full macOS E2E** | Build, dev `license.jws`, both authorities, managed run | `scripts/tests/managed-mode/e2e-licensing-macos.sh` |
+| **2b — macOS managed + Hermes** | licensectl + bundlectl + enroll + Hermes under Seatbelt | `scripts/tests/managed-mode/e2e-mac-authority-hermes.sh` |
 | **3 — Linux parity** | Landlock, `run-suite.sh`, `tamper-suite.sh` | OrbStack VM or CI; see [managed-mode-matrix.md](./managed-mode-matrix.md) |
 | **4 — Pilot** | Two hosts, real MDM, production JWKS | [enterprise-deployment-runbook.md](../enterprise-deployment-runbook.md) |
 
@@ -95,7 +95,7 @@ Layer **2** is the default pre-PR gate on a Mac with Rust installed.
 From the private repository root:
 
 ```bash
-./scripts/managed-mode/e2e-licensing-macos.sh
+./scripts/tests/managed-mode/e2e-licensing-macos.sh
 ```
 
 The script builds enterprise binaries, prepares a **dev** `license.jws` (not for production), runs license suites on unlicensed/licensed authorities, publishes a smoke bundle, enrolls an agent, and runs `finsafe run --json`.
@@ -104,9 +104,9 @@ The script builds enterprise binaries, prepares a **dev** `license.jws` (not for
 
 ```bash
 export FINSAFE_AUTHORITY_URL=http://127.0.0.1:8090
-./scripts/managed-mode/license-suite.sh missing
-./scripts/managed-mode/license-suite.sh licensed
-./scripts/managed-mode/license-suite.sh seat-limit
+./scripts/tests/managed-mode/license-suite.sh missing
+./scripts/tests/managed-mode/license-suite.sh licensed
+./scripts/tests/managed-mode/license-suite.sh seat-limit
 ```
 
 ### CI gates (engineering)
@@ -115,7 +115,7 @@ export FINSAFE_AUTHORITY_URL=http://127.0.0.1:8090
 cargo fmt --all -- --check
 cargo clippy -p finsafe-license -p finsafe-authority -- -D warnings
 cargo test -p finsafe-license -p finsafe-authority
-./scripts/managed-mode/e2e-licensing-macos.sh
+./scripts/tests/managed-mode/e2e-licensing-macos.sh
 ```
 
 ---

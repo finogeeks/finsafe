@@ -151,6 +151,7 @@ Central policy authority, `finsafe-agent`, MDM deployment, and fleet enforcement
 | [docs/testing/managed-mode-matrix.md](docs/testing/managed-mode-matrix.md) · [docs/testing/managed-mode-matrix-zh.md](docs/testing/managed-mode-matrix-zh.md) | Acceptance test matrix (pilot → production). |
 | [docs/testing/licensing-e2e-macos.md](docs/testing/licensing-e2e-macos.md) · [docs/testing/licensing-e2e-macos-zh.md](docs/testing/licensing-e2e-macos-zh.md) | macOS licensing + managed smoke E2E (`e2e-licensing-macos.sh`). |
 | [packaging/](packaging/) | systemd / LaunchDaemon units and MDM example scripts |
+| [scripts/](scripts/) | Enterprise IT utilities (`check-authority-health.sh`) |
 
 ## Security
 

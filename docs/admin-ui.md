@@ -2,129 +2,261 @@
 
 **中文：** [admin-ui-zh.md](./admin-ui-zh.md)
 
-The **FinSAFE Policy Authority admin console** is a minimal browser-based operator
-interface served at `/admin/` on the authority host.
+The **FinSAFE Policy Authority admin console** is a React operator UI served at
+`/admin/` on the authority host (embedded in `finsafe-authority-http` when built with
+`embed-admin-ui`, or from `FINSAFE_ADMIN_UI_DIR`).
 
 **URL (production):** `https://gov.example.com/policy-authority/admin/`  
 **URL (local dev):** `http://127.0.0.1:8090/admin/`
 
-> **Security:** The admin UI has no built-in authentication. In production, restrict
-> `/admin/` and `/v1/admin/*` at the reverse proxy layer using an IP allowlist,
-> SSO/OIDC, or mTLS before exposing the authority to a network. See
-> [authority-deployment.md § Security notes](./authority-deployment.md#7-security-notes).
+> **Security:** Protect `/admin/` and `/v1/admin/*` at the reverse proxy (IP allowlist,
+> SSO/OIDC, mTLS). Set admin tokens via `FINSAFE_ADMIN_TOKENS_PATH` or
+> `--workdir/.../admin_tokens` and pass `X-Admin-Token` from the UI (Settings → General).
 
 ---
 
-## Commercial license panel
+## Navigation
 
-At the top of the console, **Commercial license** shows live state from
-`GET /v1/license/status`: status (`valid`, `missing`, `expired`, `grace`, `invalid`),
-customer ID, subject, expiry, enabled features, and `max_devices`.
+| Area | Purpose |
+|------|---------|
+| **Dashboard** | Fleet KPIs: device counts, denials and runs in the last 24h, live event feed. |
+| **Devices** | Search/filter fleet; bulk-apply tags; view bundle and denial counts. |
+| **Runs** | Managed run records ingested from audit. |
+| **Audit** | Raw fleet audit events. |
+| **Bundles** | Published policy bundles (signed policy sets); policy editor (guided + YAML). |
+| **Assignments** | Connect published bundles to groups with rollout controls. |
+| **Alerts** | Security-oriented audit kinds (including policy denials). |
+| **Settings** | License/token, tag presets, device groups, **kill switch**. |
 
-When a protected API call fails because no license is installed or the license is
-invalid, the authority returns **`402 Payment Required`** with a JSON body:
-
-```json
-{
-  "error": "license missing: install a signed license at /etc/finsafe/license.jws",
-  "code": "LICENSE_MISSING"
-}
-```
-
-The UI surfaces this message and reminds operators to install or renew
-`/etc/finsafe/license.jws` (or set `FINSAFE_LICENSE_PATH` on the service) and restart
-`finsafe-authority-http`.
-
-**API equivalent:**
-
-```bash
-curl -sf "$AUTHORITY/v1/license/status" | jq .
-```
+**Recommended workflow:** define **tag presets** and **device groups** under Settings,
+publish bundles, then assign bundles to groups on **Assignments**, and apply matching
+tags on **Devices**. See the [sandbox management model](./sandbox-management-model.md).
 
 ---
 
-## Sections
+## Settings → General
 
-### Devices
+- **Commercial license** — `GET /v1/license/status` (`valid`, `missing`, `expired`, etc.).
+- **Admin token** — stored in browser `localStorage`, sent as `X-Admin-Token`.
 
-Lists all enrolled devices along with their last heartbeat time, whether the
-managed-required sentinel is present, and revocation status.
+Protected APIs without a valid license return **`402 Payment Required`**.
 
-Click **Refresh** to reload. Each entry shows:
+---
 
-| Field | Meaning |
-|-------|---------|
-| `device_id` | Stable identifier set at enrollment (`FINSAFE_AGENT_BOOTSTRAP_DEVICE_ID`). |
-| `last_seen` | UTC timestamp of the most recent heartbeat. |
-| `sentinel_present` | Whether the agent last reported `/etc/finsafe/managed-required.json` is in place. |
-| `revoked` | `true` if the device has been revoked. Revoked devices receive `revoke_device: true` on their next heartbeat and enter a local kill-switch state. |
+## Settings → Tag presets
 
-**API equivalent:**
+Browser-local catalog of allowed label names (e.g. `department:finance`,
+`cohort:beta`). Export/import JSON to share across operators. Tags are applied on
+**Devices**; the authority stores labels per device row.
+
+---
+
+## Settings → Device groups
+
+Groups are **named device cohorts** defined by deterministic rules over trusted tags and
+device facts. Assignment-targetable groups use an `all` rule: every required predicate
+must match. Supported inputs include `admin:name=value` tags, authority-verified
+`device:*` facts, `device_id`, and direct `not` exclusions. OR cases should be split
+into separate groups.
+
+Create groups here; assign matching `admin:*` tags on **Devices**. Use **Assignments**
+to connect a published bundle to a group.
+
+---
+
+## Settings → Kill switch
+
+### What it is
+
+The **kill switch** is an emergency fleet control. When active for a device, its
+`finsafe-agent`:
+
+1. **Blocks new managed runs** — `finsafe run` and managed `self-confine` cannot obtain
+   policy (`KILL_SWITCH_ACTIVE` from the agent UDS).
+2. **Ends in-flight sandboxes** — long-lived runs that watch the kill switch receive a
+   terminate signal after a grace period (from bundle `on_rotation.grace_secs`, typically
+   30s).
+
+Agents **remain enrolled**; heartbeats continue so the console still shows device health.
+
+### When to use it
+
+| Scenario | Action |
+|----------|--------|
+| Bad bundle published | Activate kill switch → roll back or publish fix → clear switch. |
+| Active incident / compromise investigation | Fleet-wide or scoped pause while retaining visibility. |
+| Change freeze | Time-bounded `until` (1h / 4h / 24h or custom RFC3339). |
+
+### When **not** to use it
+
+| Instead use… | For… |
+|--------------|------|
+| **Revoke device** | Permanent removal of trust for one machine (`Devices` detail → Revoke). |
+| **Policy / assignment rollout** | Normal deny rules (wrong program, network, labels). |
+| **Tag + group targeting** | Gradual rollout, not emergency stop. |
+
+### Scopes in the UI
+
+- **Entire fleet** — global row in authority `kill_switch` table; returned on every
+  device heartbeat as `kill_switch_until`.
+- **Device group** — applies per-device kill switch rows for all devices matching the
+  group's label filter.
+- **Specific device IDs** — per-device rows only.
+
+**Clear** sends `until: null` for the selected scope. Per-device rows from a group
+activation must be cleared with the same scope (or cleared fleet-wide when using
+**Entire fleet**).
+
+### API
+
 ```bash
-curl -sf "$AUTHORITY/v1/admin/devices" | jq .
-```
+# Read current rows
+curl -sf -H "X-Admin-Token: $TOKEN" "$AUTHORITY/v1/admin/kill-switch" | jq .
 
-### Enrollment token
-
-Issues a **one-time enrollment token** (JWS, 15-minute TTL). Copy the `token` value
-and supply it to the `finsafe-agent` service environment as `FINSAFE_ENROLL_TOKEN`
-during the device's first boot.
-
-The token is consumed by the first successful enrollment. During enrollment, the
-authority also pins `FINSAFE_AGENT_BOOTSTRAP_DEVICE_ID` to the agent's local
-device key. A later enrollment with the same `device_id` but a different device
-key is rejected with `DEVICE_ID_ALREADY_BOUND`.
-
-After enrollment succeeds, remove the token from the agent's environment profile (see
-[enterprise-deployment-runbook.md Phase D.3](./enterprise-deployment-runbook.md#d3-remove-token-from-mdm)).
-
-**API equivalent:**
-```bash
-curl -sf -X POST "$AUTHORITY/v1/enroll/token" | jq .
-# {"token":"<jws>","expires_at":"<rfc3339>"}
-```
-
-### Kill switch
-
-Activates or clears a **fleet-wide kill switch** that prevents `finsafe run` from
-succeeding on all enrolled desktops. Useful for emergency response.
-
-- **Activate (1h):** Sets the kill switch with an expiry 1 hour from now. Agents
-  receive the kill-switch state on their next heartbeat or bundle pull.
-- **Clear:** Removes the kill switch immediately.
-
-You can also set an arbitrary expiry via the API:
-
-```bash
-# Activate until a specific time
+# Activate fleet-wide for 1 hour (example time)
 curl -X POST "$AUTHORITY/v1/admin/kill-switch" \
-  -H 'Content-Type: application/json' \
-  -d '{"until":"2026-12-31T23:59:59Z"}'
+  -H "Content-Type: application/json" \
+  -H "X-Admin-Token: $TOKEN" \
+  -d '{"until":"2026-05-23T21:00:00Z","scope":{"kind":"all"}}'
 
-# Clear
+# Scoped to one device
 curl -X POST "$AUTHORITY/v1/admin/kill-switch" \
-  -H 'Content-Type: application/json' \
-  -d '{"until":null}'
+  -H "Content-Type: application/json" \
+  -H "X-Admin-Token: $TOKEN" \
+  -d '{"until":"2026-05-23T21:00:00Z","scope":{"kind":"device_ids","device_ids":["mac-hermes-1"]}}'
+
+# Clear fleet-wide
+curl -X POST "$AUTHORITY/v1/admin/kill-switch" \
+  -H "Content-Type: application/json" \
+  -H "X-Admin-Token: $TOKEN" \
+  -d '{"until":null,"scope":{"kind":"all"}}'
+```
+
+Requires license feature `kill_switch`. SSE event: `{"type":"kill-switch","until":...}`.
+
+See also [enterprise-deployment-runbook.md § Kill switch](./enterprise-deployment-runbook.md#82-kill-switch).
+
+---
+
+## Devices
+
+Lists enrolled devices with filters (status, tag, group, search), pagination, and bulk
+tagging. Define tags under **Settings → Tag presets** first.
+
+| Column | Meaning |
+|--------|---------|
+| **Device** | `device_id` from enrollment (`FINSAFE_AGENT_BOOTSTRAP_DEVICE_ID`). |
+| **Status** | `healthy`, `stale` (no heartbeat within `device_stale_after_secs`, default 5m), `revoked`, etc. |
+| **Tags** | Labels on the device; drive group membership and bundle `match_spec.groups`. |
+| **Bundle** | Last bundle id/version reported in the agent heartbeat; link to bundle detail when known. **Not reported** = no bundle in last heartbeat. |
+| **Last seen** | Relative and absolute last heartbeat time. |
+| **Denials 24h** | Count of **policy denial** audit events for this device in the last 24 hours (see below). |
+
+**Revoke** is on the device detail page; revoked devices get `revoke_device: true` on
+heartbeat and enter a local kill-switch-like state on the agent.
+
+```bash
+curl -sf -H "X-Admin-Token: $TOKEN" "$AUTHORITY/v1/admin/devices?limit=50" | jq .
 ```
 
 ---
 
-## Other admin API endpoints (CLI / automation only)
+## Policy denials (“Denials 24h”)
 
-These are not surfaced in the UI but are available for scripting:
+### What it means
+
+A **policy denial** is a managed-mode audit event (`kind: policy_denied`) meaning
+FinSAFE **refused** a managed execution attempt under the active authority bundle—not
+a generic OS error or a kill switch.
+
+Typical causes (reported in audit `reason` when emitted):
+
+- **No binding match** — e.g. user ran `curl` but the bundle only binds `hermes`.
+- **Kill switch active** — emergency pause (may also surface as `KILL_SWITCH_ACTIVE` before audit).
+- **Runtime policy block** — sandbox/network/filesystem rules denied the action (when wired to audit).
+
+The **Devices → Denials 24h** column and **Dashboard → Denials (24h)** count events
+stored in the authority database from `POST /v1/audit/events` (agent uploads spooled
+audit from managed `finsafe` runs).
+
+### When to use this metric
+
+| Signal | Interpretation |
+|--------|----------------|
+| Sudden spike on one device | Misconfigured bundle binding, wrong tags, or users launching non-approved tools. |
+| Fleet-wide increase after rollout | New bundle too strict; check **Alerts** and audit `reason` fields. |
+| Always zero | No denials recorded—either policy is permissive enough or denial audit events are not yet emitted for that code path. |
+
+**Investigate:** **Alerts** (filters `PolicyDenied`), **Audit**, device detail, and bundle
+bindings. **Remediate:** adjust bundle `match_spec`, device tags/groups, or rollout—not
+the kill switch unless you need an emergency stop.
+
+Denials are **not** the same as **kill switch** (operator pause) or **revoke** (device trust).
+
+---
+
+## Bundles and policy editor
+
+Publish signed `BundleV1` JWS artifacts as **policy sets** (multiple sandbox policies
+per bundle). Preview/publish YAML policies when the authority build supports
+`/v1/admin/policies/*`. Bundle publish creates policy content; **Assignments** control
+which devices receive each bundle.
+
+---
+
+## Assignments
+
+The **Assignments** page connects a published bundle version to a device group and
+controls rollout for that relationship. Rollout percent, seed, and optional start/end
+times belong to the assignment, not the bundle.
+
+Typical flow:
+
+1. Publish a bundle on **Bundles**.
+2. Create or verify an assignment-targetable group under **Settings → Device groups**.
+3. On **Assignments**, preview matched devices, then save or activate the assignment.
+
+When active assignments exist, `/v1/bundles/current` resolves the effective bundle through
+assignment resolution. Devices outside a partial rollout may fall back to a broader
+assignment or receive `no_assignment`. Ambiguous overlaps fail closed with
+`assignment_conflict`.
+
+```bash
+curl -sf -H "X-Admin-Token: $TOKEN" "$AUTHORITY/v1/admin/assignments" | jq .
+
+curl -X POST "$AUTHORITY/v1/admin/assignments/preview" \
+  -H "Content-Type: application/json" \
+  -H "X-Admin-Token: $TOKEN" \
+  -d '{
+    "assignment_id": "finance-hermes-prod",
+    "bundle_version": 3,
+    "group_id": "finance-hermes",
+    "rollout": { "percent": 10, "rollout_seed": "finance-hermes-prod-seed" }
+  }' | jq .
+```
+
+---
+
+## Other admin API endpoints
 
 | Method | Path | Description |
 |--------|------|-------------|
-| `POST` | `/v1/admin/bundles` | Publish a signed bundle JWS. Used by `finsafe-bundlectl bundle publish`. |
-| `POST` | `/v1/admin/devices/{device_id}/revoke` | Revoke a specific device. |
-| `GET` | `/.well-known/finsafe/jwks.json` | JWKS for verifying bundle signatures. |
-| `GET` | `/v1/bundles/current` | Latest bundle JWS (used by agents). |
-| `GET` | `/health` | Liveness check (`200 ok`). |
-| `GET` | `/v1/events` | SSE stream of admin events (bundle rotation, kill-switch, revocations). |
+| `POST` | `/v1/enroll/token` | One-time enrollment token (15m TTL). |
+| `POST` | `/v1/admin/bundles` | Publish bundle JWS (`finsafe-bundlectl`). |
+| `GET` | `/v1/admin/assignments` | List bundle-to-group assignments. |
+| `POST` | `/v1/admin/assignments` | Create or update an assignment. |
+| `POST` | `/v1/admin/assignments/preview` | Preview matched devices and conflicts. |
+| `POST` | `/v1/admin/devices/{id}/revoke` | Revoke device. |
+| `GET` | `/v1/admin/kill-switch` | List active kill-switch rows. |
+| `POST` | `/v1/admin/kill-switch` | Activate or clear kill switch. |
+| `GET` | `/v1/events` | SSE: bundle rotation, kill-switch, audit, runs. |
+| `GET` | `/health` | Liveness (`ok`). |
 
 ---
 
 ## Related documents
 
-- [authority-deployment.md](./authority-deployment.md) — installing and running the authority server
-- [enterprise-deployment-runbook.md](./enterprise-deployment-runbook.md) — full phased IT runbook
+- [sandbox-management-model.md](./sandbox-management-model.md) — bundles, groups, assignments, and rollout
+- [authority-deployment.md](./authority-deployment.md) — installing the authority server
+- [enterprise-deployment-runbook.md](./enterprise-deployment-runbook.md) — phased IT runbook
+- [managed-mode.md](./managed-mode.md) — agent, bundles, and desktop enforcement

@@ -35,6 +35,7 @@
 | 文档 | 说明 |
 |------|------|
 | [binary-reference-zh.md](./binary-reference-zh.md) · [binary-reference.md](./binary-reference.md) | **全部二进制**、发行包、Linux 配套、管理员验证清单 |
+| [sandbox-management-model-zh.md](./sandbox-management-model-zh.md) · [sandbox-management-model.md](./sandbox-management-model.md) | **沙箱管理模型**：Bundle 作为策略集合、Group、Assignment、rollout 与冲突处理 |
 | [authority-deployment-zh.md](./authority-deployment-zh.md) · [authority-deployment.md](./authority-deployment.md) | Authority 安装、商业许可证、`finsafe-bundlectl` |
 | [managed-mode-zh.md](./managed-mode-zh.md) | 概述、组件、路径、CLI 错误 |
 | [endpoint-deployment-options-zh.md](./endpoint-deployment-options-zh.md) · [endpoint-deployment-options.md](./endpoint-deployment-options.md) | 部署路径决策（不强制 MDM） |

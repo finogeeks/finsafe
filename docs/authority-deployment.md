@@ -43,7 +43,7 @@ Policy Authority and operator CLI ship in **separate** release archives from
 Verify and extract (same pattern as the desktop archives):
 
 ```bash
-VERSION=0.4.6
+VERSION=0.4.7
 shasum -a 256 -c SHA256SUMS
 
 # Authority host (Linux server)
@@ -210,6 +210,16 @@ curl -sf "$AUTHORITY/v1/bundles/current" | jq .
 open "$AUTHORITY/admin/"
 ```
 
+Or use the bundled script (from the public repo root after sync):
+
+```bash
+export FINSAFE_AUTHORITY_URL="$AUTHORITY"
+export FINSAFE_ADMIN_TOKEN=...   # optional
+./scripts/check-authority-health.sh
+```
+
+See [`scripts/README.md`](../scripts/README.md).
+
 Without a license, `POST /v1/enroll/token` and `GET /v1/admin/devices` return **402**
 with `LICENSE_MISSING`. End-to-end pilot checks (authority + desktop): [binary-reference.md](./binary-reference.md#verify-managed-mode-is-working-production-checklist).
 
@@ -221,6 +231,11 @@ with `LICENSE_MISSING`. End-to-end pilot checks (authority + desktop): [binary-r
 on a **secure operator workstation** that has access to the signing key (not on end-user
 machines). It talks to the authority over HTTP; it does not replace the authority process.
 
+**Bundle publish creates policy content; assignments control which devices receive that
+bundle.** After publishing a bundle, create or update assignments via the admin UI
+**Assignments** page or `/v1/admin/assignments` and `/v1/admin/assignments/preview`. See
+the [sandbox management model](./sandbox-management-model.md).
+
 For copy-paste command sequences and agent-oriented troubleshooting (self-contained), use
 https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL.md
 
@@ -228,9 +243,9 @@ https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL.md
 
 | Component | Role |
 |-----------|------|
-| **`finsafe-bundlectl`** | Build draft bundles, sign locally (review), **publish** bundle JSON to the authority, sign **managed-required** sentinel JWS for MDM |
-| **`finsafe-authority-http`** | SQLite store, **re-sign and persist** published bundles, serve `GET /v1/bundles/current`, JWKS, enroll, heartbeats, admin UI |
-| **`finsafe-agent`** | Pull latest bundle JWS from the authority, verify with JWKS, cache policy for `finsafe` over UDS |
+| **`finsafe-bundlectl`** | Build draft bundles, sign locally (review), **publish** bundle JSON (policy content) to the authority, sign **managed-required** sentinel JWS for MDM |
+| **`finsafe-authority-http`** | SQLite store, **re-sign and persist** published bundles, serve `GET /v1/bundles/current` (assignment-aware when assignments exist), JWKS, enroll, heartbeats, admin UI, **assignment APIs** |
+| **`finsafe-agent`** | Pull effective bundle JWS from the authority, verify with JWKS, cache policy for `finsafe` over UDS |
 
 ```mermaid
 flowchart LR
@@ -297,7 +312,8 @@ via the authority HTTP API. Policy **content** still flows through `bundle publi
 `GET /v1/bundles/current`.
 
 **Handled by the authority (not bundlectl):** one-time enroll tokens (`POST /v1/enroll/token`),
-device enroll/revoke, kill switch, audit ingestion, and the `/admin/` UI.
+device enroll/revoke, kill switch, audit ingestion, **bundle-to-group assignments**
+(`GET/POST /v1/admin/assignments`, `POST /v1/admin/assignments/preview`), and the `/admin/` UI.
 
 ### Operator commands
 
@@ -367,6 +383,7 @@ fleet machine. Regenerate and redeploy if you rotate the signing key.
 
 ## Related documents
 
+- [sandbox-management-model.md](./sandbox-management-model.md) — bundles, groups, assignments, and rollout
 - [binary-reference.md](./binary-reference.md) — full binary suite, release archives, platform matrix
 - [managed-mode.md](./managed-mode.md) — architecture overview and CLI error codes
 - [admin-ui.md](./admin-ui.md) — admin console reference

@@ -250,15 +250,27 @@ Document for app teams:
 
 ### 8.2 Kill switch
 
-Admin UI or:
+Use **Settings → Kill switch** in the admin UI for fleet-wide, group-scoped, or
+per-device emergency pause. See [admin-ui.md § Kill switch](./admin-ui.md#settings--kill-switch)
+for when to use it versus revoke or policy denials.
 
 ```bash
+# Inspect active rows
+curl -sf -H "X-Admin-Token: $TOKEN" \
+  "$FINSAFE_AUTHORITY_PUBLIC_URL/v1/admin/kill-switch" | jq .
+
+# Activate fleet-wide until a given time
 curl -X POST "$FINSAFE_AUTHORITY_PUBLIC_URL/v1/admin/kill-switch" \
   -H 'Content-Type: application/json' \
-  -d '{"until":"2026-12-31T23:59:59Z"}'
-```
+  -H "X-Admin-Token: $TOKEN" \
+  -d '{"until":"2026-12-31T23:59:59Z","scope":{"kind":"all"}}'
 
-Clears with `{"until":null}`.
+# Clear all kill-switch rows (fleet-wide clear in API)
+curl -X POST "$FINSAFE_AUTHORITY_PUBLIC_URL/v1/admin/kill-switch" \
+  -H 'Content-Type: application/json' \
+  -H "X-Admin-Token: $TOKEN" \
+  -d '{"until":null,"scope":{"kind":"all"}}'
+```
 
 ### 8.3 Revoke device
 

@@ -2,6 +2,8 @@
 
 企业桌面在 **托管模式** 下运行 FinSAFE：策略以经签名的 JWS bundle 形式由中央 **Policy Authority（策略权威）** 下发，由 **`finsafe-agent`** 校验并缓存后强制执行，现有 **`finsafe`** CLI 通过 Unix 域套接字消费策略。
 
+管理员心智模型——Bundle 作为已签名策略集合、确定性 Group、一等 Assignment、Assignment 上的 rollout 与冲突处理——见 [FinSAFE 沙箱管理模型](./sandbox-management-model-zh.md)。
+
 若不存在纳管标记且未部署 `managed-required` 哨兵，个人/开发者用法保持不变。
 
 **English:** [managed-mode.md](./managed-mode.md)

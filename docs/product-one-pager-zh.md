@@ -181,7 +181,7 @@ FinSAFE 运行时 / API     ←  finsafe-server（POST /v1/executions 等）
 
 ```bash
 # 在 monorepo 根目录
-./scripts/build-finsafe-enterprise.sh
+./scripts/dev/build-finsafe-enterprise.sh
 ```
 
 | 交付物 | 推荐路径 | 说明 |

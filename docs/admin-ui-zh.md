@@ -1,114 +1,179 @@
 # 管理 UI 参考
 
-**FinSAFE Policy Authority 管理控制台**是一个精简的基于浏览器的运维界面，由 authority 服务托管在 `/admin/` 路径下。
-
-**URL（生产）：** `https://gov.example.com/policy-authority/admin/`  
-**URL（本地开发）：** `http://127.0.0.1:8090/admin/`
-
 **English:** [admin-ui.md](./admin-ui.md)
 
-> **安全提示：** 管理 UI 没有内置认证。生产环境中，请在反向代理层限制 `/admin/` 和 `/v1/admin/*` 的访问，使用 IP 白名单、SSO/OIDC 或 mTLS。详见 [authority-deployment-zh.md § 安全说明](./authority-deployment-zh.md#7-安全说明)。
+**FinSAFE Policy Authority 管理控制台**为 React 运维界面，由 `finsafe-authority-http` 在 `/admin/` 提供（`embed-admin-ui` 构建或 `FINSAFE_ADMIN_UI_DIR`）。
+
+**URL（生产）：** `https://gov.example.com/policy-authority/admin/`  
+**URL（本地）：** `http://127.0.0.1:8090/admin/`
+
+> **安全：** 请在反向代理层保护 `/admin/` 与 `/v1/admin/*`。通过
+> `FINSAFE_ADMIN_TOKENS_PATH` 配置管理员 token，在 **设置 → 常规** 中填入
+> `X-Admin-Token`。
 
 ---
 
-## 商业许可证面板
+## 导航概览
 
-控制台顶部的 **Commercial license（商业许可证）** 通过 `GET /v1/license/status` 展示实时状态：`valid`、`missing`、`expired`、`grace`、`invalid`，以及客户 ID、subject、过期时间、已启用功能、`max_devices` 等。
-
-受保护 API 因未安装或许可证无效而失败时，authority 返回 **`402 Payment Required`**，例如：
-
-```json
-{
-  "error": "license missing: install a signed license at /etc/finsafe/license.jws",
-  "code": "LICENSE_MISSING"
-}
-```
-
-界面会提示在 `/etc/finsafe/license.jws` 安装或续期许可证（或在服务上设置 `FINSAFE_LICENSE_PATH`），并重启 `finsafe-authority-http`。
-
-**等效 API：**
-
-```bash
-curl -sf "$AUTHORITY/v1/license/status" | jq .
-```
-
----
-
-## 各功能区
-
-### 设备列表（Devices）
-
-展示所有已注册设备及其最近心跳时间、managed-required 哨兵是否存在、以及撤销状态。
-
-点击 **Refresh** 刷新。每条记录包含：
-
-| 字段 | 说明 |
+| 区域 | 用途 |
 |------|------|
-| `device_id` | 注册时设置的稳定标识符（`FINSAFE_AGENT_BOOTSTRAP_DEVICE_ID`）。 |
-| `last_seen` | 最近一次心跳的 UTC 时间戳。 |
-| `sentinel_present` | Agent 上次汇报时 `/etc/finsafe/managed-required.json` 是否存在。 |
-| `revoked` | `true` 表示该设备已被撤销。被撤销设备在下次心跳时收到 `revoke_device: true`，并进入本地 kill-switch 状态。 |
+| **总览** | 舰队 KPI：设备数、24 小时内拒绝次数与运行次数、事件流。 |
+| **设备** | 搜索/筛选、批量打标签、查看策略包与拒绝次数。 |
+| **运行** | 来自审计的托管运行记录。 |
+| **审计** | 原始舰队审计事件。 |
+| **策略包** | 已发布 bundle（已签名策略集合）；策略编辑器（引导式 + YAML）。 |
+| **Assignments（分配）** | 将已发布 bundle 关联到分组并控制 rollout。 |
+| **告警** | 安全相关审计类型（含策略拒绝）。 |
+| **设置** | 许可证/token、标签预设、设备分组、**Kill switch**。 |
 
-**等效 API：**
+**推荐流程：** 在 **设置** 中定义 **标签预设** 与 **设备分组**，发布 bundle，再在 **Assignments** 页将 bundle **分配** 到分组，最后在 **设备** 页分配匹配标签。详见 [沙箱管理模型](./sandbox-management-model-zh.md)。
+
+---
+
+## 设置 → Kill switch
+
+### 是什么
+
+**Kill switch（紧急制动）** 在激活后，`finsafe-agent` 会：
+
+1. **阻止新的托管运行** — `finsafe run`、托管 `self-confine` 无法从 agent 获取策略（UDS 返回 `KILL_SWITCH_ACTIVE`）。
+2. **结束进行中的沙箱** — 已注册的长运行会收到终止信号，经 grace 秒后退出（通常来自 bundle 的 `on_rotation.grace_secs`）。
+
+设备 **仍保持注册**，心跳继续，便于在控制台观察舰队状态。
+
+### 何时使用
+
+| 场景 | 建议 |
+|------|------|
+| 发布了错误 bundle | 先激活 kill switch → 回滚或修复 → 再清除。 |
+| 安全事件调查 | 全舰队或分组暂停，同时保留可见性。 |
+| 变更冻结 | 使用 1h / 4h / 24h 或自定义到期时间。 |
+
+### 何时不要用
+
+| 改用… | 适用于… |
+|--------|---------|
+| **撤销设备** | 永久取消单台设备信任（设备详情 → Revoke）。 |
+| **策略/assignment rollout** | 正常的绑定不匹配、网络/文件系统规则拒绝。 |
+| **标签 + 分组** | 渐进发布，而非紧急停车。 |
+
+### 界面范围
+
+- **全舰队** — 全局 kill switch；心跳返回 `kill_switch_until`。
+- **设备分组** — 对分组标签过滤器匹配的每台设备写入 per-device 记录。
+- **指定 device_id** — 仅列出的设备。
+
+**清除** 对所选范围发送 `until: null`。在 **全舰队** 下清除会删除 authority 中 **所有** kill switch 行（含此前按分组/设备写入的记录）。
+
+### API
+
 ```bash
-curl -sf "$AUTHORITY/v1/admin/devices" | jq .
+curl -sf -H "X-Admin-Token: $TOKEN" "$AUTHORITY/v1/admin/kill-switch" | jq .
+
+curl -X POST "$AUTHORITY/v1/admin/kill-switch" \
+  -H "Content-Type: application/json" \
+  -H "X-Admin-Token: $TOKEN" \
+  -d '{"until":"2026-05-23T21:00:00Z","scope":{"kind":"all"}}'
+
+curl -X POST "$AUTHORITY/v1/admin/kill-switch" \
+  -H "Content-Type: application/json" \
+  -H "X-Admin-Token: $TOKEN" \
+  -d '{"until":null,"scope":{"kind":"all"}}'
 ```
 
-### 注册 Token（Enrollment token）
+需许可证功能 `kill_switch`。详见 [企业部署手册 § Kill switch](./enterprise-deployment-runbook-zh.md#82-kill-switch)。
 
-签发一个**一次性注册 token**（JWS，有效期 15 分钟）。复制 `token` 值，在设备首次启动时通过 `FINSAFE_ENROLL_TOKEN` 环境变量传给 `finsafe-agent` 服务。
+---
 
-该 token 会在首次成功注册后被消费。注册时，authority 还会把
-`FINSAFE_AGENT_BOOTSTRAP_DEVICE_ID` 绑定到 agent 的本地设备密钥；后续若其他设备使用相同
-`device_id` 但设备密钥不同，将返回 `DEVICE_ID_ALREADY_BOUND`。
+## 设备列表与「Denials 24h」
 
-注册成功后，从 agent 的服务环境配置中删除该 token（见 [企业部署手册 Phase D.3](./enterprise-deployment-runbook-zh.md#d3-从-mdm-移除-token)）。
+### 策略拒绝（Denials）是什么
 
-**等效 API：**
+**策略拒绝（policy denial）** 指托管模式审计事件 `kind: policy_denied`：FinSAFE 依据当前 authority bundle **拒绝** 一次托管执行尝试。这不是普通 OS 错误，也不是 kill switch 本身。
+
+常见原因（写入审计 `reason` 时）：
+
+- **无匹配 binding** — 例如 bundle 只绑定 `hermes`，用户运行了 `curl`。
+- **Kill switch 已激活**。
+- **运行时策略拦截** — 沙箱/网络/文件系统规则拒绝（在审计链路接通时）。
+
+**设备 → Denials 24h** 与 **总览 → Denials (24h)** 统计过去 24 小时内入库的 `policy_denied` 事件（由 agent 上传 `finsafe` 产生的审计）。
+
+### 何时关注该指标
+
+| 现象 | 可能含义 |
+|------|----------|
+| 单设备突增 | 绑定配置错误、标签不对、用户运行未批准工具。 |
+| 发布后全舰队上升 | 新 bundle 过严；查 **告警** 与审计 `reason`。 |
+| 长期为 0 | 无拒绝记录，或该路径尚未产生 `policy_denied` 审计。 |
+
+**排查：** **告警**、**审计**、设备详情、bundle binding。**修复：** 调整 binding、设备标签/分组或 rollout——除非需要紧急停车，否则不必使用 kill switch。
+
+**Denials** 不同于 **kill switch**（运维暂停）与 **revoke**（取消设备信任）。
+
+---
+
+## 设置 → 设备分组
+
+Group 是由可信标签与设备事实上的**确定性规则**定义的**命名设备队列**。可用于 Assignment 的分组使用 `all` 规则：所有必需谓词必须同时匹配。支持 `admin:name=value` 标签、authority 已验证的 `device:*` 事实、`device_id` 以及直接 `not` 排除项。OR 情况应拆分为独立分组。
+
+在此创建 Group；在 **设备** 页分配匹配的 `admin:*` 标签。在 **Assignments** 页将已发布 bundle 关联到 Group。
+
+---
+
+## 策略包与策略编辑器
+
+发布已签名的 `BundleV1` JWS 作为**策略集合**（每个 bundle 可含多条沙箱策略）。当 authority 构建支持 `/v1/admin/policies/*` 时可预览/发布 YAML 策略。Bundle 发布创建策略**内容**；**Assignment** 控制哪些设备收到该 bundle。
+
+---
+
+## Assignments（分配）
+
+**Assignments** 页将已发布的 bundle 版本关联到设备分组，并控制该关系的 rollout。Rollout 百分比、seed 及可选开始/结束时间属于 Assignment，不属于 bundle。
+
+典型流程：
+
+1. 在 **策略包** 页发布 bundle。
+2. 在 **设置 → 设备分组** 创建或确认可用于 Assignment 的 Group。
+3. 在 **Assignments** 预览匹配设备，再保存或激活 Assignment。
+
+存在 active Assignment 时，`/v1/bundles/current` 通过 Assignment 解析有效 bundle。部分 rollout 之外的设备可能回退到更宽泛的 Assignment，或收到 `no_assignment`。歧义重叠以 `assignment_conflict` **失败关闭**。
+
 ```bash
-curl -sf -X POST "$AUTHORITY/v1/enroll/token" | jq .
-# {"token":"<jws>","expires_at":"<rfc3339>"}
-```
+curl -sf -H "X-Admin-Token: $TOKEN" "$AUTHORITY/v1/admin/assignments" | jq .
 
-### Kill switch
-
-激活或清除**全舰队 kill switch**，阻止所有已注册桌面的 `finsafe run` 执行成功。适用于应急响应场景。
-
-- **激活（1h）：** 设置从当前时间起 1 小时后到期的 kill switch。Agent 在下次心跳或 bundle 拉取时收到 kill-switch 状态。
-- **清除：** 立即清除 kill switch。
-
-也可通过 API 设置任意到期时间：
-
-```bash
-# 激活到指定时间
-curl -X POST "$AUTHORITY/v1/admin/kill-switch" \
-  -H 'Content-Type: application/json' \
-  -d '{"until":"2026-12-31T23:59:59Z"}'
-
-# 清除
-curl -X POST "$AUTHORITY/v1/admin/kill-switch" \
-  -H 'Content-Type: application/json' \
-  -d '{"until":null}'
+curl -X POST "$AUTHORITY/v1/admin/assignments/preview" \
+  -H "Content-Type: application/json" \
+  -H "X-Admin-Token: $TOKEN" \
+  -d '{
+    "assignment_id": "finance-hermes-prod",
+    "bundle_version": 3,
+    "group_id": "finance-hermes",
+    "rollout": { "percent": 10, "rollout_seed": "finance-hermes-prod-seed" }
+  }' | jq .
 ```
 
 ---
 
-## 其他管理 API 接口（CLI / 自动化专用）
-
-以下接口未在 UI 中展示，但可用于脚本和自动化：
+## 其他管理 API
 
 | 方法 | 路径 | 说明 |
 |------|------|------|
-| `POST` | `/v1/admin/bundles` | 发布已签名的 bundle JWS，由 `finsafe-bundlectl bundle publish` 调用。 |
-| `POST` | `/v1/admin/devices/{device_id}/revoke` | 撤销指定设备。 |
-| `GET` | `/.well-known/finsafe/jwks.json` | 用于验证 bundle 签名的 JWKS。 |
-| `GET` | `/v1/bundles/current` | 最新 bundle JWS（agent 使用）。 |
-| `GET` | `/health` | 存活检查（`200 ok`）。 |
-| `GET` | `/v1/events` | 管理事件 SSE 流（bundle 轮换、kill-switch、撤销）。 |
+| `POST` | `/v1/enroll/token` | 一次性注册 token（15 分钟 TTL）。 |
+| `POST` | `/v1/admin/bundles` | 发布 bundle JWS（`finsafe-bundlectl`）。 |
+| `GET` | `/v1/admin/assignments` | 列出 bundle 到分组的 Assignment。 |
+| `POST` | `/v1/admin/assignments` | 创建或更新 Assignment。 |
+| `POST` | `/v1/admin/assignments/preview` | 预览匹配设备与冲突。 |
+| `POST` | `/v1/admin/devices/{id}/revoke` | 撤销设备。 |
+| `GET` | `/v1/admin/kill-switch` | 列出 active kill switch 行。 |
+| `POST` | `/v1/admin/kill-switch` | 激活或清除 kill switch。 |
+| `GET` | `/v1/events` | SSE：bundle 轮换、kill switch、审计、运行。 |
+| `GET` | `/health` | 存活探针（`ok`）。 |
 
 ---
-
 ## 相关文档
 
-- [authority-deployment-zh.md](./authority-deployment-zh.md) — 安装和运行 authority 服务
-- [enterprise-deployment-runbook-zh.md](./enterprise-deployment-runbook-zh.md) — 分阶段 IT 部署手册
+- [sandbox-management-model-zh.md](./sandbox-management-model-zh.md) — Bundle、Group、Assignment 与 rollout
+- [authority-deployment-zh.md](./authority-deployment-zh.md)
+- [enterprise-deployment-runbook-zh.md](./enterprise-deployment-runbook-zh.md)
+- [managed-mode-zh.md](./managed-mode-zh.md)
