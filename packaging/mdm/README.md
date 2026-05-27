@@ -38,10 +38,11 @@ Windows equivalents: `C:\Program Files\FinSAFE\{finsafe.exe,finsafe-agent.exe,fi
 
 | Platform | Scripts |
 |----------|---------|
-| **Generic** | [`examples/generic/`](examples/generic/) — enroll, sentinel, remove token (any vendor) |
+| **Generic** | [`examples/generic/`](examples/generic/) — enroll, sentinel, remove token, [`install-fleet-unix.sh`](examples/generic/install-fleet-unix.sh) (used by IT pilot installer) |
 | Jamf | [`examples/jamf/`](examples/jamf/) — enroll, remove token, extension attribute |
 | Intune | [`examples/intune/`](examples/intune/) — plist, sentinel, enroll, Linux systemd, Windows Service |
 | GPO | [`examples/gpo/`](examples/gpo/) — Windows startup-script wrapper |
+| **IT pilot** (download + install) | Linux/macOS: [`../../install-fleet.sh`](../../install-fleet.sh) · Windows: [`../../install-fleet-windows.ps1`](../../install-fleet-windows.ps1) |
 | Ansible | [`examples/ansible/deploy-finsafe.yml`](examples/ansible/deploy-finsafe.yml) |
 
 ## Operator workflow (summary)

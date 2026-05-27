@@ -1,6 +1,6 @@
 # Microsoft Intune — FinSAFE 托管模式
 
-通过 Intune（Endpoint Manager）在 **macOS** 与 **Linux** 托管设备上部署 FinSAFE。
+通过 Intune（Endpoint Manager）在 **macOS**、**Linux** 与 **Windows** 托管设备上部署 FinSAFE。
 
 **English:** [intune.md](./intune.md)
 
@@ -8,14 +8,7 @@
 
 ### Windows 设备（Intune）
 
-**托管模式 v1 不包含 Windows 桌面。** 请勿将下文脚本分配给 Intune 中的 **Windows 10/11** 设备类型；当前无 Windows 版 `finsafe-agent`、无哨兵路径与 Win32 服务单元示例。
-
-| 若员工使用 Windows 笔记本 | 建议 |
-|---------------------------|------|
-| 需要本机 Hermes/OpenClaw + 舰队策略 | 发放 **Mac 或 Linux** 纳管设备，或走 **中心** `finsafe-server` API（执行在服务端 Linux） |
-| 仅需应用合规 | Intune 常规模板（补丁、BitLocker、AppLocker/WDAC）；**不能** 等价于 FinSAFE 托管 |
-
-详见 [产品一页纸 · Windows 与 MDM](../product-one-pager-zh.md#windows-设备与-mdmv1-现状)。
+Windows 托管舰队使用 `finsafe-fleet-v*`（`finsafe.exe`、`finsafe-agent.exe`、`finsafe-winhelper.exe`），安装路径与 Win32/GPO 步骤见英文手册 **[intune.md §7](./intune.md#7-windows-deployment-intune-or-gpo)**。IT 试点可用 **[`install-fleet-windows.ps1`](../../install-fleet-windows.ps1)**（需提升权限的 PowerShell）。
 
 ---
 

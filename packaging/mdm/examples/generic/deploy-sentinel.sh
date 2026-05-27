@@ -11,9 +11,9 @@ if [[ "$(id -u)" -ne 0 ]]; then
 fi
 
 if [[ -n "${1:-}" ]]; then
-  SENTINEL_JWS="$(tr -d '\n' <"$1")"
+  SENTINEL_JWS="$(tr -d '\n\r' <"$1")"
 elif [[ -n "${FINSAFE_SENTINEL_JWS:-}" ]]; then
-  SENTINEL_JWS="$FINSAFE_SENTINEL_JWS"
+  SENTINEL_JWS="$(printf '%s' "$FINSAFE_SENTINEL_JWS" | tr -d '\n\r')"
 else
   echo "Usage: FINSAFE_SENTINEL_JWS=... $0   OR   $0 /path/to/managed-required.jws" >&2
   exit 1

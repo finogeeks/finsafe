@@ -5,8 +5,11 @@ Scripts in this directory ship with [finogeeks/finsafe](https://github.com/finog
 | Script | Purpose |
 |--------|---------|
 | [`check-authority-health.sh`](check-authority-health.sh) | Verify authority `/health` and `/v1/license/status` (optional admin stats with `FINSAFE_ADMIN_TOKEN`) |
-| [`../install.sh`](../install.sh) | Install personal `finsafe` CLI from GitHub Releases |
-| [`../packaging/mdm/`](../packaging/mdm/) | MDM examples: enroll once, deploy sentinel, agent install |
+| [`../install.sh`](../install.sh) | Personal `finsafe` — Linux/macOS |
+| [`../install.ps1`](../install.ps1) | Personal `finsafe` — Windows |
+| [`../install-fleet.sh`](../install-fleet.sh) | IT pilot managed fleet — Linux/macOS (sudo) |
+| [`../install-fleet-windows.ps1`](../install-fleet-windows.ps1) | IT pilot managed fleet — Windows (elevated) |
+| [`../packaging/mdm/`](../packaging/mdm/) | **Production** MDM/Ansible examples (all platforms) |
 
 ## Operator binaries (not shell scripts)
 

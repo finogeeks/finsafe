@@ -105,7 +105,7 @@ detect_triple() {
         *) die "unsupported macOS machine: $arch" ;;
       esac
       ;;
-    *) die "unsupported OS: $os (on Windows, install WSL2 + Linux, then rerun)" ;;
+    *) die "unsupported OS: $os (on Windows, use install.ps1 from the same repo, or WSL2 + this script)" ;;
   esac
 }
 

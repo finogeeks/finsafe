@@ -199,6 +199,21 @@ Windows fleet archives ship:
 
 Install them under `C:\Program Files\FinSAFE` and keep managed state under `C:\ProgramData\FinSAFE`.
 
+### 7.0 IT pilot (download + install script)
+
+For lab machines or pre-Intune pilots, run **[`install-fleet-windows.ps1`](../../install-fleet-windows.ps1)** in an **elevated** PowerShell session from a clone of this repo (or copy the script plus `packaging/mdm/examples/intune/`). It downloads `finsafe-fleet-v*`, verifies `SHA256SUMS`, extracts the archive, and calls [`windows-install-agent-service.ps1`](../../packaging/mdm/examples/intune/windows-install-agent-service.ps1).
+
+```powershell
+Set-ExecutionPolicy -Scope Process Bypass
+.\install-fleet-windows.ps1 `
+  -Version 0.5.0 `
+  -AuthorityUrl "https://gov.example.com/policy-authority" `
+  -SentinelPath ".\managed-required.jws" `
+  -EnrollToken "one-time-token"
+```
+
+Use `-DownloadOnly` to fetch and extract binaries without registering the service. Production rollout should still use Win32/GPO packages below (same helper script, binaries bundled locally).
+
 ### 7.1 Intune Win32 app
 
 1. Extract `finsafe-fleet-v<version>-x86_64-pc-windows-msvc.tar.zst`.

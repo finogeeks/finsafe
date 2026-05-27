@@ -2,27 +2,60 @@ param(
   [string] $AuthorityUrl = "https://gov.example.com/policy-authority",
   [string] $InstallDir = "C:\Program Files\FinSAFE",
   [string] $ProgramDataDir = "C:\ProgramData\FinSAFE",
+  [string] $SourceDir = "",
   [string] $SentinelJws = "",
+  [string] $SentinelPath = "",
   [string] $EnrollToken = "",
   [string] $DeviceId = $env:COMPUTERNAME
 )
 
 $ErrorActionPreference = "Stop"
 
+# Match Unix install-fleet-unix.sh / deploy-sentinel.sh: tr -d '\n\r' first, then [[ -n ]].
+# Do not use .Trim() — spaces inside or around the JWS must be preserved.
+function Normalize-SentinelJws([string] $Value) {
+  if ($null -eq $Value) { return $Value }
+  $compact = $Value -replace '[\r\n]+', ''
+  if ([string]::IsNullOrWhiteSpace($compact)) { return '' }
+  return $compact
+}
+
+function Write-ManagedRequiredSentinel([string] $Dir, [string] $Jws) {
+  $path = Join-Path $Dir "managed-required.json"
+  $utf8NoBom = New-Object System.Text.UTF8Encoding $false
+  [System.IO.File]::WriteAllText($path, "$Jws`n", $utf8NoBom)
+}
+
+if ($SentinelJws -and $SentinelPath) {
+  throw "use only one of -SentinelJws or -SentinelPath"
+}
+if ($SentinelPath) {
+  if (-not (Test-Path -LiteralPath $SentinelPath)) {
+    throw "sentinel file not found: $SentinelPath"
+  }
+  $SentinelJws = Get-Content -LiteralPath $SentinelPath -Raw
+}
+if ($SentinelJws) {
+  $SentinelJws = Normalize-SentinelJws $SentinelJws
+}
+
 New-Item -ItemType Directory -Force -Path $InstallDir | Out-Null
 New-Item -ItemType Directory -Force -Path $ProgramDataDir | Out-Null
 
-$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$binaryDir = $SourceDir
+if ([string]::IsNullOrWhiteSpace($binaryDir)) {
+  $binaryDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+}
 foreach ($name in @("finsafe.exe", "finsafe-agent.exe", "finsafe-winhelper.exe")) {
-  $source = Join-Path $scriptDir $name
-  if (-not (Test-Path $source)) {
-    throw "Missing $name beside this script. Extract the finsafe-fleet archive before running."
+  $source = Join-Path $binaryDir $name
+  if (-not (Test-Path -LiteralPath $source)) {
+    throw "Missing $name under $binaryDir. Extract finsafe-fleet-v* or pass -SourceDir."
   }
-  Copy-Item -Force $source (Join-Path $InstallDir $name)
+  Copy-Item -Force -LiteralPath $source -Destination (Join-Path $InstallDir $name)
 }
 
 if ($SentinelJws) {
-  Set-Content -Path (Join-Path $ProgramDataDir "managed-required.json") -Value $SentinelJws -NoNewline
+  Write-ManagedRequiredSentinel -Dir $ProgramDataDir -Jws $SentinelJws
 }
 
 $serviceName = "finsafe-agent"

@@ -13,7 +13,17 @@ FinSafe 是一套**主机执行边界**工具集：Linux 命名空间、cgroup �
 | **个人 / local wrapper** | 在本机使用 `finsafe --policy …` 的开发者 | **免费** — 公开发行的 `finsafe` CLI 无需商业许可证 |
 | **托管舰队** | 部署 `finsafe-authority-http`、`finsafe-agent` 与 MDM 策略的 IT 团队 | **商业许可** — 由 Finogeeks 签发 `license.jws` 并安装在 Policy Authority 上 |
 
-GitHub [Releases](https://github.com/finogeeks/finsafe/releases) 提供个人 CLI（`finsafe-v*`）、托管舰队（`finsafe-fleet-v*`）、authority 服务（`finsafe-admin-server-v*`，Linux + macOS）与运维 CLI（`finsafe-bundlectl-v*`，Linux + macOS）。**`install.sh` 仅安装个人 CLI**；其余包请从同一 Release 页面手动下载。详见 **[binary-reference-zh.md](docs/binary-reference-zh.md)**。Authority 与 `license.jws`：[authority-deployment-zh.md](docs/authority-deployment-zh.md)。
+GitHub [Releases](https://github.com/finogeeks/finsafe/releases) 提供个人 CLI（`finsafe-v*`）、托管舰队（`finsafe-fleet-v*`）、authority 服务（`finsafe-admin-server-v*`，Linux + macOS）与运维 CLI（`finsafe-bundlectl-v*`，Linux + macOS）。详见 **[binary-reference-zh.md](docs/binary-reference-zh.md)**。Authority 与 `license.jws`：[authority-deployment-zh.md](docs/authority-deployment-zh.md)。
+
+### 安装脚本（全平台）
+
+| | **Linux** | **macOS** | **Windows** |
+|---|-----------|-----------|-------------|
+| **个人**（`finsafe-v*`） | [`install.sh`](install.sh) | [`install.sh`](install.sh) | [`install.ps1`](install.ps1) |
+| **IT 试点**（`finsafe-fleet-v*`） | [`install-fleet.sh`](install-fleet.sh)（sudo） | [`install-fleet.sh`](install-fleet.sh)（sudo） | [`install-fleet-windows.ps1`](install-fleet-windows.ps1)（提升权限） |
+| **生产舰队** | MDM / Ansible / 镜像 — [packaging/mdm/](packaging/mdm/) | MDM / Jamf / PKG — [packaging/mdm/](packaging/mdm/) | Intune / GPO — [packaging/mdm/](packaging/mdm/) |
+
+IT 试点脚本会下载发行包、校验 `SHA256SUMS`、安装二进制并配置 `finsafe-agent`，适用于实验室与小规模试点，**不能**替代大规模 MDM 交付。
 
 **供 AI Agent 使用的运维技能：**
 
@@ -55,6 +65,14 @@ curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh |
 
 下载脚本后可执行 **`install.sh --help`**，查看全部环境变量说明。
 
+**Windows（个人模式）：** PowerShell 5.1+，需 `tar`（或 `zstd` + `tar`）：
+
+```powershell
+irm https://raw.githubusercontent.com/finogeeks/finsafe/main/install.ps1 | iex
+```
+
+固定版本：`$env:FINSAFE_VERSION = '0.5.0'; irm .../install.ps1 | iex`
+
 ### 手动下载
 
 1. 打开 [**Releases**](https://github.com/finogeeks/finsafe/releases)，选择某个版本标签（例如 `v0.2.0`）。
@@ -91,7 +109,16 @@ finsafe --help
 
 ### 企业二进制（同一 GitHub Release）
 
-托管舰队与 Policy Authority 与个人 CLI 在**同一** [Releases](https://github.com/finogeeks/finsafe/releases) 页面发布。**`install.sh` 不会安装它们**。详见 **[docs/binary-reference-zh.md](docs/binary-reference-zh.md)**。
+托管舰队与 Policy Authority 与个人 CLI 在**同一** [Releases](https://github.com/finogeeks/finsafe/releases) 页面发布。舰队桌面请用 **`install-fleet.sh`** / **`install-fleet-windows.ps1`**（IT 试点）或 MDM/Ansible（生产）。Authority 与 `finsafe-bundlectl` 仍建议手动解压或自建自动化。详见 **[docs/binary-reference-zh.md](docs/binary-reference-zh.md)**。
+
+**IT 试点（托管舰队）示例：**
+
+```bash
+sudo FINSAFE_AUTHORITY_URL='https://gov.example.com/policy-authority' \
+     FINSAFE_SENTINEL_PATH=./managed-required.jws \
+     FINSAFE_ENROLL_TOKEN='one-time-token' \
+     ./install-fleet.sh
+```
 
 | 发行包 | 内容 |
 |--------|------|

@@ -38,11 +38,12 @@ All paths below implement the same **per-machine contract** (M1–M9 in the [ven
 | **Microsoft Intune** (macOS + Linux + Windows) | App/PKG/archive + scripts + plist/systemd/Windows Service | [mdm/intune.md](./mdm/intune.md) |
 | **Ansible / Puppet / Chef / Salt** (especially Linux) | Playbook role for M1–M8 | [mdm/ansible.md](./mdm/ansible.md) |
 | **Golden image or cloud-init** | Bake M1–M6 into image; first-boot script for M7–M8 | [vendor-neutral checklist](./mdm/vendor-neutral-checklist.md) § Map your product |
-| **Small fleet, no endpoint automation** | SSH + runbook + generic scripts | [packaging/mdm/examples/generic/](../../packaging/mdm/examples/generic/) |
+| **Small fleet, no endpoint automation** | SSH + runbook + generic scripts, or IT pilot installers | [packaging/mdm/examples/generic/](../../packaging/mdm/examples/generic/) · [`install-fleet.sh`](../../install-fleet.sh) / [`install-fleet-windows.ps1`](../../install-fleet-windows.ps1) |
 | **Internal apt/yum/PKG repo** | Package binaries + unit; separate package or profile for sentinel + env | Same M1–M8 mapping as Ansible |
 | **macOS without Jamf** (Munki, Autopkg, manual PKG) | PKG install + postinstall for sentinel/agent | [testing/managed-mode-macos-runbook.md](./testing/managed-mode-macos-runbook.md) |
 | **No root-level install on endpoints** | Do **not** promise managed desktop | Use **central execution** or issue managed Mac/Linux hardware |
-| **Windows laptops only** | Windows fleet archive + Intune or GPO startup script | [mdm/intune.md](./mdm/intune.md#windows-deployment-intune-or-gpo) |
+| **Windows laptops only** | Windows fleet archive + Intune or GPO; IT pilot: [`install-fleet-windows.ps1`](../../install-fleet-windows.ps1) | [mdm/intune.md](./mdm/intune.md#windows-deployment-intune-or-gpo) |
+| **Linux or macOS laptops (IT lab / pilot)** | [`install-fleet.sh`](../../install-fleet.sh) (sudo) or MDM/Ansible for production | [mdm/ansible.md](./mdm/ansible.md) · [mdm/jamf.md](./mdm/jamf.md) |
 
 ### Decision flow (short)
 

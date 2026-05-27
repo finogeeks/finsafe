@@ -13,7 +13,17 @@ This repository holds **public release binaries** and **end-user documentation**
 | **Personal / local wrapper** | Developers and power users running `finsafe --policy …` on their own machine | **Free** — public `finsafe` CLI releases include no commercial license file |
 | **Managed fleet** | IT teams running `finsafe-authority-http`, `finsafe-agent`, and MDM-delivered policy | **Commercial** — Finogeeks issues a signed `license.jws` installed on the Policy Authority |
 
-Public [GitHub Releases](https://github.com/finogeeks/finsafe/releases) ship **four archive families** on the same tag: personal CLI (`finsafe-v*`), managed fleet (`finsafe-fleet-v*`), policy authority server (`finsafe-admin-server-v*`, Linux + macOS), and operator CLI (`finsafe-bundlectl-v*`, Linux + macOS). **`install.sh` installs only `finsafe-v*`.** Commercial `license.jws` is issued by Finogeeks (not on GitHub). See [binary-reference.md](docs/binary-reference.md) and [authority-deployment.md](docs/authority-deployment.md).
+Public [GitHub Releases](https://github.com/finogeeks/finsafe/releases) ship **four archive families** on the same tag: personal CLI (`finsafe-v*`), managed fleet (`finsafe-fleet-v*`), policy authority server (`finsafe-admin-server-v*`, Linux + macOS), and operator CLI (`finsafe-bundlectl-v*`, Linux + macOS). Commercial `license.jws` is issued by Finogeeks (not on GitHub). See [binary-reference.md](docs/binary-reference.md) and [authority-deployment.md](docs/authority-deployment.md).
+
+### Install scripts (all platforms)
+
+| | **Linux** | **macOS** | **Windows** |
+|---|-----------|-----------|-------------|
+| **Personal** (`finsafe-v*`) | [`install.sh`](install.sh) | [`install.sh`](install.sh) | [`install.ps1`](install.ps1) |
+| **IT pilot** (`finsafe-fleet-v*`) | [`install-fleet.sh`](install-fleet.sh) (sudo) | [`install-fleet.sh`](install-fleet.sh) (sudo) | [`install-fleet-windows.ps1`](install-fleet-windows.ps1) (elevated) |
+| **Production fleet** | MDM / Ansible / image — [packaging/mdm/](packaging/mdm/) | MDM / Jamf / PKG — [packaging/mdm/](packaging/mdm/) | Intune / GPO — [packaging/mdm/](packaging/mdm/) |
+
+IT pilot scripts download a release, verify `SHA256SUMS`, install binaries, and configure `finsafe-agent`. They are for labs and small pilots — not replacements for MDM at scale.
 
 **Operator skills for AI agents:**
 
@@ -38,6 +48,14 @@ curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh |
 ```
 
 See **`install.sh --help`** (after downloading the script) for all environment variables.
+
+**Windows (personal):** PowerShell 5.1+ with `tar` (or `zstd` + `tar`):
+
+```powershell
+irm https://raw.githubusercontent.com/finogeeks/finsafe/main/install.ps1 | iex
+```
+
+Pin a version: `$env:FINSAFE_VERSION = '0.5.0'; irm .../install.ps1 | iex`
 
 ### Manual download
 
@@ -75,7 +93,16 @@ Each release may include **`release.json`**: a small manifest listing asset URLs
 
 ### Enterprise binaries (same GitHub Release)
 
-Managed fleet and policy authority archives ship on the **same** [Releases](https://github.com/finogeeks/finsafe/releases) page as the personal CLI. **`install.sh` does not install them** — download and unpack manually (or script via `release.json`). See **[docs/binary-reference.md](docs/binary-reference.md)** for the full matrix.
+Managed fleet and policy authority archives ship on the **same** [Releases](https://github.com/finogeeks/finsafe/releases) page as the personal CLI. For fleet desktops, use **`install-fleet.sh`** / **`install-fleet-windows.ps1`** (IT pilot) or MDM/Ansible (production). Authority and `finsafe-bundlectl` remain manual unpack or your own automation. See **[docs/binary-reference.md](docs/binary-reference.md)** for the full matrix.
+
+**IT pilot (managed fleet) example:**
+
+```bash
+sudo FINSAFE_AUTHORITY_URL='https://gov.example.com/policy-authority' \
+     FINSAFE_SENTINEL_PATH=./managed-required.jws \
+     FINSAFE_ENROLL_TOKEN='one-time-token' \
+     ./install-fleet.sh
+```
 
 | Archive | Contents |
 |---------|----------|
