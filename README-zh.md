@@ -62,6 +62,7 @@ curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh |
    - Linux x86_64：`finsafe-v<version>-x86_64-unknown-linux-gnu.tar.zst`
    - macOS Apple 芯片：`finsafe-v<version>-aarch64-apple-darwin.tar.zst`
    - macOS Intel：`finsafe-v<version>-x86_64-apple-darwin.tar.zst`
+   - Windows x86_64：`finsafe-v<version>-x86_64-pc-windows-msvc.tar.zst`
 3. 在同一发行版页面下载 **`SHA256SUMS`**。
 4. 校验并解压：
 
@@ -94,7 +95,7 @@ finsafe --help
 
 | 发行包 | 内容 |
 |--------|------|
-| **`finsafe-fleet-v<version>-<target>.tar.zst`** | 托管 `finsafe` + `finsafe-agent`（Linux 另含 helper、supervisor、landlock shim） |
+| **`finsafe-fleet-v<version>-<target>.tar.zst`** | 托管 `finsafe` + `finsafe-agent`（Linux：helper/supervisor/landlock shim；Windows：`finsafe-winhelper.exe`） |
 | **`finsafe-admin-server-v<version>-<target>.tar.zst`** | `finsafe-authority-http`（Linux 生产；macOS 本地开发 / 试点） |
 | **`finsafe-bundlectl-v<version>-<target>.tar.zst`** | `finsafe-bundlectl`（运维工作站；target 与桌面包相同） |
 | **`finsafe-v<version>-<target>.tar.zst`** | 个人模式 `finsafe`（`install.sh`） |

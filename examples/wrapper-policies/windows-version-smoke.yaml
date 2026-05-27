@@ -1,0 +1,28 @@
+# Short-lived Windows smoke: wrap a one-shot command (no Hermes / Unix paths).
+# From the repo root on Windows:
+#   finsafe --policy examples/wrapper-policies/windows-version-smoke.yaml run cmd /c echo hello
+# Paths under `filesystem` use ${USERPROFILE}; FinSAFE expands these when the policy loads
+# (the `finsafe` process environment — not the child argv). Tilde (~) in YAML is not expanded.
+# Only paths that exist on the host when the policy loads are applied; create `./workspace` first
+# if you rely on that RW scope. See docs/public-finsafe/docs/POLICY-QUICKREF.md.
+schema_version: 1
+kind: local-wrapper
+program_mode: short-lived
+degrade:
+  allow_fallback: true
+audit:
+  require_policy_digest: true
+  require_resolved_posture: true
+network: none
+resources:
+  memory_max: "512M"
+  pids_max: "64"
+  cpu_max: "100000 100000"
+windows:
+  backend: auto
+filesystem:
+  read_only_paths:
+    - "."
+    - "C:/Windows/System32"
+  read_write_paths:
+    - "./workspace"

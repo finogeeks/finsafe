@@ -75,7 +75,7 @@ Binary matrix: [binary-reference.md](https://github.com/finogeeks/finsafe/blob/m
 Example (Linux authority + macOS operator):
 
 ```bash
-VERSION=0.4.9
+VERSION=0.5.0
 shasum -a 256 -c SHA256SUMS
 
 tar -xvf "finsafe-admin-server-v${VERSION}-x86_64-unknown-linux-gnu.tar.zst"

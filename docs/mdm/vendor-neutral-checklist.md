@@ -30,18 +30,18 @@ Map each row to **one step** in your tool (package, file copy, systemd, script, 
 
 | # | Deliverable | Path / behavior | Your tool’s action |
 |---|-------------|-----------------|-------------------|
-| M1 | `finsafe` binary | `/usr/local/bin/finsafe` mode `0755` | PKG / deb / copy / image bake |
-| M1a | Linux companions (`finsafe-helper`, `finsafe-supervisor`, `finsafe-landlock-shim`) | Same directory as `finsafe` | Ship from Linux `finsafe-v*` archive; **not** on macOS |
-| M2 | `finsafe-agent` binary | `/usr/local/bin/finsafe-agent` mode `0755` | `finsafe-fleet-v*` release archive |
-| M3 | State directories | `/etc/finsafe`, `/var/lib/finsafe` (and cache/audit subdirs) | `mkdir` in preinstall |
-| M4 | **Sentinel** (signed JWS, one line) | `/etc/finsafe/managed-required.json` | Secure file deploy; root-owned |
-| M5 | **Agent service** | Linux: `finsafe-agent.service`; macOS: LaunchDaemon plist | Enable at boot |
+| M1 | `finsafe` binary | `/usr/local/bin/finsafe` or `C:\Program Files\FinSAFE\finsafe.exe` | PKG / deb / copy / image bake |
+| M1a | Platform companions | Linux: `finsafe-helper`, `finsafe-supervisor`, `finsafe-landlock-shim`; Windows: `finsafe-winhelper.exe` | Ship from the matching release archive |
+| M2 | `finsafe-agent` binary | `/usr/local/bin/finsafe-agent` or `C:\Program Files\FinSAFE\finsafe-agent.exe` | `finsafe-fleet-v*` release archive |
+| M3 | State directories | `/etc/finsafe`, `/var/lib/finsafe` or `C:\ProgramData\FinSAFE` | `mkdir` in preinstall |
+| M4 | **Sentinel** (signed JWS, one line) | `/etc/finsafe/managed-required.json` or `C:\ProgramData\FinSAFE\managed-required.json` | Secure file deploy; root/Admin-owned |
+| M5 | **Agent service** | Linux: `finsafe-agent.service`; macOS: LaunchDaemon plist; Windows: Service `finsafe-agent` | Enable at boot |
 | M6 | `FINSAFE_AUTHORITY_URL` | Agent service environment | Config profile / unit drop-in |
 | M7 | **One-time enroll** (pilot wave) | `FINSAFE_ENROLL_TOKEN` + `FINSAFE_AGENT_BOOTSTRAP_DEVICE_ID` on agent only | Script or profile; **remove token after** |
 | M8 | Remove enroll secret | No `FINSAFE_ENROLL_TOKEN` in persistent config | Second script or profile revision |
 | M9 | App launch command | `finsafe run -- <program> …` | App team docs; no `--policy` on fleet |
 
-**Reference units:** [`packaging/systemd/finsafe-agent.service`](../../packaging/systemd/finsafe-agent.service) · [`packaging/launchd/com.finogeeks.finsafe-agent.plist`](../../packaging/launchd/com.finogeeks.finsafe-agent.plist)
+**Reference units:** [`packaging/systemd/finsafe-agent.service`](../../packaging/systemd/finsafe-agent.service) · [`packaging/launchd/com.finogeeks.finsafe-agent.plist`](../../packaging/launchd/com.finogeeks.finsafe-agent.plist) · [`packaging/mdm/examples/intune/windows-install-agent-service.ps1`](../../packaging/mdm/examples/intune/windows-install-agent-service.ps1)
 
 ---
 
@@ -55,6 +55,7 @@ Map each row to **one step** in your tool (package, file copy, systemd, script, 
 | **Golden image / cloud-init** | Bake M1–M6; first-boot script for M7 |
 | **SSH + runbook** | Manual C1–C6, then scp + systemctl/launchctl for M1–M8 |
 | **Internal apt/yum repo** | Package installs M1–M2 + unit; config package for M4 |
+| **Windows GPO / Intune** | Startup script or Win32 app installs M1–M6; see [intune.md](./intune.md#windows-deployment-intune-or-gpo) |
 
 Jamf and Intune are **optional** playbooks for two common UIs—not requirements.
 
@@ -65,7 +66,7 @@ Jamf and Intune are **optional** playbooks for two common UIs—not requirements
 Run after deployment (support session or automation):
 
 ```bash
-# Binaries
+# Binaries (Linux/macOS)
 test -x /usr/local/bin/finsafe && test -x /usr/local/bin/finsafe-agent
 
 # Managed mode forced
@@ -82,6 +83,17 @@ finsafe run --json -- /usr/bin/true 2>&1 | head -c 500
 
 # Negative: personal mode blocked
 finsafe run --personal -- /usr/bin/true 2>&1 | grep -q MANAGED_FORCED_BY_POLICY && echo "enforce ok"
+```
+
+Windows equivalent:
+
+```powershell
+Test-Path "C:\Program Files\FinSAFE\finsafe.exe"
+Test-Path "C:\Program Files\FinSAFE\finsafe-agent.exe"
+Test-Path "C:\ProgramData\FinSAFE\managed-required.json"
+Test-Path "C:\ProgramData\FinSAFE\enrolled.json"
+Get-Service finsafe-agent
+& "C:\Program Files\FinSAFE\finsafe.exe" run --json -- powershell.exe -NoProfile -Command "exit 0"
 ```
 
 ---
@@ -103,6 +115,7 @@ Example scripts (adapt parameter names to your tool):
 - macOS/Linux shell: [`packaging/mdm/examples/generic/enroll-once.sh`](../../packaging/mdm/examples/generic/enroll-once.sh)
 - Jamf variant: [`packaging/mdm/examples/jamf/enroll-once.sh`](../../packaging/mdm/examples/jamf/enroll-once.sh)
 - Intune variant: [`packaging/mdm/examples/intune/macos-enroll-once.sh`](../../packaging/mdm/examples/intune/macos-enroll-once.sh)
+- Windows Intune/GPO variant: [`packaging/mdm/examples/intune/windows-install-agent-service.ps1`](../../packaging/mdm/examples/intune/windows-install-agent-service.ps1)
 
 ---
 
@@ -119,7 +132,7 @@ Example scripts (adapt parameter names to your tool):
 
 ## Out of scope (set expectations)
 
-- **Windows** desktop agent: not in managed-mode v1 (Linux + macOS only).
+- **Windows group matching:** Windows managed mode currently reports an empty supplementary group list to policy binding; prefer explicit device, user, or OS-scoped assignments until Windows group resolution is added.
 - **Local admin adversary**: can remove sentinel/agent; needs MDM lockdown + monitoring, not software alone.
 - **Non-FinSAFE launches**: users can still run binaries without `finsafe run` unless you block separately.
 

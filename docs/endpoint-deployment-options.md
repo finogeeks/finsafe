@@ -18,13 +18,13 @@ Use this guide to **choose how** your organization rolls out FinSAFE managed mod
 
 | Model | Where policy runs | Typical endpoint control | FinSAFE components |
 |-------|-------------------|--------------------------|-------------------|
-| **Managed desktop (recommended for distributed agents)** | Employee Mac/Linux laptop | Install `finsafe` + `finsafe-agent` + sentinel + enroll | Policy Authority + fleet archives + MDM **or equivalent** |
+| **Managed desktop (recommended for distributed agents)** | Employee Mac/Linux/Windows laptop | Install `finsafe` + `finsafe-agent` + sentinel + enroll | Policy Authority + fleet archives + MDM **or equivalent** |
 | **Central execution only** | Your data center / Kubernetes | No FinSAFE agent on user laptops | `finsafe-server` (see [product-one-pager.md](./product-one-pager.md)); clients call HTTPS API |
 | **Personal / developer** | User laptop, self-managed | None required | Public `finsafe` CLI + local `--policy` YAML (free; not fleet-governed) |
 
 Most enterprises adopting FinSAFE for **local OpenClaw, Hermes, or similar agents** want **managed desktop**: policy is signed, pulled from **your** Policy Authority, and the CLI cannot fall back to a personal policy file when the sentinel is in place.
 
-**Managed desktop v1 platforms:** Linux and macOS only. Windows desktop managed fleet (agent + sentinel paths) is **not** in v1. See [§6 Platform limits](#6-platform-limits).
+**Managed desktop platforms:** Linux, macOS, and Windows. Windows uses `C:\Program Files\FinSAFE` for binaries, `C:\ProgramData\FinSAFE` for state, and `\\.\pipe\finsafe-agent` for CLI ↔ agent IPC.
 
 ---
 
@@ -35,14 +35,14 @@ All paths below implement the same **per-machine contract** (M1–M9 in the [ven
 | Your situation | Recommended approach | Detailed guide |
 |----------------|----------------------|----------------|
 | **Jamf Pro** (macOS fleet) | Jamf PKG + configuration profile + one-time enroll policy | [mdm/jamf.md](./mdm/jamf.md) |
-| **Microsoft Intune** (macOS + Linux) | Intune app/PKG + scripts + plist/systemd | [mdm/intune.md](./mdm/intune.md) |
+| **Microsoft Intune** (macOS + Linux + Windows) | App/PKG/archive + scripts + plist/systemd/Windows Service | [mdm/intune.md](./mdm/intune.md) |
 | **Ansible / Puppet / Chef / Salt** (especially Linux) | Playbook role for M1–M8 | [mdm/ansible.md](./mdm/ansible.md) |
 | **Golden image or cloud-init** | Bake M1–M6 into image; first-boot script for M7–M8 | [vendor-neutral checklist](./mdm/vendor-neutral-checklist.md) § Map your product |
 | **Small fleet, no endpoint automation** | SSH + runbook + generic scripts | [packaging/mdm/examples/generic/](../../packaging/mdm/examples/generic/) |
 | **Internal apt/yum/PKG repo** | Package binaries + unit; separate package or profile for sentinel + env | Same M1–M8 mapping as Ansible |
 | **macOS without Jamf** (Munki, Autopkg, manual PKG) | PKG install + postinstall for sentinel/agent | [testing/managed-mode-macos-runbook.md](./testing/managed-mode-macos-runbook.md) |
 | **No root-level install on endpoints** | Do **not** promise managed desktop | Use **central execution** or issue managed Mac/Linux hardware |
-| **Windows laptops only** | Managed desktop v1 **not supported** | Central execution, or Mac/Linux for on-device agents |
+| **Windows laptops only** | Windows fleet archive + Intune or GPO startup script | [mdm/intune.md](./mdm/intune.md#windows-deployment-intune-or-gpo) |
 
 ### Decision flow (short)
 
@@ -78,10 +78,10 @@ Procedure: [authority-deployment.md](./authority-deployment.md) · phases A–B 
 
 | Step | What | Who creates it |
 |------|------|----------------|
-| M1–M2 | `finsafe`, `finsafe-agent` (+ Linux companions) | IT deploys from `finsafe-fleet-v*` archive |
-| M3 | `/etc/finsafe`, `/var/lib/finsafe` | IT |
+| M1–M2 | `finsafe`, `finsafe-agent` (+ Linux companions or Windows `finsafe-winhelper.exe`) | IT deploys from `finsafe-fleet-v*` archive |
+| M3 | `/etc/finsafe`, `/var/lib/finsafe` on Linux/macOS; `C:\ProgramData\FinSAFE` on Windows | IT |
 | M4 | `/etc/finsafe/managed-required.json` (signed JWS) | IT deploys; content from `finsafe-bundlectl sentinel sign` |
-| M5–M6 | Agent service + `FINSAFE_AUTHORITY_URL` | IT (systemd / LaunchDaemon) |
+| M5–M6 | Agent service + `FINSAFE_AUTHORITY_URL` | IT (systemd / LaunchDaemon / Windows Service) |
 | M7 | One-time `FINSAFE_ENROLL_TOKEN` + `FINSAFE_AGENT_BOOTSTRAP_DEVICE_ID` on **agent only** | IT injects; agent consumes |
 | M8 | Remove enroll token from persistent config | IT after enroll succeeds |
 | M9 | Apps use `finsafe run -- <program>` (no `--policy`) | App / platform teams |
@@ -169,7 +169,7 @@ Phased detail: [enterprise-deployment-runbook.md](./enterprise-deployment-runboo
 |----------|---------------------------------------------|--------|
 | **Linux** | Supported | Ansible playbook; systemd unit in [packaging/](../../packaging/) |
 | **macOS** | Supported | Jamf/Intune/Munki/manual; LaunchDaemon in [packaging/](../../packaging/) |
-| **Windows desktop** | **Not in v1** | No Windows agent/sentinel paths; use central execution or managed Mac/Linux for on-device agents |
+| **Windows desktop** | Supported | Windows Service `finsafe-agent`, named pipe `\\.\pipe\finsafe-agent`, Intune/GPO PowerShell examples |
 
 ---
 
@@ -178,7 +178,7 @@ Phased detail: [enterprise-deployment-runbook.md](./enterprise-deployment-runboo
 | Constraint | Practical option |
 |------------|------------------|
 | Cannot install system daemon on laptops | Run agents against **`finsafe-server`** in your environment; standard desktop compliance (BitLocker, EDR) only |
-| Windows-only workforce for local agents | Central execution; or provision Mac/Linux for roles that need on-device agents |
+| Windows-only workforce for local agents | Use the Windows fleet archive plus Intune/GPO deployment; central execution remains an option for locked-down endpoints |
 | Developers only, no fleet mandate | **Personal mode** — `finsafe run --policy file.yaml` (not org-enforced) |
 | No commercial license yet | Deploy authority in lab; production enroll requires Finogeeks **`license.jws`** |
 

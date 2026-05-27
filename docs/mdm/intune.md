@@ -2,7 +2,7 @@
 
 **中文：** [intune-zh.md](./intune-zh.md)
 
-Deploy FinSAFE on **macOS** and **Linux** managed devices with Intune (Endpoint Manager).
+Deploy FinSAFE on **macOS**, **Linux**, and **Windows** managed devices with Intune (Endpoint Manager).
 
 **Prerequisites:** [enterprise runbook](../enterprise-deployment-runbook.md) Phase A (authority + signed sentinel).
 
@@ -189,19 +189,68 @@ Environment=FINSAFE_ENROLL_TOKEN=one-time-token
 
 ---
 
-## 7. Compliance policies (optional)
+## 7. Windows deployment (Intune or GPO)
+
+Windows fleet archives ship:
+
+- `finsafe.exe`
+- `finsafe-agent.exe`
+- `finsafe-winhelper.exe`
+
+Install them under `C:\Program Files\FinSAFE` and keep managed state under `C:\ProgramData\FinSAFE`.
+
+### 7.1 Intune Win32 app
+
+1. Extract `finsafe-fleet-v<version>-x86_64-pc-windows-msvc.tar.zst`.
+2. Place `finsafe.exe`, `finsafe-agent.exe`, `finsafe-winhelper.exe`, and [`windows-install-agent-service.ps1`](../../packaging/mdm/examples/intune/windows-install-agent-service.ps1) in one package folder.
+3. Package the folder with the Microsoft Win32 Content Prep Tool.
+4. Install command:
+
+```powershell
+powershell.exe -ExecutionPolicy Bypass -File .\windows-install-agent-service.ps1 `
+  -AuthorityUrl "https://gov.example.com/policy-authority" `
+  -EnrollToken "%%ENROLL_TOKEN%%" `
+  -SentinelJws "%%SENTINEL_JWS%%"
+```
+
+Detection rule:
+
+```powershell
+Test-Path "C:\Program Files\FinSAFE\finsafe.exe" -and
+Test-Path "C:\Program Files\FinSAFE\finsafe-agent.exe" -and
+(Get-Service finsafe-agent -ErrorAction SilentlyContinue)
+```
+
+After `C:\ProgramData\FinSAFE\enrolled.json` appears, redeploy without `-EnrollToken` or remove `FINSAFE_ENROLL_TOKEN` from the service `Environment` registry value.
+
+### 7.2 Group Policy startup script
+
+For domain-joined fleets, place the extracted Windows fleet archive contents and [`windows-install-agent-service.ps1`](../../packaging/mdm/examples/gpo/windows-install-agent-service.ps1) in SYSVOL and run it as a Computer Startup script. Use GPO item-level targeting for pilot rings and remove the enroll token after enrollment succeeds.
+
+### 7.3 Windows verification
+
+```powershell
+Get-Service finsafe-agent
+Test-Path "C:\ProgramData\FinSAFE\managed-required.json"
+Test-Path "C:\ProgramData\FinSAFE\enrolled.json"
+& "C:\Program Files\FinSAFE\finsafe.exe" run --json -- powershell.exe -NoProfile -Command "exit 0"
+```
+
+---
+
+## 8. Compliance policies (optional)
 
 | Compliance rule | Detection |
 |-----------------|-----------|
-| FinSAFE agent running | Custom script: `test -S /run/finsafe-agent.sock` |
-| Sentinel present | `test -f /etc/finsafe/managed-required.json` |
-| Enrolled | `test -f /etc/finsafe/enrolled.json` |
+| FinSAFE agent running | macOS/Linux: `test -S /run/finsafe-agent.sock`; Windows: `Get-Service finsafe-agent` |
+| Sentinel present | macOS/Linux: `test -f /etc/finsafe/managed-required.json`; Windows: `Test-Path C:\ProgramData\FinSAFE\managed-required.json` |
+| Enrolled | macOS/Linux: `test -f /etc/finsafe/enrolled.json`; Windows: `Test-Path C:\ProgramData\FinSAFE\enrolled.json` |
 
 Mark non-compliant → remediate with script re-run (not a substitute for sentinel enforcement).
 
 ---
 
-## 8. Verification
+## 9. Verification
 
 On device (Company Portal support session or local admin):
 
@@ -214,6 +263,6 @@ Intune **Device diagnostics** → script output.
 
 ---
 
-## 9. Example payloads
+## 10. Example payloads
 
 See [`packaging/mdm/examples/intune/`](../../packaging/mdm/examples/intune/).

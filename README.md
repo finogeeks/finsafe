@@ -46,6 +46,7 @@ See **`install.sh --help`** (after downloading the script) for all environment v
    - Linux x86_64: `finsafe-v<version>-x86_64-unknown-linux-gnu.tar.zst`
    - macOS Apple Silicon: `finsafe-v<version>-aarch64-apple-darwin.tar.zst`
    - macOS Intel: `finsafe-v<version>-x86_64-apple-darwin.tar.zst`
+   - Windows x86_64: `finsafe-v<version>-x86_64-pc-windows-msvc.tar.zst`
 3. Download `SHA256SUMS` from the same release.
 4. Verify and extract:
 
@@ -78,7 +79,7 @@ Managed fleet and policy authority archives ship on the **same** [Releases](http
 
 | Archive | Contents |
 |---------|----------|
-| **`finsafe-fleet-v<version>-<target>.tar.zst`** | Managed `finsafe` + `finsafe-agent` (Linux also includes helper, supervisor, landlock shim) |
+| **`finsafe-fleet-v<version>-<target>.tar.zst`** | Managed `finsafe` + `finsafe-agent` (Linux: helper/supervisor/landlock shim; Windows: `finsafe-winhelper.exe`) |
 | **`finsafe-admin-server-v<version>-<target>.tar.zst`** | `finsafe-authority-http` (Linux production; macOS for local dev / pilot) |
 | **`finsafe-bundlectl-v<version>-<target>.tar.zst`** | `finsafe-bundlectl` (operator workstation; same targets as desktop) |
 | **`finsafe-v<version>-<target>.tar.zst`** | Personal-mode `finsafe` only (`install.sh`) |

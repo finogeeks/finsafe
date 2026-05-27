@@ -22,7 +22,7 @@ Manual run book for managed-mode acceptance.
 | 9 | Daemon stopped | CLI cannot resolve policy | `tamper-suite.sh daemon-kill` | Stop agent; expect daemon error |
 | 10 | Audit spool upload | Events in authority DB | `run-suite.sh audit` | Admin UI / DB inspection |
 | 11 | Heartbeat tamper flag | Digest mismatch reported | `tamper-suite.sh binary-swap` | Manual security review |
-| 12 | UDS challenge failure | Wrong peer on socket | `tamper-suite.sh uds-stub` | N/A (engineering) |
+| 12 | Agent IPC challenge failure | Wrong peer on socket/pipe | `tamper-suite.sh uds-stub`; Windows hosted CI named-pipe challenge smoke | N/A (engineering) |
 | 13 | Personal machine (no sentinel) | Legacy `--policy` unchanged | `run-suite.sh personal` | N/A — fleet uses sentinel |
 | 14 | Clock rollback | Floor detects rollback | `tamper-suite.sh clock-rollback` | Manual |
 | 15 | Sentinel removed | Personal path or daemon error | `tamper-suite.sh sentinel-removal` | Remove sentinel; verify behavior |
@@ -55,6 +55,10 @@ Build targets (private monorepo only):
 ## macOS
 
 See [managed-mode-macos-runbook.md](./managed-mode-macos-runbook.md) and [packaging/launchd/](https://github.com/finogeeks/finsafe/tree/main/packaging/launchd/).
+
+## Windows
+
+Hosted `windows-acceptance` runs `cargo test --release` on Windows crates, builds `finsafe.exe`, `finsafe-agent.exe`, and `finsafe-winhelper.exe`, starts the agent in console mode with `FINSAFE_AGENT_CONSOLE=1`, verifies the named-pipe challenge over `\\.\pipe\finsafe-agent`, and runs AppContainer sandbox acceptance. Full Windows authority enrollment and managed policy smoke should be run on a Windows pilot host after installing the Service through Intune or GPO.
 
 ## Stage 1 wrapper smoke (personal)
 

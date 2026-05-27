@@ -2,7 +2,7 @@
 
 **中文：** [managed-mode-zh.md](./managed-mode-zh.md)
 
-Enterprise desktops run FinSAFE under **managed mode**: policy is distributed as signed JWS bundles from a central **Policy Authority**, cached and enforced by **`finsafe-agent`**, and consumed by the existing **`finsafe`** CLI over a Unix-domain socket.
+Enterprise desktops run FinSAFE under **managed mode**: policy is distributed as signed JWS bundles from a central **Policy Authority**, cached and enforced by **`finsafe-agent`**, and consumed by the existing **`finsafe`** CLI over Unix-domain sockets on Linux/macOS or a named pipe on Windows.
 
 For the administrator mental model—bundles as signed policy sets, deterministic groups, first-class assignments, rollout on assignments, and conflict handling—see the [FinSAFE sandbox management model](./sandbox-management-model.md).
 
@@ -18,20 +18,18 @@ Full binary list, release archives, and Linux-only companions: [binary-reference
 |------------------|------|
 | **Commercial license** (`/etc/finsafe/license.jws`) | Finogeeks-issued JWS on the authority; gates admin, enrollment, bundles, and fleet audit (`402` when missing/invalid) |
 | `finsafe-authority-http` | JWKS, bundle distribution, enrollment, heartbeats, audit ingest, admin API |
-| `finsafe-agent` | Enrollment, bundle verify+cache, UDS protocol, heartbeat, audit spool upload |
+| `finsafe-agent` | Enrollment, bundle verify+cache, UDS/named-pipe protocol, heartbeat, audit spool upload |
 | `finsafe` | Resolves policy from agent when managed; `--personal` opts out only if policy allows |
 | `finsafe-bundlectl` | Build/sign/publish bundles and managed-required sentinels — see [authority-deployment.md](./authority-deployment.md#6-managing-policy-bundles-with-finsafe-bundlectl) |
 | `finsafe-helper`, `finsafe-supervisor`, `finsafe-landlock-shim` | **Linux only** — siblings of `finsafe` for bubblewrap/cgroup/Landlock (not shipped on macOS) |
+| `finsafe-winhelper.exe` | **Windows only** — sibling service/helper for Windows sandbox support |
 
-## Paths (Linux defaults)
+## Paths (production defaults)
 
-| Path | Purpose |
-|------|---------|
-| `/etc/finsafe/managed-required.json` | MDM-deployed JWS sentinel (forces managed mode) |
-| `/etc/finsafe/enrolled.json` | Device enrollment record |
-| `/var/lib/finsafe/cache/` | Verified bundle cache |
-| `/var/lib/finsafe/audit/` | Audit spool (NDJSON) |
-| `/run/finsafe-agent.sock` | CLI ↔ agent UDS |
+| Platform | Sentinel | Enrollment | Cache / audit | IPC |
+|----------|----------|------------|---------------|-----|
+| Linux/macOS | `/etc/finsafe/managed-required.json` | `/etc/finsafe/enrolled.json` | `/var/lib/finsafe/cache/`, `/var/lib/finsafe/audit/` | `/run/finsafe-agent.sock` |
+| Windows | `C:\ProgramData\FinSAFE\managed-required.json` | `C:\ProgramData\FinSAFE\enrolled.json` | `C:\ProgramData\FinSAFE\cache\`, `C:\ProgramData\FinSAFE\audit\` | `\\.\pipe\finsafe-agent` |
 
 ## Quick start (dev)
 
@@ -57,6 +55,16 @@ finsafe run -- /usr/bin/true
 ```
 
 Admin UI: [http://127.0.0.1:8090/admin/](http://127.0.0.1:8090/admin/)
+
+Windows console-mode development uses the same agent runtime without installing an SCM service:
+
+```powershell
+$env:FINSAFE_AGENT_CONSOLE = "1"
+$env:FINSAFE_MANAGED_STATE_DIR = "$PWD\agent-state"
+$env:FINSAFE_AGENT_BOOTSTRAP_DEVICE_ID = $env:COMPUTERNAME
+$env:FINSAFE_ENROLL_TOKEN = (Invoke-RestMethod -Method Post http://127.0.0.1:8090/v1/enroll/token).token
+cargo run -p finsafe-agent
+```
 
 ## CLI errors
 
