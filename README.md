@@ -55,7 +55,7 @@ See **`install.sh --help`** (after downloading the script) for all environment v
 irm https://raw.githubusercontent.com/finogeeks/finsafe/main/install.ps1 | iex
 ```
 
-Pin a version: `$env:FINSAFE_VERSION = '0.5.0'; irm .../install.ps1 | iex`
+Pin a version: `$env:FINSAFE_VERSION = '0.5.1'; irm .../install.ps1 | iex`
 
 ### Manual download
 

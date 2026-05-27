@@ -71,7 +71,7 @@ curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh |
 irm https://raw.githubusercontent.com/finogeeks/finsafe/main/install.ps1 | iex
 ```
 
-固定版本：`$env:FINSAFE_VERSION = '0.5.0'; irm .../install.ps1 | iex`
+固定版本：`$env:FINSAFE_VERSION = '0.5.1'; irm .../install.ps1 | iex`
 
 ### 手动下载
 

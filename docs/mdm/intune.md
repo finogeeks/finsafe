@@ -206,7 +206,7 @@ For lab machines or pre-Intune pilots, run **[`install-fleet-windows.ps1`](../..
 ```powershell
 Set-ExecutionPolicy -Scope Process Bypass
 .\install-fleet-windows.ps1 `
-  -Version 0.5.0 `
+  -Version 0.5.1 `
   -AuthorityUrl "https://gov.example.com/policy-authority" `
   -SentinelPath ".\managed-required.jws" `
   -EnrollToken "one-time-token"

@@ -4,8 +4,8 @@
 # Intended usage (PowerShell 5.1+):
 #   irm https://raw.githubusercontent.com/finogeeks/finsafe/main/install.ps1 | iex
 # Pin version or install directory:
-#   $env:FINSAFE_VERSION = '0.5.0'; irm .../install.ps1 | iex
-#   .\install.ps1 -Version 0.5.0 -InstallDir "$env:USERPROFILE\.local\bin"
+#   $env:FINSAFE_VERSION = '0.5.1'; irm .../install.ps1 | iex
+#   .\install.ps1 -Version 0.5.1 -InstallDir "$env:USERPROFILE\.local\bin"
 #
 # For managed fleet on Windows, use install-fleet-windows.ps1 (elevated), not this script.
 
