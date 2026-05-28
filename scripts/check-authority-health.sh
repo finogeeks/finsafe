@@ -26,6 +26,18 @@ echo "==> GET $BASE/health"
 health="$(curl -sf "$BASE/health")"
 echo "$health"
 
+echo "==> GET $BASE/admin/ (admin console)"
+admin_code="$(curl -sS -o /dev/null -w '%{http_code}' "$BASE/admin/")"
+if [[ "$admin_code" != "200" ]]; then
+  echo "ERROR: GET $BASE/admin/ returned HTTP $admin_code (expected 200)." >&2
+  echo "  Common causes:" >&2
+  echo "  - Old finsafe-authority-http built without embedded admin UI (upgrade finsafe-admin-server-v*)." >&2
+  echo "  - Visiting / instead of /admin/ (root should redirect; if not, use /admin/)." >&2
+  echo "  - Reverse proxy stripping /admin path prefix." >&2
+  exit 1
+fi
+echo "OK: admin UI reachable (HTTP 200)"
+
 echo "==> GET $BASE/v1/license/status"
 license="$(curl -sf "$BASE/v1/license/status")"
 echo "$license" | jq .

@@ -33,7 +33,7 @@ Policy Authority 与运维 CLI 在 [Releases](https://github.com/finogeeks/finsa
 校验并解压（方式与桌面发行包相同）：
 
 ```bash
-VERSION=0.6.0
+VERSION=0.6.1
 shasum -a 256 -c SHA256SUMS
 
 # Authority 主机（Linux 服务器）
@@ -156,6 +156,23 @@ sudo launchctl load /Library/LaunchDaemons/com.finogeeks.finsafe-authority.plist
 1. 将服务绑定到 `127.0.0.1:8090`（或内部端口）。
 2. 在前面放置 **nginx / Caddy / 负载均衡器** 来终止 TLS。
 3. 在反向代理层限制 `/v1/admin/*` 和 `/admin/` 的访问（IP 白名单、SSO/OIDC、mTLS）。
+
+---
+
+## 4.1 快速启动（前台，无 systemd）
+
+安装 `finsafe-admin-server-v*` 中的 `finsafe-authority-http` 后：
+
+```bash
+sudo mkdir -p /etc/finsafe /var/lib/finsafe-authority
+sudo cp license.jws /etc/finsafe/license.jws
+export FINSAFE_AUTHORITY_PUBLIC_URL=https://gov.example.com/policy-authority
+./scripts/start-authority.sh
+```
+
+在浏览器打开 **`http://127.0.0.1:8090/admin/`**（注意 `/admin/` 路径）。访问 `/` 会重定向到 `/admin/`。
+
+> **管理页 404？** 见下文 [管理 UI 404 排查](#管理-ui-404-排查)。
 
 ---
 
@@ -312,6 +329,22 @@ finsafe-bundlectl sentinel sign --out /tmp/managed-required.jws
 ```
 
 此 JWS 文件由 MDM 部署到舰队每台机器的 `/etc/finsafe/managed-required.json`。轮换签名密钥后需重新生成并重新部署。
+
+---
+
+## 管理 UI 404 排查
+
+| 现象 | 可能原因 | 处理 |
+|------|----------|------|
+| 访问 `http://host:8090/` 返回 404 | UI 不在站点根路径 | 使用 **`/admin/`**（或跟随 `/` 的重定向）。 |
+| `/admin/` 返回 404，正文含 `admin UI not available` | 二进制**未嵌入**管理 UI | 安装当前 **`finsafe-admin-server-v*`** 发行包（已嵌入 UI）。勿仅使用 `--features signer` 的本地开发构建。 |
+| 仅经反向代理 404 | 路径前缀或 upstream 错误 | 代理须转发 **`/admin/`** 及 API（`/v1/*`、`/.well-known/*`、`/health`）。 |
+| 本机 8090 正常、公网 URL 不行 | `FINSAFE_AUTHORITY_PUBLIC_URL` 或 TLS | 为注册设置公网 URL；在代理层终止 TLS。 |
+
+```bash
+export FINSAFE_AUTHORITY_URL=http://127.0.0.1:8090
+./scripts/check-authority-health.sh
+```
 
 ---
 

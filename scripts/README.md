@@ -4,7 +4,8 @@ Scripts in this directory ship with [finogeeks/finsafe](https://github.com/finog
 
 | Script | Purpose |
 |--------|---------|
-| [`check-authority-health.sh`](check-authority-health.sh) | Verify authority `/health` and `/v1/license/status` (optional admin stats with `FINSAFE_ADMIN_TOKEN`) |
+| [`start-authority.sh`](start-authority.sh) | Foreground start with defaults (`--workdir`, license path, prints **/admin/** URL) |
+| [`check-authority-health.sh`](check-authority-health.sh) | Verify `/health`, `/v1/license/status`, and **`/admin/`** (optional admin stats with `FINSAFE_ADMIN_TOKEN`) |
 | [`../install.sh`](../install.sh) | Personal `finsafe` — Linux/macOS |
 | [`../install.ps1`](../install.ps1) | Personal `finsafe` — Windows |
 | [`../install-fleet.sh`](../install-fleet.sh) | IT pilot managed fleet — Linux/macOS (sudo) |

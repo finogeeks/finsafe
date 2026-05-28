@@ -43,7 +43,7 @@ Policy Authority and operator CLI ship in **separate** release archives from
 Verify and extract (same pattern as the desktop archives):
 
 ```bash
-VERSION=0.6.0
+VERSION=0.6.1
 shasum -a 256 -c SHA256SUMS
 
 # Authority host (Linux server)
@@ -180,6 +180,23 @@ Do **not** expose `finsafe-authority-http` directly on port 443. Instead:
 1. Bind the service to `127.0.0.1:8090` (or a private port).
 2. Place **nginx / Caddy / a load balancer** in front to terminate TLS.
 3. Restrict `/v1/admin/*` and `/admin/` to an internal IP range or SSO.
+
+---
+
+## 4.1 Quick start (foreground, no systemd)
+
+After installing `finsafe-authority-http` from `finsafe-admin-server-v*`:
+
+```bash
+sudo mkdir -p /etc/finsafe /var/lib/finsafe-authority
+sudo cp license.jws /etc/finsafe/license.jws
+export FINSAFE_AUTHORITY_PUBLIC_URL=https://gov.example.com/policy-authority
+./scripts/start-authority.sh
+```
+
+Open **`http://127.0.0.1:8090/admin/`** (note the `/admin/` path). The server redirects `/` to `/admin/`.
+
+> **404 on the admin page?** See [Troubleshooting: admin UI 404](#troubleshooting-admin-ui-404) below.
 
 ---
 
@@ -364,6 +381,24 @@ finsafe-bundlectl sentinel sign --out /tmp/managed-required.jws
 
 This is the JWS file deployed by MDM to `/etc/finsafe/managed-required.json` on every
 fleet machine. Regenerate and redeploy if you rotate the signing key.
+
+---
+
+## Troubleshooting: admin UI 404
+
+| Symptom | Likely cause | Fix |
+|---------|----------------|-----|
+| `404` at `http://host:8090/` | UI is not at site root | Use **`/admin/`** (or follow redirect from `/`). |
+| `404` at `/admin/` with body `admin UI not available…` | Binary built **without** embedded UI | Install a current **`finsafe-admin-server-v*`** release (builds include embedded admin UI). Do not run a dev build with only `--features signer`. |
+| `404` only via reverse proxy | Proxy path strip / wrong upstream | Proxy must forward **`/admin/`** and API paths (`/v1/*`, `/.well-known/*`, `/health`) to the authority. Example: `location /policy-authority/ { proxy_pass http://127.0.0.1:8090/; }` — then open `https://gov.example.com/policy-authority/admin/`. |
+| Works on `127.0.0.1:8090` but not public URL | `FINSAFE_AUTHORITY_PUBLIC_URL` or TLS | Set public URL for enrollment; terminate TLS at the proxy. |
+
+Verify after any change:
+
+```bash
+export FINSAFE_AUTHORITY_URL=http://127.0.0.1:8090
+./scripts/check-authority-health.sh
+```
 
 ---
 
