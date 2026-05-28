@@ -17,6 +17,7 @@ resources:
   memory_max: "256M"
   pids_max: "32"
   cpu_max: "100000 100000"
+  timeout_ms: 120000
 windows:
   backend: appcontainer
   loopback_exemption: false

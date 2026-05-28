@@ -18,6 +18,7 @@ resources:
   memory_max: "512M"
   pids_max: "64"
   cpu_max: "100000 100000"
+  timeout_ms: 120000
 windows:
   backend: auto
 filesystem:
