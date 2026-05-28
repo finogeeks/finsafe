@@ -33,7 +33,7 @@ Policy Authority 与运维 CLI 在 [Releases](https://github.com/finogeeks/finsa
 校验并解压（方式与桌面发行包相同）：
 
 ```bash
-VERSION=0.5.1
+VERSION=0.6.0
 shasum -a 256 -c SHA256SUMS
 
 # Authority 主机（Linux 服务器）

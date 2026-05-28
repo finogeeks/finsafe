@@ -64,7 +64,7 @@ finsafe-bundlectl                  finsafe-authority-http               finsafe-
 3. 解压并安装：
 
 ```bash
-VERSION=0.5.1
+VERSION=0.6.0
 TARGET=aarch64-apple-darwin
 tar -xvf "finsafe-bundlectl-v${VERSION}-${TARGET}.tar.zst"
 sudo cp "finsafe-bundlectl-v${VERSION}-${TARGET}/finsafe-bundlectl" /usr/local/bin/

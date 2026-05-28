@@ -28,6 +28,10 @@ filesystem:
   read_write_paths: ["./workspace"]
 ```
 
+## Host profile alternative (`self-confine`)
+
+Instead of authoring wrapper YAML, **`finsafe --host-profile <NAME> self-confine`** synthesises a `local-wrapper` policy from built-in templates (`windows-desktop-isolated`, `linux-desktop-isolated`, `mac-seatbelt`, `windows-managed`). Optional **`--policy`** merges operator overrides. See [USER-GUIDE.md](USER-GUIDE.md) §1b.
+
 ## Field semantics
 
 | Field | Meaning |

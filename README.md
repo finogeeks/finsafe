@@ -55,7 +55,7 @@ See **`install.sh --help`** (after downloading the script) for all environment v
 irm https://raw.githubusercontent.com/finogeeks/finsafe/main/install.ps1 | iex
 ```
 
-Pin a version: `$env:FINSAFE_VERSION = '0.5.1'; irm .../install.ps1 | iex`
+Pin a version: `$env:FINSAFE_VERSION = '0.6.0'; irm .../install.ps1 | iex`
 
 ### Manual download
 
@@ -77,14 +77,30 @@ tar -xvf "finsafe-v${VERSION}-<target>.tar.zst"
 # finsafe-landlock-shim; keep them next to finsafe for auto-discovery.
 ```
 
-Optional: copy `finsafe` into a directory on your `PATH`. On Linux, copy the
-three companion binaries beside it as well.
+**Windows (manual extract):** use `tar --zstd` (built in on Windows 11 / recent Windows 10):
+
+```powershell
+$VERSION = "0.2.0"   # replace with the release you downloaded
+tar --zstd -xf "finsafe-v$VERSION-x86_64-pc-windows-msvc.tar.zst"
+# Binary: finsafe-v<version>-x86_64-pc-windows-msvc\finsafe.exe
+# Optional companion: finsafe-winhelper.exe (same folder; keep beside finsafe.exe)
+```
+
+Optional: copy binaries into a directory on your `PATH`. On Linux, copy the
+three companion binaries beside `finsafe`. On Windows, copy **`finsafe.exe`**
+(and **`finsafe-winhelper.exe`** when present) — PowerShell does not run
+extensionless files as executables.
 
 5. Confirm:
 
 ```bash
 ./finsafe version
 finsafe --help
+```
+
+```powershell
+.\finsafe.exe version
+.\finsafe.exe --help
 ```
 
 ### `release.json`

@@ -80,6 +80,26 @@ Copy-paste examples from this repository (clone or browse on GitHub) — see [ex
 
 Wrapper field reference: [POLICY-QUICKREF.md](POLICY-QUICKREF.md) · [POLICY-QUICKREF-zh.md](POLICY-QUICKREF-zh.md).
 
+### 1b. Host profile (`self-confine` only)
+
+When you prefer a **named posture** instead of hand-writing `kind: local-wrapper` YAML, use **`--host-profile`** before `self-confine`. The CLI synthesises an interactive wrapper policy, then uses the same launch path as `finsafe --policy <wrapper.yaml> self-confine`.
+
+Resolution order: CLI **`--host-profile`** → **`FINSAFE_HOST_PROFILE`** → **`finsafe.yaml`** `isolation.host_profile`. There is no silent default; **`legacy`** is rejected for `self-confine`.
+
+```bash
+# Windows desktop (AppContainer)
+finsafe --host-profile windows-desktop-isolated self-confine -- powershell
+
+# Optional YAML overrides (scalars from file win; path lists merge)
+finsafe --host-profile windows-desktop-isolated --policy my-tweaks.yaml self-confine -- powershell
+
+# Linux / macOS interactive brokers
+finsafe --host-profile linux-desktop-isolated self-confine -- ./my-broker
+finsafe --host-profile mac-seatbelt self-confine -- ./my-broker
+```
+
+Built-in profiles include **`windows-desktop-isolated`**, **`linux-desktop-isolated`**, **`mac-seatbelt`**, and **`windows-managed`**. Default writable root is **`./workspace`** on Windows and **`./workspace-sc`** on Linux/macOS (relative to launch cwd). **`--json`** includes **`resolved_host_profile`** and **`selected_backend`**.
+
 ### 2. High-level intent policy
 
 Use **`finsafe run --high-level`** with YAML from [examples/high-level-policies/](../examples/high-level-policies/) (intent / router schema — **not** `kind: local-wrapper`). **Do not combine** global `finsafe --policy <wrapper.yaml>…` with `run --high-level`; the CLI treats them as mutually exclusive.

@@ -79,6 +79,26 @@ finsafe --policy <PATH> self-confine <broker> [参数...]
 
 字段含义见 [POLICY-QUICKREF-zh.md](POLICY-QUICKREF-zh.md)。
 
+### 1b. 主机姿态（`--host-profile`，仅 `self-confine`）
+
+若不想手写 `kind: local-wrapper` YAML，可在 **`self-confine`** 前使用 **`--host-profile`**。CLI 会按命名姿态合成交互式包装策略，再走与 `finsafe --policy <wrapper.yaml> self-confine` 相同的启动路径。
+
+解析顺序：**`--host-profile`** → 环境变量 **`FINSAFE_HOST_PROFILE`** → **`finsafe.yaml`** 的 `isolation.host_profile`。无静默默认值；**`legacy`** 不能用于 `self-confine`。
+
+```bash
+# Windows 桌面（AppContainer）
+finsafe --host-profile windows-desktop-isolated self-confine -- powershell
+
+# 可选 YAML 覆盖（标量以文件为准；路径列表合并）
+finsafe --host-profile windows-desktop-isolated --policy my-tweaks.yaml self-confine -- powershell
+
+# Linux / macOS 交互式 Broker
+finsafe --host-profile linux-desktop-isolated self-confine -- ./my-broker
+finsafe --host-profile mac-seatbelt self-confine -- ./my-broker
+```
+
+内置姿态包括 **`windows-desktop-isolated`**、**`linux-desktop-isolated`**、**`mac-seatbelt`**、**`windows-managed`**。默认可写根目录：Windows 为 **`./workspace`**，Linux/macOS 为 **`./workspace-sc`**（相对启动 cwd）。**`--json`** 会输出 **`resolved_host_profile`**、**`selected_backend`** 等字段。
+
 ### 2. 高层意图策略
 
 使用 **`finsafe run --high-level`**，YAML 形态见 [examples/high-level-policies/](../examples/high-level-policies/)（**意图 / 路由** 模式，**不是** `kind: local-wrapper`）。**不要**同时使用「全局 `finsafe --policy <包装.yaml> …`」与 `run --high-level`，CLI 会将二者视为互斥。

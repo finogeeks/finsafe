@@ -1,30 +1,58 @@
 # Install personal-mode finsafe from GitHub releases (finogeeks/finsafe).
-# Installs finsafe.exe into FINSAFE_INSTALL_DIR (default: %USERPROFILE%\.local\bin).
+# Installs finsafe.exe (and finsafe-winhelper.exe when bundled) into FINSAFE_INSTALL_DIR.
 #
 # Intended usage (PowerShell 5.1+):
 #   irm https://raw.githubusercontent.com/finogeeks/finsafe/main/install.ps1 | iex
 # Pin version or install directory:
-#   $env:FINSAFE_VERSION = '0.5.1'; irm .../install.ps1 | iex
-#   .\install.ps1 -Version 0.5.1 -InstallDir "$env:USERPROFILE\.local\bin"
+#   $env:FINSAFE_VERSION = '0.6.0'; irm .../install.ps1 | iex
+#   .\install.ps1 -Version 0.6.0 -InstallDir "$env:USERPROFILE\.local\bin"
 #
 # For managed fleet on Windows, use install-fleet-windows.ps1 (elevated), not this script.
 
 [CmdletBinding()]
 param(
   [string] $Version = "",
-  [string] $Repo = "finogeeks/finsafe",
+  [string] $Repo = "",
   [string] $InstallDir = "",
-  [switch] $SkipChecksum
+  [switch] $SkipChecksum,
+  [switch] $Help
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
+if ($Help) {
+  @"
+Usage:
+  install.ps1 [-Version <x.y.z|vx.y.z>] [-InstallDir <path>] [-SkipChecksum]
+
+Environment:
+  FINSAFE_VERSION                 Install this version (e.g. 0.6.0). If unset, uses latest.
+  FINSAFE_INSTALL_DIR             Install directory (default: %USERPROFILE%\.local\bin)
+  FINSAFE_REPO                    GitHub owner/name (default: finogeeks/finsafe)
+  FINSAFE_INSECURE_SKIP_CHECKSUM  Set to 1 to skip SHA256 verification (not recommended)
+
+Examples:
+  irm https://raw.githubusercontent.com/finogeeks/finsafe/main/install.ps1 | iex
+  `$env:FINSAFE_VERSION = '0.6.0'; irm .../install.ps1 | iex
+  .\install.ps1 -Version 0.6.0
+"@ | Write-Host
+  exit 0
+}
+
+if ([string]::IsNullOrWhiteSpace($Repo)) {
+  $Repo = if ($env:FINSAFE_REPO) { $env:FINSAFE_REPO } else { "finogeeks/finsafe" }
+}
+
 if ([string]::IsNullOrWhiteSpace($InstallDir)) {
-  $InstallDir = Join-Path $env:USERPROFILE ".local\bin"
+  $InstallDir = if ($env:FINSAFE_INSTALL_DIR) { $env:FINSAFE_INSTALL_DIR } else {
+    Join-Path $env:USERPROFILE ".local\bin"
+  }
 }
 
 $TargetTriple = "x86_64-pc-windows-msvc"
+$CliBinaryName = "finsafe.exe"
+$WinhelperBinaryName = "finsafe-winhelper.exe"
 
 function Write-Info([string] $Message) {
   Write-Host "==> $Message"
@@ -101,12 +129,55 @@ function Expand-PersonalArchive {
   throw @"
 could not extract .tar.zst archive.
 Install tar with --zstd support (Windows 11 / recent Windows 10) or zstd CLI plus tar on PATH.
-Or download finsafe-v* manually from GitHub Releases.
+Or download finsafe-v*-x86_64-pc-windows-msvc.tar.zst manually from GitHub Releases.
 "@
 }
 
-$skipFromEnv = $env:FINSAFE_INSECURE_SKIP_CHECKSUM -eq "1"
-if ($skipFromEnv) { $SkipChecksum = $true }
+function Resolve-CliExePath {
+  param(
+    [string] $BundleDir,
+    [string] $PreferredName,
+    [string] $LegacyName
+  )
+
+  $preferred = Join-Path $BundleDir $PreferredName
+  if (Test-Path -LiteralPath $preferred) {
+    return $preferred
+  }
+
+  $legacy = Join-Path $BundleDir $LegacyName
+  if (Test-Path -LiteralPath $legacy) {
+    throw @"
+release archive contains '$LegacyName' but not '$PreferredName'.
+This usually means an older Windows CLI build before the packaging fix.
+Re-download with install.ps1, or run:
+  Rename-Item -LiteralPath '$legacy' -NewName '$PreferredName'
+Then invoke .\$PreferredName (not .\$LegacyName) in PowerShell.
+"@
+  }
+
+  throw "expected binary missing in release archive: $PreferredName (looked in $BundleDir)"
+}
+
+function Install-OptionalCompanion {
+  param(
+    [string] $BundleDir,
+    [string] $Name,
+    [string] $InstallDirectory
+  )
+
+  $source = Join-Path $BundleDir $Name
+  if (-not (Test-Path -LiteralPath $source)) {
+    return
+  }
+  $dest = Join-Path $InstallDirectory $Name
+  Copy-Item -Force -LiteralPath $source -Destination $dest
+  Write-Info "installed: $dest"
+}
+
+if ($env:FINSAFE_INSECURE_SKIP_CHECKSUM -eq "1") {
+  $SkipChecksum = $true
+}
 
 $releaseInfo = Resolve-ReleaseVersion -RepoName $Repo -RequestedVersion $Version
 $versionTag = $releaseInfo.Tag
@@ -145,27 +216,27 @@ try {
     throw "expected directory missing after extract: $bundleDir"
   }
 
-  $sourceExe = Join-Path $bundleDir "finsafe.exe"
-  if (-not (Test-Path -LiteralPath $sourceExe)) {
-    throw "expected binary missing: $sourceExe"
-  }
+  $sourceExe = Resolve-CliExePath -BundleDir $bundleDir -PreferredName $CliBinaryName -LegacyName "finsafe"
 
   New-Item -ItemType Directory -Force -Path $InstallDir | Out-Null
-  $destExe = Join-Path $InstallDir "finsafe.exe"
+  $destExe = Join-Path $InstallDir $CliBinaryName
   Copy-Item -Force -LiteralPath $sourceExe -Destination $destExe
-
   Write-Info "installed: $destExe"
+
+  Install-OptionalCompanion -BundleDir $bundleDir -Name $WinhelperBinaryName -InstallDirectory $InstallDir
+
   $onPath = $false
   foreach ($part in ($env:PATH -split ';')) {
     if ($part -eq $InstallDir) { $onPath = $true; break }
   }
   if (-not $onPath) {
     Write-Info "add to your user PATH: $InstallDir"
-    Write-Info '  [Environment]::SetEnvironmentVariable("Path", $env:Path + ";' + $InstallDir + '", "User")'
+    Write-Info ('  [Environment]::SetEnvironmentVariable("Path", $env:Path + ";' + $InstallDir + '", "User")')
   }
 
   & $destExe version
   Write-Info "done"
+  Write-Info "run finsafe as: $CliBinaryName (e.g. .\$CliBinaryName --help) — PowerShell requires the .exe suffix"
   Write-Info "managed fleet archives (finsafe-fleet-v*) use install-fleet-windows.ps1; see README.md"
 }
 finally {

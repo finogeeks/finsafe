@@ -71,7 +71,7 @@ curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh |
 irm https://raw.githubusercontent.com/finogeeks/finsafe/main/install.ps1 | iex
 ```
 
-固定版本：`$env:FINSAFE_VERSION = '0.5.1'; irm .../install.ps1 | iex`
+固定版本：`$env:FINSAFE_VERSION = '0.6.0'; irm .../install.ps1 | iex`
 
 ### 手动下载
 
@@ -93,14 +93,27 @@ tar -xvf "finsafe-v${VERSION}-<target>.tar.zst"
 # finsafe-landlock-shim；请与 finsafe 放在同一目录，便于自动发现。
 ```
 
-可将 `finsafe` 复制到 **`PATH`** 中的任意目录。Linux 上也请把三个伴随
-二进制一起复制到同一目录。
+**Windows（手动解压）：** 使用 `tar --zstd`（Windows 11 / 较新 Windows 10 自带）：
+
+```powershell
+$VERSION = "0.2.0"   # 改为你下载的版本号
+tar --zstd -xf "finsafe-v$VERSION-x86_64-pc-windows-msvc.tar.zst"
+# 二进制：finsafe-v<version>-x86_64-pc-windows-msvc\finsafe.exe
+# 可选伴随程序：finsafe-winhelper.exe（同目录，与 finsafe.exe 放在一起）
+```
+
+将二进制复制到 **`PATH`** 中的目录。Linux 请同时复制三个伴随二进制；Windows 请复制 **`finsafe.exe`**（以及压缩包内的 **`finsafe-winhelper.exe`**）。PowerShell 无法将无扩展名文件当作可执行程序运行。
 
 5. 确认：
 
 ```bash
 ./finsafe version
 finsafe --help
+```
+
+```powershell
+.\finsafe.exe version
+.\finsafe.exe --help
 ```
 
 ### `release.json`

@@ -19,7 +19,7 @@
     -EnrollToken "one-time-token"
 
 .EXAMPLE
-  .\install-fleet-windows.ps1 -Version 0.5.1 -DownloadOnly
+  .\install-fleet-windows.ps1 -Version 0.6.0 -DownloadOnly
 #>
 [CmdletBinding()]
 param(

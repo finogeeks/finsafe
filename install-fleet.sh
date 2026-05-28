@@ -11,7 +11,7 @@
 #        FINSAFE_ENROLL_TOKEN='one-time-token' \
 #        ./install-fleet.sh
 #
-#   ./install-fleet.sh --version 0.5.1 --download-only
+#   ./install-fleet.sh --version 0.6.0 --download-only
 #   sudo ./install-fleet.sh --authority-url 'https://...' --sentinel-path ./managed-required.jws
 
 set -eu

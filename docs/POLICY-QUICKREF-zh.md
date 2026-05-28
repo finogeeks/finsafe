@@ -28,6 +28,10 @@ filesystem:
   read_write_paths: ["./workspace"]
 ```
 
+## 主机姿态（`self-confine` 替代手写 YAML）
+
+不必手写包装策略时，可使用 **`finsafe --host-profile <NAME> self-confine`**，由内置模板合成交互式 `local-wrapper` 策略（如 `windows-desktop-isolated`、`linux-desktop-isolated`、`mac-seatbelt`、`windows-managed`）。可选 **`--policy`** 合并运维覆盖项。详见 [USER-GUIDE-zh.md](USER-GUIDE-zh.md) §1b。
+
 ## 字段语义
 
 | 字段 | 含义 |
