@@ -43,7 +43,7 @@ Policy Authority and operator CLI ship in **separate** release archives from
 Verify and extract (same pattern as the desktop archives):
 
 ```bash
-VERSION=0.6.4
+VERSION=0.6.6
 shasum -a 256 -c SHA256SUMS
 
 # Authority host (Linux server)
