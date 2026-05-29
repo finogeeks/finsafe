@@ -1,9 +1,11 @@
-# Windows sandbox smoke: allow System32 + workspace; deny writes elsewhere.
+# Windows sandbox smoke: workspace RW; cmd/DLL access via winsafe runtime grants.
 # From the repo root on Windows:
 #   mkdir workspace 2>nul
-#   finsafe --policy examples/wrapper-policies/windows-sandbox-smoke.yaml run cmd /c echo hello
+#   finsafe --policy examples/wrapper-policies/windows-sandbox-smoke.yaml --work-dir workspace run cmd /c echo hello
 # `${USERPROFILE}` expands at policy load time. Managed desktop fleet v1 is Linux/macOS only;
 # this policy is for local `finsafe run` on Windows (AppContainer / winsafe).
+#
+# Do not list C:\Windows\System32 under read_only_paths — see windows-version-smoke.yaml.
 schema_version: 1
 kind: local-wrapper
 program_mode: short-lived
@@ -17,13 +19,11 @@ resources:
   memory_max: "256M"
   pids_max: "32"
   cpu_max: "100000 100000"
-  timeout_ms: 120000
+  timeout_ms: 30000
 windows:
   backend: appcontainer
   loopback_exemption: false
 filesystem:
-  read_only_paths:
-    - "C:/Windows/System32"
+  read_only_paths: []
   read_write_paths:
     - "./workspace"
-    - "${USERPROFILE}/AppData/Local/Temp"

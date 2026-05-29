@@ -1,0 +1,28 @@
+# Interactive Windows smoke for `finsafe self-confine` (supervisor-spawn broker path).
+# CI uses `finsafe-winaccept.exe` as a broker stand-in (not PowerShell — AppContainer DACLs).
+# From the repo root on Windows:
+#   mkdir workspace, blocked 2>$null
+#   finsafe --policy examples/wrapper-policies/windows-selfconfine-smoke.yaml self-confine `
+#       .\target\release\finsafe-winaccept.exe filesystem
+# `${USERPROFILE}` expands at policy load time. Create `./workspace` before run if you rely on that RW scope.
+schema_version: 1
+kind: local-wrapper
+program_mode: interactive
+degrade:
+  allow_fallback: false
+audit:
+  require_policy_digest: true
+  require_resolved_posture: true
+network: none
+windows:
+  backend: appcontainer
+  package_name: finsafe-selfconfine-smoke
+resources:
+  memory_max: "512M"
+  pids_max: "32"
+  cpu_max: "100000 100000"
+  timeout_ms: 5000
+filesystem:
+  read_only_paths: []
+  read_write_paths:
+    - "./workspace"
