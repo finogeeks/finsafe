@@ -45,7 +45,7 @@ CLI can target a remote server: `finsafe run --high-level policy.yaml --server h
 
 MDM (Jamf, Intune, Ansible, golden images, etc.) delivers **binaries**, the **managed-required sentinel**, the **agent service**, and **one-time enrollment** — not policy YAML. Policy comes from **Policy Authority** via signed bundles pulled by `finsafe-agent`.
 
-Enterprise fleets use **`finsafe-fleet-v*`** release tarballs (managed `finsafe` + `finsafe-agent`). Finogeeks engineers build from the private source monorepo with `scripts/dev/build-finsafe-enterprise.sh` (`--features managed`). See the full **MDM** section in [product-one-pager-zh.md](./product-one-pager-zh.md) and [vendor-neutral MDM checklist](./mdm/vendor-neutral-checklist.md).
+Enterprise fleets use **`finsafe-fleet-v*`** release tarballs (managed `finsafe` + `finsafe-agent`) from [GitHub Releases](https://github.com/finogeeks/finsafe/releases). See the full **MDM** section in [product-one-pager-zh.md](./product-one-pager-zh.md) and [vendor-neutral MDM checklist](./mdm/vendor-neutral-checklist.md).
 
 **Windows + MDM (v1):** Managed fleet deployment (agent, sentinel, M1–M8) is **Linux and macOS only**. Intune guides cover macOS/Linux endpoints, not Windows 10/11 devices. Windows users can use **central Sandbox-as-a-Service** via `finsafe-server` while executions run on Linux workers. Details: [product-one-pager-zh.md — Windows & MDM](./product-one-pager-zh.md#windows-设备与-mdmv1-现状).
 

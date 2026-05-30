@@ -2,7 +2,7 @@
 
 **中文：** See [managed-mode-matrix-zh.md](./managed-mode-matrix-zh.md) and [enterprise-deployment-runbook-zh.md](../enterprise-deployment-runbook-zh.md).
 
-> **Audience:** Customer IT pilots and Finogeeks engineers validating macOS fleet rollout. Automated Linux harness scripts (`scripts/tests/managed-mode/*`) exist only in the **private FinSAFE source repository** — not on [finogeeks/finsafe](https://github.com/finogeeks/finsafe). Use this runbook for **manual** steps (maps to [managed-mode-matrix.md](./managed-mode-matrix.md)).
+> **Audience:** Customer IT pilots validating macOS fleet rollout. Manual steps below map to [managed-mode-matrix.md](./managed-mode-matrix.md). For a single-machine lab on release binaries, see [managed-lab.md](./managed-lab.md).
 
 For **commercial license gates**, see [licensing-e2e-macos.md — customer pilot](./licensing-e2e-macos.md#customer-pilot-verification). Full setup chain: [finsafe-enterprise-setup skill](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-enterprise-setup/SKILL.md).
 

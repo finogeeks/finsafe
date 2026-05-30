@@ -10,6 +10,8 @@
 
 **企业 IT：** 请先阅读 **[企业 IT 全景](./enterprise-it-overview-zh.md)**（个人 / 托管对比、Hermes 示例、防篡改与可治理性），再阅读 [企业部署手册](./enterprise-deployment-runbook-zh.md)。舰队安装：[与 MDM 产品无关的检查清单](./mdm/vendor-neutral-checklist-zh.md)（适用于任意 MDM 或配置管理），或 [Jamf](./mdm/jamf-zh.md) / [Intune](./mdm/intune-zh.md) / [Ansible](./mdm/ansible-zh.md)。
 
+**连接详解：** CLI 仅通过 agent 取策略（不直连权威）、agent 如何解析 `FINSAFE_AUTHORITY_URL`、哨兵与注册分工及架构图 — [managed-cli-authority-connectivity-zh.md](./managed-cli-authority-connectivity-zh.md) · [English](./managed-cli-authority-connectivity.md)。
+
 ## 组件
 
 完整二进制清单、发行包与 Linux 专属配套：[binary-reference-zh.md](./binary-reference-zh.md)。
@@ -33,30 +35,25 @@
 | `/var/lib/finsafe/audit/` | 审计 spool（NDJSON） |
 | `/run/finsafe-agent.sock` | CLI ↔ agent UDS |
 
-## 快速开始（开发）
+## 快速开始（本地实验）
+
+在 **macOS 或 Linux** 上，一条脚本即可启动 authority、发布默认策略、注册 agent 并生成 `lab.env`：
 
 ```bash
-# 终端 1 — authority（生产环境托管 API 需有效许可证）
-export FINSAFE_AUTHORITY_DB=/tmp/finsafe-authority.db
-export FINSAFE_LICENSE_PATH=/tmp/finsafe-license.jws   # 生产环境由 Finogeeks 签发
-cargo run -p finsafe-authority --bin finsafe-authority-http
+export FINSAFE_LICENSE_PATH=/path/to/license.jws   # 由 Finogeeks 签发
 
-# 终端 2 — 构建并发布 bundle
-finsafe-bundlectl bundle build --from examples/wrapper-policy.yaml --out /tmp/bundle.json
-finsafe-bundlectl bundle sign --in /tmp/bundle.json --out /tmp/bundle.jws
-finsafe-bundlectl bundle publish --in /tmp/bundle.jws --authority http://127.0.0.1:8090
+./scripts/managed-lab.sh start
+source "$(./scripts/managed-lab.sh env)"
 
-# 终端 3 — agent（引导注册）
-sudo mkdir -p /etc/finsafe /var/lib/finsafe
-export FINSAFE_AGENT_BOOTSTRAP_DEVICE_ID=dev-laptop-1
-export FINSAFE_ENROLL_TOKEN=$(curl -s -X POST http://127.0.0.1:8090/v1/enroll/token | jq -r .token)
-cargo run -p finsafe-agent
-
-# 终端 4 — 托管运行
 finsafe run -- /usr/bin/true
+./scripts/managed-lab.sh stop
 ```
 
-管理 UI：[http://127.0.0.1:8090/admin/](http://127.0.0.1:8090/admin/)
+需在 `PATH` 上安装 **[GitHub Releases](https://github.com/finogeeks/finsafe/releases)** 中的 **`finsafe-fleet-v*`**、**`finsafe-admin-server-v*`**、**`finsafe-bundlectl-v*`**。默认绑定 **`127.0.0.1:8095`**，状态目录 **`~/.finsafe-lab`**。完整说明：[managed-lab-zh.md](./testing/managed-lab-zh.md)。
+
+实验期间管理 UI：[http://127.0.0.1:8095/admin/](http://127.0.0.1:8095/admin/)
+
+生产路径（`/etc/finsafe`、MDM 哨兵、systemd/LaunchDaemon）见 [enterprise-deployment-runbook-zh.md](./enterprise-deployment-runbook-zh.md) 与 [managed-mode-macos-runbook.md](./testing/managed-mode-macos-runbook.md)。
 
 ## CLI 错误码
 

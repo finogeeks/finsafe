@@ -22,4 +22,4 @@ Enterprise fleets use **GitHub Release** tarballs — not ad-hoc source builds o
 | Policy Authority | `finsafe-admin-server-v*` | systemd / LaunchDaemon |
 | Bundle operator | `finsafe-bundlectl-v*` | IT workstation |
 
-**Finogeeks engineers** building from the private source monorepo: `scripts/dev/build-finsafe-personal.sh` (public CLI) and `scripts/dev/build-finsafe-enterprise.sh` (`--features managed`).
+Do not build from source on production endpoints; use the release tarballs above.

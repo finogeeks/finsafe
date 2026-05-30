@@ -10,6 +10,8 @@ Personal / developer use is unchanged when no enrollment marker and no `managed-
 
 **Enterprise IT:** start with the [enterprise deployment runbook](./enterprise-deployment-runbook.md). Fleet install: [vendor-neutral checklist](./mdm/vendor-neutral-checklist.md) (any MDM or config management), or [Jamf](./mdm/jamf.md) / [Intune](./mdm/intune.md) / [Ansible](./mdm/ansible.md).
 
+**Connectivity deep dive:** how the CLI talks only to the agent (not the authority), how the agent finds `FINSAFE_AUTHORITY_URL`, sentinel vs enrollment, and the architecture diagram — [managed-cli-authority-connectivity.md](./managed-cli-authority-connectivity.md) · [中文](./managed-cli-authority-connectivity-zh.md).
+
 ## Components
 
 Full binary list, release archives, and Linux-only companions: [binary-reference.md](./binary-reference.md).
@@ -31,40 +33,25 @@ Full binary list, release archives, and Linux-only companions: [binary-reference
 | Linux/macOS | `/etc/finsafe/managed-required.json` | `/etc/finsafe/enrolled.json` | `/var/lib/finsafe/cache/`, `/var/lib/finsafe/audit/` | `/run/finsafe-agent.sock` |
 | Windows | `C:\ProgramData\FinSAFE\managed-required.json` | `C:\ProgramData\FinSAFE\enrolled.json` | `C:\ProgramData\FinSAFE\cache\`, `C:\ProgramData\FinSAFE\audit\` | `\\.\pipe\finsafe-agent` |
 
-## Quick start (dev)
+## Quick start (local lab)
+
+On **macOS or Linux**, use one script to start authority, publish a default policy, enroll the agent, and write `lab.env`:
 
 ```bash
-# Terminal 1 — authority (managed APIs need a valid license in production)
-export FINSAFE_AUTHORITY_DB=/tmp/finsafe-authority.db
-export FINSAFE_LICENSE_PATH=/tmp/finsafe-license.jws   # Finogeeks-issued in production
-cargo run -p finsafe-authority --bin finsafe-authority-http
+export FINSAFE_LICENSE_PATH=/path/to/license.jws   # Finogeeks-issued
 
-# Terminal 2 — build & publish a bundle
-finsafe-bundlectl bundle build --from examples/wrapper-policy.yaml --out /tmp/bundle.json
-finsafe-bundlectl bundle sign --in /tmp/bundle.json --out /tmp/bundle.jws
-finsafe-bundlectl bundle publish --in /tmp/bundle.jws --authority http://127.0.0.1:8090
+./scripts/managed-lab.sh start
+source "$(./scripts/managed-lab.sh env)"
 
-# Terminal 3 — agent (bootstrap enrollment)
-sudo mkdir -p /etc/finsafe /var/lib/finsafe
-export FINSAFE_AGENT_BOOTSTRAP_DEVICE_ID=dev-laptop-1
-export FINSAFE_ENROLL_TOKEN=$(curl -s -X POST http://127.0.0.1:8090/v1/enroll/token | jq -r .token)
-cargo run -p finsafe-agent
-
-# Terminal 4 — managed run
 finsafe run -- /usr/bin/true
+./scripts/managed-lab.sh stop
 ```
 
-Admin UI: [http://127.0.0.1:8090/admin/](http://127.0.0.1:8090/admin/)
+Requires **`finsafe-fleet-v*`**, **`finsafe-admin-server-v*`**, and **`finsafe-bundlectl-v*`** on `PATH` (from [GitHub Releases](https://github.com/finogeeks/finsafe/releases)). Default bind **`127.0.0.1:8095`**, state **`~/.finsafe-lab`**. Full guide: [managed-lab.md](./testing/managed-lab.md).
 
-Windows console-mode development uses the same agent runtime without installing an SCM service:
+Admin UI during the lab: [http://127.0.0.1:8095/admin/](http://127.0.0.1:8095/admin/)
 
-```powershell
-$env:FINSAFE_AGENT_CONSOLE = "1"
-$env:FINSAFE_MANAGED_STATE_DIR = "$PWD\agent-state"
-$env:FINSAFE_AGENT_BOOTSTRAP_DEVICE_ID = $env:COMPUTERNAME
-$env:FINSAFE_ENROLL_TOKEN = (Invoke-RestMethod -Method Post http://127.0.0.1:8090/v1/enroll/token).token
-cargo run -p finsafe-agent
-```
+For production fleet paths (`/etc/finsafe`, MDM sentinel, systemd/LaunchDaemon), follow [enterprise-deployment-runbook.md](./enterprise-deployment-runbook.md) and [managed-mode-macos-runbook.md](./testing/managed-mode-macos-runbook.md).
 
 ## CLI errors
 

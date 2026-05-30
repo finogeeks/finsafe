@@ -4,6 +4,7 @@ Scripts in this directory ship with [finogeeks/finsafe](https://github.com/finog
 
 | Script | Purpose |
 |--------|---------|
+| [`managed-lab.sh`](managed-lab.sh) | **Full local lab**: authority + agent + enroll + `run`/`interactive` — [managed-lab.md](../docs/testing/managed-lab.md) |
 | [`start-authority.sh`](start-authority.sh) | Foreground start with defaults (`--workdir`, license path, prints **/admin/** URL) |
 | [`check-authority-health.sh`](check-authority-health.sh) | Verify `/health`, `/v1/license/status`, and **`/admin/`** (optional admin stats with `FINSAFE_ADMIN_TOKEN`) |
 | [`../install.sh`](../install.sh) | Personal `finsafe` — Linux/macOS |
@@ -23,7 +24,3 @@ Fleet rollout uses release binaries from GitHub, not source builds:
 | `finsafe-bundlectl-v*` | Build, sign, publish policy bundles |
 
 See [binary-reference.md](../docs/binary-reference.md) and [authority-deployment.md](../docs/authority-deployment.md).
-
-## Finogeeks engineering (private source repo)
-
-Regression, E2E, and release automation live in the **private** FinSAFE monorepo under `scripts/tests/`, `scripts/dev/`, and `scripts/prod/`. They are not published here.

@@ -39,11 +39,13 @@ Deploy **Policy Authority**, **finsafe-agent**, and signed bundles to employee d
 | [authority-deployment.md](./authority-deployment.md) · [authority-deployment-zh.md](./authority-deployment-zh.md) | Installing and running `finsafe-authority-http`, license, env vars, `finsafe-bundlectl` |
 | [admin-ui.md](./admin-ui.md) · [admin-ui-zh.md](./admin-ui-zh.md) | Admin console reference (devices, enrollment tokens, kill switch, API equivalents) |
 | [managed-mode.md](./managed-mode.md) · [managed-mode-zh.md](./managed-mode-zh.md) | Overview, components, paths, CLI errors |
+| [managed-cli-authority-connectivity.md](./managed-cli-authority-connectivity.md) · [managed-cli-authority-connectivity-zh.md](./managed-cli-authority-connectivity-zh.md) | **CLI ↔ agent ↔ authority** topology, discovery, IPC, enrollment |
 | [endpoint-deployment-options.md](./endpoint-deployment-options.md) · [endpoint-deployment-options-zh.md](./endpoint-deployment-options-zh.md) | Deployment path decision guide (no MDM required) |
 | [enterprise-deployment-runbook.md](./enterprise-deployment-runbook.md) · [enterprise-deployment-runbook-zh.md](./enterprise-deployment-runbook-zh.md) | Full phased deployment and operations |
 | [mdm/vendor-neutral-checklist.md](./mdm/vendor-neutral-checklist.md) · [vendor-neutral-checklist-zh.md](./mdm/vendor-neutral-checklist-zh.md) | Checklist for any MDM or config tool |
 | [mdm/README.md](./mdm/README.md) · [README-zh.md](./mdm/README-zh.md) | Jamf, Intune, Ansible playbooks |
 | [testing/managed-mode-matrix.md](./testing/managed-mode-matrix.md) · [managed-mode-matrix-zh.md](./testing/managed-mode-matrix-zh.md) | Acceptance tests before production |
+| [testing/managed-lab.md](./testing/managed-lab.md) · [managed-lab-zh.md](./testing/managed-lab-zh.md) | **Local full stack lab** — [`scripts/managed-lab.sh`](../scripts/managed-lab.sh) on one machine |
 | [testing/licensing-e2e-macos.md](./testing/licensing-e2e-macos.md) · [licensing-e2e-macos-zh.md](./testing/licensing-e2e-macos-zh.md) | macOS licensing + managed smoke (**customer curl checklist** + Finogeeks harness note) |
 
 Read order: **[enterprise-it-overview.md](./enterprise-it-overview.md)** → **[endpoint-deployment-options.md](./endpoint-deployment-options.md)** → **[enterprise-deployment-runbook.md](./enterprise-deployment-runbook.md)**.

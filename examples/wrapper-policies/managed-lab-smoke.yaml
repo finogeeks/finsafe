@@ -1,0 +1,24 @@
+# Default policy for scripts/managed-lab.sh — minimal managed smoke on macOS/Linux.
+# Allows /usr/bin/true and read-only FHS paths; workspace writes under ./workspace and /tmp.
+schema_version: 1
+kind: local-wrapper
+program_mode: short-lived
+degrade:
+  allow_fallback: false
+audit:
+  require_policy_digest: true
+  require_resolved_posture: true
+network: host
+resources:
+  memory_max: "256M"
+  pids_max: "32"
+  cpu_max: "100000 100000"
+filesystem:
+  read_only_paths:
+    - "/usr"
+    - "/lib"
+    - "/lib64"
+    - "/bin"
+  read_write_paths:
+    - "/tmp"
+    - "./workspace"

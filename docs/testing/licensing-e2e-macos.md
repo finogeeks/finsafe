@@ -2,12 +2,7 @@
 
 **中文：** [licensing-e2e-macos-zh.md](./licensing-e2e-macos-zh.md)
 
-> **Audience**
->
-> | You are | Use this document |
-> |---------|-------------------|
-> | **Customer IT / pilot** | [Customer pilot verification](#customer-pilot-verification) below, plus [finsafe-enterprise-setup skill](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-enterprise-setup/SKILL.md) and [authority-deployment.md](../authority-deployment.md). |
-> | **Finogeeks engineering** | [Finogeeks automated harness](#finogeeks-automated-harness) — requires the **private FinSAFE source repository** (not shipped on `finogeeks/finsafe`). |
+> **Audience:** Customer IT and security teams validating **commercial licensing** and managed APIs during a pilot. Use **release binaries** from [GitHub Releases](https://github.com/finogeeks/finsafe/releases) and a **Finogeeks-issued** `license.jws`.
 
 Related docs:
 
@@ -19,9 +14,9 @@ Related docs:
 
 ## Customer pilot verification
 
-Use **release binaries** and a **Finogeeks-issued** `license.jws`. No Rust toolchain or private repo scripts are required.
-
 **Recommended skill:** [finsafe-enterprise-setup/SKILL.md](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-enterprise-setup/SKILL.md) (full phased setup).
+
+**Single-machine lab:** [managed-lab.md](./managed-lab.md) (`./scripts/managed-lab.sh start` with `FINSAFE_LICENSE_PATH`).
 
 ### 1. Authority + license
 
@@ -65,69 +60,14 @@ Two hosts, real MDM, production JWKS: [enterprise-deployment-runbook.md](../ente
 
 ---
 
-## Finogeeks automated harness
-
-The following layers run only in the **Finogeeks private FinSAFE monorepo** (scripts are not published on `finogeeks/finsafe`).
-
-Docker is **not** required for licensing on macOS; use OrbStack or Linux only for Landlock or Linux-only harness scripts.
-
-### Test layers (engineering)
-
-| Layer | What it proves | Command (private repo) |
-|-------|----------------|------------------------|
-| **0 — Unit** | JWS verify, expiry, grace, features, seat math | `cargo test -p finsafe-license -p finsafe-authority` |
-| **1 — HTTP gates** | `402` without license; `200` with license; seat cap | `scripts/tests/managed-mode/license-suite.sh …` |
-| **2 — Full macOS E2E** | Build, dev `license.jws`, both authorities, managed run | `scripts/tests/managed-mode/e2e-licensing-macos.sh` |
-| **2b — macOS managed + Hermes** | licensectl + bundlectl + enroll + Hermes under Seatbelt | `scripts/tests/managed-mode/e2e-mac-authority-hermes.sh` |
-| **3 — Linux parity** | Landlock, `run-suite.sh`, `tamper-suite.sh` | OrbStack VM or CI; see [managed-mode-matrix.md](./managed-mode-matrix.md) |
-| **4 — Pilot** | Two hosts, real MDM, production JWKS | [enterprise-deployment-runbook.md](../enterprise-deployment-runbook.md) |
-
-Layer **2** is the default pre-PR gate on a Mac with Rust installed.
-
-### Prerequisites (engineering)
-
-- **macOS** with Xcode CLI tools or Rust (`cargo`).
-- **`curl`** and **`jq`** on `PATH`.
-- Private FinSAFE repository checkout.
-
-### One-command full E2E (engineering)
-
-From the private repository root:
-
-```bash
-./scripts/tests/managed-mode/e2e-licensing-macos.sh
-```
-
-The script builds enterprise binaries, prepares a **dev** `license.jws` (not for production), runs license suites on unlicensed/licensed authorities, publishes a smoke bundle, enrolls an agent, and runs `finsafe run --json`.
-
-### Partial runs (authority already up)
-
-```bash
-export FINSAFE_AUTHORITY_URL=http://127.0.0.1:8090
-./scripts/tests/managed-mode/license-suite.sh missing
-./scripts/tests/managed-mode/license-suite.sh licensed
-./scripts/tests/managed-mode/license-suite.sh seat-limit
-```
-
-### CI gates (engineering)
-
-```bash
-cargo fmt --all -- --check
-cargo clippy -p finsafe-license -p finsafe-authority -- -D warnings
-cargo test -p finsafe-license -p finsafe-authority
-./scripts/tests/managed-mode/e2e-licensing-macos.sh
-```
-
----
-
 ## Mapping to acceptance matrix
 
-| Matrix concern | Customer (curl / runbook) | Engineering (private scripts) |
-|----------------|---------------------------|-----------------------------|
-| License missing blocks admin/enroll | `402` on admin/enroll without `license.jws` | `license-suite.sh missing` |
-| Valid license unlocks fleet APIs | `/v1/license/status` + admin `200` | `license-suite.sh licensed` |
-| Seat enforcement | Manual enroll over `max_devices` | `license-suite.sh seat-limit` |
-| Enroll + managed run | macOS runbook + `finsafe run --json` | `e2e-licensing-macos.sh` |
-| Tamper, kill switch, rotation | [managed-mode-matrix.md](./managed-mode-matrix.md) checklist | `tamper-suite.sh`, etc. |
+| Matrix concern | How to verify |
+|----------------|---------------|
+| License missing blocks admin/enroll | `402` on admin/enroll without `license.jws` |
+| Valid license unlocks fleet APIs | `/v1/license/status` + admin `200` |
+| Seat enforcement | Enroll over `max_devices` in license |
+| Enroll + managed run | [managed-mode-macos-runbook.md](./managed-mode-macos-runbook.md) or [managed-lab.md](./managed-lab.md) |
+| Tamper, kill switch, rotation | [managed-mode-matrix.md](./managed-mode-matrix.md) checklist |
 
 Add a matrix row when introducing a new license `code` or protected route.

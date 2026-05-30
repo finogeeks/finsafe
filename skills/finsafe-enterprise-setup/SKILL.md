@@ -5,7 +5,7 @@ description: >-
   releases only: Policy Authority, Finogeeks license.jws, finsafe-bundlectl bundles,
   MDM fleet rollout, and pilot verification. Use when setting up managed fleet,
   authority host, commercial license install, or enterprise deployment without the
-  private FinSAFE source repo.
+  a Rust toolchain from source.
 ---
 
 # FinSAFE enterprise setup (managed fleet)
@@ -16,14 +16,14 @@ Guide for AI agents helping **customer IT / platform engineering** deploy **mana
 - A **Finogeeks-issued** `license.jws` (not on GitHub)
 - Optional companion skill: [finsafe-bundlectl](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL.md)
 
-This skill is **self-contained** (full `https://` links only). No checkout of the private FinSAFE monorepo is required.
+This skill is **self-contained** (full `https://` links only). Everything referenced ships on [finogeeks/finsafe](https://github.com/finogeeks/finsafe).
 
 ## Scope
 
 | In scope | Out of scope |
 |----------|----------------|
 | Release downloads, authority install, license file | Issuing `license.jws` (`finsafe-licensectl` — Finogeeks only) |
-| Pilot verification (`curl`, Admin UI) | [`scripts/check-authority-health.sh`](scripts/check-authority-health.sh); Finogeeks CI: `scripts/tests/managed-mode/*` (private monorepo) |
+| Pilot verification (`curl`, Admin UI) | [`scripts/check-authority-health.sh`](scripts/check-authority-health.sh); [managed-lab.md](docs/testing/managed-lab.md) for single-machine stack |
 | MDM fleet phases (high level) | Personal-mode `install.sh` only workflow |
 | Hand-off to bundlectl skill for publish/sentinel | Rust `cargo build` from source |
 
@@ -174,7 +174,7 @@ Use the matrix as a **checklist**, not as shell commands: [managed-mode-matrix.m
 | Tamper: local `--policy` | Expect `MANAGED_POLICY_LOCAL_OVERRIDE` when sentinel present |
 | Admin operations | [admin-ui.md](https://github.com/finogeeks/finsafe/blob/main/docs/admin-ui.md) |
 
-Automated `scripts/tests/managed-mode/*` harnesses are **Finogeeks engineering only** (private monorepo).
+**Single-machine lab:** with fleet + admin-server + bundlectl on `PATH` and a valid `license.jws`, run [`scripts/managed-lab.sh`](https://github.com/finogeeks/finsafe/blob/main/scripts/managed-lab.sh) — see [managed-lab.md](https://github.com/finogeeks/finsafe/blob/main/docs/testing/managed-lab.md).
 
 ## Key docs (bookmark list)
 

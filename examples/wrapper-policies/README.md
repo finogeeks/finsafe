@@ -10,8 +10,9 @@ See [docs/POLICY-QUICKREF.md](../../docs/POLICY-QUICKREF.md) or [docs/POLICY-QUI
 
 | File | Platform | Use |
 |------|----------|-----|
+| `managed-lab-smoke.yaml` | Linux / macOS | Default bundle for [`scripts/managed-lab.sh`](../../scripts/managed-lab.sh) (`/usr/bin/true`, minimal FHS) |
 | `hermes-*.yaml` | Linux / macOS | Hermes broker smoke (`${HOME}`, FHS paths) |
 | `windows-version-smoke.yaml` | Windows | Minimal `finsafe run cmd /c echo hello` |
 | `windows-sandbox-smoke.yaml` | Windows | Stricter AppContainer smoke with `network: host` |
 
-**Maintainers:** source-of-truth YAML lives under `examples/wrapper-policies/` in the private FinSAFE monorepo; copy updates here before a public doc sync.
+**Maintainers:** edit YAML in this directory; keep comments and paths consistent with [managed-lab.md](../../docs/testing/managed-lab.md) and [POLICY-QUICKREF.md](../../docs/POLICY-QUICKREF.md).

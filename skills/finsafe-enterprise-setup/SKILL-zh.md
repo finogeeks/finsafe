@@ -3,7 +3,7 @@ name: finsafe-enterprise-setup
 description: >-
   企业 IT 仅通过 GitHub 发行包部署 FinSAFE 托管模式：Policy Authority、Finogeeks 签发的
   license.jws、finsafe-bundlectl 策略包、MDM 舰队下发与试点验收。适用于托管舰队搭建、
-  authority 主机、商业许可证安装，且无需私有 FinSAFE 源码仓库。
+  authority 主机、商业许可证安装，且仅使用本公开仓库中的发行版与文档。
 ---
 
 # FinSAFE 企业部署（托管舰队）
@@ -14,14 +14,14 @@ description: >-
 - **Finogeeks 签发**的 `license.jws`（不在 GitHub 上）
 - 配套技能：[finsafe-bundlectl](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL-zh.md)
 
-本技能**自包含**（仅使用完整 `https://` 链接），**无需**克隆私有 FinSAFE 源码仓库。
+本技能**自包含**（仅使用完整 `https://` 链接）。所引用内容均来自 [finogeeks/finsafe](https://github.com/finogeeks/finsafe)。
 
 ## 范围
 
 | 范围内 | 范围外 |
 |--------|--------|
 | 发行包下载、authority 安装、许可证文件 | 签发 `license.jws`（`finsafe-licensectl` — 仅 Finogeeks） |
-| 试点验收（`curl`、Admin UI） | `scripts/tests/managed-mode/*`（私有源码仓 / Finogeeks CI） |
+| 试点验收（`curl`、Admin UI） | [`scripts/check-authority-health.sh`](scripts/check-authority-health.sh)；单机栈见 [managed-lab-zh.md](docs/testing/managed-lab-zh.md) |
 | MDM 舰队阶段（概要） | 仅 `install.sh` 的个人模式工作流 |
 | 移交 bundlectl 技能做 publish/sentinel | 从源码 `cargo build` |
 
@@ -158,7 +158,7 @@ finsafe-bundlectl sentinel sign --out /secure/mdm/managed-required.jws
 | 篡改：本地 `--policy` | 有 sentinel 时应为 `MANAGED_POLICY_LOCAL_OVERRIDE` |
 | 管理操作 | [admin-ui-zh.md](https://github.com/finogeeks/finsafe/blob/main/docs/admin-ui-zh.md) |
 
-自动化 `scripts/tests/managed-mode/*` 仅供 **Finogeeks 工程**（私有 monorepo）。
+**单机实验：** PATH 上具备 fleet + admin-server + bundlectl 且持有有效 `license.jws` 时，可运行 [`scripts/managed-lab.sh`](https://github.com/finogeeks/finsafe/blob/main/scripts/managed-lab.sh) — 见 [managed-lab-zh.md](https://github.com/finogeeks/finsafe/blob/main/docs/testing/managed-lab-zh.md)。
 
 ## 关键文档
 

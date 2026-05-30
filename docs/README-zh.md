@@ -38,11 +38,13 @@
 | [sandbox-management-model-zh.md](./sandbox-management-model-zh.md) · [sandbox-management-model.md](./sandbox-management-model.md) | **沙箱管理模型**：Bundle 作为策略集合、Group、Assignment、rollout 与冲突处理 |
 | [authority-deployment-zh.md](./authority-deployment-zh.md) · [authority-deployment.md](./authority-deployment.md) | Authority 安装、商业许可证、`finsafe-bundlectl` |
 | [managed-mode-zh.md](./managed-mode-zh.md) | 概述、组件、路径、CLI 错误 |
+| [managed-cli-authority-connectivity-zh.md](./managed-cli-authority-connectivity-zh.md) · [English](./managed-cli-authority-connectivity.md) | **CLI ↔ agent ↔ 权威** 拓扑、发现、IPC、注册 |
 | [endpoint-deployment-options-zh.md](./endpoint-deployment-options-zh.md) · [endpoint-deployment-options.md](./endpoint-deployment-options.md) | 部署路径决策（不强制 MDM） |
 | [enterprise-deployment-runbook-zh.md](./enterprise-deployment-runbook-zh.md) | 完整分阶段部署与运维 |
 | [mdm/vendor-neutral-checklist-zh.md](./mdm/vendor-neutral-checklist-zh.md) | 适用于任意 MDM 或配置工具的检查清单 |
 | [mdm/README-zh.md](./mdm/README-zh.md) | Jamf、Intune、Ansible 手册 |
 | [testing/managed-mode-matrix-zh.md](./testing/managed-mode-matrix-zh.md) | 生产前验收测试 |
+| [testing/managed-lab-zh.md](./testing/managed-lab-zh.md) · [managed-lab.md](./testing/managed-lab.md) | **本机全栈实验** — [`scripts/managed-lab.sh`](../scripts/managed-lab.sh) |
 | [testing/licensing-e2e-macos-zh.md](./testing/licensing-e2e-macos-zh.md) · [licensing-e2e-macos.md](./testing/licensing-e2e-macos.md) | macOS 许可证与托管冒烟（**客户 curl 清单** + Finogeeks harness 说明） |
 
 建议阅读顺序：**[enterprise-it-overview-zh.md](./enterprise-it-overview-zh.md)** → **[endpoint-deployment-options-zh.md](./endpoint-deployment-options-zh.md)** → **[enterprise-deployment-runbook-zh.md](./enterprise-deployment-runbook-zh.md)**。

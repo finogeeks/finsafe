@@ -42,7 +42,7 @@
 
 两种模式 **共用同一套 `finsafe` 二进制与隔离引擎**；差异在于 **策略由谁提供、能否被终端用户改写**。
 
-> **发行说明：** 公开发行的 `curl \| sh` 安装包默认 **不含** 托管能力（更小、适合个人试用）。舰队部署请使用带 **`managed` 特性** 的企业构建（见 [packaging/README.md](../packaging/README.md) 中的 `build-finsafe-enterprise.sh`）。
+> **发行说明：** 公开发行的 `curl \| sh` 安装包默认 **不含** 托管能力（更小、适合个人试用）。舰队部署请使用 [GitHub Releases](https://github.com/finogeeks/finsafe/releases) 中的 **`finsafe-fleet-v*`** 发行包（见 [packaging/README.md](../packaging/README.md)）。
 
 ---
 

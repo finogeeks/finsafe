@@ -17,4 +17,4 @@ These are intent documents. They must not declare raw sandbox mechanism fields (
 
 ## Maintainers
 
-When the published FinSAFE engine changes high-level schema, update these examples in the **private** FinSAFE source tree under `examples/high-level-policies/`, then copy the revised files into `docs/public-finsafe/examples/high-level-policies/` before a public doc sync so operators stay aligned.
+When the published FinSAFE engine changes high-level schema, update these YAML files in this directory and cross-check [POLICY-QUICKREF.md](../../docs/POLICY-QUICKREF.md) so operators stay aligned.

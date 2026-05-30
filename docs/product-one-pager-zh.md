@@ -177,12 +177,7 @@ FinSAFE 运行时 / API     ←  finsafe-server（POST /v1/executions 等）
 
 ### 企业二进制与安装路径
 
-舰队包必须使用带 **`managed` 特性** 的构建（公开发行的 `curl | sh` 包默认不含托管能力）：
-
-```bash
-# 在 monorepo 根目录
-./scripts/dev/build-finsafe-enterprise.sh
-```
+舰队部署请使用 [GitHub Releases](https://github.com/finogeeks/finsafe/releases) 中的 **`finsafe-fleet-v*`** 发行包（含托管 `finsafe` + `finsafe-agent`）。公开发行的 `curl | sh` 个人安装包默认不含托管能力。
 
 | 交付物 | 推荐路径 | 说明 |
 |--------|----------|------|

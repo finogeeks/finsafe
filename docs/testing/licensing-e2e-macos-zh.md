@@ -2,12 +2,7 @@
 
 **English:** [licensing-e2e-macos.md](./licensing-e2e-macos.md)
 
-> **读者**
->
-> | 角色 | 使用章节 |
-> |------|----------|
-> | **客户 IT / 试点** | 下文 [客户试点验收](#客户试点验收)，以及 [finsafe-enterprise-setup 技能](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-enterprise-setup/SKILL-zh.md)、[authority-deployment-zh.md](../authority-deployment-zh.md)。 |
-> | **Finogeeks 工程** | [Finogeeks 自动化 harness](#finogeeks-自动化-harness) — 需要**私有 FinSAFE 源码仓库**（不在 `finogeeks/finsafe` 公开发布）。 |
+> **读者：** 在试点中验证**商业许可证**与托管 API 的客户 IT 与安全团队。使用 [GitHub Releases](https://github.com/finogeeks/finsafe/releases) 的**发行版二进制**与 **Finogeeks 签发**的 `license.jws`。
 
 相关文档：
 
@@ -19,9 +14,9 @@
 
 ## 客户试点验收
 
-使用 **发行包二进制** 与 **Finogeeks 签发**的 `license.jws`。无需 Rust 工具链或私有仓库脚本。
-
 **推荐技能：** [finsafe-enterprise-setup/SKILL-zh.md](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-enterprise-setup/SKILL-zh.md)。
+
+**单机实验：** [managed-lab-zh.md](./managed-lab-zh.md)（设置 `FINSAFE_LICENSE_PATH` 后 `./scripts/managed-lab.sh start`）。
 
 ### 1. Authority + 许可证
 
@@ -65,47 +60,12 @@ finsafe run --json -- /usr/bin/true | jq '.envelope.policy_source // .exit_code'
 
 ---
 
-## Finogeeks 自动化 harness
-
-以下仅在 **Finogeeks 私有 FinSAFE monorepo** 中运行（脚本不在 `finogeeks/finsafe` 上）。
-
-macOS 验证许可证**不需要 Docker**；Landlock 或 Linux 专用脚本时再使用 OrbStack / Linux。
-
-### 测试分层（工程）
-
-| 层级 | 内容 | 命令（私有仓库） |
-|------|------|------------------|
-| **0 — 单元** | JWS、过期、宽限期、席位 | `cargo test -p finsafe-license -p finsafe-authority` |
-| **1 — HTTP** | 无证 `402`、有证 `200`、席位 | `scripts/tests/managed-mode/license-suite.sh …` |
-| **2 — macOS E2E** | 开发 `license.jws`、双 authority、托管运行 | `scripts/tests/managed-mode/e2e-licensing-macos.sh` |
-| **2b — Hermes** | licensectl + bundlectl + Hermes | `scripts/tests/managed-mode/e2e-mac-authority-hermes.sh` |
-| **3 — Linux** | Landlock、tamper | 见 [managed-mode-matrix-zh.md](./managed-mode-matrix-zh.md) |
-| **4 — 试点** | 真实 MDM | [enterprise-deployment-runbook-zh.md](../enterprise-deployment-runbook-zh.md) |
-
-### 一键 E2E（工程）
-
-在私有仓库根目录：
-
-```bash
-./scripts/tests/managed-mode/e2e-licensing-macos.sh
-```
-
-### CI（工程）
-
-```bash
-cargo fmt --all -- --check
-cargo clippy -p finsafe-license -p finsafe-authority -- -D warnings
-cargo test -p finsafe-license -p finsafe-authority
-./scripts/tests/managed-mode/e2e-licensing-macos.sh
-```
-
----
-
 ## 与验收矩阵的对应
 
-| 矩阵项 | 客户（curl / runbook） | 工程（私有脚本） |
-|--------|------------------------|------------------|
-| 无证阻断 | 无 `license.jws` 时 `402` | `license-suite.sh missing` |
-| 有效许可证 | `/v1/license/status` + 管理 `200` | `license-suite.sh licensed` |
-| 席位 | 手工超额注册 | `license-suite.sh seat-limit` |
-| 注册 + 运行 | macOS runbook + `finsafe run --json` | `e2e-licensing-macos.sh` |
+| 矩阵项 | 验证方式 |
+|--------|----------|
+| 无证阻断 | 无 `license.jws` 时 admin/enroll 返回 `402` |
+| 有效许可证 | `/v1/license/status` + 管理 API `200` |
+| 席位 | 超过许可证 `max_devices` 注册 |
+| 注册 + 运行 | [managed-mode-macos-runbook.md](./managed-mode-macos-runbook.md) 或 [managed-lab-zh.md](./managed-lab-zh.md) |
+| 篡改、kill switch、轮换 | [managed-mode-matrix-zh.md](./managed-mode-matrix-zh.md) 检查清单 |
