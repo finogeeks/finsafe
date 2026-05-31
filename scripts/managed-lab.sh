@@ -141,7 +141,7 @@ Environment:
                             Override binary paths
 
 After start:
-  Admin UI:  http://${BIND}/admin/
+  Admin UI:  http://${BIND}/admin
   CLI env:   source \$($0 env)
 
 See: ${PUBLIC_ROOT}/docs/testing/managed-lab.md
@@ -365,10 +365,11 @@ cmd_start() {
   write_lab_env
   echo ""
   echo "FinSAFE managed lab is up."
-  echo "  Admin:       http://${BIND}/admin/"
+  echo "  Admin:       http://${BIND}/admin"
   echo "  State:       $LAB_DIR"
   echo "  CLI env:     source $ENV_FILE"
   echo "  Smoke run:   $0 run -- /usr/bin/true"
+  echo "  Admin data:  audit/runs appear after a successful run (agent uploads ~every 1s)"
   echo "  Hermes:      publish hermes-version-smoke.yaml, then see docs/testing/managed-lab.md"
   echo "  Publish:     $0 publish --from examples/wrapper-policies/<name>.yaml"
   echo "  Stop:        $0 stop"
@@ -468,11 +469,11 @@ invoke_lab_finsafe() {
 }
 
 cmd_run() {
-  invoke_lab_finsafe run "usage: $0 run [--json] -- <program> [args...]"
+  invoke_lab_finsafe run "usage: $0 run [--json] -- <program> [args...]" "$@"
 }
 
 cmd_interactive() {
-  invoke_lab_finsafe self-confine "usage: $0 interactive [--json] -- <program> [args...]"
+  invoke_lab_finsafe self-confine "usage: $0 interactive [--json] -- <program> [args...]" "$@"
 }
 
 CMD="${1:-help}"

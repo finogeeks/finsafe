@@ -17,7 +17,7 @@ Use **`scripts/managed-lab.sh`** to run a **full managed stack on one machine**:
 | `finsafe-authority-http` | Local Policy Authority on `127.0.0.1:8095` (default) |
 | `finsafe-agent` | Enrolled desktop agent under `~/.finsafe-lab/desktop/` |
 | `lab.env` | Exports `FINSAFE_AUTHORITY_URL`, agent socket, license path, signing key |
-| Admin UI | [http://127.0.0.1:8095/admin/](http://127.0.0.1:8095/admin/) |
+| Admin UI | [http://127.0.0.1:8095/admin](http://127.0.0.1:8095/admin) |
 
 Production paths (`/etc/finsafe`, `/var/lib/finsafe`) are **not** used. The lab keeps state under **`~/.finsafe-lab`** so pilots can delete it without touching fleet installs.
 
@@ -158,6 +158,9 @@ Interactive Hermes REPL:
 
 | Symptom | What to do |
 |---------|------------|
+| `usage: … run [--json] -- <program>` on every `run` | Upgrade to a script that forwards args (`cmd_run … "$@"`). Smoke: `./scripts/managed-lab.sh run -- /usr/bin/true` |
+| Admin UI 404 at `/admin/` but `/admin` works | Open **`http://<bind>/admin`** (no trailing slash). Root `/` redirects there. Rebuild authority if an older binary lacks the `/admin/` route. |
+| Empty audit / runs in Admin UI | Rebuild **`finsafe`** with the `managed` feature (enterprise packages do). Run `./scripts/managed-lab.sh run -- /usr/bin/true`, wait ~2s for agent upload, refresh Admin. Check `enrolled.json` **`authority_url`** is reachable from the agent (not `http://0.0.0.0:…`). Inspect spool: `$FINSAFE_LAB_DIR/desktop/audit/*.ndjson`. |
 | `license status expected valid` | Check `FINSAFE_LICENSE_PATH`, seats, and expiry — `curl -s http://127.0.0.1:8095/v1/license/status \| jq` |
 | `MANAGED_DAEMON_UNREACHABLE` | `./scripts/managed-lab.sh status`; `stop` then `start`, or `restart-agent` |
 | Hermes `env: hermes: No such file` | Still on `managed-lab-smoke` bundle — publish `hermes-version-smoke.yaml` and restart agent |
