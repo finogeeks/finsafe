@@ -49,8 +49,10 @@ filesystem:
   read_write_paths:
     - "./workspace"
     - "${HOME}/.hermes"
-  # Optional (policy compiler): extra read-only carveouts, skip default .git/.finsafe protection, or mask secrets via globs — see docs/design/finsafe-sandbox-design.md
+  # Optional (policy compiler) — see docs/POLICY-QUICKREF.md
   # protected_read_only_paths: []
   # skip_default_protected_paths: false
-  # deny_read_globs: ["*.env", "**/*.env"]
+  # deny_read_paths: ["./workspace/.env"]   # deny read under writable roots (not read_only_paths)
+  # skip_default_deny_read: false             # Linux/macOS: built-in deny-read (.env, ~/.ssh, …) unless true
+  # deny_write_globs: ["*.pem", "**/*.pem"]   # writes blocked; alias: deny_read_globs
   # glob_scan_max_depth: 8

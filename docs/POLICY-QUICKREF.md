@@ -52,8 +52,35 @@ Instead of authoring wrapper YAML, **`finsafe --host-profile <NAME> self-confine
 | `filesystem.read_write_paths` | Writable scope. Same **existence-at-compile-time** rule as `read_only_paths`; missing entries are omitted (`read_write landlock skipped (path missing)`). Creating a directory later in the same run does not add it—you must re-run `finsafe run` after the path exists on the host. |
 | `filesystem.protected_read_only_paths` | Optional extra paths forced into a **read-only** layer (carveouts under writable roots). Relative paths resolve against the process working directory. |
 | `filesystem.skip_default_protected_paths` | Default `false`: compiler may add `.git` / `.finsafe` under each `read_write_paths` entry when they exist on disk. Set `true` to skip that merge. |
-| `filesystem.deny_read_globs` | Optional suffix glob list (`*.ext`, `**/*.ext`). Matches under writable roots are added to read-only restrictions (writes blocked). Unsupported patterns are skipped with log lines in derivation output. |
-| `filesystem.glob_scan_max_depth` | Maximum directory depth when expanding `deny_read_globs` (compiler default `8` if omitted). |
+| `filesystem.deny_read_paths` | Explicit paths (or bounded globs) **denied for read** under writable roots — e.g. allow `./workspace` but block `./workspace/.env`. Compiled into a separate `deny_read_paths` layer (not `read_only_paths`). On Linux/macOS, a built-in deny-read set applies unless `skip_default_deny_read: true`. Windows: operator paths only (no built-in defaults yet). |
+| `filesystem.deny_write_globs` | Glob list (`*.ext`, `**/*.ext`, …) expanded via bounded `globset` into extra read-only entries (writes blocked). Legacy YAML key `deny_read_globs` is accepted as an alias. |
+| `filesystem.skip_default_deny_read` | When `true`, skip built-in deny-read paths on Linux/macOS isolated profiles. |
+| `filesystem.glob_scan_max_depth` | Maximum directory depth when expanding deny globs (compiler default `8` if omitted). |
+| `network` (allowlist) | YAML: `network:\n  allowlist:\n    domains: [example.com]`. Requires egress `finsafe-net-proxy` + `proxy_cell` at launch; effective mode `allowlist`. |
+
+### Built-in filesystem defaults (Linux/macOS)
+
+Unless `skip_default_deny_read: true` or `skip_default_protected_paths: true`, the compiler merges shipped defaults (independent of your YAML):
+
+| Category | Typical paths (summary) |
+|----------|-------------------------|
+| **Deny read** (under each writable root) | `.env`, `.env.local`, `.env.production` |
+| **Deny read** (under `$HOME`) | `.ssh`, `.aws`, `.gnupg`, `.config/gcloud` |
+| **Deny read** (Linux absolutes) | `/etc/shadow`, `/etc/gshadow` |
+| **Protected read-only** (under each writable root, when present) | `.git`, `.finsafe` |
+
+After a fleet upgrade, Hermes and similar programs on Linux/macOS may fail to read `.env` or `~/.ssh` even when bundle YAML is unchanged. To preserve prior behavior, set `skip_default_deny_read: true` on the relevant sandbox policy (and review protected segments). Windows managed and personal runs do not apply the built-in deny-read set yet.
+
+### Egress proxy observability (allowlist mode)
+
+When `finsafe-net-proxy` enforces an allowlist, operators can enable:
+
+| Variable | Effect |
+|----------|--------|
+| `FINSAFE_NET_PROXY_AUDIT_LOG=1` | Emit one JSON line per proxy decision to stderr (`finsafe_net_proxy_audit …`). |
+| `FINSAFE_NET_PROXY_TRACE=1` | Verbose proxy trace on stderr (debugging only). |
+
+Rate limiting is applied inside the proxy; blocked requests record reasons such as `rate_limit_global` or `rate_limit_domain:<host>` in the audit envelope when auditing is enabled.
 
 ### Path templates (`${HOME}`, `${XDG_CONFIG_HOME}`, `${USERPROFILE}`)
 

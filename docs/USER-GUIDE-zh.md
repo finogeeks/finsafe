@@ -49,7 +49,7 @@ finsafe doctor
 - **`macos_seatbelt.deny_outbound_ports`**（可选，macOS）：在 **`network: host`** 时按端口拒绝出站 TCP。
 - **`resources`：** 内存、pids、cgroup CPU 配额；短命 **`run`** 可用 **`timeout_ms`** 限制墙上时钟。
 
-**可选的 `filesystem` 编译项：** 包装器可能在 Landlock 只读层合并默认受保护子目录，并按 **`deny_read_globs`** 等配置扩展规则。不写这些键的**旧策略仍然有效**。详见 [POLICY-QUICKREF-zh.md](POLICY-QUICKREF-zh.md)。
+**可选的 `filesystem` 编译项：** 包装器可能合并默认可写根下的受保护子目录（`.git` / `.finsafe`），在 Linux/macOS 上应用 **内置 deny-read**（例如工作区下的 `.env`、`$HOME` 下的 `.ssh`，除非 `skip_default_deny_read: true`），并支持显式 **`deny_read_paths`** 与 **`deny_write_globs`**（旧键名 `deny_read_globs` 仍可用）。**`deny_read_paths` 与 `read_only_paths` 不同** — deny-read 在可写范围内禁止读；只读路径是授权。YAML 可不写这些键，但 Linux/macOS 舰队升级仍会带上发行版内置默认项，除非显式关闭。详见 [POLICY-QUICKREF-zh.md](POLICY-QUICKREF-zh.md)。
 
 ---
 

@@ -14,6 +14,8 @@ FinSAFE 托管模式建议用五个概念来理解：
 
 沙箱策略定义单个 agent 或程序在运行时可访问的资源：文件系统与网络策略、资源上限、stdio 行为、审计要求及平台相关强制项。管理员应思考：「Hermes 运行时，Hermes 可以使用哪些资源？」
 
+字段说明见 [POLICY-QUICKREF-zh.md](./POLICY-QUICKREF-zh.md)。在 **Linux/macOS** 上，编译器还会合并 **内置 deny-read 与受保护路径默认项**，除非策略显式关闭（`skip_default_deny_read`、`skip_default_protected_paths`）— 仅升级二进制、不重新发布 bundle 也可能改变桌面行为。见 [managed-mode-zh.md — 策略默认项](./managed-mode-zh.md#策略默认项舰队管理员)。
+
 ## Bundle（策略包）
 
 Bundle 不是「一份 Hermes 策略」。Bundle 是匹配设备收到的**已签名策略集合**。Bundle 内部，FinSAFE 为所请求的程序精确选择一条沙箱策略。若无策略匹配，运行被拒绝；若多条策略匹配，Bundle 视为歧义并**失败关闭（fail closed）**。

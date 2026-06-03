@@ -14,6 +14,8 @@ FinSAFE managed mode is easiest to manage as five concepts:
 
 A sandbox policy defines what one agent or program may access when it runs: filesystem and network posture, resource limits, stdio behavior, audit requirements, and platform-specific enforcement. Administrators should think: "When Hermes runs, what resources may Hermes use?"
 
+Field reference: [POLICY-QUICKREF.md](./POLICY-QUICKREF.md). On **Linux/macOS**, the compiler also merges **built-in deny-read and protected-path defaults** unless a policy opts out (`skip_default_deny_read`, `skip_default_protected_paths`) — bundle republish is not required for those defaults to apply after a binary upgrade. See [managed-mode.md — Policy defaults](./managed-mode.md#policy-defaults-fleet-administrators).
+
 ## Bundle
 
 A bundle is not just one Hermes policy. A bundle is the signed policy set a matching device receives. Inside the bundle, FinSAFE selects exactly one sandbox policy for the requested program. If no policy matches, the run is denied. If multiple policies match, the bundle is considered ambiguous and fails closed.

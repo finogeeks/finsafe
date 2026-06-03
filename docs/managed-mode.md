@@ -53,6 +53,17 @@ Admin UI during the lab: [http://127.0.0.1:8095/admin/](http://127.0.0.1:8095/ad
 
 For production fleet paths (`/etc/finsafe`, MDM sentinel, systemd/LaunchDaemon), follow [enterprise-deployment-runbook.md](./enterprise-deployment-runbook.md) and [managed-mode-macos-runbook.md](./testing/managed-mode-macos-runbook.md).
 
+## Policy defaults (fleet administrators)
+
+Published bundles contain **sandbox policies** (wrapper YAML). FinSAFE also applies **compiler defaults** that are not duplicated in every bundle file:
+
+- **Linux/macOS:** Built-in **deny-read** paths (for example `.env` under writable workspace roots and `.ssh` under `$HOME`) and **protected** `.git` / `.finsafe` segments under writable roots, unless a policy sets `skip_default_deny_read: true` or `skip_default_protected_paths: true`.
+- **Windows:** Built-in deny-read defaults are **not** applied yet; only paths you declare in bundle YAML (including `deny_read_paths`) take effect.
+
+After upgrading `finsafe` / agent binaries without republishing bundle content, agents may still change enforcement on Linux/macOS desktops. Review [POLICY-QUICKREF.md](./POLICY-QUICKREF.md) — sections **Built-in filesystem defaults** and **`filesystem.deny_read_paths`** — before wide rollout. Use `skip_default_deny_read: true` only when a program legitimately must read paths covered by the default set.
+
+**Network allowlist:** Policies may use `network.allowlist.domains`; endpoints need `finsafe-net-proxy` at launch. See POLICY-QUICKREF and optional proxy env vars (`FINSAFE_NET_PROXY_AUDIT_LOG`).
+
 ## CLI errors
 
 | Code | Meaning |

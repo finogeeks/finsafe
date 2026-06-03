@@ -50,7 +50,7 @@ Summary of important fields:
 - **`macos_seatbelt.deny_outbound_ports`** (optional, macOS): Block specific outbound TCP ports when `network: host`.
 - **`resources`:** Memory, PIDs, CPU cgroup strings; optional `timeout_ms` for wall-clock limits on **`run`**.
 
-**Optional compiler `filesystem` fields:** The wrapper may merge default protected subtrees (for example `.git` / `.finsafe` under writable roots) and expand optional globs such as **`deny_read_globs`** into Landlock-oriented read-only rules. Omitting those keys keeps older policies valid. See [POLICY-QUICKREF.md](POLICY-QUICKREF.md) ([Chinese](POLICY-QUICKREF-zh.md)).
+**Optional compiler `filesystem` fields:** The wrapper may merge default protected subtrees (`.git` / `.finsafe` under writable roots), apply a **built-in deny-read set** on Linux/macOS (for example `.env` under the workspace and `.ssh` under `$HOME` unless `skip_default_deny_read: true`), add explicit **`deny_read_paths`**, and expand **`deny_write_globs`** (legacy alias `deny_read_globs`) into extra read-only rules. **`deny_read_paths` is not the same as `read_only_paths`** — deny-read blocks reads inside writable scope; read-only paths are grants. Omitting those keys keeps older policies valid on paper, but fleet upgrades on Linux/macOS still pick up shipped defaults unless you opt out. See [POLICY-QUICKREF.md](POLICY-QUICKREF.md) ([Chinese](POLICY-QUICKREF-zh.md)).
 
 ---
 

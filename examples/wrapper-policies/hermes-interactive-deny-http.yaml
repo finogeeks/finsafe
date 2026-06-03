@@ -1,9 +1,13 @@
-# Wrap interactive Hermes while allowing normal HTTPS LLM calls but denying outbound HTTP.
+# Demonstrate blocking outbound web access (HTTP and HTTPS) for an interactive Hermes broker.
 # Use with:
-#   finsafe --policy examples/wrapper-policies/hermes-interactive-deny-http.yaml self-confine \\
+#   finsafe --policy examples/wrapper-policies/hermes-interactive-deny-http.yaml self-confine \
 #       /usr/bin/env HOME="$HOME" PATH="/opt/homebrew/bin:$HOME/.local/bin:/usr/bin:/bin" hermes
 # Paths under `filesystem` use ${HOME} and ${XDG_CONFIG_HOME}; FinSAFE expands these when the policy loads from the finsafe loader environment. Tilde (~) inside YAML paths is not expanded.
-# macOS Seatbelt note: this is port-based, not domain-based. It denies outbound port 80.
+# macOS Seatbelt note: this is port-based, not domain-based. It denies outbound TCP 80 and 443.
+# LLM/model-provider HTTPS also uses 443 — use `hermes-interactive.yaml` when the broker must call APIs.
+# Verify inside Hermes (both should fail with operation-not-permitted / connection errors):
+#   curl -s 'http://example.com'
+#   curl -s 'https://wttr.in/Shenzhen?format=3'
 schema_version: 1
 kind: local-wrapper
 program_mode: interactive
@@ -15,8 +19,8 @@ audit:
 stdio:
   mode: inherit
 macos_seatbelt:
-  deny_outbound_ports: [80]
-# host keeps HTTPS model-provider calls available; macos_seatbelt above denies the test port.
+  deny_outbound_ports: [80, 443]
+# host + denied ports 80/443: general outbound allowed in profile, then web ports blocked.
 network: host
 resources:
   memory_max: "1G"
