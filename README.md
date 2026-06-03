@@ -13,7 +13,7 @@ This repository holds **public release binaries** and **end-user documentation**
 | **Personal / local wrapper** | Developers and power users running `finsafe --policy …` on their own machine | **Free** — public `finsafe` CLI releases include no commercial license file |
 | **Managed fleet** | IT teams running `finsafe-authority-http`, `finsafe-agent`, and MDM-delivered policy | **Commercial** — Finogeeks issues a signed `license.jws` installed on the Policy Authority |
 
-Public [GitHub Releases](https://github.com/finogeeks/finsafe/releases) ship **four archive families** on the same tag: personal CLI (`finsafe-v*`), managed fleet (`finsafe-fleet-v*`), policy authority server (`finsafe-admin-server-v*`, Linux + macOS), and operator CLI (`finsafe-bundlectl-v*`, Linux + macOS). Commercial `license.jws` is issued by Finogeeks (not on GitHub). See [binary-reference.md](docs/binary-reference.md) and [authority-deployment.md](docs/authority-deployment.md).
+Public [GitHub Releases](https://github.com/finogeeks/finsafe/releases) ship **four archive families** on the same tag: personal CLI (`finsafe-v*`), managed fleet (`finsafe-fleet-v*`), policy authority server (`finsafe-admin-server-v*`, Linux + macOS), and operator CLI (`finsafe-bundlectl-v*`, Linux + macOS). Commercial `license.jws` is issued by Finogeeks (not on GitHub). **Release notes:** [CHANGELOG.md](CHANGELOG.md) (curated for public users; each release page mirrors the matching version section). See [binary-reference.md](docs/binary-reference.md) and [authority-deployment.md](docs/authority-deployment.md).
 
 ### Install scripts (all platforms)
 
