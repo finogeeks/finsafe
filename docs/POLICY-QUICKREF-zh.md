@@ -52,24 +52,24 @@ filesystem:
 | `filesystem.read_write_paths` | 可写范围。与 `read_only_paths` 相同：**编译时须已存在**；缺失项会被省略（`read_write landlock skipped (path missing)`）。同一次运行中事后 `mkdir` 不会自动加入，须在路径存在后重新执行 `finsafe run`。 |
 | `filesystem.protected_read_only_paths` | 可选：在可写根下额外强制 **只读** 的路径（雕刻）。相对路径相对 **进程工作目录** 解析。 |
 | `filesystem.skip_default_protected_paths` | 默认 `false`：若磁盘上存在，编译器可能在每个 `read_write_paths` 条目下合并 `.git` / `.finsafe`。设为 `true` 则跳过该合并。 |
-| `filesystem.deny_read_paths` | 显式路径（或受限 glob），在可写根下 **禁止读取** — 例如允许 `./workspace` 但拒绝 `./workspace/.env`。编译为独立的 `deny_read_paths` 层（不是 `read_only_paths`）。Linux/macOS 隔离配置默认合并内置 deny-read，除非 `skip_default_deny_read: true`。Windows：仅运维声明的路径（尚无内置默认集）。 |
+| `filesystem.deny_read_paths` | 显式路径（或受限 glob），在可写根下 **禁止读取** — 例如允许 `./workspace` 但拒绝 `./workspace/.env`。编译为独立的 `deny_read_paths` 层（不是 `read_only_paths`）。Linux/macOS 隔离配置与 Windows 隔离/托管配置默认合并内置 deny-read，除非 `skip_default_deny_read: true`。 |
 | `filesystem.deny_write_globs` | Glob 列表（`*.ext`、`**/*.ext` 等），经有界 `globset` 展开为额外只读项（禁止写入）。旧键名 `deny_read_globs` 仍可作为别名接受。 |
-| `filesystem.skip_default_deny_read` | 为 `true` 时，在 Linux/macOS 隔离配置中跳过内置 deny-read 路径。 |
+| `filesystem.skip_default_deny_read` | 为 `true` 时，在 Linux/macOS 隔离配置与 Windows 隔离/托管配置中跳过内置 deny-read 路径。 |
 | `filesystem.glob_scan_max_depth` | 展开 deny 相关 glob 时的最大目录深度（省略时编译器默认 `8`）。 |
 | `network`（allowlist） | YAML：`network:\n  allowlist:\n    domains: [example.com]`。启动时需 egress `finsafe-net-proxy` 与 `proxy_cell`；有效网络模式为 `allowlist`。 |
 
-### 内置文件系统默认项（Linux/macOS）
+### 内置文件系统默认项（Linux/macOS/Windows）
 
-在未设置 `skip_default_deny_read: true` 且未设置 `skip_default_protected_paths: true` 时，编译器会合并随发行版附带的默认规则（与策略 YAML 无关）：
+在未设置 `skip_default_deny_read: true` 且未设置 `skip_default_protected_paths: true` 时，**Linux/macOS 隔离**与 **Windows 隔离/托管**配置会合并随发行版附带的默认规则（与策略 YAML 无关）：
 
 | 类别 | 典型路径（摘要） |
 |------|------------------|
 | **Deny read**（可写根下） | `.env`、`.env.local`、`.env.production` |
-| **Deny read**（`$HOME` 下） | `.ssh`、`.aws`、`.gnupg`、`.config/gcloud` |
+| **Deny read**（`$HOME` / `%USERPROFILE%` 下） | `.ssh`、`.aws`、`.gnupg`、`.config/gcloud` |
 | **Deny read**（Linux 绝对路径） | `/etc/shadow`、`/etc/gshadow` |
 | **Protected read-only**（每个可写根下，若存在） | `.git`、`.finsafe` |
 
-托管 bundle 升级后，即使未改 YAML，Linux/macOS 桌面上的 Hermes 等程序也可能因上述默认项而无法读取 `.env` 或 `~/.ssh`。需要旧行为时：在相关 sandbox 策略中设置 `skip_default_deny_read: true`（并评估是否同时跳过受保护子目录）。Windows 托管与个人模式目前不应用内置 deny-read 集。
+托管 bundle 升级后，即使未改 YAML，Hermes 等程序也可能因上述默认项而无法读取 `.env` 或用户配置目录下的凭证路径。需要旧行为时：在相关 sandbox 策略中设置 `skip_default_deny_read: true`（并评估是否同时跳过受保护子目录）。
 
 ### 出站代理可观测性（allowlist 模式）
 

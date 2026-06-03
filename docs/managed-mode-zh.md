@@ -60,9 +60,9 @@ finsafe run -- /usr/bin/true
 已发布的 Bundle 内含 **沙箱策略**（wrapper YAML）。FinSAFE 还会合并 **编译器默认项**，这些不会出现在每一份 bundle 文件中：
 
 - **Linux/macOS：** 内置 **deny-read**（例如可写工作区下的 `.env`、`$HOME` 下的 `.ssh`）以及可写根下的 **受保护** `.git` / `.finsafe`，除非策略设置 `skip_default_deny_read: true` 或 `skip_default_protected_paths: true`。
-- **Windows：** 目前 **不** 应用内置 deny-read；仅 bundle YAML 中声明的路径（含 `deny_read_paths`）生效。
+- **Windows（隔离/托管）：** 同样应用内置 **deny-read**（可写根下的 `.env*`；`%USERPROFILE%` 下的 `.ssh`、`.aws`、`.gnupg`、`.config/gcloud`），经 DACL deny ACE 强制，除非 `skip_default_deny_read: true`。
 
-仅升级 `finsafe` / agent 二进制、未重新发布 bundle 内容时，Linux/macOS 桌面上的强制行为仍可能变化。全量推广前请阅读 [POLICY-QUICKREF-zh.md](./POLICY-QUICKREF-zh.md) 中 **内置文件系统默认项** 与 **`filesystem.deny_read_paths`**。仅在程序确实需要读取默认拒绝路径时设置 `skip_default_deny_read: true`。
+仅升级 `finsafe` / agent 二进制、未重新发布 bundle 内容时，Linux/macOS 与 Windows 桌面上的强制行为仍可能变化。全量推广前请阅读 [POLICY-QUICKREF-zh.md](./POLICY-QUICKREF-zh.md) 中 **内置文件系统默认项** 与 **`filesystem.deny_read_paths`**。仅在程序确实需要读取默认拒绝路径时设置 `skip_default_deny_read: true`。
 
 **网络 allowlist：** 策略可使用 `network.allowlist.domains`；启动时需配合 `finsafe-net-proxy`。见 POLICY-QUICKREF 及可选环境变量 `FINSAFE_NET_PROXY_AUDIT_LOG`。
 

@@ -52,24 +52,24 @@ Instead of authoring wrapper YAML, **`finsafe --host-profile <NAME> self-confine
 | `filesystem.read_write_paths` | Writable scope. Same **existence-at-compile-time** rule as `read_only_paths`; missing entries are omitted (`read_write landlock skipped (path missing)`). Creating a directory later in the same run does not add it—you must re-run `finsafe run` after the path exists on the host. |
 | `filesystem.protected_read_only_paths` | Optional extra paths forced into a **read-only** layer (carveouts under writable roots). Relative paths resolve against the process working directory. |
 | `filesystem.skip_default_protected_paths` | Default `false`: compiler may add `.git` / `.finsafe` under each `read_write_paths` entry when they exist on disk. Set `true` to skip that merge. |
-| `filesystem.deny_read_paths` | Explicit paths (or bounded globs) **denied for read** under writable roots — e.g. allow `./workspace` but block `./workspace/.env`. Compiled into a separate `deny_read_paths` layer (not `read_only_paths`). On Linux/macOS, a built-in deny-read set applies unless `skip_default_deny_read: true`. Windows: operator paths only (no built-in defaults yet). |
+| `filesystem.deny_read_paths` | Explicit paths (or bounded globs) **denied for read** under writable roots — e.g. allow `./workspace` but block `./workspace/.env`. Compiled into a separate `deny_read_paths` layer (not `read_only_paths`). On Linux/macOS isolated profiles and Windows isolated/managed profiles, a built-in deny-read set applies unless `skip_default_deny_read: true`. |
 | `filesystem.deny_write_globs` | Glob list (`*.ext`, `**/*.ext`, …) expanded via bounded `globset` into extra read-only entries (writes blocked). Legacy YAML key `deny_read_globs` is accepted as an alias. |
-| `filesystem.skip_default_deny_read` | When `true`, skip built-in deny-read paths on Linux/macOS isolated profiles. |
+| `filesystem.skip_default_deny_read` | When `true`, skip built-in deny-read paths on Linux/macOS isolated profiles and Windows isolated/managed profiles. |
 | `filesystem.glob_scan_max_depth` | Maximum directory depth when expanding deny globs (compiler default `8` if omitted). |
 | `network` (allowlist) | YAML: `network:\n  allowlist:\n    domains: [example.com]`. Requires egress `finsafe-net-proxy` + `proxy_cell` at launch; effective mode `allowlist`. |
 
-### Built-in filesystem defaults (Linux/macOS)
+### Built-in filesystem defaults (Linux/macOS/Windows)
 
-Unless `skip_default_deny_read: true` or `skip_default_protected_paths: true`, the compiler merges shipped defaults (independent of your YAML):
+Unless `skip_default_deny_read: true` or `skip_default_protected_paths: true`, the compiler merges shipped defaults (independent of your YAML) on **Linux/macOS isolated** and **Windows isolated/managed** profiles:
 
 | Category | Typical paths (summary) |
 |----------|-------------------------|
 | **Deny read** (under each writable root) | `.env`, `.env.local`, `.env.production` |
-| **Deny read** (under `$HOME`) | `.ssh`, `.aws`, `.gnupg`, `.config/gcloud` |
+| **Deny read** (under `$HOME` / `%USERPROFILE%`) | `.ssh`, `.aws`, `.gnupg`, `.config/gcloud` |
 | **Deny read** (Linux absolutes) | `/etc/shadow`, `/etc/gshadow` |
 | **Protected read-only** (under each writable root, when present) | `.git`, `.finsafe` |
 
-After a fleet upgrade, Hermes and similar programs on Linux/macOS may fail to read `.env` or `~/.ssh` even when bundle YAML is unchanged. To preserve prior behavior, set `skip_default_deny_read: true` on the relevant sandbox policy (and review protected segments). Windows managed and personal runs do not apply the built-in deny-read set yet.
+After a fleet upgrade, Hermes and similar programs may fail to read `.env` or credential dirs under the user profile even when bundle YAML is unchanged. To preserve prior behavior, set `skip_default_deny_read: true` on the relevant sandbox policy (and review protected segments).
 
 ### Egress proxy observability (allowlist mode)
 
