@@ -37,6 +37,7 @@ Deploy **Policy Authority**, **finsafe-agent**, and signed bundles to employee d
 | [binary-reference.md](./binary-reference.md) · [binary-reference-zh.md](./binary-reference-zh.md) | All shipped binaries, release archives, admin verification checklist |
 | [sandbox-management-model.md](./sandbox-management-model.md) · [sandbox-management-model-zh.md](./sandbox-management-model-zh.md) | **Sandbox management model**: bundles as policy sets, groups, assignments, rollout, and conflict handling |
 | [authority-deployment.md](./authority-deployment.md) · [authority-deployment-zh.md](./authority-deployment-zh.md) | Installing and running `finsafe-authority-http`, license, env vars, `finsafe-bundlectl` |
+| [https-inspection-runbook.md](./https-inspection-runbook.md) · [https-inspection-runbook-zh.md](./https-inspection-runbook-zh.md) | **HTTPS inspection (TLS terminate)** — license, CA, publish, pilot verification |
 | [admin-ui.md](./admin-ui.md) · [admin-ui-zh.md](./admin-ui-zh.md) | Admin console reference (devices, enrollment tokens, kill switch, API equivalents) |
 | [managed-mode.md](./managed-mode.md) · [managed-mode-zh.md](./managed-mode-zh.md) | Overview, components, paths, CLI errors |
 | [managed-cli-authority-connectivity.md](./managed-cli-authority-connectivity.md) · [managed-cli-authority-connectivity-zh.md](./managed-cli-authority-connectivity-zh.md) | **CLI ↔ agent ↔ authority** topology, discovery, IPC, enrollment |
@@ -47,8 +48,13 @@ Deploy **Policy Authority**, **finsafe-agent**, and signed bundles to employee d
 | [testing/managed-mode-matrix.md](./testing/managed-mode-matrix.md) · [managed-mode-matrix-zh.md](./testing/managed-mode-matrix-zh.md) | Acceptance tests before production |
 | [testing/managed-lab.md](./testing/managed-lab.md) · [managed-lab-zh.md](./testing/managed-lab-zh.md) | **Local full stack lab** — [`scripts/managed-lab.sh`](../scripts/managed-lab.sh) on one machine |
 | [testing/licensing-e2e-macos.md](./testing/licensing-e2e-macos.md) · [licensing-e2e-macos-zh.md](./testing/licensing-e2e-macos-zh.md) | macOS licensing + managed smoke (**customer curl checklist** + Finogeeks harness note) |
+| [testing/managed-mode-macos-runbook.md](./testing/managed-mode-macos-runbook.md) · [managed-mode-macos-runbook-zh.md](./testing/managed-mode-macos-runbook-zh.md) | macOS fleet pilot manual steps (EN procedural; zh index) |
 
 Read order: **[enterprise-it-overview.md](./enterprise-it-overview.md)** → **[endpoint-deployment-options.md](./endpoint-deployment-options.md)** → **[enterprise-deployment-runbook.md](./enterprise-deployment-runbook.md)**.
+
+### Documentation languages
+
+Most operator guides exist as **English** and **Chinese** pairs (`*.md` / `*-zh.md`). When a topic differs between languages (for example HTTPS inspection CA rotation or Admin UI settings), treat the **English** file as the reference for the latest procedure until both are updated in the same change. Strategic background is fullest in [enterprise-it-overview-zh.md](./enterprise-it-overview-zh.md); English readers can use [enterprise-it-overview.md](./enterprise-it-overview.md) for links to all admin runbooks.
 
 ## Deployment artifacts (scripts and service units)
 

@@ -115,6 +115,25 @@ limit). After `expires_at`, a optional **`grace_until`** window (typically 14 da
 allows existing enrolled devices to continue heartbeat and audit while renewal is
 completed.
 
+### TLS inspection (MITM)
+
+HTTPS **TLS termination** at the egress proxy (L7 filtering, richer fleet audit) is gated by the license feature **`mitm_tls_terminate`**. It is **not** enabled in default `finsafe_licensectl` feature sets — request it from Finogeeks when purchasing managed mode.
+
+| Step | Action |
+|------|--------|
+| 1 | Ensure `mitm_tls_terminate` appears in the authority's `license.jws`. |
+| 2 | Generate the authority inspection CA: **`POST /v1/admin/mitm/ca`** (admin session). Inspect with **`GET /v1/admin/mitm/ca`**. |
+| 3 | Publish sandbox policies with **`tls_terminate: true`** (wrapper YAML or high-level `network.tls_terminate`). Bundle publish rejects `tls_terminate` without a CA present. |
+| 4 | Enrolled agents embed **`inspection_ca_cert_pem`** in distributed bundles; children trust the CA via injected env vars (`SSL_CERT_FILE`, `CURL_CA_BUNDLE`, …). |
+
+Public cert for diagnostics (no admin auth): **`GET /v1/mitm/ca/cert`**.
+
+**Compliance:** fleet operators must inform end users that HTTPS traffic may be decrypted for policy enforcement and audit.
+
+**Lab / CI:** proxy processes honor `FINSAFE_LICENSE_MITM=1` to skip license checks; optional `FINSAFE_MITM_CA_CERT_PATH` / `FINSAFE_MITM_CA_KEY_PATH` for a stable dev CA when using `start_internal_proxy`.
+
+**Full procedure:** [https-inspection-runbook.md](./https-inspection-runbook.md) (example policy, curl checks, pilot verification, troubleshooting).
+
 ---
 
 ## 3. Environment variables

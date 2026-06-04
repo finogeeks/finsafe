@@ -30,6 +30,46 @@
 
 ---
 
+## 设置 → 常规
+
+| 字段 | 说明 |
+|------|------|
+| **Authority 公网 URL** | 设备与 bundlectl 使用的基址（如 `https://gov.example.com/policy-authority`）。 |
+| **管理员令牌** | 写入 `X-Admin-Token` 的密钥；用于 API 与 UI。 |
+| **设备过期阈值（秒）** | 无心跳超过该时间后设备标记为 **stale**（默认 300）。 |
+| **注册 token TTL（秒）** | 一次性注册 token 有效期（默认 900）。 |
+
+**保存** 会持久化到 authority 配置存储。修改 URL 或令牌后，请用新值更新 MDM 载荷与 `finsafe-bundlectl` 环境变量。
+
+---
+
+## 设置 → 标签预设
+
+定义可在 **设备** 页分配的 `admin:*` 标签（如 `admin:dept=finance`）。**Assignments** 与 bundle `match_spec.groups` 依赖这些标签将设备归入分组。
+
+---
+
+## 设置 → 设备分组
+
+**Group** 是由可信标签与设备事实上的**确定性规则**定义的**命名设备队列**。可用于 Assignment 的分组使用 `all` 规则：所有必需谓词必须同时匹配。支持 `admin:name=value` 标签、authority 已验证的 `device:*` 事实、`device_id` 以及直接 `not` 排除项。OR 情况应拆分为独立分组。
+
+在此创建 Group；在 **设备** 页分配匹配的 `admin:*` 标签。在 **Assignments** 页将已发布 bundle 关联到 Group。
+
+---
+
+## HTTPS 检查（TLS 终止）
+
+可选商业能力（`license.jws` 含 `mitm_tls_terminate`）。**合规：** 启用前须告知用户；沙箱内 HTTPS 可能被解密用于策略与审计。控制台暂无专用 CA 向导，请用管理 API（与 Kill switch 相同 `X-Admin-Token`）：
+
+```bash
+curl -X POST "$AUTHORITY/v1/admin/mitm/ca" -H "X-Admin-Token: $TOKEN"
+curl -sf "$AUTHORITY/v1/admin/mitm/ca" -H "X-Admin-Token: $TOKEN" | jq -r '.cert_pem' | head -3
+```
+
+在 **Bundles** 中发布 `tls_terminate: true` 的策略。完整流程：[https-inspection-runbook-zh.md](./https-inspection-runbook-zh.md)。
+
+---
+
 ## 设置 → Kill switch
 
 ### 是什么
@@ -85,9 +125,30 @@ curl -X POST "$AUTHORITY/v1/admin/kill-switch" \
 
 ---
 
-## 设备列表与「Denials 24h」
+## 设备
 
-### 策略拒绝（Denials）是什么
+列出已注册设备，支持筛选（状态、标签、分组、搜索）、分页与批量打标签。请先在 **设置 → 标签预设** 中定义标签。
+
+| 列 | 含义 |
+|----|------|
+| **Device** | 注册时的 `device_id`（`FINSAFE_AGENT_BOOTSTRAP_DEVICE_ID`）。 |
+| **Status** | `healthy`、`stale`（超过 `device_stale_after_secs` 无心跳，默认 5 分钟）、`revoked` 等。 |
+| **Tags** | 设备标签；决定分组归属与 bundle `match_spec.groups`。 |
+| **Bundle** | 心跳上报的最近 bundle id/版本；已知时可跳转详情。**Not reported** = 最近心跳无 bundle。 |
+| **Last seen** | 相对与绝对最后心跳时间。 |
+| **Denials 24h** | 该设备过去 24 小时内**策略拒绝**审计事件数（见下）。 |
+
+**Revoke** 在设备详情页；撤销后心跳返回 `revoke_device: true`，agent 进入类似 kill switch 的本地状态。
+
+```bash
+curl -sf -H "X-Admin-Token: $TOKEN" "$AUTHORITY/v1/admin/devices?limit=50" | jq .
+```
+
+---
+
+## 策略拒绝（「Denials 24h」）
+
+### 含义
 
 **策略拒绝（policy denial）** 指托管模式审计事件 `kind: policy_denied`：FinSAFE 依据当前 authority bundle **拒绝** 一次托管执行尝试。这不是普通 OS 错误，也不是 kill switch 本身。
 
@@ -110,14 +171,6 @@ curl -X POST "$AUTHORITY/v1/admin/kill-switch" \
 **排查：** **告警**、**审计**、设备详情、bundle binding。**修复：** 调整 binding、设备标签/分组或 rollout——除非需要紧急停车，否则不必使用 kill switch。
 
 **Denials** 不同于 **kill switch**（运维暂停）与 **revoke**（取消设备信任）。
-
----
-
-## 设置 → 设备分组
-
-Group 是由可信标签与设备事实上的**确定性规则**定义的**命名设备队列**。可用于 Assignment 的分组使用 `all` 规则：所有必需谓词必须同时匹配。支持 `admin:name=value` 标签、authority 已验证的 `device:*` 事实、`device_id` 以及直接 `not` 排除项。OR 情况应拆分为独立分组。
-
-在此创建 Group；在 **设备** 页分配匹配的 `admin:*` 标签。在 **Assignments** 页将已发布 bundle 关联到 Group。
 
 ---
 
@@ -177,3 +230,4 @@ curl -X POST "$AUTHORITY/v1/admin/assignments/preview" \
 - [authority-deployment-zh.md](./authority-deployment-zh.md)
 - [enterprise-deployment-runbook-zh.md](./enterprise-deployment-runbook-zh.md)
 - [managed-mode-zh.md](./managed-mode-zh.md)
+- [https-inspection-runbook-zh.md](./https-inspection-runbook-zh.md) — HTTPS 检查端到端（CA、发布、试点）

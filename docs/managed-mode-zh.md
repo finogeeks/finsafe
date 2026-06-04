@@ -64,7 +64,9 @@ finsafe run -- /usr/bin/true
 
 仅升级 `finsafe` / agent 二进制、未重新发布 bundle 内容时，Linux/macOS 与 Windows 桌面上的强制行为仍可能变化。全量推广前请阅读 [POLICY-QUICKREF-zh.md](./POLICY-QUICKREF-zh.md) 中 **内置文件系统默认项** 与 **`filesystem.deny_read_paths`**。仅在程序确实需要读取默认拒绝路径时设置 `skip_default_deny_read: true`。
 
-**网络 allowlist：** 策略可使用 `network.allowlist.domains`；启动时需配合 `finsafe-net-proxy`。见 POLICY-QUICKREF 及可选环境变量 `FINSAFE_NET_PROXY_AUDIT_LOG`。
+**网络 allowlist：** 策略可使用 `network.allowlist.domains`；启动时需 `finsafe-net-proxy`，或设置 `start_internal_proxy: true` 使用本机回环代理（`127.0.0.1:60080`）。见 [POLICY-QUICKREF-zh.md](./POLICY-QUICKREF-zh.md) 及 `FINSAFE_NET_PROXY_AUDIT_LOG`。
+
+**HTTPS 检查（`tls_terminate`）：** 可选商业能力（许可证功能 `mitm_tls_terminate`）。Authority 签发检查用 CA；已发布 bundle 携带 `inspection_ca_cert_pem`；Agent 安装证书并向子进程注入信任库环境变量。须向用户告知 HTTPS 可能被解密。配置见 [https-inspection-runbook-zh.md](./https-inspection-runbook-zh.md)、[authority-deployment-zh.md](./authority-deployment-zh.md) 与 [POLICY-QUICKREF-zh.md](./POLICY-QUICKREF-zh.md) — **TLS 检查**。
 
 ## CLI 错误码
 

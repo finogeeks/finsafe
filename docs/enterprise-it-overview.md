@@ -11,3 +11,5 @@ This page is the **entry point for enterprise IT, MDM, and security operations**
 - **MDM deployment** panorama and links to the [enterprise deployment runbook](./enterprise-deployment-runbook.md)
 
 For hands-on deployment, choose a path in [endpoint-deployment-options.md](./endpoint-deployment-options.md), then follow [enterprise-deployment-runbook.md](./enterprise-deployment-runbook.md) and the [vendor-neutral MDM checklist](./mdm/vendor-neutral-checklist.md).
+
+**English procedure docs (no need to read Chinese for operations):** [docs/README.md](./README.md) indexes the full admin path. Highlights: [https-inspection-runbook.md](./https-inspection-runbook.md) (TLS inspection / MITM), [authority-deployment.md](./authority-deployment.md), [admin-ui.md](./admin-ui.md), [sandbox-management-model.md](./sandbox-management-model.md). Strategic background and Hermes walkthroughs remain fullest in [enterprise-it-overview-zh.md](./enterprise-it-overview-zh.md).

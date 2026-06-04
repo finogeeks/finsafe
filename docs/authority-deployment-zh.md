@@ -92,6 +92,25 @@ sudo chmod 0640 /etc/finsafe/license.jws
 
 许可证包含 **功能开关** 与可选 **`max_devices` 席位**，在**新设备注册**时强制（已撤销设备不计入席位）。`expires_at` 之后可选 **`grace_until`** 宽限期（通常 14 天），期间已注册设备仍可心跳与上报审计，便于续期。
 
+### TLS 检查（MITM）
+
+出口代理 **HTTPS 终止**（L7 过滤、更丰富的舰队审计）由许可证功能 **`mitm_tls_terminate`** 控制；`finsafe_licensectl` 默认功能集**不包含**此项，需向 Finogeeks 采购。
+
+| 步骤 | 操作 |
+|------|------|
+| 1 | 确认 `license.jws` 含 `mitm_tls_terminate`。 |
+| 2 | **`POST /v1/admin/mitm/ca`** 生成 Authority 检查 CA（**`GET /v1/admin/mitm/ca`** 查看）。 |
+| 3 | 发布含 **`tls_terminate: true`** 的沙箱策略；无 CA 时拒绝发布。 |
+| 4 | Agent 分发 bundle 中的 **`inspection_ca_cert_pem`**；子进程通过 `SSL_CERT_FILE`、`CURL_CA_BUNDLE` 等信任该 CA。 |
+
+公开证书（无需管理员会话）：**`GET /v1/mitm/ca/cert`**。
+
+**合规：**须告知终端用户 HTTPS 可能被解密用于策略与审计。
+
+**实验环境：** 代理可设 `FINSAFE_LICENSE_MITM=1`；`start_internal_proxy` 可用 `FINSAFE_MITM_CA_CERT_PATH` / `FINSAFE_MITM_CA_KEY_PATH` 固定开发 CA。
+
+**完整流程：** [https-inspection-runbook-zh.md](./https-inspection-runbook-zh.md)（示例策略、curl 验证、试点步骤、故障排查）。
+
 ---
 
 ## 3. 环境变量

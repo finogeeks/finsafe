@@ -52,11 +52,25 @@ Instead of authoring wrapper YAML, **`finsafe --host-profile <NAME> self-confine
 | `filesystem.read_write_paths` | Writable scope. Same **existence-at-compile-time** rule as `read_only_paths`; missing entries are omitted (`read_write landlock skipped (path missing)`). Creating a directory later in the same run does not add it—you must re-run `finsafe run` after the path exists on the host. |
 | `filesystem.protected_read_only_paths` | Optional extra paths forced into a **read-only** layer (carveouts under writable roots). Relative paths resolve against the process working directory. |
 | `filesystem.skip_default_protected_paths` | Default `false`: compiler may add `.git` / `.finsafe` under each `read_write_paths` entry when they exist on disk. Set `true` to skip that merge. |
-| `filesystem.deny_read_paths` | Explicit paths (or bounded globs) **denied for read** under writable roots — e.g. allow `./workspace` but block `./workspace/.env`. Compiled into a separate `deny_read_paths` layer (not `read_only_paths`). On Linux/macOS isolated profiles and Windows isolated/managed profiles, a built-in deny-read set applies unless `skip_default_deny_read: true`. |
+| `filesystem.deny_read_paths` | Explicit paths (or bounded globs) **denied for read** under writable roots — e.g. allow `./workspace` but block `./workspace/.env`. Compiled into a separate `deny_read_paths` layer (not `read_only_paths`). On Linux/macOS isolated profiles and Windows isolated/managed profiles, a built-in deny-read set applies unless `skip_default_deny_read: true`. **Unix sockets** (e.g. `docker.sock`) are blocked via this layer on Linux (bwrap `/dev/null` overlay) and via Seatbelt `unix-socket` rules on macOS—not via `read_only_paths` or Landlock alone. |
+| `filesystem.allow_unix_socket_paths` | Host Unix socket paths **exempted from built-in sensitive-socket denies** (Docker/containerd/podman API sockets). Does not remove explicit `deny_read_paths`. Use when a product intentionally drives a local container runtime from inside the sandbox. |
 | `filesystem.deny_write_globs` | Glob list (`*.ext`, `**/*.ext`, …) expanded via bounded `globset` into extra read-only entries (writes blocked). Legacy YAML key `deny_read_globs` is accepted as an alias. |
 | `filesystem.skip_default_deny_read` | When `true`, skip built-in deny-read paths on Linux/macOS isolated profiles and Windows isolated/managed profiles. |
 | `filesystem.glob_scan_max_depth` | Maximum directory depth when expanding deny globs (compiler default `8` if omitted). |
+| `filesystem.toolchains` | Optional list of **named presets** (`homebrew`, `npm-global`, `cargo`, …) shipped in `toolchain-defaults.yaml`. When building from a **host profile** (`--host-profile`), each name **appends** `read_write_paths` / `read_only_paths` after the template and before operator YAML overrides. Repeatable CLI flag: `--toolchain <name>`. **Self-confine only** in v1. Built-in deny-read still applies; presets grant real writes (not log suppression). The `homebrew` preset is **broad** (`/opt/homebrew`, `/usr/local`) because formula install scripts run there—use explicit narrower `read_write_paths` for stricter setups. Example: [`brew-self-confine.yaml`](../../examples/wrapper-policies/brew-self-confine.yaml). |
 | `network` (allowlist) | YAML: `network:\n  allowlist:\n    domains: [example.com]`. Requires egress `finsafe-net-proxy` + `proxy_cell` at launch; effective mode `allowlist`. |
+| `tls_terminate` | When `true` (wrapper root or `network.tls_terminate`), the egress proxy **decrypts HTTPS** for L7 filtering and richer `proxy_egress` audit (`tls_terminated`, method/path). Requires commercial license feature **`mitm_tls_terminate`** on the authority, an authority **inspection CA** embedded in published bundles (`inspection_ca_cert_pem`), and the agent-installed CA under the managed cache. Children receive trust-store env vars (`SSL_CERT_FILE`, `CURL_CA_BUNDLE`, `NODE_EXTRA_CA_CERTS`, …) pointing at the inspection cert. **Compliance:** users must be informed that HTTPS is inspected. |
+| `start_internal_proxy` | When `true`, `finsafe run` / `finsafe self-confine` may start a bundled loopback forward proxy on **`127.0.0.1:60080`** (same range as Windows WFP `permit-loopback`) instead of requiring a separate `finsafe-net-proxy` UDS. Pair with `network: allowlist` and usually `tls_terminate: true` for managed HTTPS inspection. |
+
+### TLS inspection (MITM) operator notes
+
+| Topic | Detail |
+|-------|--------|
+| **License** | Authority and publish paths return **`402`** without `mitm_tls_terminate` in `/etc/finsafe/license.jws`. `finsafe_licensectl` does **not** add this feature by default — request it from Finogeeks. |
+| **Authority CA** | Operators run `POST /v1/admin/mitm/ca` (admin API) before publishing policies with `tls_terminate: true`. Agents fetch the public cert via bundle field or `GET /v1/mitm/ca/cert`. |
+| **Example policy** | [`enterprise-https-inspection.yaml`](../examples/wrapper-policies/enterprise-https-inspection.yaml) + [https-inspection-runbook.md](./https-inspection-runbook.md). |
+| **Dev / lab** | Set `FINSAFE_LICENSE_MITM=1` on proxy hosts to bypass license checks. Optional stable CA: `FINSAFE_MITM_CA_CERT_PATH` + `FINSAFE_MITM_CA_KEY_PATH` for `start_internal_proxy`. Force termination for curl/openssl probes: `FINSAFE_MITM_FORCE_TERMINATE=1`. |
+| **Audit schema** | Terminated flows use `proxy_egress` schema version **3**; opaque CONNECT tunnels stay at **2**. |
 
 ### Built-in filesystem defaults (Linux/macOS/Windows)
 
@@ -67,9 +81,12 @@ Unless `skip_default_deny_read: true` or `skip_default_protected_paths: true`, t
 | **Deny read** (under each writable root) | `.env`, `.env.local`, `.env.production` |
 | **Deny read** (under `$HOME` / `%USERPROFILE%`) | `.ssh`, `.aws`, `.gnupg`, `.config/gcloud` |
 | **Deny read** (Linux absolutes) | `/etc/shadow`, `/etc/gshadow` |
+| **Deny read / unix-socket** (sensitive container APIs, when paths exist on host at compile time) | `/var/run/docker.sock`, `/run/docker.sock`, `/run/containerd/containerd.sock`, `/run/podman/podman.sock`, `$HOME/.docker/run/docker.sock`, `$HOME/.orbstack/run/docker.sock` |
 | **Protected read-only** (under each writable root, when present) | `.git`, `.finsafe` |
 
-After a fleet upgrade, Hermes and similar programs may fail to read `.env` or credential dirs under the user profile even when bundle YAML is unchanged. To preserve prior behavior, set `skip_default_deny_read: true` on the relevant sandbox policy (and review protected segments).
+**Path vs socket vs network:** Listing `/var` in `read_only_paths` blocks directory listing through Landlock but does **not** block `connect()` to `/var/run/docker.sock`. Use built-in sensitive-socket defaults (default-on), explicit `deny_read_paths`, or `network: none` / seccomp `no_network` for defense in depth. Putting a socket path only in `read_only_paths` has no Landlock effect—the compiler logs a warning.
+
+After a fleet upgrade, Hermes and similar programs may fail to read `.env` or credential dirs under the user profile even when bundle YAML is unchanged. Workloads that relied on implicit access to Docker/containerd sockets without declaring `allow_unix_socket_paths` will see `connect()` failures under `network: host` or proxy modes—add explicit allows only when required. To preserve prior behavior entirely, set `skip_default_deny_read: true` on the relevant sandbox policy (and review protected segments).
 
 ### Egress proxy observability (allowlist mode)
 

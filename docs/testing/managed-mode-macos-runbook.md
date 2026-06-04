@@ -1,6 +1,6 @@
 # Managed mode — macOS manual runbook
 
-**中文：** See [managed-mode-matrix-zh.md](./managed-mode-matrix-zh.md) and [enterprise-deployment-runbook-zh.md](../enterprise-deployment-runbook-zh.md).
+**中文：** [managed-mode-macos-runbook-zh.md](./managed-mode-macos-runbook-zh.md) (index) · [managed-mode-matrix-zh.md](./managed-mode-matrix-zh.md) · [enterprise-deployment-runbook-zh.md](../enterprise-deployment-runbook-zh.md).
 
 > **Audience:** Customer IT pilots validating macOS fleet rollout. Manual steps below map to [managed-mode-matrix.md](./managed-mode-matrix.md). For a single-machine lab on release binaries, see [managed-lab.md](./managed-lab.md).
 

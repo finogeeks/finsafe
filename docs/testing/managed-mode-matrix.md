@@ -27,6 +27,7 @@ Manual run book for managed-mode acceptance.
 | 19 | Valid license | `GET /v1/license/status` valid/grace; admin + enroll `200` | [licensing-e2e-macos.md](./licensing-e2e-macos.md) |
 | 20 | Seat limit | Nth+1 enroll returns `402` + `LICENSE_SEAT_LIMIT` | Enroll over `max_devices` |
 | 21 | License + managed smoke (macOS) | Publish bundle, enroll, `finsafe run --json` exit 0 or `policy_source=managed` | [managed-mode-macos-runbook.md](./managed-mode-macos-runbook.md) or [managed-lab.md](./managed-lab.md) |
+| 22 | HTTPS inspection (`mitm_tls_terminate`) | CA created; publish `tls_terminate: true`; pilot curl + `tls_terminated` in proxy audit | [https-inspection-runbook.md](../https-inspection-runbook.md) |
 
 **macOS licensing guide:** [licensing-e2e-macos.md](./licensing-e2e-macos.md)
 

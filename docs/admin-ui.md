@@ -64,6 +64,20 @@ to connect a published bundle to a group.
 
 ---
 
+## HTTPS inspection (TLS terminate)
+
+Optional commercial add-on (`mitm_tls_terminate` in `license.jws`). The Admin UI does not yet expose a dedicated CA wizard; use the admin API (same token as kill switch):
+
+```bash
+# After license includes mitm_tls_terminate
+curl -X POST "$AUTHORITY/v1/admin/mitm/ca" -H "X-Admin-Token: $TOKEN"
+curl -sf "$AUTHORITY/v1/admin/mitm/ca" -H "X-Admin-Token: $TOKEN" | jq -r '.cert_pem' | head -3
+```
+
+Publish bundles whose wrapper policies set `tls_terminate: true` (see **Bundles** policy editor or YAML). Full operator procedure: [https-inspection-runbook.md](./https-inspection-runbook.md).
+
+---
+
 ## Settings → Kill switch
 
 ### What it is

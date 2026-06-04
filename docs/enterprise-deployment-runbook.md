@@ -47,7 +47,7 @@ On each desktop:
 | Approved wrapper policies | Source YAML reviewed by security; built into bundles |
 | Device identity | Stable `device_id` per machine (MDM serial, hostname policy, or asset tag) |
 
-**Supported platforms (v1):** Linux and macOS desktops. Windows host sandbox is not in managed-mode v1.
+**Supported platforms (v1):** **Linux**, **macOS**, and **Windows** managed desktops (`finsafe-fleet-v*` archives, `finsafe` + `finsafe-agent`, sentinel, enroll). Install paths differ by OS — see [endpoint-deployment-options.md](./endpoint-deployment-options.md) and [mdm/README.md](./mdm/README.md). **HTTPS inspection (TLS terminate)** on Windows: pilot on your build before fleet-wide rollout — [https-inspection-runbook.md](./https-inspection-runbook.md).
 
 ---
 
@@ -91,6 +91,17 @@ finsafe-bundlectl bundle publish --in /secure/bundles/bundle-v1.jws --authority 
 ```
 
 Record: `bundle_id`, `version`, digest, and JWKS thumbprint from `/.well-known/finsafe/jwks.json`.
+
+### A.2b Enable HTTPS inspection (optional add-on)
+
+Skip unless you purchased **`mitm_tls_terminate`** on `license.jws`. Full steps: [https-inspection-runbook.md](./https-inspection-runbook.md).
+
+| Step | Action |
+|------|--------|
+| 1 | Confirm `GET /v1/license/status` lists `mitm_tls_terminate`. |
+| 2 | `POST /v1/admin/mitm/ca` with `X-Admin-Token`. |
+| 3 | `finsafe-bundlectl bundle build` from [`enterprise-https-inspection.yaml`](../examples/wrapper-policies/enterprise-https-inspection.yaml) (adjust domains), then sign + publish. |
+| 4 | Assign bundle via Admin UI **Assignments**; pilot `finsafe run` + `proxy_egress` audit with `tls_terminated: true`. |
 
 ### A.3 Sign managed-required sentinel
 

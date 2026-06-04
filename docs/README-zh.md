@@ -37,6 +37,7 @@
 | [binary-reference-zh.md](./binary-reference-zh.md) · [binary-reference.md](./binary-reference.md) | **全部二进制**、发行包、Linux 配套、管理员验证清单 |
 | [sandbox-management-model-zh.md](./sandbox-management-model-zh.md) · [sandbox-management-model.md](./sandbox-management-model.md) | **沙箱管理模型**：Bundle 作为策略集合、Group、Assignment、rollout 与冲突处理 |
 | [authority-deployment-zh.md](./authority-deployment-zh.md) · [authority-deployment.md](./authority-deployment.md) | Authority 安装、商业许可证、`finsafe-bundlectl` |
+| [https-inspection-runbook-zh.md](./https-inspection-runbook-zh.md) · [https-inspection-runbook.md](./https-inspection-runbook.md) | **HTTPS 检查（TLS 终止）** — 许可证、CA、发布、试点验证 |
 | [managed-mode-zh.md](./managed-mode-zh.md) | 概述、组件、路径、CLI 错误 |
 | [managed-cli-authority-connectivity-zh.md](./managed-cli-authority-connectivity-zh.md) · [English](./managed-cli-authority-connectivity.md) | **CLI ↔ agent ↔ 权威** 拓扑、发现、IPC、注册 |
 | [endpoint-deployment-options-zh.md](./endpoint-deployment-options-zh.md) · [endpoint-deployment-options.md](./endpoint-deployment-options.md) | 部署路径决策（不强制 MDM） |
@@ -46,8 +47,13 @@
 | [testing/managed-mode-matrix-zh.md](./testing/managed-mode-matrix-zh.md) | 生产前验收测试 |
 | [testing/managed-lab-zh.md](./testing/managed-lab-zh.md) · [managed-lab.md](./testing/managed-lab.md) | **本机全栈实验** — [`scripts/managed-lab.sh`](../scripts/managed-lab.sh) |
 | [testing/licensing-e2e-macos-zh.md](./testing/licensing-e2e-macos-zh.md) · [licensing-e2e-macos.md](./testing/licensing-e2e-macos.md) | macOS 许可证与托管冒烟（**客户 curl 清单** + Finogeeks harness 说明） |
+| [testing/managed-mode-macos-runbook-zh.md](./testing/managed-mode-macos-runbook-zh.md) · [managed-mode-macos-runbook.md](./testing/managed-mode-macos-runbook.md) | macOS 舰队试点手工步骤（英文操作为主；中文索引） |
 
 建议阅读顺序：**[enterprise-it-overview-zh.md](./enterprise-it-overview-zh.md)** → **[endpoint-deployment-options-zh.md](./endpoint-deployment-options-zh.md)** → **[enterprise-deployment-runbook-zh.md](./enterprise-deployment-runbook-zh.md)**。
+
+### 文档语言与同步
+
+多数运维指南提供 **英文** / **中文** 成对文件（`*.md` / `*-zh.md`）。若中英文内容不一致（例如 HTTPS 检查 CA 轮换、Admin UI 设置项），以**同一变更中最后更新的语言版本**为准；不确定时优先对照英文版。战略背景以 [enterprise-it-overview-zh.md](./enterprise-it-overview-zh.md) 最完整；英文入口见 [enterprise-it-overview.md](./enterprise-it-overview.md)。
 
 ## 部署制品（脚本与服务单元）
 

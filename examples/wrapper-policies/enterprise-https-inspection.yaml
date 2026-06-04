@@ -1,0 +1,53 @@
+# Managed fleet example: restricted egress + HTTPS inspection (TLS termination).
+#
+# Requires on the Policy Authority:
+#   - license.jws feature: mitm_tls_terminate
+#   - POST /v1/admin/mitm/ca (inspection CA) before publish
+#
+# Pair with finsafe-bundlectl bundle build/sign/publish — see:
+#   docs/public-finsafe/docs/https-inspection-runbook.md
+#
+# Pilot (unmanaged, local policy file):
+#   finsafe --policy examples/wrapper-policies/enterprise-https-inspection.yaml run -- \
+#     curl -fsS https://example.com/
+#
+# Use hostnames in URLs (not raw IP literals) when traffic goes through the loopback proxy.
+schema_version: 1
+kind: local-wrapper
+program_mode: short-lived
+degrade:
+  allow_fallback: true
+audit:
+  require_policy_digest: true
+  require_resolved_posture: true
+stdio:
+  mode: capture
+# Restricted egress: only listed domains via loopback forward proxy (127.0.0.1:60080).
+network:
+  allowlist:
+    domains:
+      - example.com
+      - api.openai.com
+      - api.anthropic.com
+# Decrypt HTTPS at the proxy for L7 policy and richer proxy_egress audit (schema v3).
+tls_terminate: true
+# Spawn bundled loopback proxy in-process (managed desktops do not need a separate finsafe-net-proxy).
+start_internal_proxy: true
+resources:
+  memory_max: "1G"
+  pids_max: "256"
+  cpu_max: "100000 100000"
+  timeout_ms: 120000
+filesystem:
+  read_only_paths:
+    - "/usr"
+    - "/lib"
+    - "/lib64"
+    - "/bin"
+    - "/sbin"
+    - "/etc/ssl"
+    - "${HOME}/.local/bin"
+    - "/opt/homebrew/bin"
+  read_write_paths:
+    - "./workspace"
+    - "${HOME}/.cache"

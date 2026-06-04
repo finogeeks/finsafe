@@ -52,11 +52,25 @@ filesystem:
 | `filesystem.read_write_paths` | 可写范围。与 `read_only_paths` 相同：**编译时须已存在**；缺失项会被省略（`read_write landlock skipped (path missing)`）。同一次运行中事后 `mkdir` 不会自动加入，须在路径存在后重新执行 `finsafe run`。 |
 | `filesystem.protected_read_only_paths` | 可选：在可写根下额外强制 **只读** 的路径（雕刻）。相对路径相对 **进程工作目录** 解析。 |
 | `filesystem.skip_default_protected_paths` | 默认 `false`：若磁盘上存在，编译器可能在每个 `read_write_paths` 条目下合并 `.git` / `.finsafe`。设为 `true` 则跳过该合并。 |
-| `filesystem.deny_read_paths` | 显式路径（或受限 glob），在可写根下 **禁止读取** — 例如允许 `./workspace` 但拒绝 `./workspace/.env`。编译为独立的 `deny_read_paths` 层（不是 `read_only_paths`）。Linux/macOS 隔离配置与 Windows 隔离/托管配置默认合并内置 deny-read，除非 `skip_default_deny_read: true`。 |
+| `filesystem.deny_read_paths` | 显式路径（或受限 glob），在可写根下 **禁止读取** — 例如允许 `./workspace` 但拒绝 `./workspace/.env`。编译为独立的 `deny_read_paths` 层（不是 `read_only_paths`）。Linux/macOS 隔离配置与 Windows 隔离/托管配置默认合并内置 deny-read，除非 `skip_default_deny_read: true`。**Unix 套接字**（如 `docker.sock`）在 Linux 上通过该层（bwrap `/dev/null` 覆盖）阻断，在 macOS 上通过 Seatbelt `unix-socket` 规则阻断——不能仅靠 `read_only_paths` 或 Landlock。 |
+| `filesystem.allow_unix_socket_paths` | 从内置敏感套接字 deny 中 **豁免** 的主机 Unix 套接字路径（Docker/containerd/podman API）。不会移除显式 `deny_read_paths`。仅当产品有意在沙箱内驱动本地容器运行时时使用。 |
 | `filesystem.deny_write_globs` | Glob 列表（`*.ext`、`**/*.ext` 等），经有界 `globset` 展开为额外只读项（禁止写入）。旧键名 `deny_read_globs` 仍可作为别名接受。 |
 | `filesystem.skip_default_deny_read` | 为 `true` 时，在 Linux/macOS 隔离配置与 Windows 隔离/托管配置中跳过内置 deny-read 路径。 |
 | `filesystem.glob_scan_max_depth` | 展开 deny 相关 glob 时的最大目录深度（省略时编译器默认 `8`）。 |
+| `filesystem.toolchains` | 可选的**命名预设**列表（`homebrew`、`npm-global`、`cargo` 等），定义于 `toolchain-defaults.yaml`。通过 **`--host-profile`** 构建时，每个名称会在模板之后、运维 YAML 覆盖之前**追加** `read_write_paths` / `read_only_paths`。可重复 CLI 参数：`--toolchain <name>`。**v1 仅支持 self-confine**。内置 deny-read 仍生效；预设授予真实写入权限（非日志抑制）。`homebrew` 预设范围**较宽**（`/opt/homebrew`、`/usr/local`），因 formula 安装脚本会在这些路径执行——更严格场景请用更窄的显式 `read_write_paths`。示例：[`brew-self-confine.yaml`](../../examples/wrapper-policies/brew-self-confine.yaml)。 |
 | `network`（allowlist） | YAML：`network:\n  allowlist:\n    domains: [example.com]`。启动时需 egress `finsafe-net-proxy` 与 `proxy_cell`；有效网络模式为 `allowlist`。 |
+| `tls_terminate` | 为 `true` 时（wrapper 根或 `network.tls_terminate`），出口代理**解密 HTTPS** 以做 L7 过滤与更丰富的 `proxy_egress` 审计（`tls_terminated`、method/path）。需要 Authority 商业许可证 **`mitm_tls_terminate`**、已发布 bundle 中嵌入的 **inspection CA**（`inspection_ca_cert_pem`），以及 Agent 在托管缓存中安装的检查 CA。子进程会收到指向该证书的信任库环境变量（`SSL_CERT_FILE`、`CURL_CA_BUNDLE`、`NODE_EXTRA_CA_CERTS` 等）。**合规：**须告知用户 HTTPS 被检查。 |
+| `start_internal_proxy` | 为 `true` 时，`finsafe run` / `finsafe self-confine` 可在 **`127.0.0.1:60080`** 启动内置回环正向代理（与 Windows WFP `permit-loopback` 端口范围一致），无需单独 UDS `finsafe-net-proxy`。通常与 `network: allowlist` 及 `tls_terminate: true` 配合。 |
+
+### TLS 检查（MITM）运维说明
+
+| 主题 | 说明 |
+|------|------|
+| **许可证** | `/etc/finsafe/license.jws` 中无 `mitm_tls_terminate` 时，Authority 与发布路径返回 **`402`**。`finsafe_licensectl` 默认**不**包含该功能——需向 Finogeeks 申请。 |
+| **Authority CA** | 发布 `tls_terminate: true` 的策略前，运维执行 **`POST /v1/admin/mitm/ca`**（管理 API）。Agent 通过 bundle 字段或 **`GET /v1/mitm/ca/cert`** 获取公钥证书。 |
+| **示例策略** | [`enterprise-https-inspection.yaml`](../examples/wrapper-policies/enterprise-https-inspection.yaml) + [https-inspection-runbook-zh.md](./https-inspection-runbook-zh.md)。 |
+| **开发/实验** | 代理主机可设 `FINSAFE_LICENSE_MITM=1` 跳过许可证检查。`start_internal_proxy` 可选稳定 CA：`FINSAFE_MITM_CA_CERT_PATH` + `FINSAFE_MITM_CA_KEY_PATH`。curl/openssl 探测可设 `FINSAFE_MITM_FORCE_TERMINATE=1`。 |
+| **审计 schema** | 终止 TLS 的流量使用 `proxy_egress` schema **3**；不透明 CONNECT 隧道仍为 **2**。 |
 
 ### 内置文件系统默认项（Linux/macOS/Windows）
 
@@ -67,9 +81,12 @@ filesystem:
 | **Deny read**（可写根下） | `.env`、`.env.local`、`.env.production` |
 | **Deny read**（`$HOME` / `%USERPROFILE%` 下） | `.ssh`、`.aws`、`.gnupg`、`.config/gcloud` |
 | **Deny read**（Linux 绝对路径） | `/etc/shadow`、`/etc/gshadow` |
+| **Deny read / unix-socket**（敏感容器 API，编译时主机上存在则生效） | `/var/run/docker.sock`、`/run/docker.sock`、`/run/containerd/containerd.sock`、`/run/podman/podman.sock`、`$HOME/.docker/run/docker.sock`、`$HOME/.orbstack/run/docker.sock` |
 | **Protected read-only**（每个可写根下，若存在） | `.git`、`.finsafe` |
 
-托管 bundle 升级后，即使未改 YAML，Hermes 等程序也可能因上述默认项而无法读取 `.env` 或用户配置目录下的凭证路径。需要旧行为时：在相关 sandbox 策略中设置 `skip_default_deny_read: true`（并评估是否同时跳过受保护子目录）。
+**路径 vs 套接字 vs 网络：** 在 `read_only_paths` 中列出 `/var` 可通过 Landlock 限制目录列举，但 **不会** 阻断对 `/var/run/docker.sock` 的 `connect()`。内置敏感套接字默认（默认开启）、显式 `deny_read_paths`，或 `network: none` / seccomp `no_network` 提供纵深防御。仅把套接字写在 `read_only_paths` 对 Landlock 无效——编译器会记录警告。
+
+托管 bundle 升级后，即使未改 YAML，Hermes 等程序也可能因上述默认项而无法读取 `.env` 或用户配置目录下的凭证路径。在 `network: host` 或代理模式下，曾隐式使用 Docker/containerd 套接字且未声明 `allow_unix_socket_paths` 的工作负载将看到 `connect()` 失败——仅在确有需要时显式放行。需要完全恢复旧行为时：在相关 sandbox 策略中设置 `skip_default_deny_read: true`（并评估受保护子目录）。
 
 ### 出站代理可观测性（allowlist 模式）
 

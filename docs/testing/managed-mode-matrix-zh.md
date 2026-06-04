@@ -29,6 +29,7 @@
 | 19 | 有效许可证 | status valid/grace；管理/注册 `200` | [licensing-e2e-macos-zh.md](./licensing-e2e-macos-zh.md) |
 | 20 | 席位上限 | `LICENSE_SEAT_LIMIT` | 超额注册 |
 | 21 | macOS 许可证+托管冒烟 | bundle + 注册 + `finsafe run --json` | [managed-mode-macos-runbook.md](./managed-mode-macos-runbook.md) 或 [managed-lab-zh.md](./managed-lab-zh.md) |
+| 22 | HTTPS 检查（`mitm_tls_terminate`） | 已创建 CA；发布 `tls_terminate: true`；试点 curl + 审计含 `tls_terminated` | [https-inspection-runbook-zh.md](../https-inspection-runbook-zh.md) |
 
 **macOS 许可证：** [licensing-e2e-macos-zh.md](./licensing-e2e-macos-zh.md)
 

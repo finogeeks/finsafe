@@ -47,7 +47,7 @@
 | 已审批的 wrapper 策略 | 安全团队审查的源 YAML；打包进 bundle |
 | 设备身份 | 每台机器稳定的 `device_id`（MDM 序列号、主机名策略或资产标签） |
 
-**v1 支持平台：** Linux 与 macOS 桌面。Windows 主机沙箱不在托管模式 v1 范围内。
+**v1 支持平台：** **Linux**、**macOS** 与 **Windows** 托管桌面（`finsafe-fleet-v*` 发行包、`finsafe` + `finsafe-agent`、sentinel、注册）。各 OS 安装路径见 [endpoint-deployment-options-zh.md](./endpoint-deployment-options-zh.md) 与 [mdm/README-zh.md](./mdm/README-zh.md)。**Windows 上启用 HTTPS 检查（TLS 终止）**：请先小范围试点确认构建版本，再全舰队推广 — [https-inspection-runbook-zh.md](./https-inspection-runbook-zh.md)。
 
 ---
 
@@ -91,6 +91,17 @@ finsafe-bundlectl bundle publish --in /secure/bundles/bundle-v1.jws --authority 
 ```
 
 记录：`bundle_id`、`version`、摘要，以及 `/.well-known/finsafe/jwks.json` 的 JWKS 指纹。
+
+### A.2b 启用 HTTPS 检查（可选增值能力）
+
+未采购 **`mitm_tls_terminate`** 可跳过。完整步骤：[https-inspection-runbook-zh.md](./https-inspection-runbook-zh.md)。
+
+| 步骤 | 操作 |
+|------|------|
+| 1 | `GET /v1/license/status` 含 `mitm_tls_terminate`。 |
+| 2 | 携带 `X-Admin-Token` 执行 `POST /v1/admin/mitm/ca`。 |
+| 3 | 基于 [`enterprise-https-inspection.yaml`](../examples/wrapper-policies/enterprise-https-inspection.yaml) 调整域名后 build / sign / publish。 |
+| 4 | Admin UI **Assignments** 下发；试点 `finsafe run` 并检查 `tls_terminated` 审计。 |
 
 ### A.3 签名 managed-required 哨兵
 
