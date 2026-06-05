@@ -6,7 +6,7 @@
 
 **适用对象：** 从 [GitHub Releases](https://github.com/finogeeks/finsafe/releases) 安装套件后，需要在本机快速验证 Authority + 桌面 agent + CLI 的 IT 管理员与安全工程师。
 
-**平台：** 仅 macOS 与 Linux（不支持 Windows）。
+**平台：** **`managed-lab.sh` 仅 macOS / Linux**（含 Policy Authority）。Windows 仅部署设备侧舰队（[Intune §7](../mdm/intune.md#7-windows-deployment-intune-or-gpo)、`install-fleet-windows.ps1`）；CI 在 **windows-acceptance** 的 **agent-pipe** job 验证 bootstrap 注册与命名管道 IPC（Windows runner 上不构建 authority / licensectl）。
 
 ---
 

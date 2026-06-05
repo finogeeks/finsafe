@@ -47,7 +47,7 @@ MDM (Jamf, Intune, Ansible, golden images, etc.) delivers **binaries**, the **ma
 
 Enterprise fleets use **`finsafe-fleet-v*`** release tarballs (managed `finsafe` + `finsafe-agent`) from [GitHub Releases](https://github.com/finogeeks/finsafe/releases). See the full **MDM** section in [product-one-pager-zh.md](./product-one-pager-zh.md) and [vendor-neutral MDM checklist](./mdm/vendor-neutral-checklist.md).
 
-**Windows + MDM (v1):** Managed fleet deployment (agent, sentinel, M1–M8) is **Linux and macOS only**. Intune guides cover macOS/Linux endpoints, not Windows 10/11 devices. Windows users can use **central Sandbox-as-a-Service** via `finsafe-server` while executions run on Linux workers. Details: [product-one-pager-zh.md — Windows & MDM](./product-one-pager-zh.md#windows-设备与-mdmv1-现状).
+**Windows + MDM:** `finsafe-agent.exe`, sentinel at `C:\ProgramData\FinSAFE\managed-required.json`, and Intune/GPO install scripts are **implemented** (see [managed-mode.md](./managed-mode.md), [intune.md §7](./mdm/intune.md#7-windows-deployment-intune-or-gpo)). Regression matrix **`windows-managed`** proves **device fleet** (bootstrap enroll + agent IPC via `windows-acceptance`); **Policy Authority** runs on Linux/macOS only — full **Authority → enroll → bundle → managed run** is covered by `linux-managed-fleet` and `e2e-mac-authority-hermes`. Treat Windows managed desktop as **pilot** until your MDM + remote Authority sign-off. Windows users can also use **central Sandbox-as-a-Service** via `finsafe-server`. Details: [product-one-pager-zh.md — Windows & MDM](./product-one-pager-zh.md#windows-设备与-mdm实现-vs-正式交付).
 
 ## Read next
 

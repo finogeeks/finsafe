@@ -13,7 +13,7 @@
 | **[endpoint-deployment-options-zh.md](../endpoint-deployment-options-zh.md)** · [English](../endpoint-deployment-options.md) | **部署路径选型** — Jamf、Intune、Ansible、镜像、SSH 或仅中心侧 |
 | **[vendor-neutral-checklist-zh.md](./vendor-neutral-checklist-zh.md)** · [English](./vendor-neutral-checklist.md) | **任意工具**（Ansible、Kandji、黄金镜像、SSH）— 不要求 Jamf/Intune |
 | [jamf-zh.md](./jamf-zh.md) · [English](./jamf.md) | Jamf Pro（macOS 舰队） |
-| [intune-zh.md](./intune-zh.md) · [English](./intune.md) | Microsoft Intune（**macOS + Linux**；**不含 Windows 托管 v1**） |
+| [intune-zh.md](./intune-zh.md) · [English](./intune.md) | Microsoft Intune（**macOS + Linux + Windows**；Windows 见 intune §7 / Win32） |
 | [ansible-zh.md](./ansible-zh.md) · [English](./ansible.md) | 无 MDM 的 Linux 服务器 / VDI |
 
 示例文件：[`packaging/mdm/examples/`](../../packaging/mdm/examples/)。

@@ -36,6 +36,7 @@ IT 试点脚本会下载发行包、校验 `SHA256SUMS`、安装二进制并配�
 
 | 文档 | 说明 |
 |------|------|
+| **[docs/terminology-glossary-zh.md](docs/terminology-glossary-zh.md)** | **概念术语表**（MITM、WFP、企业代理、L7、隔离机制、托管舰队、对标 sandbox-runtime/Codex） |
 | **[docs/product-one-pager-zh.md](docs/product-one-pager-zh.md)** | **产品一页纸**（定位、痛点、与 Docker/云沙箱对比、适用场景） |
 | **[docs/enterprise-it-overview-zh.md](docs/enterprise-it-overview-zh.md)** | 企业 IT 全景（首选阅读） |
 | [docs/binary-reference-zh.md](docs/binary-reference-zh.md) | 全部二进制与发行包对照 |

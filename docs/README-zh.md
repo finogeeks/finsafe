@@ -2,6 +2,12 @@
 
 **English:** [README.md](./README.md)
 
+## 概念与术语
+
+| 文档 | 说明 |
+|------|------|
+| [terminology-glossary-zh.md](./terminology-glossary-zh.md) · [English](./terminology-glossary.md) | **概念术语表**：MITM、WFP、企业代理、L7、Landlock、Bundle/托管、对标 sandbox-runtime/Codex 等 |
+
 ## 企业 IT 全景（首选）
 
 | 文档 | 说明 |

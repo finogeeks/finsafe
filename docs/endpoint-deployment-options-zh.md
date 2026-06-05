@@ -24,7 +24,7 @@
 
 若需治理本机 OpenClaw、Hermes 等 Agent，通常选 **托管桌面**：策略由企业签名、从 **自有** Policy Authority 拉取；哨兵就位后 CLI 不能退回个人策略文件。
 
-**托管桌面 v1 平台：** 仅 Linux 与 macOS。Windows 桌面托管舰队（Agent + 哨兵路径）**不在 v1**。见 [§8 平台限制](#8-平台限制)。
+**托管桌面平台：** Linux、macOS 与 **Windows**（Windows 为设备侧舰队；Policy Authority 在 Linux/macOS）。见 [§8 平台限制](#8-平台限制)。
 
 ---
 
@@ -35,14 +35,14 @@
 | 情况 | 推荐方式 | 详细文档 |
 |------|----------|----------|
 | **Jamf Pro**（macOS 舰队） | Jamf PKG + 配置描述文件 + 一次性注册策略 | [mdm/jamf-zh.md](./mdm/jamf-zh.md) |
-| **Microsoft Intune**（macOS + Linux） | Intune 应用/PKG + 脚本 + plist/systemd | [mdm/intune-zh.md](./mdm/intune-zh.md) |
+| **Microsoft Intune**（macOS + Linux + Windows） | macOS/Linux：应用/PKG + 脚本；Windows：Win32/GPO（§7） | [mdm/intune-zh.md](./mdm/intune-zh.md) · [intune.md §7](./mdm/intune.md#7-windows-deployment-intune-or-gpo) |
 | **Ansible / Puppet / Chef / Salt**（尤指 Linux） | Playbook 完成 M1–M8 | [mdm/ansible-zh.md](./mdm/ansible-zh.md) |
 | **黄金镜像 / cloud-init** | 镜像内烘焙 M1–M6；首启脚本做 M7–M8 | [vendor-neutral-checklist-zh.md](./mdm/vendor-neutral-checklist-zh.md) § 映射到你的产品 |
 | **小规模、无端点自动化** | SSH + 运维手册 + 通用脚本 | [packaging/mdm/examples/generic/](../../packaging/mdm/examples/generic/) |
 | **自建 apt/yum/PKG 仓库** | 打包二进制 + 服务单元；哨兵与环境变量另包或描述文件 | 与 Ansible 相同 M1–M8 映射 |
 | **无 Jamf 的 macOS**（Munki、Autopkg、手工 PKG） | PKG + 安装后配置哨兵/Agent | [testing/managed-mode-macos-runbook-zh.md](./testing/managed-mode-macos-runbook-zh.md) |
 | **无法在终端做 root 级安装** | 不要承诺托管桌面 | 用 **中心执行**，或发放可托管的 Mac/Linux |
-| **仅 Windows 笔记本** | 托管桌面 v1 **不支持** | 中心执行，或为本地 Agent 配 Mac/Linux |
+| **仅 Windows 笔记本** | 可用 Win32/GPO 托管（试点）；无 Mac/Linux 时也可中心执行 | [intune.md §7](./mdm/intune.md#7-windows-deployment-intune-or-gpo) 或中心 `finsafe-server` |
 
 ### 简要决策
 
@@ -169,7 +169,7 @@ test -f /etc/finsafe/managed-required.json && echo ok || echo missing
 |------|--------------------------------|------|
 | **Linux** | 支持 | Ansible；[packaging/](../../packaging/) 中 systemd |
 | **macOS** | 支持 | Jamf/Intune/Munki/手工；LaunchDaemon |
-| **Windows 桌面** | **v1 不支持** | 无 Windows Agent/哨兵路径；本地 Agent 用中心执行或 Mac/Linux |
+| **Windows 桌面** | **实现 + 试点** | 设备侧 `finsafe-agent.exe`、哨兵 `C:\ProgramData\FinSAFE\`；CI 见 `windows-acceptance` agent-pipe；Authority 在 Linux/macOS |
 
 ---
 

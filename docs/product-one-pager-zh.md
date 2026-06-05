@@ -140,7 +140,7 @@ FinSAFE 运行时 / API     ←  finsafe-server（POST /v1/executions 等）
 |------|------|
 | 仅需 **固定 Docker 镜像**、无 Agent 动态工具链 | 标准容器平台可能更简单 |
 | **互联网陌生人** 多租户、零信任内核 | 外层 MicroVM 或商业云沙箱 |
-| **Windows** Agent 主机沙箱（v1） | 当前托管 v1 以 Linux / macOS 为主；中心 Linux 执行仍可用 |
+| **仅中心执行、不愿在 Windows 装舰队组件** | Windows 本地沙箱与托管组件已实现；矩阵 `windows-managed` 覆盖设备舰队 CI，Authority 全链在 Linux/macOS E2E；中心 Linux 执行仍可用 |
 | 期望 FinSAFE **单独解决** 模型安全与提示词注入 | 需上层网关与策略引擎 |
 
 ---
@@ -217,18 +217,18 @@ FinSAFE **不绑定** 某一 MDM；只要能以 root 安装文件、保持系统
 | 工具 | 托管模式 v1 覆盖的端点 |
 |------|------------------------|
 | **Jamf Pro** | **macOS** |
-| **Microsoft Intune** | **macOS** + **Linux**（自定义脚本 / systemd）；**不含 Windows 端 FinSAFE 舰队** |
-| **Ansible / SCCM 等** | 以 **Linux** 为主（见 [ansible-zh.md](./mdm/ansible-zh.md)） |
+| **Microsoft Intune** | **macOS** + **Linux**（脚本/systemd）+ **Windows**（Win32/GPO，见 [intune.md §7](./mdm/intune.md#7-windows-deployment-intune-or-gpo)） |
+| **Ansible / SCCM 等** | **Linux** 为主（[ansible-zh.md](./mdm/ansible-zh.md)）；Windows 可用 GPO 启动脚本（同 Intune §7） |
 
-### Windows 设备与 MDM（v1 现状）
+### Windows 设备与 MDM（实现 vs 正式交付）
 
-**结论：** 托管模式 v1 **没有** 面向 Windows 桌面的 MDM 装机清单（无 Windows 版 `finsafe-agent`、无 `managed-required` 哨兵路径、无 Intune「Windows 应用」示例）。这与「FinSAFE 可在云端运行」并不矛盾——**中心执行平面** 与 **Windows 笔记本上的本地托管** 是两条路径。
+**结论：** Windows **本地沙箱**（AppContainer、WFP、deny-read 等）与 **托管组件**（`finsafe-agent.exe`、哨兵、注册、策略缓存、审计 spool、命名管道 IPC）**已在代码与发行包中实现**；生产路径见 [managed-mode.md](./managed-mode.md) 与 [intune.md §7](./mdm/intune.md#7-windows-deployment-intune-or-gpo)。**Policy Authority 不在 Windows 上运行**（仅 Linux/macOS）；回归矩阵 `windows-managed` 验证 **设备侧舰队**（`windows-acceptance` 的 agent-pipe），全链 **Authority → enroll → bundle → 托管 run** 由 Linux/macOS E2E 覆盖。试点投产前仍建议在真实 MDM + 远程 Authority 环境做一次手工验证。中心执行平面与 Windows 桌面托管是两条路径，可并存。
 
-| 能力 | Windows 桌面（v1） | Mac / Linux 桌面（v1） |
-|------|-------------------|------------------------|
-| MDM 下发 `finsafe` + `finsafe-agent` + 哨兵 | **不支持** | **支持**（见上文 M1–M8） |
-| `finsafe run` 本地包装 Hermes/OpenClaw | **无官方 Windows 主机沙箱** | 支持（bwrap / Seatbelt） |
-| 通过 **Policy Authority + agent** 强制舰队策略 | **不支持** | 支持 |
+| 能力 | Windows 桌面 | Mac / Linux 桌面 |
+|------|----------------|------------------|
+| MDM 下发 `finsafe` + `finsafe-agent` + 哨兵 | **支持**（Win32/GPO 示例；路径 `C:\ProgramData\FinSAFE\`） | **支持**（见上文 M1–M8） |
+| `finsafe run` 本地包装（AppContainer / Seatbelt / bwrap） | **支持**（AppContainer + `finsafe-winhelper`） | 支持 |
+| 通过 **Policy Authority + agent** 强制舰队策略 | **设备侧 CI 已有**（`windows-managed`）；Authority 全链见 Linux/macOS E2E — **试点**需 MDM 手工验证 | 支持 + 有 managed E2E |
 | 员工在 Windows 上使用 Agent，**执行落在中心** | **可以**（见下） | 可选本地或中心 |
 
 **Windows 上 IT 仍可采用的方案：**
@@ -246,9 +246,9 @@ FinSAFE **不绑定** 某一 MDM；只要能以 root 安装文件、保持系统
 4. **互补：应用控制，而非 FinSAFE 托管**  
    在 Intune 上对 `hermes.exe`、`openclaw` 等使用 **AppLocker / WDAC** 限制未包裹启动，属于 **EDR/应用控制** 范畴，**不能** 替代 FinSAFE 的策略编译与 `policy_hash` 审计；可与 Mac/Linux 托管舰队并存。
 
-**Microsoft Intune 说明：** 现有 [intune-zh.md](./mdm/intune-zh.md) 仅覆盖 **macOS 与 Linux** 托管设备；请勿将其中脚本用于「Windows 10/11 设备」类型。Windows 设备在 Intune 中仍可用于部署其他安全基线，但 **FinSAFE 托管模式装机项（M1–M8）不适用**。
+**Microsoft Intune 说明：** [intune-zh.md](./mdm/intune-zh.md) 概述三平台；Windows 分步见英文 [intune.md §7](./mdm/intune.md#7-windows-deployment-intune-or-gpo) 或 IT 试点脚本 [install-fleet-windows.ps1](../install-fleet-windows.ps1)。Windows 上启用 **HTTPS 检查（TLS 终止）** 前请先小范围试点 — [https-inspection-runbook-zh.md](./https-inspection-runbook-zh.md)。
 
-**规划预期：** Windows 桌面托管（含 Intune Win32 服务、哨兵路径、UDS/agent 协议）属于 **后续版本** 范围；当前请以 [vendor-neutral-checklist-zh.md](./mdm/vendor-neutral-checklist-zh.md) 与 [部署手册](./enterprise-deployment-runbook-zh.md) 中的平台声明为准。
+**正式交付门禁：** `windows-acceptance` 全绿（含 agent-pipe）+ Linux/macOS 托管 E2E 全绿；Windows 试点机上用 **远程** Authority 做一次 enroll + 托管 `finsafe run` 验证。详见 [p0-p2-improvement-plan.md](../../../design/p0-p2-improvement-plan.md)。
 
 ### 推荐上线顺序（结合 MDM）
 

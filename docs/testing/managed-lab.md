@@ -6,7 +6,7 @@ Use **`scripts/managed-lab.sh`** to run a **full managed stack on one machine**:
 
 **Audience:** IT administrators and security engineers evaluating fleet + authority after installing from [GitHub Releases](https://github.com/finogeeks/finsafe/releases).
 
-**Platforms:** macOS and Linux only (not Windows).
+**Platforms:** macOS and Linux for **`scripts/managed-lab.sh`** (includes Policy Authority). On **Windows**, deploy device fleet only via [Intune §7](../mdm/intune.md#7-windows-deployment-intune-or-gpo) / `install-fleet-windows.ps1`; CI proves bootstrap enroll + agent IPC in **windows-acceptance** → `agent-pipe` job (no authority on the Windows runner).
 
 ---
 

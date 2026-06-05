@@ -118,7 +118,7 @@ finsafe run --personal -- /usr/bin/true 2>&1 | grep -q MANAGED_FORCED_BY_POLICY 
 
 ## 范围外（请设定预期）
 
-- **Windows** 桌面 **托管模式 v1 不包含**（仅 Linux + macOS）。Intune 的 **Windows 设备** 类型不适用本文 M1–M8；Windows 用户可改用 **中心 `finsafe-server` API**（执行在云端 Linux）。见 [产品一页纸 · Windows 与 MDM](../product-one-pager-zh.md#windows-设备与-mdmv1-现状)。
+- **Windows** 桌面：M1–M8 与 Linux/macOS **同一契约**（路径为 `C:\Program Files\FinSAFE\`、`C:\ProgramData\FinSAFE\`、命名管道 IPC）；见 [intune.md §7](./intune.md#7-windows-deployment-intune-or-gpo)。回归矩阵 **`windows-managed`** 覆盖 **设备侧舰队**（`windows-acceptance` agent-pipe）；**Authority 全链**由 Linux/macOS E2E 证明 — 试点投产前请在真实 MDM + 远程 Authority 环境做一次手工验证。亦可改用 **中心 `finsafe-server` API**。见 [产品一页纸 · Windows 与 MDM](../product-one-pager-zh.md#windows-设备与-mdm实现-vs-正式交付)。
 - **本地管理员对手**：可移除哨兵/agent；需 MDM 锁定与监控，单靠软件不够。
 - **非 FinSAFE 启动**：用户仍可直接运行未包裹 `finsafe run` 的二进制，除非另行阻断。
 

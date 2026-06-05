@@ -2,6 +2,12 @@
 
 **中文：** [README-zh.md](./README-zh.md)
 
+## Concepts and terminology
+
+| Document | Description |
+|----------|-------------|
+| [terminology-glossary-zh.md](./terminology-glossary-zh.md) · [terminology-glossary.md](./terminology-glossary.md) | **Glossary**: MITM, WFP, corporate proxy, L7 hooks, isolation primitives, managed fleet terms, sandbox-runtime/Codex comparison context |
+
 ## Enterprise IT panorama (start here)
 
 | Document | Description |
