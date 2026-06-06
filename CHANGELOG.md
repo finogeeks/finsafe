@@ -10,6 +10,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.8.5] - 2026-06-06
+
+### Fixed
+
+- **Windows AppContainer deny-read:** Deny-read paths (explicit policy entries and built-in defaults such as `workspace/.env` and `%USERPROFILE%/.ssh`) are enforced via protected DACL sealing on leaf files. Inherited package read ALLOW ACEs on writable workspace ancestors no longer let confined processes read denied secrets.
+- **Windows acceptance:** Deny-read scenarios are back in CI (`deny_read`, built-in `.env` and `.ssh`, and `skip_default_deny_read` opt-out).
+
 ## [0.8.4] - 2026-06-04
 
 ### Added
