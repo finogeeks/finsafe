@@ -173,4 +173,5 @@ Interactive Hermes REPL:
 - [managed-mode.md](../managed-mode.md) — architecture and production paths
 - [authority-deployment.md](../authority-deployment.md) — authority + license + bundlectl
 - [managed-mode-macos-runbook.md](./managed-mode-macos-runbook.md) — production Mac fleet steps
+- [windows-remote-authority-e2e.md](./windows-remote-authority-e2e.md) — Linux/macOS Authority + Windows fleet (two-machine pilot)
 - [licensing-e2e-macos.md](./licensing-e2e-macos.md) — license verification checklist

@@ -248,7 +248,7 @@ FinSAFE **不绑定** 某一 MDM；只要能以 root 安装文件、保持系统
 
 **Microsoft Intune 说明：** [intune-zh.md](./mdm/intune-zh.md) 概述三平台；Windows 分步见英文 [intune.md §7](./mdm/intune.md#7-windows-deployment-intune-or-gpo) 或 IT 试点脚本 [install-fleet-windows.ps1](../install-fleet-windows.ps1)。Windows 上启用 **HTTPS 检查（TLS 终止）** 前请先小范围试点 — [https-inspection-runbook-zh.md](./https-inspection-runbook-zh.md)。
 
-**正式交付门禁：** `windows-acceptance` 全绿（含 agent-pipe）+ Linux/macOS 托管 E2E 全绿；Windows 试点机上用 **远程** Authority 做一次 enroll + 托管 `finsafe run` 验证。详见 [p0-p2-improvement-plan.md](../../../design/p0-p2-improvement-plan.md)。
+**正式交付门禁：** `windows-acceptance` 全绿（含 agent-pipe）+ Linux/macOS 托管 E2E 全绿；Windows 试点机上用 **远程** Authority 做一次 enroll + 托管 `finsafe run` 验证（脚本化步骤见 [windows-remote-authority-e2e-zh.md](./testing/windows-remote-authority-e2e-zh.md)）。详见 [p0-p2-improvement-plan.md](../../../design/p0-p2-improvement-plan.md)。
 
 ### 推荐上线顺序（结合 MDM）
 

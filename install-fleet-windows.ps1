@@ -94,11 +94,15 @@ function Get-ExpectedSha256 {
 
   $escapedName = [regex]::Escape($ArchiveName)
   $pattern = "^\s*([0-9a-fA-F]{64})\s+$escapedName\s*$"
-  $matches = Select-String -Path $SumsFile -Pattern $pattern
-  if ($matches.Count -ne 1) {
-    throw "expected exactly one SHA256 line for $ArchiveName in SHA256SUMS (found $($matches.Count))"
+  # @(...) forces an array so .Count is reliable even on a single match. Under
+  # Set-StrictMode -Version Latest a lone MatchInfo is a scalar without .Count,
+  # which previously threw "The property 'Count' cannot be found on this object".
+  # Avoid the name $matches: it is a PowerShell automatic variable.
+  $shaMatches = @(Select-String -Path $SumsFile -Pattern $pattern)
+  if ($shaMatches.Count -ne 1) {
+    throw "expected exactly one SHA256 line for $ArchiveName in SHA256SUMS (found $($shaMatches.Count))"
   }
-  return $matches[0].Matches[0].Groups[1].Value.ToLowerInvariant()
+  return $shaMatches[0].Matches[0].Groups[1].Value.ToLowerInvariant()
 }
 
 function Expand-FleetArchive {

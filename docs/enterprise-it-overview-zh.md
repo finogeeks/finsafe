@@ -214,7 +214,7 @@ IT 侧流程（摘要）：
 FinSAFE 的价值可概括为：
 
 1. **策略一致性** — 中心：租户级 `HighLevelPolicy` 经 Router 编译；边缘：Hermes/OpenClaw 包装策略以 bundle 覆盖全舰队。
-2. **防篡改与强制入口** — 中心：API 拒绝原始 bwrap/seccomp 旋钮；边缘：纳管设备禁止本地 `--policy` 覆盖。
+2. **防篡改与舰队级强制托管** — 中心：API 拒绝原始 bwrap/seccomp 旋钮；边缘：已部署哨兵/注册的舰队设备禁止 `--personal` 与本地 `--policy` 覆盖（**应用/舰队契约**，见 [enrollment-boundary.md](../../../design/enrollment-boundary.md)）。**整机**拦截任意解释器属于 AppLocker/WDAC/EDR 等客户集成层，非 FinSAFE Core 默认范围。
 3. **审计与合规** — 统一 JSON 契约（准入、`policy_hash`、运行信封），可汇入 SIEM。
 4. **演进能力** — 中心：配额、审批、`resolve`；边缘：bundle 轮换、kill switch。
 5. **形态可组合** — 敏感交互在桌面托管；批处理或工具执行走中心 API；未纳管环境仍可用 `--policy` 试点。

@@ -10,6 +10,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.8.6] - 2026-06-10
+
+### Fixed
+
+- **Windows self-confine interactive output:** ConPTY (`live_conpty`) launches now set `STARTF_USESTDHANDLES` with null std handles so console-subsystem children connect to the pseudoconsole instead of inheriting the parent terminal handles. Without this, AppContainer-confined `cmd`, `whoami`, and PowerShell could exit successfully yet print nothing in an interactive PowerShell session.
+
 ## [0.8.5] - 2026-06-06
 
 ### Fixed

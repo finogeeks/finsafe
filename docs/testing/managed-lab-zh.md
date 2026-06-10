@@ -173,4 +173,5 @@ source "$(./scripts/managed-lab.sh env)"
 - [managed-mode-zh.md](../managed-mode-zh.md)
 - [authority-deployment-zh.md](../authority-deployment-zh.md)
 - [managed-mode-macos-runbook.md](./managed-mode-macos-runbook.md)（生产 Mac 步骤）
+- [windows-remote-authority-e2e-zh.md](./windows-remote-authority-e2e-zh.md)（Linux/macOS Authority + Windows 舰队，双机试点）
 - [licensing-e2e-macos-zh.md](./licensing-e2e-macos-zh.md)
