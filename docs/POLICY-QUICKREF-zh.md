@@ -89,6 +89,27 @@ filesystem:
 
 托管 bundle 升级后，即使未改 YAML，Hermes 等程序也可能因上述默认项而无法读取 `.env` 或用户配置目录下的凭证路径。在 `network: host` 或代理模式下，曾隐式使用 Docker/containerd 套接字且未声明 `allow_unix_socket_paths` 的工作负载将看到 `connect()` 失败——仅在确有需要时显式放行。需要完全恢复旧行为时：在相关 sandbox 策略中设置 `skip_default_deny_read: true`（并评估受保护子目录）。
 
+### Windows AppContainer：大体积 `read_only_paths` / `read_write_paths` 根目录
+
+**Linux/macOS 无此问题。** Landlock 与 Seatbelt 按路径规则约束，不会对策略根下每个文件做枚举或逐文件 `SetNamedSecurityInfoW`。以下说明 **仅适用于 Windows**。
+
+Windows AppContainer 要求 FinSAFE 使用的每个文件系统根（`work_dir`、`read_only_paths`、`read_write_paths` 各项）具备**可继承**的 DACL（Package SID ACE）与 **Low 强制完整性标签**。子进程继承这些 ACL；首次启动时 FinSAFE 会在根上（必要时在子项上）写入可继承授权。
+
+| 阶段 | 行为 | 运维建议 |
+|------|------|----------|
+| **首次启动**且策略根下子项过多（默认守卫：≥ **10000** 个直接子项） | 默认 **拒绝**启动（`refusing to apply inheritable AppContainer ACLs`），避免对大树逐文件改 ACL 导致数分钟卡顿（端点 DLP/EDR 拦截每次 `SetNamedSecurityInfoW` 时更严重）。 | **收窄路径**——不要把整个 agent 目录、项目根或含 `node_modules` 的树放进 `read_only_paths` / `read_write_paths`；只列工作负载真正需要的目录。 |
+| **首次启动**且接受一次性打标成本 | 设 `FINSAFE_WINSAFE_INHERIT_ROOT_FAIL=0` 完成**一次**打标（会有 WARNING）。打标完成后取消该变量，以便后续误配仍 fail closed。 | 安排在维护窗口；优先收窄路径，而非给 1 万+ 文件树打标。 |
+| **同一已打标根**上的 **重复启动** | 若根上已有可继承 Package ACE + Low-IL 姿态，FinSAFE 跳过大树守卫，并在授权已满足时跳过冗余 `SetNamedSecurityInfoW`。典型重复启动 **1 秒内**完成，即使树下文件很多。 | Hermes / `finsafe run` 稳态循环应在首次打标后变快；若每次仍慢，通常是根尚未打标或策略根路径在变。 |
+
+| 变量 | 默认 | 作用 |
+|------|------|------|
+| `FINSAFE_WINSAFE_INHERIT_ROOT_WARN_LIMIT` | `10000` | 直接子项数达到该值即触发大树守卫（遍历上限同此值）。 |
+| `FINSAFE_WINSAFE_INHERIT_ROOT_FAIL` | `1`（fail closed） | `0` = 警告后继续应用可继承 ACL（一次性打标）。 |
+
+**不能作为生产绕行：** `windows.backend: restricted_token` 为实验能力、未 GA；不能替代对大只读树做 AppContainer ACL 打标。
+
+回归：`scripts/dev/run-windows-acceptance.ps1` 的 `inherit-guard` 套件含 *inherit-relaunch-fast*（同一目录第二次启动须在 1 秒内完成）。
+
 ### 出站代理可观测性（allowlist 模式）
 
 当 `finsafe-net-proxy` 执行 allowlist 时，运维可设置：
@@ -100,13 +121,17 @@ filesystem:
 
 代理内置速率限制；启用审计时，被拒请求会记录 `rate_limit_global` 或 `rate_limit_domain:<host>` 等原因。
 
-### 路径占位符（`${HOME}` / `${XDG_CONFIG_HOME}` / `${USERPROFILE}`）
+### 路径占位符（`${HOME}` / `~/` / `${XDG_CONFIG_HOME}` / `${USERPROFILE}`）
 
-`filesystem` 下任意 `*_paths` 字符串条目（含 `protected_read_only_paths`）支持的 **括号占位符** 仅为 `${HOME}`、`${XDG_CONFIG_HOME}`、`${USERPROFILE}`：
+`filesystem` 下任意 `*_paths` 字符串条目（含 `protected_read_only_paths`、`deny_read_paths`、`allow_unix_socket_paths`）支持：
 
-- **替换发生在 FinSAFE 解析 YAML/JSON 时**，环境取自 **`finsafe` 自身进程**，不会自动从你包裹的子进程 argv 推导。
+- **花括号占位符：** `${HOME}`、`${XDG_CONFIG_HOME}`、`${USERPROFILE}`
+- **波浪号前缀：** `~` 或 `~/子路径`（从 `HOME` 解析；Windows 上回退到 `USERPROFILE`）
+
+Shell 写法如 `$HOME/bin`（无花括号）或 `%USERPROFILE%\bin` **不会**展开——请用 `${HOME}/bin` 或 `~/bin`。
+
+- **替换发生在 FinSAFE 解析 YAML/JSON 时**，环境取自 **`finsafe` 自身进程**，不会自动从你包裹的子进程 argv 推导。托管 bundle 在每台设备执行 `finsafe run` 时各自展开。
 - **`policy_digest`** 仍对磁盘上的原始策略字节做摘要；占位符不会改变离线哈希比对语义。
-- 形如 `~/bin` 的波浪号前缀在 YAML 中 **不会做展开**；请写 `${HOME}/bin`。
 - **`${XDG_CONFIG_HOME}`** 未设置时会回退到 `${HOME}/.config`。若 Hermes/GitHub CLI 的配置不在默认位置，可先导出 `GH_CONFIG_DIR` / `XDG_CONFIG_HOME`，再启动 `finsafe`，或在策略中写明绝对路径。
 
 ## 声明式原则

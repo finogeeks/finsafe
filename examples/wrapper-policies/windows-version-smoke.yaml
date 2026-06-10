@@ -1,9 +1,10 @@
 # Short-lived Windows smoke: wrap a one-shot command (no Hermes / Unix paths).
 # From the repo root on Windows:
 #   mkdir workspace 2>nul
-#   finsafe --policy examples/wrapper-policies/windows-version-smoke.yaml --work-dir workspace run cmd /c echo hello
+#   mkdir workspace 2>nul
+#   finsafe --policy examples/wrapper-policies/windows-version-smoke.yaml run cmd /c echo hello
 # Paths under `filesystem` use ${USERPROFILE}; FinSAFE expands these when the policy loads
-# (the `finsafe` process environment — not the child argv). Tilde (~) in YAML is not expanded.
+# (the `finsafe` process environment — not the child argv). `~/` and ${HOME} are expanded at load time.
 # Only paths that exist on the host when the policy loads are applied; create `./workspace` first
 # if you rely on that RW scope. See docs/public-finsafe/docs/POLICY-QUICKREF.md.
 #
@@ -23,6 +24,8 @@ resources:
   memory_max: "512M"
   pids_max: "64"
   cpu_max: "100000 100000"
+  # Wall-clock safety net for CI; cmd echo should finish in seconds. Keep well below
+  # the windows-acceptance job watchdog so wedged children fail fast, not at 2+ minutes.
   timeout_ms: 30000
 windows:
   backend: appcontainer

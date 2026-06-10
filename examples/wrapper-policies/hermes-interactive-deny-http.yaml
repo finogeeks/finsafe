@@ -2,7 +2,7 @@
 # Use with:
 #   finsafe --policy examples/wrapper-policies/hermes-interactive-deny-http.yaml self-confine \
 #       /usr/bin/env HOME="$HOME" PATH="/opt/homebrew/bin:$HOME/.local/bin:/usr/bin:/bin" hermes
-# Paths under `filesystem` use ${HOME} and ${XDG_CONFIG_HOME}; FinSAFE expands these when the policy loads from the finsafe loader environment. Tilde (~) inside YAML paths is not expanded.
+# Paths under `filesystem` use ${HOME}, ${XDG_CONFIG_HOME}, or ~/; FinSAFE expands these when the policy loads from the finsafe loader environment.
 # macOS Seatbelt note: this is port-based, not domain-based. It denies outbound TCP 80 and 443.
 # LLM/model-provider HTTPS also uses 443 — use `hermes-interactive.yaml` when the broker must call APIs.
 # Verify inside Hermes (both should fail with operation-not-permitted / connection errors):

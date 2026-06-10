@@ -5,7 +5,7 @@
 #   finsafe --policy examples/wrapper-policies/hermes-oneshot-query.yaml run \\
 #       /usr/bin/env HOME="$HOME" PATH="/opt/homebrew/bin:$HOME/.local/bin:/usr/bin:/bin" \\
 #           hermes chat -q "Reply with exactly: ok" -Q --source tool
-# Paths under `filesystem` use ${HOME} and ${XDG_CONFIG_HOME}; FinSAFE expands these when the policy loads. Tilde (~) inside YAML paths is not expanded.
+# Paths under `filesystem` use ${HOME}, ${XDG_CONFIG_HOME}, or ~/; FinSAFE expands these when the policy loads.
 # On macOS: sandbox-exec (Seatbelt) confinement.
 # On Linux strict: bubblewrap + cgroup v2 + Landlock.
 schema_version: 1
@@ -49,10 +49,10 @@ filesystem:
   read_write_paths:
     - "./workspace"
     - "${HOME}/.hermes"
-  # Optional (policy compiler) — see docs/POLICY-QUICKREF.md
+  # Optional (policy compiler) — see docs/public-finsafe/docs/POLICY-QUICKREF.md
   # protected_read_only_paths: []
   # skip_default_protected_paths: false
-  # deny_read_paths: ["./workspace/.env"]   # deny read under writable roots (not read_only_paths)
-  # skip_default_deny_read: false             # Linux/macOS: built-in deny-read (.env, ~/.ssh, …) unless true
-  # deny_write_globs: ["*.pem", "**/*.pem"]   # writes blocked; alias: deny_read_globs
+  # deny_read_paths: ["./workspace/.env"]
+  # skip_default_deny_read: false
+  # deny_write_globs: ["*.pem", "**/*.pem"]   # alias: deny_read_globs
   # glob_scan_max_depth: 8

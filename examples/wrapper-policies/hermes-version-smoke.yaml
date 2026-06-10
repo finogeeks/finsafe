@@ -2,7 +2,7 @@
 # On macOS deny-default Seatbelt, invoke with explicit HOME/PATH, for example:
 #   finsafe --policy examples/wrapper-policies/hermes-version-smoke.yaml run --json \\
 #       /usr/bin/env HOME="$HOME" PATH="/opt/homebrew/bin:$HOME/.local/bin:/usr/bin:/bin" hermes --version
-# Paths under `filesystem` use ${HOME} and ${XDG_CONFIG_HOME}; FinSAFE expands these when the policy loads. Tilde (~) inside YAML paths is not expanded.
+# Paths under `filesystem` use ${HOME}, ${XDG_CONFIG_HOME}, or ~/; FinSAFE expands these when the policy loads.
 # On Linux strict + bwrap/Landlock, FinSAFE invokes the child inside the sandbox.
 # On macOS, FinSAFE runs the child via `sandbox-exec` (Seatbelt MVP) under `mac-seatbelt`.
 schema_version: 1

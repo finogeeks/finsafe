@@ -2,7 +2,7 @@
 # Use with:
 #   finsafe --policy examples/wrapper-policies/hermes-interactive.yaml self-confine \\
 #       /usr/bin/env HOME="$HOME" PATH="/opt/homebrew/bin:$HOME/.local/bin:/usr/bin:/bin" hermes
-# Paths under `filesystem` use ${HOME} and ${XDG_CONFIG_HOME}; FinSAFE expands these from the finsafe loader process environment when the policy loads (distinct from `--` argv). Tilde (~) inside YAML paths is not expanded.
+# Paths under `filesystem` use ${HOME}, ${XDG_CONFIG_HOME}, or ~/; FinSAFE expands these from the finsafe loader process environment when the policy loads (distinct from `--` argv).
 # On macOS: FinSAFE emits a pre-exec audit envelope, then execs Hermes via sandbox-exec (Seatbelt).
 # On Linux strict: FinSAFE applies cgroup v2 + Landlock + seccomp to itself, then execs Hermes.
 schema_version: 1

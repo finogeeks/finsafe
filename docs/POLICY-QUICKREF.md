@@ -89,6 +89,27 @@ Unless `skip_default_deny_read: true` or `skip_default_protected_paths: true`, t
 
 After a fleet upgrade, Hermes and similar programs may fail to read `.env` or credential dirs under the user profile even when bundle YAML is unchanged. Workloads that relied on implicit access to Docker/containerd sockets without declaring `allow_unix_socket_paths` will see `connect()` failures under `network: host` or proxy modes—add explicit allows only when required. To preserve prior behavior entirely, set `skip_default_deny_read: true` on the relevant sandbox policy (and review protected segments).
 
+### Windows AppContainer: large `read_only_paths` / `read_write_paths` roots
+
+**Linux/macOS do not have this behavior.** Landlock and Seatbelt apply path rules without walking every file under a policy root or calling per-file `SetNamedSecurityInfoW`. The notes below are **Windows-only**.
+
+Windows AppContainer needs an **inheritable** DACL (Package SID ACE) and a **Low mandatory integrity label** on each filesystem root FinSAFE uses: `work_dir`, every `read_only_paths` entry, and every `read_write_paths` entry. Child processes inherit those ACLs; FinSAFE must materialize them on the root (and, on first launch, may touch descendants when applying inheritable grants).
+
+| Phase | What happens | Operator impact |
+|-------|----------------|-----------------|
+| **First launch** on a large tree (default guard: ≥ **10 000** immediate children under a policy root) | FinSAFE **refuses** by default (`refusing to apply inheritable AppContainer ACLs`) to avoid multi-minute ACL storms (worse under endpoint DLP/EDR that intercepts every `SetNamedSecurityInfoW`). | **Narrow paths** — do not put an entire agent checkout, project root, or tree containing `node_modules` in `read_only_paths` / `read_write_paths`. List only directories the workload truly needs. |
+| **First launch** when you accept the one-time cost | Set `FINSAFE_WINSAFE_INHERIT_ROOT_FAIL=0` for a **single** labeling run (expect warnings). After labels exist, unset it so later misconfigurations still fail closed. | Use a maintenance window; prefer narrowing paths over labeling a 10k+ tree. |
+| **Repeat launch** on the **same** already-labeled roots | FinSAFE skips the large-tree guard when the root already has inheritable Package ACE + Low-IL posture, and skips redundant `SetNamedSecurityInfoW` when grants are satisfied. Typical relaunch stays **under one second** even when the tree is large. | Steady-state Hermes / `finsafe run` loops should be fast once roots are labeled; slowness on every launch usually means paths are not yet labeled or policy roots keep changing. |
+
+| Variable | Default | Effect |
+|----------|---------|--------|
+| `FINSAFE_WINSAFE_INHERIT_ROOT_WARN_LIMIT` | `10000` | Immediate-child count at/above this triggers the large-tree guard (walk is capped at this limit). |
+| `FINSAFE_WINSAFE_INHERIT_ROOT_FAIL` | `1` (fail closed) | `0` = warn and apply inheritable ACLs anyway (one-time labeling). |
+
+**Not a production workaround:** `windows.backend: restricted_token` is experimental and not GA; it does not replace AppContainer ACL labeling for large read-only trees.
+
+Regression coverage: `scripts/dev/run-windows-acceptance.ps1` suite `inherit-guard` case *inherit-relaunch-fast* (second launch on the same labeled directory must complete in &lt;1 s).
+
 ### Egress proxy observability (allowlist mode)
 
 When `finsafe-net-proxy` enforces an allowlist, operators can enable:
@@ -100,13 +121,17 @@ When `finsafe-net-proxy` enforces an allowlist, operators can enable:
 
 Rate limiting is applied inside the proxy; blocked requests record reasons such as `rate_limit_global` or `rate_limit_domain:<host>` in the audit envelope when auditing is enabled.
 
-### Path templates (`${HOME}`, `${XDG_CONFIG_HOME}`, `${USERPROFILE}`)
+### Path templates (`${HOME}`, `~/`, `${XDG_CONFIG_HOME}`, `${USERPROFILE}`)
 
-String entries inside `filesystem.*_paths` (including `protected_read_only_paths`) treat **braced placeholders** strictly as `${HOME}`, `${XDG_CONFIG_HOME}`, or `${USERPROFILE}`:
+String entries inside `filesystem.*_paths` (including `protected_read_only_paths`, `deny_read_paths`, and `allow_unix_socket_paths`) support:
 
-- Substitution runs when FinSAFE parses the YAML/JSON (the **`finsafe` process environment** — not implicitly from the eventual child `argv`).
+- **Braced placeholders:** `${HOME}`, `${XDG_CONFIG_HOME}`, `${USERPROFILE}`
+- **Leading tilde:** `~` or `~/subdir` (resolved from `HOME`, or `USERPROFILE` on Windows)
+
+Shell forms like `$HOME/bin` (no braces) and `%USERPROFILE%\bin` are **not** expanded—use `${HOME}/bin` or `~/bin`.
+
+- Substitution runs when FinSAFE parses the YAML/JSON (the **`finsafe` process environment** — not implicitly from the eventual child `argv`). Managed-mode bundles keep templates on the wire; each device expands at `finsafe run` time.
 - **`policy_digest`** is still computed over the **raw policy file bytes**. Templates are deliberate portability affordances without changing offline digest equality.
-- Tilde-only paths like `~/bin` remain **unsupported** inside wrapper policy YAML; use `${HOME}/bin`.
 - **`${XDG_CONFIG_HOME}`** falls back to `${HOME}/.config` when the variable is absent (POSIX desktop convention). Set `GH_CONFIG_DIR` in the Hermes/GitHub CLI process if auth files live elsewhere (point your policy paths at that resolved directory literal or export `XDG_CONFIG_HOME` accordingly before launching `finsafe`).
 
 ## Declarative rule
