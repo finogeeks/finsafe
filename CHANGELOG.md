@@ -10,6 +10,27 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.8.7] - 2026-06-10
+
+### Changed
+
+- **Windows self-confine live output (Stage 2):** Interactive `self-confine` on a real TTY now streams broker output live through ConPTY pumps under **both** backends, including AppContainer. Previously interactive AppContainer console hosts (`cmd`, PowerShell) were diverted to buffered ConPTY capture, which froze the screen until broker exit and could wedge in conhost teardown (scripts appearing to hang until an external timeout). Non-TTY callers keep pipe capture and replay-after-exit.
+- **Bounded ConPTY teardown:** After the broker exits, the live-ConPTY stdout drain is capped at 5 s; a wedged conhost flush is detached (with a `FINSAFE_WIN_LAUNCH_DEBUG=1` diagnostic) instead of hanging the supervisor.
+
+### Fixed
+
+- **Windows self-confine policy timeout:** `self-confine` now honors `resources.timeout_ms` from the compiled execution spec instead of always waiting forever; long-lived brokers still omit the field for an infinite supervisor wait. The `launch_windows_full` timeout parameter is wired through to the child wait (it was previously ignored).
+- **Windows inheritable-ACL fast path:** Repeat launches on a tree that already carries inheritable package DACL grants skip the fail-closed large-tree guard even when the low-integrity label probe is inconclusive, matching the idempotent `SetNamedSecurityInfoW` skip in `grant_path`.
+
+### Added
+
+- `FINSAFE_WIN_PTY_MODE=live|buffered|pipe` — diagnostic override for the interactive stdio plumbing if a specific host misbehaves.
+- `FINSAFE_SELF_CONFINE_FORCE_PTY=1` — test/diagnostic hook that forces the ConPTY path without a TTY; used by the Windows acceptance suite to exercise pseudoconsole attach + teardown under AppContainer.
+
+### Known gaps
+
+- Non-interactive `self-confine` with console hosts (`cmd`, PowerShell) on headless Windows runners can still wedge for minutes in some CI environments. CI skips the optional `cmd /c echo` smoke by default (`FINSAFE_WIN_ACCEPTANCE_SELF_CONFINE_CMD=1` for local runs). Interactive TTY launches use live ConPTY (Stage 2).
+
 ## [0.8.6] - 2026-06-10
 
 ### Fixed

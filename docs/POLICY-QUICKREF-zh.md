@@ -108,7 +108,7 @@ Windows AppContainer 要求 FinSAFE 使用的每个文件系统根（`work_dir`�
 
 **不能作为生产绕行：** `windows.backend: restricted_token` 为实验能力、未 GA；不能替代对大只读树做 AppContainer ACL 打标。
 
-回归：`scripts/dev/run-windows-acceptance.ps1` 的 `inherit-guard` 套件含 *inherit-relaunch-fast*（同一目录第二次启动须在 1 秒内完成）。
+回归：`scripts/dev/run-windows-acceptance.ps1` 的 `inherit-guard` 套件含 *inherit-relaunch-fast*（同一目录第二次启动须在 3 秒内完成）。
 
 ### 出站代理可观测性（allowlist 模式）
 

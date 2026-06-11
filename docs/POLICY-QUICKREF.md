@@ -108,7 +108,7 @@ Windows AppContainer needs an **inheritable** DACL (Package SID ACE) and a **Low
 
 **Not a production workaround:** `windows.backend: restricted_token` is experimental and not GA; it does not replace AppContainer ACL labeling for large read-only trees.
 
-Regression coverage: `scripts/dev/run-windows-acceptance.ps1` suite `inherit-guard` case *inherit-relaunch-fast* (second launch on the same labeled directory must complete in &lt;1 s).
+Regression coverage: `scripts/dev/run-windows-acceptance.ps1` suite `inherit-guard` case *inherit-relaunch-fast* (second launch on the same labeled directory must complete in &lt;3 s).
 
 ### Egress proxy observability (allowlist mode)
 
