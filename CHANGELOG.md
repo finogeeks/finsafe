@@ -10,6 +10,18 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.8.8] - 2026-06-11
+
+### Added
+
+- **Windows PipeInherit stdio:** Embedded hosts (e.g. desktop agents speaking JSON-RPC over pipes) can request live bidirectional stdio by setting **`stdio.mode: inherit`** on the CLI `run` path. The sandboxed child inherits the launcher's own standard handles — no ConPTY, no `stdin = NUL`, and no buffer-until-exit capture that deadlocks long-lived agents.
+- **Windows stdio design docs:** Public design references for the Windows stdio strategy inventory, MXC comparison, and PipeInherit embedded-host contract.
+
+### Fixed
+
+- **Windows localized cmd output:** PipeCapture decodes OEM-encoded bytes from detached console hosts (e.g. localized `dir` headers) via OEM/ACP fallback instead of lossy UTF-8.
+- **Windows acceptance cargo test:** `windows-acceptance` runs `cargo test` with `--no-fail-fast` so one failing crate does not skip `finsafe-winsafe` unit tests.
+
 ## [0.8.7] - 2026-06-10
 
 ### Changed
