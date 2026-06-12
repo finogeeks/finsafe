@@ -227,7 +227,18 @@ try {
   Copy-Item -Force -LiteralPath $sourceExe -Destination $destExe
   Write-Info "installed: $destExe"
 
+  $destHelper = Join-Path $InstallDir $WinhelperBinaryName
   Install-OptionalCompanion -BundleDir $bundleDir -Name $WinhelperBinaryName -InstallDirectory $InstallDir
+
+  if (Test-Path -LiteralPath $destHelper) {
+    Write-Info "running one-time Windows setup (helper service; accept the permission prompt if shown)"
+    & $destExe setup-windows
+    if ($LASTEXITCODE -ne 0) {
+      Write-Info "WARNING: setup-windows exited $LASTEXITCODE — run '$CliBinaryName setup-windows' after install"
+    }
+  } else {
+    Write-Info "WARNING: $WinhelperBinaryName not in archive; network-locked policies will not work on Windows"
+  }
 
   $onPath = $false
   foreach ($part in ($env:PATH -split ';')) {

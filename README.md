@@ -55,6 +55,8 @@ See **`install.sh --help`** (after downloading the script) for all environment v
 irm https://raw.githubusercontent.com/finogeeks/finsafe/main/install.ps1 | iex
 ```
 
+The installer copies `finsafe.exe` and `finsafe-winhelper.exe`, then runs **`finsafe setup-windows`** once (Windows may show a single permission prompt). After that, use `finsafe run` normally — no admin shell required.
+
 Pin a version: `$env:FINSAFE_VERSION = '0.6.0'; irm .../install.ps1 | iex`
 
 ### Manual download
@@ -83,13 +85,14 @@ tar -xvf "finsafe-v${VERSION}-<target>.tar.zst"
 $VERSION = "0.2.0"   # replace with the release you downloaded
 tar --zstd -xf "finsafe-v$VERSION-x86_64-pc-windows-msvc.tar.zst"
 # Binary: finsafe-v<version>-x86_64-pc-windows-msvc\finsafe.exe
-# Optional companion: finsafe-winhelper.exe (same folder; keep beside finsafe.exe)
+# Companion: finsafe-winhelper.exe (same folder; required for network-locked policies)
+.\finsafe.exe setup-windows   # once per machine (permission prompt is normal)
 ```
 
 Optional: copy binaries into a directory on your `PATH`. On Linux, copy the
 three companion binaries beside `finsafe`. On Windows, copy **`finsafe.exe`**
-(and **`finsafe-winhelper.exe`** when present) — PowerShell does not run
-extensionless files as executables.
+and **`finsafe-winhelper.exe`** together, then run **`finsafe setup-windows`** once.
+PowerShell does not run extensionless files as executables.
 
 5. Confirm:
 

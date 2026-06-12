@@ -1,7 +1,8 @@
 # Windows sandbox smoke: workspace RW; cmd/DLL access via winsafe runtime grants.
 # From the repo root on Windows:
 #   mkdir workspace 2>nul
-#   finsafe --policy examples/wrapper-policies/windows-sandbox-smoke.yaml --work-dir workspace run cmd /c echo hello
+#   finsafe --policy examples/wrapper-policies/windows-sandbox-smoke.yaml run cmd /c echo hello
+# (`--work-dir` only overrides child cwd; policy paths always resolve from the shell cwd.)
 # `${USERPROFILE}` expands at policy load time. Managed desktop fleet v1 is Linux/macOS only;
 # this policy is for local `finsafe run` on Windows (AppContainer / winsafe).
 #

@@ -100,10 +100,11 @@ tar -xvf "finsafe-v${VERSION}-<target>.tar.zst"
 $VERSION = "0.2.0"   # 改为你下载的版本号
 tar --zstd -xf "finsafe-v$VERSION-x86_64-pc-windows-msvc.tar.zst"
 # 二进制：finsafe-v<version>-x86_64-pc-windows-msvc\finsafe.exe
-# 可选伴随程序：finsafe-winhelper.exe（同目录，与 finsafe.exe 放在一起）
+# 伴随程序：finsafe-winhelper.exe（同目录）
+.\finsafe.exe setup-windows   # 每台机器运行一次（可能出现权限提示，属正常）
 ```
 
-将二进制复制到 **`PATH`** 中的目录。Linux 请同时复制三个伴随二进制；Windows 请复制 **`finsafe.exe`**（以及压缩包内的 **`finsafe-winhelper.exe`**）。PowerShell 无法将无扩展名文件当作可执行程序运行。
+将二进制复制到 **`PATH`** 中的目录。Linux 请同时复制三个伴随二进制；Windows 请同时复制 **`finsafe.exe`** 与 **`finsafe-winhelper.exe`**，并运行一次 **`finsafe setup-windows`**。使用 `install.ps1` 安装时会自动执行该步骤。PowerShell 无法将无扩展名文件当作可执行程序运行。
 
 5. 确认：
 

@@ -1,8 +1,12 @@
 # Short-lived Windows smoke: wrap a one-shot command (no Hermes / Unix paths).
+# Uses `network: none` (strict network lockdown). On a personal desktop run once:
+#   finsafe setup-windows
+# before this policy, or use windows-sandbox-smoke.yaml (`network: host`) for a no-setup smoke.
 # From the repo root on Windows:
-#   mkdir workspace 2>nul
-#   mkdir workspace 2>nul
 #   finsafe --policy examples/wrapper-policies/windows-version-smoke.yaml run cmd /c echo hello
+# FinSAFE auto-creates `./workspace` when missing and sets child cwd there when it is the
+# sole read_write_paths entry. Use `cmd /c echo hello` for smoke tests — not `cmd /c dir`
+# from an ungranted cwd (`dir` lists the process working directory).
 # Paths under `filesystem` use ${USERPROFILE}; FinSAFE expands these when the policy loads
 # (the `finsafe` process environment — not the child argv). `~/` and ${HOME} are expanded at load time.
 # Only paths that exist on the host when the policy loads are applied; create `./workspace` first

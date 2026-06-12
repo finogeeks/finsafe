@@ -26,6 +26,19 @@ directory (the installer does this automatically).
 |------|-------------------------------|
 | **Linux** (bubblewrap / cgroup toolchain available) | Strict stack: Bubblewrap-oriented isolation plus cgroup / Landlock / seccomp as resolved from policy. Missing bubblewrap may cause **fail closed** for strict postures. |
 | **macOS** (arm64 or x86_64) | **`mac-seatbelt`**: children run via `/usr/bin/sandbox-exec`. Bubblewrap-style namespaces are **not** used for the local tool wrapper; `probe` / `doctor` describe capabilities. |
+| **Windows** (10/11 desktop) | **`appcontainer`**: AppContainer + Job limits. Run **`finsafe setup-windows` once** after install (installer does this automatically) so `network: none` policies work. Hermes and other **`network: host`** policies work without that step. |
+
+**Windows quick start (personal):**
+
+```powershell
+irm https://raw.githubusercontent.com/finogeeks/finsafe/main/install.ps1 | iex
+mkdir workspace
+finsafe --policy examples/wrapper-policies/windows-sandbox-smoke.yaml run cmd /c echo hello
+```
+
+FinSAFE auto-creates `./workspace` when missing and uses it as the child cwd when it is the sole `read_write_paths` entry. Pass `--work-dir <path>` only when you need a different child working directory; policy filesystem paths always resolve from your shell cwd.
+
+If install did not finish setup, or `finsafe doctor` warns about the Windows helper, run **`finsafe setup-windows`** once (accept the permission prompt if Windows asks).
 
 Quick checks:
 

@@ -10,6 +10,19 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.8.10] - 2026-06-12
+
+### Added
+
+- **`finsafe setup-windows`:** One-time Windows host setup for personal desktops. Registers and starts the `finsafe-winhelper` Windows service beside `finsafe.exe`, provisions the network sandbox (`network: none` / allowlist policies), and may show a single Windows permission prompt. `install.ps1` runs this automatically after install.
+- **`finsafe doctor` on Windows:** Warns when the helper service is not running and points operators to `finsafe setup-windows` (policies with `network: host`, such as Hermes, do not need this step).
+
+### Fixed
+
+- **Windows network setup errors:** Failures such as `NetLocalGroupAdd(finsafe-net): 5` now include plain-language guidance to run `finsafe setup-windows` instead of opaque Win32 errors alone.
+- **`finsafe-winhelper` Windows Service mode:** SCM-started helper no longer forces console mode; dev/acceptance still use `FINSAFE_WINHELPER_CONSOLE=1`.
+- **Windows wrapper work-dir / smoke:** Policy `filesystem.*_paths` always resolve from the shell cwd; `--work-dir` only sets the sandboxed child's working directory (fixing `./workspace` double-nesting when both were set to `workspace`). When a policy has a sole relative `read_write_paths` entry (for example `./workspace`), FinSAFE auto-creates the directory, auto-uses it as child cwd for `cmd` / PowerShell smoke runs, and grants read+write on the child cwd when it matches that RW root. Access-denied hints steer operators to `cmd /c echo hello` instead of `cmd /c dir`.
+
 ## [0.8.9] - 2026-06-11
 
 ### Fixed
