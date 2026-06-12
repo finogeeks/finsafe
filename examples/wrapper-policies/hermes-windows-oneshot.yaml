@@ -1,0 +1,42 @@
+# Windows: wrap one-shot Hermes commands under AppContainer.
+# From a PowerShell prompt in your project directory:
+#   mkdir workspace 2>$null
+#   finsafe --policy examples/wrapper-policies/hermes-windows-oneshot.yaml run hermes --version
+#   finsafe --policy examples/wrapper-policies/hermes-windows-oneshot.yaml run hermes chat -q "Reply with exactly: ok" -Q --source tool
+#
+# No venv paths needed: FinSAFE detects the Python venv behind `hermes.exe`
+# (and the base interpreter from its pyvenv.cfg) and grants the sandbox read
+# access automatically. The FIRST launch labels that tree once and prints
+#   finsafe: granting sandbox read access to agent runtime …
+# — large venvs can take a minute there; later launches are fast.
+#
+# Notes:
+# - Do NOT add the venv (or `.`) to read_only_paths; large trees trip the
+#   inheritable-ACL guard and the automatic runtime grant already covers it.
+# - Do NOT set `stdio: { mode: inherit }` for interactive PowerShell use; the
+#   default capture mode replays output after the child exits. (Since 0.8.9,
+#   inherit auto-falls back to capture on a console anyway.)
+# - Paths use ${USERPROFILE}; FinSAFE expands them when the policy loads, and
+#   only paths that exist are applied — create `./workspace` first.
+schema_version: 1
+kind: local-wrapper
+program_mode: short-lived
+degrade:
+  allow_fallback: false
+audit:
+  require_policy_digest: true
+  require_resolved_posture: true
+# host: hermes needs outbound HTTPS for LLM API calls
+network: host
+resources:
+  memory_max: "1G"
+  pids_max: "256"
+  cpu_max: "100000 100000"
+  timeout_ms: 120000
+windows:
+  backend: appcontainer
+filesystem:
+  read_only_paths: []
+  read_write_paths:
+    - "./workspace"
+    - "${USERPROFILE}/.hermes"

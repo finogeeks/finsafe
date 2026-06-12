@@ -11,7 +11,8 @@ See [docs/POLICY-QUICKREF.md](../../docs/POLICY-QUICKREF.md) or [docs/POLICY-QUI
 | File | Platform | Use |
 |------|----------|-----|
 | `managed-lab-smoke.yaml` | Linux / macOS | Default bundle for [`scripts/managed-lab.sh`](../../scripts/managed-lab.sh) (`/usr/bin/true`, minimal FHS) |
-| `hermes-*.yaml` | Linux / macOS | Hermes broker smoke (`${HOME}`, FHS paths) |
+| `hermes-version-smoke.yaml`, `hermes-oneshot-query.yaml`, `hermes-interactive*.yaml` | Linux / macOS | Hermes broker smoke (`${HOME}`, FHS paths) |
+| `hermes-windows-oneshot.yaml` | Windows | One-shot Hermes (`hermes --version`, `hermes chat -q …`) under AppContainer; venv access is granted automatically |
 | `windows-version-smoke.yaml` | Windows | Minimal `finsafe run cmd /c echo hello` |
 | `windows-sandbox-smoke.yaml` | Windows | Stricter AppContainer smoke with `network: host` |
 

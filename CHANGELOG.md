@@ -10,6 +10,18 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.8.9] - 2026-06-11
+
+### Fixed
+
+- **Windows `stdio.mode: inherit` on interactive consoles:** `finsafe run` with a policy that sets `stdio.mode: inherit` (e.g. policies reused from embedded-host deployments) silently produced no output in interactive PowerShell/cmd sessions on 0.8.8 — even `cmd /c dir` looked broken. The launcher now detects when its own stdout is a console (not a host-owned pipe) and falls back to buffered capture + replay, so output always appears. True passthrough is unchanged for embedded hosts that own pipes; `FINSAFE_WIN_PIPE_INHERIT_FORCE=1` forces passthrough onto a console if you really want it.
+- **Windows wrapper text-mode replay:** Captured child output on the wrapper `run` path now replays through the console-aware writer (`WriteConsoleW`), matching the spec `run` path, so localized (OEM-codepage) output renders correctly.
+
+### Added
+
+- **Windows agent runtime auto-grant (Hermes works out of the box):** When the resolved command target lives inside a Python venv (e.g. `hermes.exe` under `…\venv\Scripts\`), FinSAFE now automatically grants the sandbox read+execute on the venv root **and** the base interpreter referenced by `pyvenv.cfg`. Previously such launches died in the loader with `STATUS_DLL_INIT_FAILED` (0xC0000142) unless the policy enumerated venv internals — which then tripped the inheritable-ACL size guard. The first launch labels the runtime tree once and prints a progress line (`finsafe: granting sandbox read access to agent runtime …`); subsequent launches are fast. Volume/profile roots are never auto-granted.
+- **`examples/wrapper-policies/hermes-windows-oneshot.yaml`:** Windows policy for one-shot Hermes commands (`hermes --version`, `hermes chat -q …`) — no venv paths, no stdio overrides needed.
+
 ## [0.8.8] - 2026-06-11
 
 ### Added
