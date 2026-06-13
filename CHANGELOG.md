@@ -10,6 +10,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.8.11] - 2026-06-13
+
+### Fixed
+
+- **Windows `read_only_paths: ["."]` with `read_write_paths: ["./workspace"]`:** Shell smoke (`cmd /c dir`, PowerShell) keeps the launch directory as the sandboxed child cwd instead of auto-relocating into `./workspace`, so read-only listing of the project root works again. Auto workspace cwd still applies for the common `./workspace`-only smoke case.
+
 ## [0.8.10] - 2026-06-12
 
 ### Added
