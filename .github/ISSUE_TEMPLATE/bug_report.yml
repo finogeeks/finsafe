@@ -1,0 +1,85 @@
+name: Bug report
+description: Report a problem with FinSAFE (CLI, fleet, or authority)
+title: "[bug]: "
+labels:
+  - bug
+  - triage:pending
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Runtime fixes usually land in the upstream FinSAFE source repository; this issue tracks your report.
+        Please include version, OS, and clear reproduction steps.
+
+  - type: input
+    id: version
+    attributes:
+      label: finsafe version
+      description: Output of `finsafe --version` (or release tag if using fleet archives only)
+      placeholder: "0.8.7"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Platform
+      options:
+        - macOS (Apple Silicon)
+        - macOS (Intel)
+        - Linux (x86_64)
+        - Linux (aarch64)
+        - Windows
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      options:
+        - Personal CLI (`finsafe run`, `probe`, `doctor`)
+        - Managed fleet (`finsafe-agent`, install-fleet)
+        - Policy authority (`finsafe-authority-http`, `bundlectl`)
+        - SaaS daemon (`finsafe-server-http`)
+        - Install script / packaging
+        - Documentation only
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Exact commands, policy paths, and configuration
+      placeholder: |
+        1. finsafe probe
+        2. finsafe run --high-level examples/... -- echo hi
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include logs, `finsafe probe` output, or panic text if applicable
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context
+      description: Wrapper policy YAML, license.jws context (no secrets), systemd unit snippet, etc.
+    validations:
+      required: false
