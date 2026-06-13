@@ -1,0 +1,34 @@
+# Adds triage:pending to new bug reports (zero LLM). Maintainer dispatch runs from Geeksfino/finsafe/scripts/issue-dispatch/.
+name: Issue triage pending
+
+on:
+  issues:
+    types: [opened, labeled]
+
+permissions:
+  issues: write
+
+jobs:
+  label-pending:
+    if: >-
+      github.event.action == 'opened' ||
+      (github.event.action == 'labeled' && github.event.label.name == 'bug')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ensure triage label exists
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create "triage:pending" \
+            --repo "${{ github.repository }}" \
+            --description "Awaiting automated or maintainer triage" \
+            --color "FBCA04" \
+            --force
+
+      - name: Add triage:pending
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue edit "${{ github.event.issue.number }}" \
+            --repo "${{ github.repository }}" \
+            --add-label "triage:pending"
