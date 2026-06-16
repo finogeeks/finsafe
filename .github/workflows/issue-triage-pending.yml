@@ -62,15 +62,12 @@ jobs:
 
       - name: Priority gate + dispatch fix agent
         env:
-          GH_TOKEN: ${{ secrets.FINSAFE_PRIORITY_DISPATCH_PAT }}
+          GH_TOKEN: ${{ github.token }}
           PRIORITY_ISSUE_REPORTERS: ${{ vars.PRIORITY_ISSUE_REPORTERS }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
+          DISPATCH_PAT: ${{ secrets.FINSAFE_PRIORITY_DISPATCH_PAT }}
         run: |
           set -euo pipefail
-          if [[ -z "${GH_TOKEN}" ]]; then
-            echo "FINSAFE_PRIORITY_DISPATCH_PAT not set; skipping priority dispatch"
-            exit 0
-          fi
           issue_json="$(gh issue view "${ISSUE_NUMBER}" \
             --repo "${{ github.repository }}" \
             --json number,title,body,labels,author)"
@@ -78,7 +75,11 @@ jobs:
             echo "Issue #${ISSUE_NUMBER} not eligible for priority dispatch"
             exit 0
           fi
-          gh workflow run issue-dispatch.yml \
+          if [[ -z "${DISPATCH_PAT}" ]]; then
+            echo "FINSAFE_PRIORITY_DISPATCH_PAT not set; skipping priority dispatch"
+            exit 0
+          fi
+          GH_TOKEN="${DISPATCH_PAT}" gh workflow run issue-dispatch.yml \
             --repo Geeksfino/finsafe \
             -f issue="${ISSUE_NUMBER}" \
             -f limit=1 \
