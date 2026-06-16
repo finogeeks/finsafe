@@ -10,6 +10,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.8.14] - 2026-06-16
+
+### Fixed
+
+- **Windows AppContainer System32 console hosts (`cmd.exe`, `powershell.exe`):** Launching a system-owned binary under AppContainer no longer wedges for minutes on hosts with Defender tamper-protection or EDR file filters. The launcher was applying redundant ancestor and volume-root traverse grants via `SetNamedSecurityInfoW` to `C:\Windows\System32`, `C:\Windows`, and `C:\`; those directories already grant `ALL APPLICATION PACKAGES` read+execute and AppContainer tokens bypass traverse checks. The redundant writes are now skipped, restoring fast (~1s) launches for `finsafe run cmd …` and `finsafe self-confine cmd …`.
+- **Windows self-confine ConPTY on headless hosts:** Forced live-ConPTY smokes and teardown paths are more robust on non-TTY CI and automation runners (bounded `ClosePseudoConsole`, buffered capture routing for console hosts under `FINSAFE_SELF_CONFINE_FORCE_PTY`).
+
 ## [0.8.13] - 2026-06-16
 
 ### Fixed
