@@ -10,6 +10,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.8.12] - 2026-06-16
+
+### Fixed
+
+- **Windows AppContainer `read_write_paths` directory ops:** Sandboxed `cmd` could create and read files under a declared RW root but `dir` (FindFirstFile) and `del` (DeleteFile) failed with Access denied even when the child cwd matched that root. RW DACL grants now include explicit traverse and delete-child permissions; access-denied hints no longer suggest a missing RW grant when cwd is already inside `read_write_paths`.
+
 ## [0.8.11] - 2026-06-13
 
 ### Fixed
