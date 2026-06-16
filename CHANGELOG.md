@@ -10,6 +10,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.8.13] - 2026-06-16
+
+### Fixed
+
+- **Windows AppContainer `read_write_paths` directory listing and delete:** Sandboxed `cmd /c dir` and `cmd /c del` under paths listed in `filesystem.read_write_paths` no longer fail with Access denied when the child cwd is inside those roots. RW DACL grants now include explicit `FILE_LIST_DIRECTORY` and `DELETE` bits so LowBox checks match what `FindFirstFile` and `DeleteFile` need (public issue #4).
+
 ## [0.8.12] - 2026-06-16
 
 ### Fixed
