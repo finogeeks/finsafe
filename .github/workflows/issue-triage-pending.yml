@@ -1,4 +1,13 @@
-# Adds triage:pending to new bug reports (zero LLM). Maintainer dispatch runs from Geeksfino/finsafe/scripts/issue-dispatch/.
+# Public intake on finogeeks/finsafe (synced from docs/public-finsafe/.github/workflows/).
+#
+# - Adds triage:pending on new bugs ($0 LLM)
+# - Real-time priority dispatch for trusted reporters (bug + body quality)
+#
+# Secrets on finogeeks/finsafe:
+#   FINSAFE_PRIORITY_DISPATCH_PAT — Geeksfino PAT with Actions R/W on Geeksfino/finsafe
+#
+# Variables (keep in sync with Geeksfino/finsafe):
+#   PRIORITY_ISSUE_REPORTERS — comma-separated GitHub logins
 name: Issue triage pending
 
 on:
@@ -32,3 +41,47 @@ jobs:
           gh issue edit "${{ github.event.issue.number }}" \
             --repo "${{ github.repository }}" \
             --add-label "triage:pending"
+
+  dispatch-priority:
+    if: >-
+      github.event.action == 'opened' ||
+      (github.event.action == 'labeled' && github.event.label.name == 'bug')
+    needs: label-pending
+    runs-on: ubuntu-latest
+    concurrency:
+      group: finsafe-priority-dispatch-${{ github.event.issue.number }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          repository: Geeksfino/finsafe
+          token: ${{ secrets.FINSAFE_PRIORITY_DISPATCH_PAT }}
+          path: upstream
+          sparse-checkout: scripts/issue-dispatch
+          sparse-checkout-cone-mode: true
+
+      - name: Priority gate + dispatch fix agent
+        env:
+          GH_TOKEN: ${{ secrets.FINSAFE_PRIORITY_DISPATCH_PAT }}
+          PRIORITY_ISSUE_REPORTERS: ${{ vars.PRIORITY_ISSUE_REPORTERS }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${GH_TOKEN}" ]]; then
+            echo "FINSAFE_PRIORITY_DISPATCH_PAT not set; skipping priority dispatch"
+            exit 0
+          fi
+          issue_json="$(gh issue view "${ISSUE_NUMBER}" \
+            --repo "${{ github.repository }}" \
+            --json number,title,body,labels,author)"
+          if ! echo "${issue_json}" | python3 upstream/scripts/issue-dispatch/triage.py --priority-gate; then
+            echo "Issue #${ISSUE_NUMBER} not eligible for priority dispatch"
+            exit 0
+          fi
+          gh workflow run issue-dispatch.yml \
+            --repo Geeksfino/finsafe \
+            -f issue="${ISSUE_NUMBER}" \
+            -f limit=1 \
+            -f triage_only=false \
+            -f dry_run=false
+          echo "Dispatched Geeksfino/finsafe issue-dispatch for #${ISSUE_NUMBER}"
