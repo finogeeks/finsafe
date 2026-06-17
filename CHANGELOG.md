@@ -10,6 +10,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.8.15] - 2026-06-17
+
+<!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
+
+### Fixed
+
+- **fix(windows): AppContainer DACL grants without Write Owner; winhelper fallback** (public issue [finogeeks/finsafe#5](https://github.com/finogeeks/finsafe/issues/5), PR [Geeksfino/finsafe#53](https://github.com/Geeksfino/finsafe/pull/53))
+
 ## [0.8.14] - 2026-06-16
 
 ### Fixed
