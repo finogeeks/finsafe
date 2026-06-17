@@ -10,6 +10,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.8.17] - 2026-06-17
+
+<!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
+
+### Fixed
+
+- **fix(windows): split sc.exe keyword args for setup-windows service create** (public issue [finogeeks/finsafe#7](https://github.com/finogeeks/finsafe/issues/7), PR [Geeksfino/finsafe#55](https://github.com/Geeksfino/finsafe/pull/55))
+
 ## [0.8.16] - 2026-06-17
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
