@@ -10,6 +10,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.8.16] - 2026-06-17
+
+<!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
+
+### Fixed
+
+- **fix(windows): skip inheritable relabel when work_dir is under Program Files** (public issue [finogeeks/finsafe#8](https://github.com/finogeeks/finsafe/issues/8), PR [Geeksfino/finsafe#54](https://github.com/Geeksfino/finsafe/pull/54))
+
 ## [0.8.15] - 2026-06-17
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
