@@ -146,35 +146,90 @@ sudo FINSAFE_AUTHORITY_URL='https://gov.example.com/policy-authority' \
 
 ## 快速上手（Hermes）
 
-以下假设 **`hermes`** 已在 **`PATH`** 中（请自行安装）。示例策略使用当前目录下的 **`./workspace`** —— 执行前先 **`mkdir -p workspace`**，或修改 YAML 中的路径。
+**`install.sh` 仅安装 `finsafe` 二进制** — 请**自行安装 Hermes** 并确保其在 **`PATH`** 中。示例策略假定当前目录下有可写的 **`./workspace`**（先执行 **`mkdir -p workspace`**）。
 
-**方式 A — 只下载策略文件**（YAML 落在当前目录）：
+**macOS：** Seatbelt 缺省拒绝策略下，若直接运行 `hermes …` 失败，请使用各 YAML 文件头注释中的 `/usr/bin/env HOME=… PATH=…` 形式。
+
+### 获取示例策略
+
+**方式 A — `finsafe init`**（需 CLI 已包含该子命令）：
+
+```bash
+finsafe init
+export POLICY_EXAMPLES="$HOME/.config/finsafe/policies/examples"
+```
+
+**方式 B — 只下载策略文件**（YAML 落在当前目录）：
 
 ```bash
 curl -fsSL -O https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/hermes-version-smoke.yaml
 curl -fsSL -O https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/hermes-oneshot-query.yaml
 curl -fsSL -O https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/hermes-interactive.yaml
-mkdir -p workspace
-finsafe --policy ./hermes-version-smoke.yaml run hermes --version
-finsafe --policy ./hermes-oneshot-query.yaml run hermes chat -q "用一句话说你好。"
-finsafe --policy ./hermes-interactive.yaml self-confine hermes   # 需要真实 TTY
 ```
 
-**方式 B — 克隆本仓库**，在仓库根目录执行：
+**方式 C — 克隆本仓库**：
 
 ```bash
 git clone https://github.com/finogeeks/finsafe.git && cd finsafe
-mkdir -p workspace
-finsafe --policy ./examples/wrapper-policies/hermes-version-smoke.yaml run hermes --version
-finsafe --policy ./examples/wrapper-policies/hermes-oneshot-query.yaml run hermes chat -q "用一句话说你好。"
-finsafe --policy ./examples/wrapper-policies/hermes-interactive.yaml self-confine hermes   # 需要真实 TTY
+export POLICY_EXAMPLES="$PWD/examples/wrapper-policies"
 ```
 
-- **`run`** → 策略须为 **`program_mode: short-lived`**（一次性 / 批处理）。  
-- **`self-confine`** → 策略须为 **`program_mode: interactive`**（长期交互 REPL）；请在真实终端中使用。  
-- 错误搭配（例如对交互策略用 `run`）会被 CLI 拒绝。
+### 运行 Hermes
+
+```bash
+mkdir -p workspace
+finsafe --policy "$POLICY_EXAMPLES/hermes-version-smoke.yaml" run -- hermes --version
+finsafe --policy "$POLICY_EXAMPLES/hermes-oneshot-query.yaml" run -- \
+  hermes chat -q "用一句话说你好。"
+finsafe --policy "$POLICY_EXAMPLES/hermes-interactive.yaml" self-confine -- hermes   # 需要真实 TTY
+```
+
+若使用方式 B，将 `"$POLICY_EXAMPLES/…"` 换成 `./hermes-….yaml`。
+
+- **`run`** → **`program_mode: short-lived`**  
+- **`self-confine`** → **`program_mode: interactive`**（须在真实终端中）
 
 更多说明：[USER-GUIDE-zh.md](docs/USER-GUIDE-zh.md)、[POLICY-QUICKREF-zh.md](docs/POLICY-QUICKREF-zh.md)。
+
+## 快速上手（OpenCode）
+
+请**自行安装 OpenCode**（示例常假定 `opencode` 及 `~/.bun/bin` 在 **`PATH`** 中）。仓库内仅有 **一次性** 策略，无交互式 OpenCode 示例。
+
+```bash
+export POLICY_AGENT="$HOME/.config/finsafe/policies/examples"
+# 或克隆后：export POLICY_AGENT=./examples/wrapper-policies/agent-sandbox
+
+mkdir -p workspace
+finsafe --policy "$POLICY_AGENT/opencode-oneshot.yaml" run -- \
+  /usr/bin/env HOME="$HOME" PATH="$HOME/.bun/bin:$HOME/.local/bin:/usr/bin:/bin" \
+  opencode run "你的提示词"
+```
+
+单文件下载：
+
+```bash
+curl -fsSL -O https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/agent-sandbox/opencode-oneshot.yaml
+mkdir -p workspace
+finsafe --policy ./opencode-oneshot.yaml run -- opencode run "你的提示词"
+```
+
+策略迭代（`learn`、`explain`、`--audit`）：[USER-GUIDE-zh.md § 创建与迭代策略](docs/USER-GUIDE-zh.md)。
+
+## 示例策略与策略编写
+
+**`install.sh` / `install.ps1` 仅安装二进制**。安装后：
+
+```bash
+finsafe init   # 若 CLI 支持 — 写入 ~/.config/finsafe/policies/examples/
+# 或 git clone / curl -O（见上方快速上手）
+```
+
+| 路径 | 内容 |
+|------|------|
+| [examples/wrapper-policies/](examples/wrapper-policies/) | Hermes、Windows 冒烟、managed-lab |
+| [examples/wrapper-policies/agent-sandbox/](examples/wrapper-policies/agent-sandbox/) | Codex、OpenCode、agy 等 agent 模板 |
+
+沙箱失败时用 **`finsafe learn`** 生成可审阅 YAML、**`finsafe --audit run`** 查看 stderr 提示，或对保存的 **`--json` 信封** 运行 **`finsafe explain`**。详见 [USER-GUIDE-zh.md § 创建与迭代策略](docs/USER-GUIDE-zh.md)。
 
 ## 文档
 
@@ -182,11 +237,13 @@ finsafe --policy ./examples/wrapper-policies/hermes-interactive.yaml self-confin
 
 | 文档 | 说明 |
 |------|------|
-| [docs/USER-GUIDE.md](docs/USER-GUIDE.md) | 英文运维指南（`run` 与 `self-confine`、策略 YAML 概述、退出码）。 |
+| [docs/USER-GUIDE.md](docs/USER-GUIDE.md) | 英文运维指南（`run` 与 `self-confine`、**learn / explain**、策略 YAML、退出码）。 |
 | [docs/USER-GUIDE-zh.md](docs/USER-GUIDE-zh.md) | 中文用户指南。 |
 | [docs/POLICY-QUICKREF-zh.md](docs/POLICY-QUICKREF-zh.md) | 包装策略（`kind: local-wrapper`）字段速查（中文）。 |
 | [docs/POLICY-QUICKREF.md](docs/POLICY-QUICKREF.md) | 同上（英文）。 |
+| [docs/isolation-audit-mode.md](docs/isolation-audit-mode.md) | `--audit` 与保存 JSON 信封供 `explain` |
 | [examples/README.md](examples/README.md) | 策略示例索引（`high-level-policies/`、`wrapper-policies/`）。 |
+| [examples/wrapper-policies/agent-sandbox/](examples/wrapper-policies/agent-sandbox/) | Agent CLI 策略模板 |
 | [examples/wrapper-policies/hermes-version-smoke.yaml](examples/wrapper-policies/hermes-version-smoke.yaml) | 最小化的短期 wrapper 策略示例。 |
 
 ### 企业管理员（托管模式 / 舰队部署）

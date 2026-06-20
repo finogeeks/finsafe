@@ -1,0 +1,39 @@
+# Hermes oneshot with HTTPS (443) blocked.
+# Tests that hermes starts normally but its LLM API call fails.
+# Key difference from deny-https.yaml: includes uv Python runtime path.
+# Usage:
+#   finsafe --policy examples/wrapper-policies/agent-sandbox/hermes-deny-https.yaml run -- \
+#       /usr/bin/env HOME="$HOME" PATH="/opt/homebrew/bin:$HOME/.local/bin:/usr/bin:/bin" \
+#       hermes chat -q "Reply ok" -Q --source tool
+schema_version: 1
+kind: local-wrapper
+program_mode: short-lived
+degrade:
+  allow_fallback: true
+audit:
+  require_policy_digest: true
+  require_resolved_posture: true
+stdio:
+  mode: inherit
+macos_seatbelt:
+  deny_outbound_ports: [80, 443]
+network: host
+resources:
+  memory_max: "512M"
+  pids_max: "64"
+  cpu_max: "100000 100000"
+  timeout_ms: 20000
+filesystem:
+  skip_default_deny_read: true
+  read_only_paths:
+    - "."
+    - "/usr"
+    - "/bin"
+    - "/sbin"
+    - "${HOME}/.local/bin"
+    - "${HOME}/.local/share/uv/python"
+    - "/opt/homebrew/bin"
+    - "${HOME}/.hermes"
+  read_write_paths:
+    - "./workspace"
+    - "${HOME}/.hermes"

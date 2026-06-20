@@ -21,10 +21,11 @@
 
 | Document | Description |
 |----------|-------------|
-| [USER-GUIDE.md](./USER-GUIDE.md) | Install, `run` vs `self-confine`, wrapper policies |
+| [USER-GUIDE.md](./USER-GUIDE.md) | Install, `run` vs `self-confine`, **`learn` / `explain`**, wrapper policies |
 | [USER-GUIDE-zh.md](./USER-GUIDE-zh.md) | 中文用户指南 |
 | [POLICY-QUICKREF.md](./POLICY-QUICKREF.md) | Wrapper policy field reference |
 | [POLICY-QUICKREF-zh.md](./POLICY-QUICKREF-zh.md) | 包装策略字段速查 |
+| [isolation-audit-mode.md](./isolation-audit-mode.md) | `--audit` and saving JSON envelopes for `explain` |
 
 ## Operator skills (AI agents)
 

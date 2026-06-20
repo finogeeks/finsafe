@@ -1,0 +1,38 @@
+# Network isolation test: denies outbound TCP 80 and 443 (HTTP/HTTPS).
+# Any LLM API call or web fetch should fail.
+# Usage:
+#   finsafe --policy examples/wrapper-policies/agent-sandbox/deny-https.yaml run -- \
+#       /usr/bin/env HOME="$HOME" PATH="/opt/homebrew/bin:/usr/bin:/bin" \
+#       curl -sf --max-time 5 https://httpbin.org/get
+# Expected: connection refused / network error (non-zero exit)
+schema_version: 1
+kind: local-wrapper
+program_mode: short-lived
+degrade:
+  allow_fallback: true
+audit:
+  require_policy_digest: true
+  require_resolved_posture: true
+stdio:
+  mode: inherit
+macos_seatbelt:
+  deny_outbound_ports: [80, 443]
+network: host
+resources:
+  memory_max: "256M"
+  pids_max: "64"
+  cpu_max: "100000 100000"
+  timeout_ms: 15000
+filesystem:
+  read_only_paths:
+    - "."
+    - "/usr"
+    - "/bin"
+    - "/sbin"
+    - "/lib"
+    - "/lib64"
+    - "${HOME}/.local/bin"
+    - "/opt/homebrew/bin"
+    - "${HOME}/.hermes"
+  read_write_paths:
+    - "./workspace"

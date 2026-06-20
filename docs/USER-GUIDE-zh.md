@@ -68,14 +68,17 @@ finsafe --policy <PATH> self-confine <broker> [参数...]
 
 `<PATH>` 可为绝对路径，或相对于**当前 shell 工作目录**的相对路径（**不**相对于 `finsafe` 可执行文件本身）。YAML 中的路径（例如 `./workspace`）一般也按当前工作目录解析，除非使用根路径等锚定写法。
 
-下列示例可复制使用 —— 克隆本仓库或直接在 GitHub 浏览；完整索引见 [examples/README.md](../examples/README.md)：
+下列示例可复制使用 —— 完整首次上手流程：[README § 快速上手（Hermes）](../README-zh.md#快速上手hermes)、[README § 快速上手（OpenCode）](../README-zh.md#快速上手opencode)。索引：[examples/README.md](../examples/README.md)：
 
 | 用途 | 策略文件 | 示例命令 |
 |------|----------|----------|
-| 短命任务冒烟 | [examples/wrapper-policies/hermes-version-smoke.yaml](../examples/wrapper-policies/hermes-version-smoke.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-version-smoke.yaml run echo hello` |
-| 一次性查询 / 短命令风格 | [examples/wrapper-policies/hermes-oneshot-query.yaml](../examples/wrapper-policies/hermes-oneshot-query.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-oneshot-query.yaml run hermes chat -q "…"` |
-| 交互式 Broker（需 TTY） | [examples/wrapper-policies/hermes-interactive.yaml](../examples/wrapper-policies/hermes-interactive.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-interactive.yaml self-confine hermes` |
-| 同上，且在 Seatbelt 下拒绝出站 TCP 80 | [examples/wrapper-policies/hermes-interactive-deny-http.yaml](../examples/wrapper-policies/hermes-interactive-deny-http.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-interactive-deny-http.yaml self-confine hermes` |
+| 短命任务冒烟 | [examples/wrapper-policies/hermes-version-smoke.yaml](../examples/wrapper-policies/hermes-version-smoke.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-version-smoke.yaml run -- hermes --version` |
+| 一次性查询 / 短命令风格 | [examples/wrapper-policies/hermes-oneshot-query.yaml](../examples/wrapper-policies/hermes-oneshot-query.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-oneshot-query.yaml run -- hermes chat -q "…"` |
+| 交互式 Broker（需 TTY） | [examples/wrapper-policies/hermes-interactive.yaml](../examples/wrapper-policies/hermes-interactive.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-interactive.yaml self-confine -- hermes` |
+| OpenCode 一次性 | [examples/wrapper-policies/agent-sandbox/opencode-oneshot.yaml](../examples/wrapper-policies/agent-sandbox/opencode-oneshot.yaml) | 见 [README § 快速上手（OpenCode）](../README-zh.md#快速上手opencode) |
+| 同上，且在 Seatbelt 下拒绝出站 TCP 80 | [examples/wrapper-policies/hermes-interactive-deny-http.yaml](../examples/wrapper-policies/hermes-interactive-deny-http.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-interactive-deny-http.yaml self-confine -- hermes` |
+
+尚无 **`finsafe --agent <名称>`** 快捷方式 —— 请始终用 **`--policy <yaml 路径>`** 指定策略。
 
 字段含义见 [POLICY-QUICKREF-zh.md](POLICY-QUICKREF-zh.md)。
 
@@ -165,8 +168,10 @@ finsafe --help
 ```bash
 mkdir -p my-workspace/workspace
 cd my-workspace
-finsafe --policy ./examples/wrapper-policies/hermes-version-smoke.yaml run echo "hello"
+finsafe --policy ./examples/wrapper-policies/hermes-version-smoke.yaml run -- hermes --version
 ```
+
+**macOS：** 若 `hermes` 找不到或路径被拒绝，请使用 [README 快速上手（Hermes）](../README-zh.md#快速上手hermes) 或 YAML 文件头注释中的 `/usr/bin/env HOME=… PATH=…` 形式。
 
 （请将 `--policy` 指到你保存 YAML 的路径；本仓库 [examples](../examples/) 下有示例策略。）
 
@@ -186,6 +191,96 @@ finsafe --policy /path/to/interactive-policy.yaml self-confine your-broker
 ```
 
 将 `your-broker` 换为你的 Broker 可执行文件。
+
+---
+
+## 示例策略（`install.sh` 不会自动安装）
+
+**`install.sh` / `install.ps1` 只安装二进制**，不会把 YAML 复制到本机。获取 starter 策略的方式：
+
+| 方式 | 适用场景 |
+|------|----------|
+| **`finsafe init`**（推荐） | 创建 `~/.config/finsafe/policies/examples/`（Linux/macOS）或 `%APPDATA%\FinSAFE\policies\examples\`（Windows），并写入精选冒烟 YAML |
+| **克隆** [finogeeks/finsafe](https://github.com/finogeeks/finsafe) | 完整 `examples/`（Hermes、Windows、各 agent CLI） |
+| **`curl -O` 单文件** | 不克隆仓库，只下载一两个 YAML（见 [README](../README.md)） |
+
+```bash
+finsafe init
+finsafe --policy ~/.config/finsafe/policies/examples/hermes-version-smoke.yaml run -- hermes --version
+```
+
+可用 **`FINSAFE_CONFIG_DIR`**（配置根目录）或 **`FINSAFE_POLICIES_DIR`**（仅策略目录）覆盖默认路径。主机 profile 配置：**`~/.config/finsafe/finsafe.yaml`**（或 **`FINSAFE_CONFIG`** 指定文件）。
+
+| 目录 | 内容 |
+|------|------|
+| `~/.config/finsafe/policies/examples/`（`init` 后） | Hermes 冒烟、Codex/OpenCode one-shot、Windows 沙箱冒烟 |
+| [examples/wrapper-policies/](../examples/wrapper-policies/) | GitHub 仓库中的完整公开示例 |
+| [examples/wrapper-policies/agent-sandbox/](../examples/wrapper-policies/agent-sandbox/) | Hermes、Codex、OpenCode、agy、隔离探测 |
+
+使用 **`finsafe --policy <yaml 路径>`**；可用绝对路径，或相对于当前 shell 工作目录的相对路径。
+
+---
+
+## 创建与迭代策略
+
+沙箱运行失败（路径拒绝、网络阻断、超时）时，用 **`finsafe learn`**、**`finsafe --audit`** 或 **`finsafe explain`**，而不是盲目改 YAML。
+
+### 选哪个工具？
+
+| 场景 | 工具 |
+|------|------|
+| 有命令、**尚无策略**（或要新草稿） | **`finsafe learn -- <cmd>`** → 默认 `~/.config/finsafe/policies/learned-policy.yaml`（可用 `--out` 覆盖） |
+| 已有策略，失败后**追加授权** | **`finsafe learn --base ./policy.yaml -- <cmd>`** |
+| 同一次运行要看 **stderr 提示**、不生成 YAML | **`finsafe --audit --policy ./policy.yaml run -- <cmd>`** |
+| 已保存 **`--json` 信封** | **`finsafe explain envelope.json`** |
+
+字段说明与平台差异：[POLICY-QUICKREF-zh.md](POLICY-QUICKREF-zh.md) · [`--audit` 约定](isolation-audit-mode.md)。
+
+### `finsafe learn`
+
+在**真实强制**下捕获拒绝（macOS/Windows 为诊断采集；Linux 为 seccomp audit），输出**可审阅 YAML**：
+
+```bash
+mkdir -p workspace
+cd my-project
+
+finsafe learn -- my-agent --print "hello"
+# → ~/.config/finsafe/policies/learned-policy.yaml（可用 --out 覆盖）
+finsafe --policy ./learned-policy.yaml run -- my-agent --print "hello"
+finsafe learn --base ./learned-policy.yaml --out ./learned-policy.yaml -- my-agent --print "hello"
+```
+
+常用参数：**`--work-dir`**、**`--json`**。
+
+**说明：** Linux 上 learn 可能让 seccomp 未拦截的 syscall 继续执行并记录；macOS/Windows 保持完整强制，命令仍可能非零退出——请阅读 learn 摘要及被阻止的敏感路径。
+
+### `finsafe explain`
+
+对已保存的执行信封做事后诊断（与 `finsafe run --json` 输出同形）：
+
+```bash
+finsafe --policy ./policy.yaml run --json -- my-agent --print "hello" 2>audit.stderr \
+  | tail -1 > envelope.json
+finsafe explain envelope.json
+```
+
+`explain` 会解析 `policy_derivation_notes`（含 Windows `etw_audit:`）及子进程 stdout 标记。
+
+### 典型迭代循环
+
+```
+finsafe learn -- <cmd>           → learned-policy.yaml
+       ↓
+finsafe --policy learned-policy.yaml run -- <cmd>
+       ↓
+（仍失败？）finsafe learn --base learned-policy.yaml -- <cmd>
+       ↓
+（可选）finsafe --audit run …
+       ↓
+（可选）保存 --json → finsafe explain
+       ↓
+重复直至通过
+```
 
 ---
 
@@ -232,6 +327,7 @@ macOS **不可**与 Linux「完全等价隔离」：
 | **`program_mode` 不匹配** | **`short-lived`** 须配 **`run`**，**`interactive`** 须配 **`self-confine`**。 |
 | **`network: none` 下无法访问 API** | 若需出站 HTTPS，在威胁模型允许时使用 **`network: host`**。 |
 | macOS 上路径访问被拒 | 放宽 **`read_only_paths` / `read_write_paths`**，确认 **`./workspace`** 等存在，结合 **`run --json`** 佐证字段排查。 |
+| **沙箱失败从何入手** | 见 **创建与迭代策略** — **`finsafe learn -- <cmd>`** 或 **`finsafe --audit --policy … run -- <cmd>`**；保存 **`--json`** 后用 **`finsafe explain`**。 |
 | Linux **`run` 内 `/dev/tty` 失败** | 策略设 **`stdio: pty`** 或使用 **`finsafe run --stdio pty`**；勿指望 **`inherit`** 在 bubblewrap 内提供 controlling terminal。 |
 
 ---
@@ -240,4 +336,5 @@ macOS **不可**与 Linux「完全等价隔离」：
 
 - [POLICY-QUICKREF-zh.md](POLICY-QUICKREF-zh.md) — 包装策略字段速查（中文）  
 - [POLICY-QUICKREF.md](POLICY-QUICKREF.md) — Wrapper policy field reference (English)  
+- [isolation-audit-mode.md](isolation-audit-mode.md) — `--audit` 行为与保存 JSON 信封  
 - [USER-GUIDE.md](USER-GUIDE.md) — English user guide

@@ -2,7 +2,7 @@
 
 **中文：** [README-zh.md](README-zh.md)
 
-FinSafe is a host execution boundary toolkit: namespaces, cgroup limits, syscall filtering (Linux), path restrictions, and Seatbelt-backed profiles (macOS), with auditable outcomes. The **`finsafe`** command-line tool is the operator front door for **local wrapper** workflows (`run`, `self-confine`, `probe`, `doctor`, and related helpers).
+FinSafe is a host execution boundary toolkit: namespaces, cgroup limits, syscall filtering (Linux), path restrictions, and Seatbelt-backed profiles (macOS), with auditable outcomes. The **`finsafe`** command-line tool is the operator front door for **local wrapper** workflows (`run`, `self-confine`, `learn`, `explain`, `probe`, `doctor`, and related helpers).
 
 This repository holds **public release binaries** and **end-user documentation** only. It does **not** contain FinSafe engine source code.
 
@@ -134,35 +134,101 @@ Install authority binaries on the policy server; run `finsafe-bundlectl` from a 
 
 ## Quick start (Hermes)
 
-These examples assume **`hermes`** is on your **`PATH`** (install Hermes separately). Example policies use **`./workspace`** under your **current working directory** — run `mkdir -p workspace` before the commands below, or edit the YAML.
+FinSAFE installs **only the `finsafe` binary** — install **Hermes** separately and ensure it is on your **`PATH`**. Example policies expect a writable **`./workspace`** under your **current working directory** (`mkdir -p workspace` before the commands below).
 
-**Option A — download policies** (files land in the current directory):
+**macOS:** Seatbelt deny-default often requires an explicit `HOME`/`PATH` prefix. If bare `hermes …` fails, use the `/usr/bin/env …` form shown in each YAML file’s header comments.
+
+### Get example policies
+
+**Option A — `finsafe init`** (when your build includes it):
+
+```bash
+finsafe init
+export POLICY_EXAMPLES="$HOME/.config/finsafe/policies/examples"
+```
+
+**Option B — download policies** (files land in the current directory):
 
 ```bash
 curl -fsSL -O https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/hermes-version-smoke.yaml
 curl -fsSL -O https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/hermes-oneshot-query.yaml
 curl -fsSL -O https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/hermes-interactive.yaml
-mkdir -p workspace
-finsafe --policy ./hermes-version-smoke.yaml run hermes --version
-finsafe --policy ./hermes-oneshot-query.yaml run hermes chat -q "Say hello in one sentence."
-finsafe --policy ./hermes-interactive.yaml self-confine hermes   # TTY required
 ```
 
-**Option B — clone this repo** and run from the repository root:
+**Option C — clone this repo** and run from the repository root:
 
 ```bash
 git clone https://github.com/finogeeks/finsafe.git && cd finsafe
-mkdir -p workspace
-finsafe --policy ./examples/wrapper-policies/hermes-version-smoke.yaml run hermes --version
-finsafe --policy ./examples/wrapper-policies/hermes-oneshot-query.yaml run hermes chat -q "Say hello in one sentence."
-finsafe --policy ./examples/wrapper-policies/hermes-interactive.yaml self-confine hermes   # TTY required
+export POLICY_EXAMPLES="$PWD/examples/wrapper-policies"
 ```
 
+### Run Hermes
+
+```bash
+mkdir -p workspace
+
+# Smoke (short-lived) — use `run`
+finsafe --policy "$POLICY_EXAMPLES/hermes-version-smoke.yaml" run -- hermes --version
+
+# One-shot LLM query (short-lived) — use `run`; needs Hermes config / API access
+finsafe --policy "$POLICY_EXAMPLES/hermes-oneshot-query.yaml" run -- \
+  hermes chat -q "Say hello in one sentence."
+
+# Interactive broker (long-lived) — use `self-confine` from a real TTY
+finsafe --policy "$POLICY_EXAMPLES/hermes-interactive.yaml" self-confine -- hermes
+```
+
+If you downloaded YAML into the current directory (Option B), replace `"$POLICY_EXAMPLES/…"` with `./hermes-….yaml`.
+
 - **`run`** → policy **`program_mode: short-lived`** (one-shot / batch).  
-- **`self-confine`** → policy **`program_mode: interactive`** (long-lived REPL); use a real terminal.  
+- **`self-confine`** → policy **`program_mode: interactive`** (long-lived REPL).  
 - Mixing these (e.g. `run` with an `interactive` policy) is rejected.
 
 More detail: [USER-GUIDE.md](docs/USER-GUIDE.md), [POLICY-QUICKREF.md](docs/POLICY-QUICKREF.md).
+
+## Quick start (OpenCode)
+
+Install **OpenCode** separately (examples often expect `opencode` and sometimes `~/.bun/bin` on **`PATH`**). There is no interactive OpenCode sample in this repo — only a **one-shot** policy.
+
+After **`finsafe init`**, or from a clone:
+
+```bash
+export POLICY_AGENT="$HOME/.config/finsafe/policies/examples"
+# or: export POLICY_AGENT=./examples/wrapper-policies/agent-sandbox   # when cloned
+
+mkdir -p workspace
+finsafe --policy "$POLICY_AGENT/opencode-oneshot.yaml" run -- \
+  /usr/bin/env HOME="$HOME" PATH="$HOME/.bun/bin:$HOME/.local/bin:/usr/bin:/bin" \
+  opencode run "your prompt here"
+```
+
+Download only this file:
+
+```bash
+curl -fsSL -O https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/agent-sandbox/opencode-oneshot.yaml
+mkdir -p workspace
+finsafe --policy ./opencode-oneshot.yaml run -- opencode run "your prompt here"
+```
+
+Policy field reference and failure iteration (`learn`, `explain`, `--audit`): [USER-GUIDE.md § Creating and iterating policies](docs/USER-GUIDE.md).
+
+## Example policies and policy authoring
+
+**`install.sh` / `install.ps1` install binaries only** — wrapper YAML is **not** copied to your machine. After install:
+
+```bash
+finsafe init   # when available — seeds ~/.config/finsafe/policies/examples/
+# or:
+git clone https://github.com/finogeeks/finsafe.git && cd finsafe
+# or curl -O individual YAML files (see Quick start sections above)
+```
+
+| Path | Contents |
+|------|----------|
+| [examples/wrapper-policies/](examples/wrapper-policies/) | Hermes, Windows smokes, managed-lab |
+| [examples/wrapper-policies/agent-sandbox/](examples/wrapper-policies/agent-sandbox/) | Agent CLI templates (Hermes, Codex, OpenCode, agy) |
+
+When a sandbox run fails, use **`finsafe learn`** to generate reviewable YAML, **`finsafe --audit run`** for inline stderr hints, or **`finsafe explain`** on a saved `--json` envelope. Full workflow: [USER-GUIDE.md § Creating and iterating policies](docs/USER-GUIDE.md).
 
 ## Documentation
 
@@ -170,11 +236,13 @@ More detail: [USER-GUIDE.md](docs/USER-GUIDE.md), [POLICY-QUICKREF.md](docs/POLI
 
 | Document | Description |
 |----------|-------------|
-| [docs/USER-GUIDE.md](docs/USER-GUIDE.md) | English operator guide (`run` vs `self-confine`, policy YAML overview, exit codes). |
+| [docs/USER-GUIDE.md](docs/USER-GUIDE.md) | English operator guide (`run` vs `self-confine`, **learn / explain**, policy YAML, exit codes). |
 | [docs/USER-GUIDE-zh.md](docs/USER-GUIDE-zh.md) | Chinese user guide. |
 | [docs/POLICY-QUICKREF.md](docs/POLICY-QUICKREF.md) | Wrapper policy (`kind: local-wrapper`) field reference (English). |
 | [docs/POLICY-QUICKREF-zh.md](docs/POLICY-QUICKREF-zh.md) | 包装策略字段速查（中文）. |
+| [docs/isolation-audit-mode.md](docs/isolation-audit-mode.md) | `--audit` behavior; saving JSON envelopes for `explain`. |
 | [examples/README.md](examples/README.md) | Index of policy examples (`high-level-policies/`, `wrapper-policies/`). |
+| [examples/wrapper-policies/agent-sandbox/](examples/wrapper-policies/agent-sandbox/) | Agent CLI policy templates (Codex, OpenCode, agy, …). |
 | [examples/wrapper-policies/hermes-version-smoke.yaml](examples/wrapper-policies/hermes-version-smoke.yaml) | Minimal short-lived wrapper policy example. |
 
 ### Enterprise administrators (managed fleet)

@@ -1,0 +1,39 @@
+# Wrap agy --print (non-interactive) in finsafe.
+# Usage:
+#   finsafe --policy examples/wrapper-policies/agent-sandbox/agy-oneshot.yaml run -- \
+#       /usr/bin/env HOME="$HOME" PATH="$HOME/.local/bin:/usr/bin:/bin" \
+#       agy --print "your prompt here"
+schema_version: 1
+kind: local-wrapper
+program_mode: short-lived
+degrade:
+  allow_fallback: true
+audit:
+  require_policy_digest: true
+  require_resolved_posture: true
+stdio:
+  mode: inherit
+network: host
+resources:
+  memory_max: "512M"
+  pids_max: "256"
+  cpu_max: "100000 100000"
+  timeout_ms: 60000
+filesystem:
+  read_only_paths:
+    - "."
+    - "/usr"
+    - "/bin"
+    - "/sbin"
+    - "/lib"
+    - "/lib64"
+    - "${HOME}/.local/bin"
+    - "${HOME}/.local/share"
+    - "/opt/homebrew/bin"
+    - "${HOME}/.config/agy"
+    - "${HOME}/.config/google-cloud-sdk"
+    - "/var/folders"
+  read_write_paths:
+    - "./workspace"
+    - "/tmp"
+    - "${HOME}/.gemini"

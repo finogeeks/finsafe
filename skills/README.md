@@ -18,6 +18,8 @@ file — no local checkout of the documentation tree is required.
 |-------|------|----------|
 | **finsafe-enterprise-setup** | [SKILL.md](./finsafe-enterprise-setup/SKILL.md) · [SKILL-zh.md](./finsafe-enterprise-setup/SKILL-zh.md) | End-to-end managed fleet: authority, Finogeeks `license.jws`, MDM, pilot checks |
 | **finsafe-bundlectl** | [SKILL.md](./finsafe-bundlectl/SKILL.md) · [SKILL-zh.md](./finsafe-bundlectl/SKILL-zh.md) | Build / sign / publish policy bundles; MDM managed-required sentinel |
+| **finsafe-trace-denials** | [SKILL.md](./finsafe-trace-denials/SKILL.md) | Discover which paths / ports are denied by a policy using `--audit` or `finsafe-trace`; iterate to a working policy without trial-and-error |
+| **finsafe-agent-sandbox-verify** | [SKILL.md](./finsafe-agent-sandbox-verify/SKILL.md) | End-to-end methodology for proving a sandbox policy correctly contains a CLI agent (Hermes, OpenCode, agy, Codex) — success criteria, A/B/C/D test suites, verification techniques, gotcha table |
 
 ## Optional deeper reading (online only)
 

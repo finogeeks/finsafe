@@ -44,7 +44,7 @@ filesystem:
 | `audit.require_policy_digest` | 若审计信封中未记录包装策略摘要，则拒绝启动。 |
 | `audit.require_resolved_posture` | 若未记录解析后的主机姿态，则拒绝启动。 |
 | `stdio.mode` | 子进程标准 IO，用于 **`run`**：`capture`、`inherit`、`null` 或 `pty`。文本模式运行通常受此控制；`--json` 往往在未覆盖时偏向 capture。在 **Linux** 上，**`pty`** 会分配虚拟伪终端，使在沙箱内打开 **`/dev/tty`** 的工具（如 `vim`、`less`、密码提示或 Git 钩子）可正常工作，且无需直通宿主机 TTY。单次覆盖：**`finsafe run --stdio pty`**。Linux 上 **`inherit`** 不会在 bubblewrap 内提供 controlling terminal。 |
-| `macos_seatbelt.deny_outbound_ports` | 可选：在 `network: host` 时于 Seatbelt 配置中按 **TCP 端口** 拒绝出站（粗粒度；非按域名）。 |
+| `macos_seatbelt.deny_outbound_ports` | 可选：在 `network: host` 时于 Seatbelt 配置中按 **TCP 端口** 拒绝出站（粗粒度；非按域名）。**失败模式：** 在 `network: host` 上叠加按端口 deny 时，可能立即失败（`EPERM`），也可能一直等到客户端 TCP 超时，取决于具体网络栈；部分 agent 会挂起而不给出明确错误。务必配合 `resources.timeout_ms`，以便 FinSAFE 终止子进程。若需完全网络隔离，优先使用 `network: none`（在 socket/DNS 系统调用层拒绝，通常较快失败）。 |
 | `network` | `none` 或 `host`（Stage 1）。 |
 | `resources.memory_max` / `pids_max` / `cpu_max` | 在 Linux 严格栈下为 cgroup v2 风格的资源字符串。 |
 | `resources.timeout_ms` | 可选：**`run`** 调用的墙上时钟上限。 |
@@ -148,3 +148,50 @@ Shell 写法如 `$HOME/bin`（无花括号）或 `%USERPROFILE%\bin` **不会**�
 - `fallback_used` / `fallback_reason` — 姿态选择发生降级时。
 
 确切字段名请以当前构建为准；可用 **`finsafe run --json`** 配合测试命令查看本机输出的信封结构。
+
+## 在 macOS 上诊断沙箱失败
+
+### macOS 上的 `--audit`（诊断采集）
+
+在 **Linux** 上，`finsafe --audit` 使用 seccomp 宽松模式（系统调用仍允许，写入内核审计）。在 **macOS** 上，`sandbox-exec` **没有**原生宽松模式。全局 `--audit` 仍使用**相同的 enforce 配置**（attestation 为 `seatbelt_mode: diagnostic`，`seatbelt_profile_digest` 与 enforce 一致），并在运行期间流式采集内核 Sandbox `deny(...)` 事件；退出后在 stderr 打印建议的 `filesystem.read_only_paths` / `read_write_paths`。
+
+命令仍可能在首次拒绝时失败——这是预期行为。价值在于可操作的**路径发现**，而非让工作负载跑完。
+
+### `finsafe-trace`（仅引擎源码检出）
+
+部分 FinSAFE 引擎检出包含 `scripts/dev/finsafe-trace.sh`。**公开** [finogeeks/finsafe](https://github.com/finogeeks/finsafe) 发行树中**不包含**该脚本。已发布二进制请优先使用 **`finsafe --audit`** 与 **`finsafe learn`**。
+
+**内置 CLI（推荐）：**
+```bash
+finsafe --audit --policy my-agent.yaml run -- hermes --print "hello"
+```
+
+另见 [isolation-audit-mode.md](isolation-audit-mode.md)（跨平台 `--audit` 约定及保存 JSON 信封供 `finsafe explain`）。
+
+### 策略迭代循环（macOS / Linux / Windows）
+
+**`finsafe learn`** 捕获拒绝事件并生成可审阅的 YAML：
+
+```bash
+finsafe learn -- my-agent --print "hello"          # → ./learned-policy.yaml
+finsafe --policy ./learned-policy.yaml run -- my-agent --print "hello"
+finsafe learn --base ./learned-policy.yaml -- …    # 合并新授权
+```
+
+在 **Windows** 上，`learn` 保持 AppContainer 强制，并解析 ETW `etw_audit:` 行与子进程 stdout 标记（如 `blocked_write_denied`）。`--audit run` 会在 stderr 输出同类证据的内联修复建议。
+
+**手动 / 仅审计循环**（已有策略文件时）：
+
+```
+finsafe run → 失败
+       ↓
+finsafe --audit run → 显示被拒绝路径 + YAML 建议
+       ↓
+finsafe explain envelope.json   # 从事后保存的 JSON 诊断（见 USER-GUIDE-zh.md）
+       ↓
+编辑包装 YAML（补充路径 / skip_default_deny_read）
+       ↓
+finsafe run → 重复直至通过
+```
+
+在 Linux 上，`finsafe --audit run -- cmd` 还会启用 seccomp 宽松模式，使命令在记录违规的同时可能跑完。在 macOS 上，`--audit` 保持 Seatbelt 强制并流式采集内核拒绝日志（`seatbelt_mode: diagnostic`）。在 Windows 上，`--audit` 增加 ETW 采集与标记提示，不削弱 AppContainer 强制。

@@ -15,5 +15,6 @@ See [docs/POLICY-QUICKREF.md](../../docs/POLICY-QUICKREF.md) or [docs/POLICY-QUI
 | `hermes-windows-oneshot.yaml` | Windows | One-shot Hermes (`hermes --version`, `hermes chat -q …`) under AppContainer; venv access is granted automatically |
 | `windows-version-smoke.yaml` | Windows | Minimal `finsafe run cmd /c echo hello` |
 | `windows-sandbox-smoke.yaml` | Windows | Stricter AppContainer smoke with `network: host` |
+| `agent-sandbox/` | Linux / macOS / Windows | Agent CLI samples (Hermes, Codex, OpenCode, agy) and isolation probes — see [agent-sandbox/README.md](agent-sandbox/README.md) |
 
 **Maintainers:** edit YAML in this directory; keep comments and paths consistent with [managed-lab.md](../../docs/testing/managed-lab.md) and [POLICY-QUICKREF.md](../../docs/POLICY-QUICKREF.md).

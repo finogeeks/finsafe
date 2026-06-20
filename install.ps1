@@ -251,6 +251,7 @@ try {
 
   & $destExe version
   Write-Info "done"
+  Write-Info "run `finsafe init` to create %APPDATA%\FinSAFE\policies\ with seeded example YAML (or clone https://github.com/finogeeks/finsafe for the full examples tree)"
   Write-Info "run finsafe as: $CliBinaryName (e.g. .\$CliBinaryName --help) — PowerShell requires the .exe suffix"
   Write-Info "managed fleet archives (finsafe-fleet-v*) use install-fleet-windows.ps1; see README.md"
 }

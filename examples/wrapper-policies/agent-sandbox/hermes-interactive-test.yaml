@@ -1,0 +1,35 @@
+# Interactive hermes policy for self-confine testing.
+# program_mode: interactive -> must use: finsafe self-confine
+# skip_default_deny_read fixes the ~/.hermes/.env startup crash (F1).
+# Usage:
+#   finsafe --policy examples/wrapper-policies/agent-sandbox/hermes-interactive-test.yaml self-confine \
+#       /usr/bin/env HOME="$HOME" PATH="/opt/homebrew/bin:$HOME/.local/bin:/usr/bin:/bin" hermes
+schema_version: 1
+kind: local-wrapper
+program_mode: interactive
+degrade:
+  allow_fallback: true
+audit:
+  require_policy_digest: true
+  require_resolved_posture: true
+stdio:
+  mode: inherit
+network: host
+resources:
+  memory_max: "1G"
+  pids_max: "256"
+  cpu_max: "100000 100000"
+filesystem:
+  skip_default_deny_read: true
+  read_only_paths:
+    - "."
+    - "/usr"
+    - "/bin"
+    - "/sbin"
+    - "${HOME}/.local/bin"
+    - "${HOME}/.local/share/uv/python"
+    - "/opt/homebrew/bin"
+    - "${HOME}/.hermes"
+  read_write_paths:
+    - "./workspace"
+    - "${HOME}/.hermes"

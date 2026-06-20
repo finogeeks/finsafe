@@ -82,14 +82,17 @@ finsafe --policy <PATH> self-confine <broker> [args...]
 
 `<PATH>` may be absolute or **relative to your current shell working directory** (it is not relative to the `finsafe` binary). Fields such as `filesystem.read_write_paths: ["./workspace"]` are resolved against the same cwd unless the YAML uses anchored paths.
 
-Copy-paste examples from this repository (clone or browse on GitHub) — see [examples/README.md](../examples/README.md):
+Copy-paste examples from this repository — full first-run walkthroughs: [README § Quick start (Hermes)](../README.md#quick-start-hermes), [README § Quick start (OpenCode)](../README.md#quick-start-opencode). Index: [examples/README.md](../examples/README.md).
 
 | Goal | Policy file | Example |
 |------|-------------|---------|
-| Short-lived wrapper smoke | [examples/wrapper-policies/hermes-version-smoke.yaml](../examples/wrapper-policies/hermes-version-smoke.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-version-smoke.yaml run echo hello` |
-| One-shot broker / query style | [examples/wrapper-policies/hermes-oneshot-query.yaml](../examples/wrapper-policies/hermes-oneshot-query.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-oneshot-query.yaml run hermes chat -q "…"` |
-| Interactive broker (TTY) | [examples/wrapper-policies/hermes-interactive.yaml](../examples/wrapper-policies/hermes-interactive.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-interactive.yaml self-confine hermes` |
-| Interactive broker + deny outbound TCP port 80 (Seatbelt) | [examples/wrapper-policies/hermes-interactive-deny-http.yaml](../examples/wrapper-policies/hermes-interactive-deny-http.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-interactive-deny-http.yaml self-confine hermes` |
+| Short-lived wrapper smoke | [examples/wrapper-policies/hermes-version-smoke.yaml](../examples/wrapper-policies/hermes-version-smoke.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-version-smoke.yaml run -- hermes --version` |
+| One-shot broker / query style | [examples/wrapper-policies/hermes-oneshot-query.yaml](../examples/wrapper-policies/hermes-oneshot-query.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-oneshot-query.yaml run -- hermes chat -q "…"` |
+| Interactive broker (TTY) | [examples/wrapper-policies/hermes-interactive.yaml](../examples/wrapper-policies/hermes-interactive.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-interactive.yaml self-confine -- hermes` |
+| OpenCode one-shot | [examples/wrapper-policies/agent-sandbox/opencode-oneshot.yaml](../examples/wrapper-policies/agent-sandbox/opencode-oneshot.yaml) | See [README § Quick start (OpenCode)](../README.md#quick-start-opencode) |
+| Interactive broker + deny outbound TCP port 80 (Seatbelt) | [examples/wrapper-policies/hermes-interactive-deny-http.yaml](../examples/wrapper-policies/hermes-interactive-deny-http.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-interactive-deny-http.yaml self-confine -- hermes` |
+
+There is **no** `finsafe --agent <name>` shortcut yet — always pass an explicit YAML path with **`--policy`**.
 
 Wrapper field reference: [POLICY-QUICKREF.md](POLICY-QUICKREF.md) · [POLICY-QUICKREF-zh.md](POLICY-QUICKREF-zh.md).
 
@@ -179,10 +182,12 @@ If policy uses `read_write_paths: ["./workspace"]`, create that directory first:
 ```bash
 mkdir -p my-workspace/workspace
 cd my-workspace
-finsafe --policy ./examples/wrapper-policies/hermes-version-smoke.yaml run echo "hello"
+finsafe --policy ./examples/wrapper-policies/hermes-version-smoke.yaml run -- hermes --version
 ```
 
-(Adjust `--policy` to the path where you stored your YAML; the [examples](../examples/) folder in this repo includes a starter policy.)
+On **macOS**, if `hermes` is not found or Seatbelt denies toolchain paths, use explicit `HOME`/`PATH` (see [Quick start (Hermes)](../README.md#quick-start-hermes) or the policy file header comments).
+
+(Adjust `--policy` to the path where you stored your YAML; the [examples](../examples/) folder in this repo includes starter policies.)
 
 Machine-readable output:
 
@@ -202,6 +207,102 @@ finsafe --policy /path/to/interactive-policy.yaml self-confine your-broker
 ```
 
 Replace `your-broker` with the broker executable you run (for example a local agent CLI).
+
+---
+
+## Example policies (not installed by `install.sh`)
+
+**`install.sh` / `install.ps1` install binaries only** — no YAML is copied to your machine. Get starter policies in one of these ways:
+
+| Method | When to use |
+|--------|-------------|
+| **`finsafe init`** (recommended) | Creates `~/.config/finsafe/policies/examples/` (Linux/macOS) or `%APPDATA%\FinSAFE\policies\examples\` (Windows) with a curated smoke set. |
+| **Clone** [finogeeks/finsafe](https://github.com/finogeeks/finsafe) | Full `examples/` tree (Hermes, Windows smokes, agent CLIs). |
+| **`curl -O` raw files** | One or two policies without cloning (see [README](../README.md) quick start). |
+
+```bash
+finsafe init
+finsafe --policy ~/.config/finsafe/policies/examples/hermes-version-smoke.yaml run -- hermes --version
+```
+
+Override locations with **`FINSAFE_CONFIG_DIR`** (config root) or **`FINSAFE_POLICIES_DIR`** (policy store only). Host profile YAML: **`~/.config/finsafe/finsafe.yaml`** (or **`FINSAFE_CONFIG`** for an explicit file path).
+
+| Directory | Contents |
+|-----------|----------|
+| `~/.config/finsafe/policies/examples/` (after `init`) | Hermes smokes, Codex/OpenCode one-shots, Windows sandbox smoke |
+| [examples/wrapper-policies/](../examples/wrapper-policies/) | Full public tree in the GitHub repo |
+| [examples/wrapper-policies/agent-sandbox/](../examples/wrapper-policies/agent-sandbox/) | Hermes, Codex, OpenCode, agy, isolation probes |
+
+Use **`finsafe --policy <path-to.yaml>`** with paths relative to your shell cwd unless you pass an absolute path.
+
+---
+
+## Creating and iterating policies
+
+When a sandboxed run fails (path denied, network blocked, timeout), use **`finsafe learn`**, **`finsafe --audit`**, or **`finsafe explain`** instead of guessing YAML fields.
+
+### Which tool when?
+
+| Situation | Tool |
+|-----------|------|
+| You have a command and **no policy yet** (or want a fresh draft) | **`finsafe learn -- <cmd>`** — writes `~/.config/finsafe/policies/learned-policy.yaml` by default (override with `--out`) |
+| You have a policy and want **more grants** after a failure | **`finsafe learn --base ./policy.yaml -- <cmd>`** |
+| You want **inline hints** on the same run without generating YAML | **`finsafe --audit --policy ./policy.yaml run -- <cmd>`** |
+| You saved a **`--json` envelope** from a past run | **`finsafe explain envelope.json`** |
+
+Field reference and platform notes: [POLICY-QUICKREF.md](POLICY-QUICKREF.md) · [`--audit` contract](isolation-audit-mode.md).
+
+### `finsafe learn`
+
+Captures sandbox denials under **real enforcement** (diagnostic capture on macOS/Windows; seccomp audit on Linux) and emits **reviewable YAML**:
+
+```bash
+mkdir -p workspace
+cd my-project
+
+# First pass — built-in minimal seed (network: none, ./workspace writable)
+finsafe learn -- my-agent --print "hello"
+# → ~/.config/finsafe/policies/learned-policy.yaml (override with --out)
+
+# Run under the learned policy
+finsafe --policy ./learned-policy.yaml run -- my-agent --print "hello"
+
+# Merge additional grants after another failure
+finsafe learn --base ./learned-policy.yaml --out ./learned-policy.yaml -- my-agent --print "hello"
+```
+
+Useful flags: **`--work-dir`** (child cwd), **`--json`** (machine-readable summary on stdout).
+
+**Expectations:** Linux `learn` may allow seccomp-missed syscalls to complete while logging them. macOS and Windows keep full enforcement — the command may still exit non-zero; review the learn summary and blocked secret paths before deploying.
+
+### `finsafe explain`
+
+Post-mortem diagnosis from a saved execution envelope (same JSON shape as `finsafe run --json`):
+
+```bash
+finsafe --policy ./policy.yaml run --json -- my-agent --print "hello" 2>audit.stderr \
+  | tail -1 > envelope.json
+finsafe explain envelope.json
+# or: finsafe explain --json envelope.json
+```
+
+`explain` reads `policy_derivation_notes` (including Windows `etw_audit:` lines) and child stdout markers when present.
+
+### Typical iteration loop
+
+```
+finsafe learn -- <cmd>                    → learned-policy.yaml
+       ↓
+finsafe --policy learned-policy.yaml run -- <cmd>
+       ↓
+(still failing?) finsafe learn --base learned-policy.yaml -- <cmd>
+       ↓
+(optional) finsafe --audit run …          → stderr hints
+       ↓
+(optional) save --json envelope → finsafe explain
+       ↓
+repeat until clean
+```
 
 ---
 
@@ -248,6 +349,7 @@ Typical meanings (see `finsafe --help` for the authoritative list for your versi
 | **`program_mode` mismatch** | Policy **`short-lived`** must pair with **`run`**; **`interactive`** with **`self-confine`**. |
 | **No network** under `network: none` | Use **`network: host`** if the workload needs outbound HTTPS (subject to your threat model). |
 | **Paths denied on macOS** | Widen **`read_only_paths`** / **`read_write_paths`**, ensure declared directories exist, inspect **`--json`** attestation fields. |
+| **Sandbox run failed — where to start** | See **Creating and iterating policies** — try **`finsafe learn -- <cmd>`** or **`finsafe --audit --policy … run -- <cmd>`**; save **`--json`** output for **`finsafe explain`**. |
 | **`/dev/tty` fails inside Linux `run`** | Use **`stdio: pty`** in policy or **`finsafe run --stdio pty`**. Do not expect **`inherit`** to provide a controlling terminal under bubblewrap. |
 
 ---
@@ -256,4 +358,5 @@ Typical meanings (see `finsafe --help` for the authoritative list for your versi
 
 - [POLICY-QUICKREF.md](POLICY-QUICKREF.md) — wrapper policy field reference  
 - [POLICY-QUICKREF-zh.md](POLICY-QUICKREF-zh.md) — 包装策略字段速查（中文）  
+- [isolation-audit-mode.md](isolation-audit-mode.md) — `--audit` behavior and saving JSON envelopes  
 - [USER-GUIDE-zh.md](USER-GUIDE-zh.md) — 中文用户指南

@@ -1,0 +1,33 @@
+# Variant of hermes-version-smoke with skip_default_deny_read:true to test
+# whether the built-in .env deny_read is the cause of hermes startup failure.
+# NOTE: skip_default_deny_read removes ALL built-in denies including ~/.ssh, ~/.aws.
+# This is for diagnostic testing only - not a production policy.
+schema_version: 1
+kind: local-wrapper
+program_mode: short-lived
+degrade:
+  allow_fallback: true
+audit:
+  require_policy_digest: true
+  require_resolved_posture: true
+stdio:
+  mode: inherit
+network: host
+resources:
+  memory_max: "512M"
+  pids_max: "64"
+  cpu_max: "100000 100000"
+filesystem:
+  skip_default_deny_read: true
+  read_only_paths:
+    - "."
+    - "/usr"
+    - "/bin"
+    - "/sbin"
+    - "${HOME}/.local/bin"
+    - "${HOME}/.local/share/uv/python"
+    - "/opt/homebrew/bin"
+    - "${HOME}/.hermes"
+  read_write_paths:
+    - "./workspace"
+    - "${HOME}/.hermes"

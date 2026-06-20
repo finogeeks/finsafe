@@ -238,4 +238,5 @@ else
 fi
 
 info "done"
+info "run \`finsafe init\` to create ~/.config/finsafe/policies/ with seeded example YAML (or clone https://github.com/finogeeks/finsafe for the full examples tree)"
 info "managed fleet and policy authority archives (finsafe-fleet-v*, finsafe-admin-server-v*, finsafe-bundlectl-v*) are on the same GitHub release; see README.md"

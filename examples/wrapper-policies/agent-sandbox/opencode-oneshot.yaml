@@ -1,0 +1,40 @@
+# Wrap opencode non-interactive (opencode run "...") in finsafe.
+# Usage:
+#   finsafe --policy examples/wrapper-policies/agent-sandbox/opencode-oneshot.yaml run -- \
+#       /usr/bin/env HOME="$HOME" PATH="$HOME/.bun/bin:$HOME/.local/bin:/usr/bin:/bin" \
+#       opencode run "your prompt here"
+schema_version: 1
+kind: local-wrapper
+program_mode: short-lived
+degrade:
+  allow_fallback: true
+audit:
+  require_policy_digest: true
+  require_resolved_posture: true
+stdio:
+  mode: inherit
+network: host
+resources:
+  memory_max: "1G"
+  pids_max: "512"
+  cpu_max: "100000 100000"
+  timeout_ms: 120000
+filesystem:
+  read_only_paths:
+    - "."
+    - "/usr"
+    - "/bin"
+    - "/sbin"
+    - "/lib"
+    - "/lib64"
+    - "${HOME}/.bun"
+    - "${HOME}/.local/bin"
+    - "${HOME}/.local/share/uv/python"
+    - "/opt/homebrew/bin"
+    - "${HOME}/.config/opencode"
+    - "${HOME}/.config/gh"
+    - "${HOME}/.npmrc"
+  read_write_paths:
+    - "./workspace"
+    - "${HOME}/.config/opencode"
+    - "${HOME}/.local/share/opencode"

@@ -1,0 +1,29 @@
+# Minimal policy for testing sandbox enforcement.
+# Intentionally declares ONLY /usr, /bin, ./workspace.
+# Any attempt to read ~/.ssh, ~/.aws, ~, or write outside ./workspace should be denied.
+# Usage:
+#   finsafe --policy examples/wrapper-policies/agent-sandbox/isolation-test.yaml run -- /bin/sh -c "cat ~/.ssh/id_rsa"
+#   finsafe --policy examples/wrapper-policies/agent-sandbox/isolation-test.yaml run -- /bin/sh -c "echo x > ~/evil.txt"
+schema_version: 1
+kind: local-wrapper
+program_mode: short-lived
+degrade:
+  allow_fallback: false
+audit:
+  require_policy_digest: true
+  require_resolved_posture: true
+stdio:
+  mode: inherit
+network: host
+resources:
+  memory_max: "128M"
+  pids_max: "32"
+  cpu_max: "100000 100000"
+  timeout_ms: 10000
+filesystem:
+  read_only_paths:
+    - "/usr"
+    - "/bin"
+    - "/sbin"
+  read_write_paths:
+    - "./workspace"

@@ -44,7 +44,7 @@ Instead of authoring wrapper YAML, **`finsafe --host-profile <NAME> self-confine
 | `audit.require_policy_digest` | Refuse to start unless the wrapper policy digest is recorded in the audit envelope. |
 | `audit.require_resolved_posture` | Refuse to start unless resolved host posture is recorded. |
 | `stdio.mode` | Child stdio for **`run`**: `capture`, `inherit`, `null`, or `pty`. Text-mode runs default from this when set; `--json` often implies capture unless overridden. On **Linux**, **`pty`** allocates a virtual pseudo-terminal so tools that open **`/dev/tty`** (for example `vim`, `less`, password prompts, or Git hooks) work inside the sandbox without host TTY passthrough. Override per invocation with **`finsafe run --stdio pty`**. **`inherit`** on Linux does not grant a controlling terminal inside bubblewrap. |
-| `macos_seatbelt.deny_outbound_ports` | Optional list of TCP ports to deny in the Seatbelt profile even when `network: host` (coarse control; not per-domain filtering). |
+| `macos_seatbelt.deny_outbound_ports` | Optional list of TCP ports to deny in the Seatbelt profile even when `network: host` (coarse control; not per-domain filtering). **Failure mode:** port-specific denies layered on `network: host` may fail immediately (`EPERM`) or stall until the client TCP timeout, depending on the stack; some agents hang rather than surfacing a clear error. Always pair with `resources.timeout_ms` so FinSAFE kills the child. For complete network isolation prefer `network: none`, which denies at the socket/DNS syscall level and usually fails fast. |
 | `network` | `none` or `host` (Stage 1). |
 | `resources.memory_max` / `pids_max` / `cpu_max` | cgroup v2-style resource strings where the Linux strict path applies. |
 | `resources.timeout_ms` | Optional wall-clock ceiling for a **`run`** invocation. |
@@ -148,3 +148,63 @@ Every wrapper invocation should record (in JSON or logs, depending on mode):
 - `fallback_used` / `fallback_reason` — when posture selection degraded.
 
 Exact field names and nesting follow the FinSafe version you run; use `finsafe run --json` with a test command to inspect the envelope your build emits.
+
+## Diagnosing sandbox failures on macOS
+
+### macOS `--audit` (diagnostic capture)
+
+`finsafe --audit` on **Linux** uses seccomp permissive mode (syscalls allowed,
+logged to kernel audit). On **macOS**, `sandbox-exec` has no native
+permissive/log-only mode. Global `--audit` instead runs the **same enforce
+profile** (`seatbelt_mode: diagnostic` in attestation; same
+`seatbelt_profile_digest` as enforce) and streams kernel Sandbox `deny(...)`
+events during the run. After exit, FinSAFE prints suggested
+`filesystem.read_only_paths` / `read_write_paths` additions on stderr.
+
+The command may still fail on the first denial — that is expected. The value is
+actionable path discovery, not allowing the workload to complete.
+
+### `finsafe-trace` (engine source checkout only)
+
+Some FinSAFE engine checkouts ship `scripts/dev/finsafe-trace.sh` for bisecting Seatbelt profiles via `FINSAFE_SANDBOX_EXEC`. It is **not** part of the public `finogeeks/finsafe` release tree. Prefer built-in **`finsafe --audit`** and **`finsafe learn`** on released binaries.
+
+**Built-in CLI (recommended):**
+```bash
+finsafe --audit --policy my-agent.yaml run -- hermes --print "hello"
+```
+
+See also [isolation-audit-mode.md](isolation-audit-mode.md) for the cross-platform `--audit` contract and how to save JSON envelopes for `finsafe explain`.
+
+### Policy iteration loop (macOS / Linux / Windows)
+
+**`finsafe learn`** captures denials and writes reviewable YAML:
+
+```bash
+finsafe learn -- my-agent --print "hello"          # → ./learned-policy.yaml
+finsafe --policy ./learned-policy.yaml run -- my-agent --print "hello"
+finsafe learn --base ./learned-policy.yaml -- …    # merge new grants
+```
+
+On **Windows**, `learn` keeps AppContainer enforcement and ingests ETW
+`etw_audit:` lines plus child stdout markers (`blocked_write_denied`, etc.).
+Use `--audit run` for inline stderr remediation on the same evidence.
+
+**Manual / audit-only loop** (when you already have a policy file):
+
+```
+finsafe run → fails
+       ↓
+finsafe --audit run → shows denied paths + suggested YAML (or finsafe-trace on macOS)
+       ↓
+finsafe explain envelope.json   # post-mortem from saved JSON (see USER-GUIDE.md)
+       ↓
+edit wrapper YAML (add paths / skip_default_deny_read)
+       ↓
+finsafe run → repeat until clean
+```
+
+On Linux, `finsafe --audit run -- cmd` also runs seccomp permissive so the
+command may complete while syscall misses are logged. On macOS, `--audit` keeps
+Seatbelt enforcement and streams kernel deny events (`seatbelt_mode: diagnostic`).
+On Windows, `--audit` adds ETW capture and marker hints without weakening
+AppContainer enforcement.

@@ -10,6 +10,19 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.0] - 2026-06-20
+
+### Added
+
+- **`finsafe learn` / `finsafe explain`:** Capture sandbox denials and turn them into policy YAML or human-readable explanations on Linux (bubblewrap), macOS (Seatbelt), and Windows (AppContainer wrapper). Inline remediation hints appear on denial paths across platforms.
+- **`finsafe init`:** Seeds reference policy examples under the user config directory (`~/.config/finsafe/policies/examples/` on Linux/macOS, `%APPDATA%\FinSAFE\policies\examples\` on Windows). Install scripts now suggest running it after install; it does not auto-select a default policy for `run`.
+- **Public docs:** Hermes and OpenCode quick starts, first-run flow, agent-sandbox wrapper examples, and install-path guidance in README and USER-GUIDE (EN/zh).
+
+### Changed
+
+- **Learn output paths:** Default `finsafe learn --out` writes to `policies/learned-policy.yaml` under the FinSAFE user config root via `policy_paths`.
+- **CLI:** Removed the experimental `finsafe learn --agent` flag until an agent registry exists; `run --high-level --agent <id>` remains for scheduler identity only.
+
 ## [0.8.17] - 2026-06-17
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->

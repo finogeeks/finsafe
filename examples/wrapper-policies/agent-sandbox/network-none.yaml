@@ -1,0 +1,28 @@
+# Full network isolation (`network: none`). Outbound syscalls denied; fails fast.
+# Usage:
+#   finsafe --policy examples/wrapper-policies/agent-sandbox/network-none.yaml run -- \
+#       /usr/bin/env PATH="/usr/bin:/bin" curl -sf --max-time 3 https://example.com
+# Expected: non-zero exit (network denied)
+schema_version: 1
+kind: local-wrapper
+program_mode: short-lived
+degrade:
+  allow_fallback: true
+audit:
+  require_policy_digest: true
+  require_resolved_posture: true
+stdio:
+  mode: inherit
+network: none
+resources:
+  memory_max: "128M"
+  pids_max: "32"
+  cpu_max: "100000 100000"
+  timeout_ms: 10000
+filesystem:
+  read_only_paths:
+    - "/usr"
+    - "/bin"
+    - "/sbin"
+  read_write_paths:
+    - "./workspace"
