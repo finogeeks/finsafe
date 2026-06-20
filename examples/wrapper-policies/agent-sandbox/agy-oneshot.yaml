@@ -3,6 +3,11 @@
 #   finsafe --policy examples/wrapper-policies/agent-sandbox/agy-oneshot.yaml run -- \
 #       /usr/bin/env HOME="$HOME" PATH="$HOME/.local/bin:/usr/bin:/bin" \
 #       agy --print "your prompt here"
+#
+# Auth: agy reads OAuth tokens from the Antigravity IDE profile
+# (${HOME}/Library/Application Support/Antigravity/User/globalStorage/state.vscdb
+# key `antigravityUnifiedStateSync.oauthToken`) and Cookies — not only ~/.gemini.
+# macOS Keychain + LaunchServices prefs are also required to decrypt/use the token.
 schema_version: 1
 kind: local-wrapper
 program_mode: short-lived
@@ -32,8 +37,12 @@ filesystem:
     - "/opt/homebrew/bin"
     - "${HOME}/.config/agy"
     - "${HOME}/.config/google-cloud-sdk"
+    - "${HOME}/.antigravity"
+    - "${HOME}/Library/Keychains"
+    - "${HOME}/Library/Preferences"
     - "/var/folders"
   read_write_paths:
     - "./workspace"
     - "/tmp"
     - "${HOME}/.gemini"
+    - "${HOME}/Library/Application Support/Antigravity"

@@ -29,6 +29,7 @@ Each YAML file’s header comment documents the intended command and expected ou
 | `codex-oneshot.yaml` | Codex non-interactive one-shot |
 | `opencode-oneshot.yaml` | OpenCode `run` one-shot |
 | `agy-oneshot.yaml` | agy `--print` one-shot |
+| `agy-interactive.yaml` | agy TUI via `self-confine` (real TTY); `agy --print` for non-TTY SC smoke |
 
 ## Related
 

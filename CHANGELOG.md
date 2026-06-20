@@ -10,6 +10,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.1] - 2026-06-20
+
+### Fixed
+
+- **macOS `finsafe self-confine`:** Seatbelt profile temp files are kept alive until `sandbox-exec` starts, fixing exit 65 (`…/.tmpXXXXXX: No such file or directory`) on interactive wrapper launches (Hermes, agy, and other `program_mode: interactive` policies).
+
+### Added
+
+- **Agent-sandbox examples:** `agy-interactive.yaml` for `self-confine` with agy; updated `agy-oneshot.yaml` with Antigravity IDE auth paths (`~/Library/Application Support/Antigravity`, Keychain, Preferences).
+- **Public skill:** `finsafe-agent-sandbox-verify` expanded with R2-seatbelt, self-confine sub-suite, and agy auth gotchas (F11).
+
 ## [0.9.0] - 2026-06-20
 
 ### Added

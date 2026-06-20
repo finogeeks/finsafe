@@ -1,0 +1,51 @@
+# Interactive agy policy for self-confine testing.
+# program_mode: interactive -> must use: finsafe self-confine (not run)
+#
+# Auth paths mirror agy-oneshot.yaml (Antigravity profile + Keychain).
+#
+# Usage (real TTY required for bubbletea UI):
+#   mkdir -p ~/finsafe-sandbox-verify/workspace && cd ~/finsafe-sandbox-verify
+#   finsafe --policy examples/wrapper-policies/agent-sandbox/agy-interactive.yaml self-confine \
+#       /usr/bin/env HOME="$HOME" PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/bin:/bin" agy
+#
+# Non-interactive smoke inside self-confine (no TTY — SC-3 style):
+#   finsafe --policy examples/wrapper-policies/agent-sandbox/agy-interactive.yaml self-confine \
+#       /usr/bin/env HOME="$HOME" PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/bin:/bin" \
+#       agy --print "Reply exactly: selfconfine-agy-ok"
+schema_version: 1
+kind: local-wrapper
+program_mode: interactive
+degrade:
+  allow_fallback: true
+audit:
+  require_policy_digest: true
+  require_resolved_posture: true
+stdio:
+  mode: inherit
+network: host
+resources:
+  memory_max: "1G"
+  pids_max: "256"
+  cpu_max: "100000 100000"
+filesystem:
+  read_only_paths:
+    - "."
+    - "/usr"
+    - "/bin"
+    - "/sbin"
+    - "/lib"
+    - "/lib64"
+    - "${HOME}/.local/bin"
+    - "${HOME}/.local/share"
+    - "/opt/homebrew/bin"
+    - "${HOME}/.config/agy"
+    - "${HOME}/.config/google-cloud-sdk"
+    - "${HOME}/.antigravity"
+    - "${HOME}/Library/Keychains"
+    - "${HOME}/Library/Preferences"
+    - "/var/folders"
+  read_write_paths:
+    - "./workspace"
+    - "/tmp"
+    - "${HOME}/.gemini"
+    - "${HOME}/Library/Application Support/Antigravity"

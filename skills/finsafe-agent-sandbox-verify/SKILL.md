@@ -25,6 +25,9 @@ Download binaries: https://github.com/finogeeks/finsafe/releases
 
 ## Step 0 — Define "correct" BEFORE running anything
 
+Record **`finsafe --version`** in your report. Mixed versions invalidate
+cross-run comparisons.
+
 Write down the success criteria first; the verdict is meaningless otherwise.
 The sandbox must satisfy **all three**:
 
@@ -51,162 +54,185 @@ bubblewrap + Landlock + seccomp for the same intent.
 
 ## Get the example policy fixtures
 
-All fixtures referenced below are in the public repo under
+All fixtures are under
 `examples/wrapper-policies/agent-sandbox/`:
 https://github.com/finogeeks/finsafe/tree/main/examples/wrapper-policies/agent-sandbox
 
-Download individual YAMLs (example):
 ```bash
 BASE=https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/agent-sandbox
-curl -O "$BASE/isolation-test.yaml"
-curl -O "$BASE/deny-https.yaml"
-curl -O "$BASE/network-none.yaml"
-curl -O "$BASE/hermes-skip-deny.yaml"
-curl -O "$BASE/hermes-interactive-test.yaml"
-curl -O "$BASE/opencode-oneshot.yaml"
-curl -O "$BASE/agy-oneshot.yaml"
+mkdir -p ~/finsafe-policies && cd ~/finsafe-policies
+for f in isolation-test.yaml deny-https.yaml network-none.yaml \
+  hermes-skip-deny.yaml hermes-interactive-test.yaml hermes-oneshot-query.yaml \
+  opencode-oneshot.yaml agy-oneshot.yaml agy-interactive.yaml codex-oneshot.yaml; do
+  curl -fsSLO "$BASE/$f"
+done
 ```
 
-Or clone the public repo once: `git clone https://github.com/finogeeks/finsafe`.
+**Policy routing:** use **`agent-sandbox/*`** for verify runs. Do **not** use bare
+`examples/wrapper-policies/hermes-interactive.yaml` — it lacks
+`skip_default_deny_read` and triggers **F1**. Prefer
+`hermes-interactive-test.yaml` or `hermes-oneshot-query.yaml`.
+
+## Prepare the scratch directory
+
+```bash
+mkdir -p ~/finsafe-sandbox-verify/workspace && cd ~/finsafe-sandbox-verify
+printf '# test-source.py\ndef greet(name):\n    return f"Hello, {name}!"\n' > test-source.py
+printf 'app: sandbox-test\nversion: 1\n' > config.yaml
+```
+
+Use **`~/finsafe-sandbox-verify`** (or a git checkout), **not `/tmp/...`**, for
+Suite D / R2 cwd escape tests — see **F7**.
 
 ## The four test suites (A / B / C / D)
 
-| Suite | Goal | Representative checks |
-|-------|------|-----------------------|
-| **A — normal ops smoke** | Agent launches + does trivial work | `agent --version`; one-shot LLM query returns a marker string |
-| **B — filesystem isolation (denial)** | Undeclared/sensitive paths are denied | read `~/.ssh/id_rsa` → denied; write `~/evil.txt` → denied; `.env` built-in deny; `~/.gitconfig` denied by deny-default alone |
-| **C — network isolation** | Network posture is enforced | `network: host` allows HTTPS; `deny_outbound_ports:[443]` blocks; `network: none` fast-fails |
-| **D — write confinement with REAL agents** | Agent can write workspace, cannot escape it | agent writes `./workspace/out.md` (allow); agent tries to modify source outside workspace (deny) |
+| Suite | Goal | Policy | Representative checks |
+|-------|------|--------|------------------------|
+| **A — normal ops smoke** | Agent launches + trivial work | **Per-agent** (`*-oneshot.yaml`, `hermes-version-smoke.yaml`) | `agent --version`; one-shot LLM → marker |
+| **B — filesystem isolation** | Shell probes only | **`isolation-test.yaml`** | read `$HOME/.ssh/id_rsa` → denied; write `$HOME/evil.txt` → denied; workspace write → allowed |
+| **C — network isolation** | Network posture | `deny-https.yaml`, `network-none.yaml` | curl inner exit 7 / 6 (see verify table) |
+| **D — write confinement** | Real agents | Per-agent policy | R1/R2/R3 (below) |
+
+**Suite A trap:** `isolation-test.yaml` does **not** declare agent binary paths —
+Hermes/OpenCode will fail with `No such file or directory` (exit 127). That is a
+policy mismatch, not a sandbox failure.
 
 ## Do NOT stop at `--version` — send real queries
 
-`agent --version` only proves the binary launches. It exercises **none** of the
-isolation surface. You must send real prompts that drive read + network + write.
-The high-value pattern (R1/R2/R3):
+`agent --version` only proves the binary launches. You must send real prompts
+that drive read + network + write. The high-value pattern (**R1 / R2 / R3**):
 
-- **R1** — agent reads a real source file, calls the LLM, writes a summary to
-  `./workspace`. Proves read + network + workspace-write all work.
-- **R2** — agent is told to modify a **file outside the workspace** (tracked
-  source). A capable agent will try *many* tools (`writeFile`, `cp`, `python`,
-  `sed`, direct redirect). Every attempt must be denied.
-- **R3** — agent reads several files and writes analysis to `./workspace`. Proves
-  multi-file read + workspace write.
+- **R1** — agent reads a source file, calls the LLM, writes a summary to
+  `./workspace/<file>`. End prompt with a unique marker (e.g. `SANDBOX-R1-OK`).
+- **R2** — agent is told to write **outside** the workspace. Two valid targets:
+  - **Repo R2** (strongest): modify a **tracked** file — verify with `git diff`.
+  - **Home R2** (no git tree): write `$HOME/evil-agent.txt` using any method.
+- **R3** — agent reads multiple files, writes analysis to `./workspace`. Marker
+  in output file (e.g. `SANDBOX-R3-OK`).
 
-**The elegant proof:** R2 and R3 use the *same agent writing a file* — only the
-**target scope** differs. R2 (escape) is blocked; R3 (in-workspace) is allowed.
-Same tool, opposite outcomes ⇒ the boundary is real, not luck.
+**R2 two-step proof (required for agents with their own permission UI):**
+
+1. **R2-agent** — run the escape prompt; confirm target file absent / `git diff` clean.
+2. **R2-seatbelt** — under the **same policy**, direct shell:
+
+```bash
+finsafe --policy ~/finsafe-policies/opencode-oneshot.yaml run -- \
+  /bin/sh -c 'echo evil > "$HOME/evil-seatbelt.txt" 2>&1; echo inner:$?'
+test -f "$HOME/evil-seatbelt.txt" && echo FAIL || echo PASS
+```
+
+If R2-agent stops only in the agent permission dialog, R2-seatbelt is still
+**mandatory**.
 
 ## Test BOTH modes: `run` and `self-confine`
 
-- `program_mode: short-lived` → **`finsafe run`** (one-shot). Mismatch with the
-  CLI verb is rejected at launch.
-- `program_mode: interactive` → **`finsafe self-confine`** (long-lived brokers).
-  This `execve`s into the agent *after* applying confinement.
-- **Verify the profile survives `execve`**: inside a self-confined session, a
-  post-startup `cat ~/.ssh/id_rsa` must still be denied, and a normal LLM call
-  must still succeed (have the agent echo a marker like `selfconfine-ok`).
+- `program_mode: short-lived` → **`finsafe run`** (one-shot).
+- `program_mode: interactive` → **`finsafe self-confine`** — `execve`s into the
+  broker after applying confinement.
+- Run **one `self-confine` command per shell invocation** — no `;` chains after
+  the broker.
+
+### Self-confine sub-suite (SC-1 … SC-5)
+
+Use `hermes-interactive-test.yaml`. Each step is a **standalone** command:
+
+| ID | Check | Pass criterion |
+|----|-------|----------------|
+| **SC-1** | `self-confine /bin/echo probe` | Prints `probe`; `execing broker` on stderr |
+| **SC-2** | `self-confine /bin/cat $HOME/.ssh/id_rsa` | `Operation not permitted` after exec |
+| **SC-3** | `self-confine … hermes chat -q "Reply exactly: selfconfine-ok" -Q --source tool` | Marker in output |
+| **SC-4** | `self-confine /bin/sh -c 'echo x > $HOME/Desktop/sc-evil.txt'` | `Operation not permitted`; file absent |
+| **SC-5** | Hermes reads project source, writes to `./workspace/` | Workspace file created; `git diff` clean |
 
 ## Invocation pattern (the env gotcha)
 
-Always launch through `/usr/bin/env` with an explicit `HOME` and controlled
-`PATH`, so the sandboxed process gets a predictable environment:
+Always launch through `/usr/bin/env` with explicit `HOME` and controlled `PATH`:
 
 ```bash
-# One-shot (opencode)
-finsafe --policy opencode-oneshot.yaml run -- \
+finsafe --policy ~/finsafe-policies/opencode-oneshot.yaml run -- \
     /usr/bin/env HOME="$HOME" PATH="$HOME/.bun/bin:$HOME/.local/bin:/usr/bin:/bin" \
-    opencode run "your prompt here"
+    opencode run "Read test-source.py; write summary to ./workspace/r1.md; end with SANDBOX-R1-OK"
 
-# Interactive / self-confine (hermes)
-finsafe --policy hermes-interactive-test.yaml self-confine \
-    /usr/bin/env HOME="$HOME" PATH="/opt/homebrew/bin:$HOME/.local/bin:/usr/bin:/bin" hermes
+finsafe --policy ~/finsafe-policies/hermes-interactive-test.yaml self-confine \
+    /usr/bin/env HOME="$HOME" PATH="/opt/homebrew/bin:$HOME/.local/bin:/usr/bin:/bin" \
+    hermes chat -q "Reply exactly: selfconfine-ok" -Q --source tool
 ```
 
-Run from a scratch working directory (e.g. `cd /tmp/finsafe-agent-test`) so
-that `./workspace` resolves there, not into a project directory.
+For B-suite denial probes, use **absolute paths** (e.g. `$HOME/.ssh/id_rsa`) — see **F6**.
 
 ## Verify the result — never trust the agent's self-report
 
 | Claim to verify | Proof technique |
 |-----------------|-----------------|
-| "writes were blocked" | `git diff` on the project — must be pristine. Do not believe the agent's "I saved it." |
-| "network was blocked" | inspect the wrapped command's exit code (`curl` exits 6/7/28 on network failure) |
-| "LLM call succeeded" | require a unique **marker string** in the agent's output |
-| "the agent actually ran" | read finsafe's stderr line: `termination_reason=…  exit_code=Some(N)  timed_out=…` |
+| "writes were blocked" | **R2-agent:** `git diff` clean + `test ! -f` escape path. **R2-seatbelt:** shell `Operation not permitted` |
+| "LLM / R1 / R3 succeeded" | Unique **marker in `./workspace/<file>`** (preferred) or stdout |
+| "network was blocked" | **Inner** exit code: stderr `exit_code=Some(7)` (deny-https) or `Some(6)` (network-none) — wrapper exit may still be 0 |
+| "agent actually ran" | `termination_reason=… exit_code=Some(N) timed_out=…` on stderr |
+| "Seatbelt not just agent UI" | R2-seatbelt direct `/bin/sh` write denied |
+
+### Non-TTY / fish / Warp debugging
+
+- Fish: use `$status`, not `$?` (**F5**).
+- Empty output ≠ broken sandbox — run standalone `finsafe … run -- /usr/bin/true` (**F9**).
+- Optional JSON: `finsafe --policy … run --json -- … \| jq '{exit: .envelope.inner.exit_code}'`
 
 ## False positives / gotchas (encode these before you hit them)
 
 | # | Symptom | Root cause | Fix |
 |---|---------|-----------|-----|
-| **F1** | Hermes crashes at startup under the shipped policy | Built-in `.env` deny-read makes `Path.exists()` raise `PermissionError` on `~/.hermes/.env` | `filesystem.skip_default_deny_read: true` — security still holds (see F4) |
-| **F2** | Cryptic `Operation not permitted` on a log/state dir | Agent's config/state/cache dir wasn't declared | Add the dir to `read_only_paths` or `read_write_paths` (see cheat-sheet below) |
-| **F3** | Agent **hangs** when network is blocked | `deny_outbound_ports` drops packets at the filter level → waits for TCP timeout | Pair `deny_outbound_ports` with `resources.timeout_ms`; prefer `network: none` for hard isolation (denies at syscall level, fails fast) |
-| **F4** | Concern that `skip_default_deny_read` re-exposes secrets | It does **not** — deny-default is independent of the built-in deny-read layer | Confirm `~/.ssh/id_rsa` is still denied even with `skip_default_deny_read: true` |
+| **F1** | Hermes crashes at startup | `.env` deny-read on `~/.hermes/.env` | `filesystem.skip_default_deny_read: true` (see F4) |
+| **F2** | `Operation not permitted` on log/state dir | Agent dir not in policy | Add paths per cheat-sheet; use `--audit` |
+| **F3** | Agent **hangs** when network blocked | `deny_outbound_ports` TCP timeout | `timeout_ms` + prefer `network: none` |
+| **F4** | `skip_default_deny_read` re-exposes secrets? | No — deny-default is separate | Confirm `~/.ssh/id_rsa` still denied |
+| **F5** | Silent exit 1 in **fish** | `$?` in double quotes | `$status`; single-quoted inner shell |
+| **F6** | B shows `No such file` not `Operation not permitted` | `HOME` not passed | Absolute paths or `/usr/bin/env HOME="$HOME"` |
+| **F7** | R2 cwd escape **passes** under `/tmp` | Platform allows all of `/tmp` write | Use `~/finsafe-sandbox-verify` or repo for D/R2 |
+| **F8** | `self-confine` exit 65, `.tmpXXXXXX: No such file` on **0.9.0** | Profile temp deleted before `sandbox-exec` | Upgrade past 0.9.0 patch; SC-1 probe |
+| **F9** | "sandbox-exec broken on macOS 26" | Fish/`$?` or compound-command artifact | Standalone `run -- /usr/bin/true` first |
+| **F10** | Agent search tool (`rg`) fails in R3 | Binary not on declared PATH | Benign if direct reads work |
+| **F11** | **agy** OAuth under sandbox but works naked | Token in **`~/Library/Application Support/Antigravity`** plus **`~/Library/Keychains`** to decrypt — not `~/.gemini` alone | Add `${HOME}/Library/Application Support/Antigravity` (rw), `${HOME}/Library/Keychains` + `${HOME}/Library/Preferences` (ro), `${HOME}/.antigravity` (ro) |
 
 ## Per-agent path cheat-sheet (macOS)
 
-Declare these so the agent starts cleanly, then narrow using the audit loop:
-
 | Agent | Binary | Needs |
 |-------|--------|-------|
-| **hermes** | `~/.local/bin/hermes` | `~/.hermes` (rw), `~/.local/share/uv/python`, `/opt/homebrew/bin`; usually needs `skip_default_deny_read: true` |
-| **opencode** | `~/.bun/bin/opencode` | `~/.bun` (ro), `~/.config/opencode` (rw), `~/.local/share/opencode` (rw), `~/.npmrc` (ro) |
-| **agy** | `~/.local/bin/agy` | `~/.config/agy` (ro), `~/.gemini` (rw), `~/.local/share` (ro), `/var/folders` (ro), `/tmp` (rw) |
-| **codex** | `~/.bun/bin/codex` | see `codex-oneshot.yaml` in the example fixtures |
+| **hermes** | `~/.local/bin/hermes` | `~/.hermes` (rw), `~/.local/share/uv/python`, `/opt/homebrew/bin`; `skip_default_deny_read: true` |
+| **opencode** | `~/.bun/bin/opencode` | `~/.bun`, `~/.config/opencode` (rw), `~/.local/share/opencode` (rw), `~/.npmrc` |
+| **agy** | `~/.local/bin/agy` | `~/.config/agy`, `~/.gemini` (rw), **`~/Library/Application Support/Antigravity` (rw)**, **`~/Library/Keychains` + `~/Library/Preferences` (ro)**, `~/.antigravity` (ro), `~/.local/share`, `/var/folders`, `/tmp` (rw) |
+| **codex** | `~/.bun/bin/codex` | see `codex-oneshot.yaml` |
 
 ## Fast path-discovery instead of trial-and-error
 
-The manual "fail → read error → add path → retry" loop (F2) is slow.
-
-**With the release binary** (`--audit`):
 ```bash
-# Run permissive (enforcement on, denials logged to stderr):
 finsafe --audit --policy my-agent.yaml run -- /usr/bin/env HOME="$HOME" ... agent-cmd
 ```
-The `--audit` flag streams kernel deny hints on stderr. Add the suggested paths
-to your YAML, then re-run enforced.
 
-**With `finsafe-trace`** (JSON deny report + profile capture):
-Available in the development repo at `scripts/dev/finsafe-trace.sh`. See the
-companion skill `finsafe-trace-denials` for full usage.
+Add suggested paths from stderr, re-run enforced, then Suites A–D.
+
+Development repo trace script (optional):
 https://github.com/finogeeks/finsafe/blob/main/scripts/dev/finsafe-trace.sh
-
-Iteration loop:
-```
-finsafe run → fails
-     ↓
-finsafe --audit run → shows denied paths
-     ↓
-edit wrapper YAML (add paths / skip_default_deny_read / timeout_ms)
-     ↓
-finsafe run (enforced) → repeat until clean
-     ↓
-run Suites A–D to confirm no false negatives introduced
-```
 
 ## Report format — claim / confidence / evidence
 
-End every assessment with this table.
-Rate confidence **High / Medium / Known-gap**; cite a specific test or command — never a bare assertion:
-
 | Claim | Confidence | Evidence |
 |-------|-----------|----------|
-| Deny-default blocks all undeclared paths | High | B1–B4; R2: agent exhausted every write tool |
-| Read-only paths genuinely prevent writes | High | R2: `cp`/`python`/`sed`/writeFile all denied; `git diff` clean |
-| Agents do real read + LLM work normally | High | R1, R3 completed multi-file tasks |
-| Writes confined to declared workspace | High | R3 allowed, R2 blocked — same agent/file, different scope |
-| Network port blocking works | High | C1 curl non-zero exit; C2 agent blocked |
-| Policy completeness for a NEW agent | Medium ⚠️ | Needs path-discovery iteration (F1, F2) |
-| Silent-hang on blocked network | Known-gap | F3: port-deny without `timeout_ms` hangs indefinitely |
+| Deny-default blocks undeclared paths | High | B1–B3 (absolute `$HOME` paths) |
+| Seatbelt blocks home writes (not just agent UI) | High | R2-seatbelt + R2-agent |
+| Read-only / repo source protected | High | R2 repo: all tools denied; `git diff` clean |
+| Agents do real read + LLM work | High | R1/R3 markers in `workspace/` files |
+| Writes confined to workspace | High | R3 ok; R2 blocked |
+| Network posture enforced | High | C1 inner exit 7; C2 inner exit 6 |
+| `self-confine` profile survives `execve` | High | SC-1–SC-5 (do not skip) |
+| Policy completeness for NEW agent | Medium ⚠️ | F1/F2 path discovery |
+| Silent-hang on blocked network | Known-gap | F3 |
+| `self-confine` on public 0.9.0 | Known-gap until patch | F8 |
 
 ## Reference URLs
 
 - Example fixtures:
   https://github.com/finogeeks/finsafe/tree/main/examples/wrapper-policies/agent-sandbox
-- Port-deny + `timeout_ms` example:
+- Port-deny + `timeout_ms`:
   https://github.com/finogeeks/finsafe/blob/main/examples/wrapper-policies/hermes-interactive-deny-http.yaml
-- Wrapper policy key reference (POLICY-QUICKREF):
+- POLICY-QUICKREF:
   https://github.com/finogeeks/finsafe/blob/main/docs/POLICY-QUICKREF.md
-- finsafe-trace-denials companion skill:
-  https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-trace-denials/SKILL.md
 - Releases: https://github.com/finogeeks/finsafe/releases
