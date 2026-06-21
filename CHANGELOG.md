@@ -10,6 +10,19 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.2] - 2026-06-20
+
+### Added
+
+- **Egress L7 governance (Track A):** Identity injection, static L7 rules, token brokering (`network.credential_map`), bounded content audit (schema v4), compile-time threat-intel allowlist augmentation, and parent-proxy `required` fail-closed at proxy launch.
+- **Executor → server audit (G11):** `ExecutionRecord.proxy_egress_records` populated after proxied cell runs.
+- **Track B (macOS):** HTTPS MITM-through-sandbox probe (`sandbox_exec_mitm_https_via_tcp_loopback_proxy`); CLI `internal_proxy` uses the same `build_proxy_config_from_plan` pipeline as the executor.
+- **Docs:** `docs/design/token-transformation.md`, updated governance acceptance matrix (G1–G11).
+
+### Changed
+
+- **Parent proxy:** Bundle-declared `network.parent_proxy` with launch-time reachability probe when `required: true`.
+
 ## [0.9.1] - 2026-06-20
 
 ### Fixed
