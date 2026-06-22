@@ -10,12 +10,22 @@
 2. 确保 `finsafe-bundlectl` 在 `PATH` 上，并按技能设置环境变量。
 3. 技能内已含安装、命令、故障排查与最小策略 YAML 示例。
 
-## 可用技能
+## Agent 沙箱（Hermes、OpenCode、agy 等）
+
+**从这里开始：** [docs/agent-sandbox-guide-zh.md](../docs/agent-sandbox-guide-zh.md) · [English](../docs/agent-sandbox-guide.md) — 含 Agent 专用 **`learn` / `explain`** 流程。
 
 | 技能 | 文件 | 适用场景 |
 |------|------|----------|
-| **finsafe-enterprise-setup** | [SKILL-zh.md](./finsafe-enterprise-setup/SKILL-zh.md) · [English](./finsafe-enterprise-setup/SKILL.md) | 托管舰队端到端：authority、Finogeeks `license.jws`、MDM、试点验收 |
-| **finsafe-bundlectl** | [SKILL-zh.md](./finsafe-bundlectl/SKILL-zh.md) · [English](./finsafe-bundlectl/SKILL.md) | 构建 / 签名 / 发布 bundle；MDM 哨兵 |
+| **finsafe-agent-sandbox-run** | [SKILL-zh.md](./finsafe-agent-sandbox-run/SKILL-zh.md) · [English](./finsafe-agent-sandbox-run/SKILL.md) | 运行 Agent；用 **`learn`**、**`explain`**、`--audit`、trace 迭代策略 |
+| **finsafe-agent-sandbox-verify** | [SKILL.md](./finsafe-agent-sandbox-verify/SKILL.md) | Agent 能跑后：证明隔离 |
+| **finsafe-trace-denials** | [SKILL.md](./finsafe-trace-denials/SKILL.md) | macOS：**`learn`** 报 0 拒绝但 stderr 仍拒绝时 |
+
+## 企业舰队
+
+| 技能 | 文件 | 适用场景 |
+|------|------|----------|
+| **finsafe-enterprise-setup** | [SKILL-zh.md](./finsafe-enterprise-setup/SKILL-zh.md) · [English](./finsafe-enterprise-setup/SKILL.md) | 托管舰队端到端 |
+| **finsafe-bundlectl** | [SKILL-zh.md](./finsafe-bundlectl/SKILL-zh.md) · [English](./finsafe-bundlectl/SKILL.md) | bundle 发布 + MDM 哨兵 |
 
 ## 可选延伸阅读（仅完整 URL）
 

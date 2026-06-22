@@ -9,20 +9,28 @@ description: >-
 
 # finsafe trace-denials skill
 
+**Companion:** [finsafe-agent-sandbox-run](../finsafe-agent-sandbox-run/SKILL.md) — agent run + **`learn` / `explain`** ladder.
+
 ## When to use
 
-Use this skill when **`finsafe run`** or **`finsafe self-confine`** causes a
-command to fail with `Operation not permitted` or behaves unexpectedly on macOS,
-and you need to know *which* filesystem paths or operations the Seatbelt sandbox
-denied so you can extend the wrapper policy.
+Use when **`finsafe run`** fails with `Operation not permitted` on macOS and you need
+structured YAML path suggestions.
 
+**Prefer `finsafe learn` first** when kernel denials are captured:
 
-> **Why `--audit` alone is not enough on macOS**
-> `finsafe --audit` records `seatbelt_mode: permissive` in the attestation JSON
-> but generates the **identical** Seatbelt profile as enforce mode (same
-> `seatbelt_profile_digest`). macOS `sandbox-exec` has no native permissive mode.
-> `finsafe-trace` is the practical workaround: it intercepts the compiled profile
-> and reads denial events directly from the macOS kernel log.
+```bash
+finsafe learn --base ~/finsafe-policies/opencode-oneshot.yaml \
+  --out ~/finsafe-policies/opencode-learned.yaml --json -- \
+  /usr/bin/env HOME="$HOME" PATH="…" opencode run "hello"
+```
+
+Use **`finsafe-trace`** when `learn` reports **`denial_count: 0`** but stderr still
+denies paths (common on macOS for agent log files). Also use **`finsafe explain`**
+on saved `run --json` envelopes — see [agent-sandbox-guide](https://github.com/finogeeks/finsafe/blob/main/docs/agent-sandbox-guide.md).
+
+> **Note on `--audit`**
+> `finsafe --audit` streams kernel deny hints on stderr under unchanged enforcement.
+> `finsafe-trace` adds a structured **DENIED OPERATIONS** table and **SUGGESTED POLICY ADDITIONS**.
 
 ## Prerequisites
 

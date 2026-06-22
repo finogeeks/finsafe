@@ -21,7 +21,8 @@
 
 | Document | Description |
 |----------|-------------|
-| [USER-GUIDE.md](./USER-GUIDE.md) | Install, `run` vs `self-confine`, **`learn` / `explain`**, wrapper policies |
+| [agent-sandbox-guide.md](./agent-sandbox-guide.md) · [agent-sandbox-guide-zh.md](./agent-sandbox-guide-zh.md) | **Agent sandbox** — Hermes, OpenCode, agy; **`learn` / `explain`** iteration for agents |
+| [USER-GUIDE.md](./USER-GUIDE.md) | Install, `run` vs `self-confine`, generic **`learn` / `explain`**, wrapper policies |
 | [USER-GUIDE-zh.md](./USER-GUIDE-zh.md) | 中文用户指南 |
 | [POLICY-QUICKREF.md](./POLICY-QUICKREF.md) | Wrapper policy field reference |
 | [POLICY-QUICKREF-zh.md](./POLICY-QUICKREF-zh.md) | 包装策略字段速查 |
@@ -31,8 +32,11 @@
 
 | Skill | Description |
 |-------|-------------|
-| [finsafe-enterprise-setup/SKILL.md](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-enterprise-setup/SKILL.md) · [SKILL-zh.md](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-enterprise-setup/SKILL-zh.md) | **`finsafe-enterprise-setup`**: managed fleet end-to-end (releases + Finogeeks license only) |
-| [finsafe-bundlectl/SKILL.md](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL.md) · [SKILL-zh.md](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL-zh.md) | **`finsafe-bundlectl`**: bundle publish + MDM sentinel |
+| [finsafe-agent-sandbox-run/SKILL.md](../skills/finsafe-agent-sandbox-run/SKILL.md) | **Agent sandbox:** run + **`learn` / `explain`** policy iteration |
+| [finsafe-agent-sandbox-verify/SKILL.md](../skills/finsafe-agent-sandbox-verify/SKILL.md) | Prove isolation after the agent runs |
+| [finsafe-trace-denials/SKILL.md](../skills/finsafe-trace-denials/SKILL.md) | macOS path discovery when learn under-reports |
+| [finsafe-enterprise-setup/SKILL.md](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-enterprise-setup/SKILL.md) · [SKILL-zh.md](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-enterprise-setup/SKILL-zh.md) | Managed fleet end-to-end |
+| [finsafe-bundlectl/SKILL.md](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL.md) · [SKILL-zh.md](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL-zh.md) | Bundle publish + MDM sentinel |
 | [../skills/README.md](../skills/README.md) | Index of public operator skills |
 
 ## For enterprise administrators (managed fleet)

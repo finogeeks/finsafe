@@ -10,9 +10,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
-## [0.9.3] - 2026-06-22
+## [0.9.4] - 2026-06-22
 
-<!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
+### Added
+
+- **Per-environment egress scoping (#58):** `environment_id` attribution at the proxy boundary, per-environment approval store, and strict fail-closed mode for unattributed requests.
+- **Track B (macOS/Windows):** Sandbox-level L7 deny, identity injection, and parent-proxy chain probes; wrapper policy governance fields (`inject_identity`, `l7_rules`, `credential_map`) wired through `internal_proxy`.
+- **Docs:** Agent sandbox guides (EN/zh), platform feature matrix, and `finsafe-agent-sandbox-run` skill.
+
+## [0.9.3] - 2026-06-22
 
 ### Fixed
 

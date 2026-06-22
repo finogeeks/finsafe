@@ -4,7 +4,7 @@
 
 ## FinSafe 能做什么
 
-FinSafe 约束的是 **代码如何运行**：命名空间、cgroup、seccomp（Linux）、路径限制，以及 macOS 上基于 **Seatbelt** 的配置，并提供 **可审计** 的执行结果。它 **不是** 大模型产品本身；智能体决定 **做什么**，FinSafe 决定 **在什么隔离姿态下执行**。
+FinSafe 约束的是 **代码如何运行**：命名空间、cgroup、seccomp（Linux）、路径限制、macOS 上基于 **Seatbelt** 的配置，以及 Windows 上基于 **AppContainer** 的配置，并提供 **可审计** 的执行结果。它 **不是** 大模型产品本身；智能体决定 **做什么**，FinSafe 决定 **在什么隔离姿态下执行**。
 
 - **CLI (`finsafe`)：** 本地「包装器」入口 —— 短命任务用 **`run`**，常驻交互式 Broker 用 **`self-confine`**。
 - **服务端多租户**调度与准入由**单独的执行平台**承担（不在本仓库说明范围内）。多数本地场景只需 CLI + 包装策略 YAML。
@@ -25,6 +25,7 @@ Linux 发行包除 `finsafe` 外还包含 `finsafe-helper`、`finsafe-supervisor
 |------|---------------------|
 | **Linux**（已安装 bubblewrap / cgroup 等工具链） | 严格栈：Bubblewrap 等隔离 + 按策略解析的 cgroup / Landlock / seccomp。缺少 bwrap 时，严格姿态可能 **拒绝启动**。 |
 | **macOS**（arm64 或 x86_64） | **`mac-seatbelt`**：通过 `/usr/bin/sandbox-exec` 运行子进程；本地工具封装 **不使用** Bubblewrap 命名空间栈。`probe` / `doctor` 可查看能力说明。 |
+| **Windows**（10/11 桌面） | **AppContainer / LowBox**：AppContainer + Job 限制。安装后运行一次 **`finsafe setup-windows`**（安装器会自动执行），使 helper 支持的 DACL/WFP 设置可用。 |
 
 快速自检：
 
@@ -44,12 +45,12 @@ finsafe doctor
 常用字段简要说明：
 
 - **`program_mode`：** 必须与子命令一致（**`short-lived`** 配 **`run`**，**`interactive`** 配 **`self-confine`**）。
-- **`network`：** Stage 1 为 **`none`** 或 **`host`**。
+- **`network`：** **`none`**、**`host`**，或带代理配置的 **`allowlist`**。
 - **`filesystem.read_only_paths` / `read_write_paths`：** 声明路径，与工作目录、`./workspace` 等布局一致。
 - **`macos_seatbelt.deny_outbound_ports`**（可选，macOS）：在 **`network: host`** 时按端口拒绝出站 TCP。
-- **`resources`：** 内存、pids、cgroup CPU 配额；短命 **`run`** 可用 **`timeout_ms`** 限制墙上时钟。
+- **`resources`：** 内存、pids、CPU 字符串（按平台能力执行）；短命 **`run`** 可用 **`timeout_ms`** 限制墙上时钟。
 
-**可选的 `filesystem` 编译项：** 包装器可能合并默认可写根下的受保护子目录（`.git` / `.finsafe`），在 Linux/macOS 上应用 **内置 deny-read**（例如工作区下的 `.env`、`$HOME` 下的 `.ssh`，除非 `skip_default_deny_read: true`），并支持显式 **`deny_read_paths`** 与 **`deny_write_globs`**（旧键名 `deny_read_globs` 仍可用）。**`deny_read_paths` 与 `read_only_paths` 不同** — deny-read 在可写范围内禁止读；只读路径是授权。YAML 可不写这些键，但 Linux/macOS 舰队升级仍会带上发行版内置默认项，除非显式关闭。详见 [POLICY-QUICKREF-zh.md](POLICY-QUICKREF-zh.md)。
+**可选的 `filesystem` 编译项：** 包装器可能合并默认可写根下的受保护子目录（`.git` / `.finsafe`），在 Linux/macOS/Windows 上应用 **内置 deny-read**（例如工作区下的 `.env`、`$HOME` 下的 `.ssh`，除非 `skip_default_deny_read: true`），并支持显式 **`deny_read_paths`** 与 **`deny_write_globs`**（旧键名 `deny_read_globs` 仍可用）。**`deny_read_paths` 与 `read_only_paths` 不同** — deny-read 在可写范围内禁止读；只读路径是授权。YAML 可不写这些键，但受支持桌面平台的舰队升级仍会带上发行版内置默认项，除非显式关闭。详见 [POLICY-QUICKREF-zh.md](POLICY-QUICKREF-zh.md)。
 
 ---
 
@@ -225,6 +226,8 @@ finsafe --policy ~/.config/finsafe/policies/examples/hermes-version-smoke.yaml r
 
 沙箱运行失败（路径拒绝、网络阻断、超时）时，用 **`finsafe learn`**、**`finsafe --audit`** 或 **`finsafe explain`**，而不是盲目改 YAML。
 
+**运行 Hermes、OpenCode 或 agy？** 见 [agent-sandbox-guide-zh.md](agent-sandbox-guide-zh.md) § **用 learn 与 explain 迭代策略**（含 `--base` 示例策略与 macOS learn 零拒绝说明）。
+
 ### 选哪个工具？
 
 | 场景 | 工具 |
@@ -327,7 +330,7 @@ macOS **不可**与 Linux「完全等价隔离」：
 | **`program_mode` 不匹配** | **`short-lived`** 须配 **`run`**，**`interactive`** 须配 **`self-confine`**。 |
 | **`network: none` 下无法访问 API** | 若需出站 HTTPS，在威胁模型允许时使用 **`network: host`**。 |
 | macOS 上路径访问被拒 | 放宽 **`read_only_paths` / `read_write_paths`**，确认 **`./workspace`** 等存在，结合 **`run --json`** 佐证字段排查。 |
-| **沙箱失败从何入手** | 见 **创建与迭代策略** — **`finsafe learn -- <cmd>`** 或 **`finsafe --audit --policy … run -- <cmd>`**；保存 **`--json`** 后用 **`finsafe explain`**。 |
+| **沙箱失败从何入手** | **Agent（Hermes/OpenCode/agy）：** [agent-sandbox-guide-zh.md](agent-sandbox-guide-zh.md) § **用 learn 与 explain 迭代策略**。**其他：** [USER-GUIDE-zh § 创建与迭代策略](USER-GUIDE-zh.md) — **`learn`**、**`explain`**、**`--audit`**。 |
 | Linux **`run` 内 `/dev/tty` 失败** | 策略设 **`stdio: pty`** 或使用 **`finsafe run --stdio pty`**；勿指望 **`inherit`** 在 bubblewrap 内提供 controlling terminal。 |
 
 ---

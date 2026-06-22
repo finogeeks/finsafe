@@ -4,7 +4,7 @@ This guide is for **operators and developers** who run programs and agent broker
 
 ## What FinSafe does
 
-FinSafe constrains **how** code runs on a host: namespaces, cgroup limits, syscall filtering (Linux), path restrictions, and Seatbelt-backed profiles (macOS), with **auditable** outcomes. It is **not** an AI product; agent runtimes decide *what* to do—the boundary defines *inside which isolation posture* work runs.
+FinSafe constrains **how** code runs on a host: namespaces, cgroup limits, syscall filtering (Linux), path restrictions, Seatbelt-backed profiles (macOS), and AppContainer-backed profiles (Windows), with **auditable** outcomes. It is **not** an AI product; agent runtimes decide *what* to do—the boundary defines *inside which isolation posture* work runs.
 
 - **CLI (`finsafe`):** Local wrapper front door — `run` for short-lived commands, `self-confine` for long-lived interactive brokers.
 - **Server mode:** Multi-tenant submission and scheduling use a separate execution platform (not covered in this repository). Most local users only need the CLI and a wrapper policy file.
@@ -58,12 +58,12 @@ Operators pass a **wrapper policy** (`kind: local-wrapper`) with **`--policy`**.
 Summary of important fields:
 
 - **`program_mode`:** Must match the subcommand (`short-lived` → `run`, `interactive` → `self-confine`).
-- **`network`:** `none` or `host` (Stage 1 wrapper).
+- **`network`:** `none`, `host`, or `allowlist` with proxy configuration.
 - **`filesystem.read_only_paths` / `read_write_paths`:** Paths relative to your workspace layout.
 - **`macos_seatbelt.deny_outbound_ports`** (optional, macOS): Block specific outbound TCP ports when `network: host`.
-- **`resources`:** Memory, PIDs, CPU cgroup strings; optional `timeout_ms` for wall-clock limits on **`run`**.
+- **`resources`:** Memory, PIDs, CPU strings where the platform can enforce them; optional `timeout_ms` for wall-clock limits on **`run`**.
 
-**Optional compiler `filesystem` fields:** The wrapper may merge default protected subtrees (`.git` / `.finsafe` under writable roots), apply a **built-in deny-read set** on Linux/macOS (for example `.env` under the workspace and `.ssh` under `$HOME` unless `skip_default_deny_read: true`), add explicit **`deny_read_paths`**, and expand **`deny_write_globs`** (legacy alias `deny_read_globs`) into extra read-only rules. **`deny_read_paths` is not the same as `read_only_paths`** — deny-read blocks reads inside writable scope; read-only paths are grants. Omitting those keys keeps older policies valid on paper, but fleet upgrades on Linux/macOS still pick up shipped defaults unless you opt out. See [POLICY-QUICKREF.md](POLICY-QUICKREF.md) ([Chinese](POLICY-QUICKREF-zh.md)).
+**Optional compiler `filesystem` fields:** The wrapper may merge default protected subtrees (`.git` / `.finsafe` under writable roots), apply a **built-in deny-read set** on Linux/macOS/Windows (for example `.env` under the workspace and `.ssh` under `$HOME` unless `skip_default_deny_read: true`), add explicit **`deny_read_paths`**, and expand **`deny_write_globs`** (legacy alias `deny_read_globs`) into extra read-only rules. **`deny_read_paths` is not the same as `read_only_paths`** — deny-read blocks reads inside writable scope; read-only paths are grants. Omitting those keys keeps older policies valid on paper, but fleet upgrades on supported desktop platforms still pick up shipped defaults unless you opt out. See [POLICY-QUICKREF.md](POLICY-QUICKREF.md) ([Chinese](POLICY-QUICKREF-zh.md)).
 
 ---
 
@@ -241,6 +241,8 @@ Use **`finsafe --policy <path-to.yaml>`** with paths relative to your shell cwd 
 
 When a sandboxed run fails (path denied, network blocked, timeout), use **`finsafe learn`**, **`finsafe --audit`**, or **`finsafe explain`** instead of guessing YAML fields.
 
+**Running Hermes, OpenCode, or agy?** See [agent-sandbox-guide.md](agent-sandbox-guide.md) § **Policy iteration with learn and explain** for agent-shaped commands, `--base` on example policies, and the macOS `learn` zero-denial caveat.
+
 ### Which tool when?
 
 | Situation | Tool |
@@ -349,7 +351,7 @@ Typical meanings (see `finsafe --help` for the authoritative list for your versi
 | **`program_mode` mismatch** | Policy **`short-lived`** must pair with **`run`**; **`interactive`** with **`self-confine`**. |
 | **No network** under `network: none` | Use **`network: host`** if the workload needs outbound HTTPS (subject to your threat model). |
 | **Paths denied on macOS** | Widen **`read_only_paths`** / **`read_write_paths`**, ensure declared directories exist, inspect **`--json`** attestation fields. |
-| **Sandbox run failed — where to start** | See **Creating and iterating policies** — try **`finsafe learn -- <cmd>`** or **`finsafe --audit --policy … run -- <cmd>`**; save **`--json`** output for **`finsafe explain`**. |
+| **Sandbox run failed — where to start** | **Agents (Hermes/OpenCode/agy):** [agent-sandbox-guide.md](agent-sandbox-guide.md) § **Policy iteration with learn and explain**. **Other workloads:** [USER-GUIDE § Creating and iterating policies](USER-GUIDE.md) — **`finsafe learn`**, **`finsafe explain`**, **`--audit`**. |
 | **`/dev/tty` fails inside Linux `run`** | Use **`stdio: pty`** in policy or **`finsafe run --stdio pty`**. Do not expect **`inherit`** to provide a controlling terminal under bubblewrap. |
 
 ---

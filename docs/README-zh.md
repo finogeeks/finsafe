@@ -21,7 +21,8 @@
 
 | 文档 | 说明 |
 |------|------|
-| [USER-GUIDE-zh.md](./USER-GUIDE-zh.md) | 安装、`run` 与 `self-confine`、wrapper 策略 |
+| [agent-sandbox-guide-zh.md](./agent-sandbox-guide-zh.md) · [English](./agent-sandbox-guide.md) | **Agent 沙箱** — Hermes、OpenCode、agy；Agent 专用 **`learn` / `explain`** |
+| [USER-GUIDE-zh.md](./USER-GUIDE-zh.md) | 安装、`run` 与 `self-confine`、通用 learn/explain |
 | [USER-GUIDE.md](./USER-GUIDE.md) | English user guide |
 | [POLICY-QUICKREF-zh.md](./POLICY-QUICKREF-zh.md) | 包装策略字段速查 |
 | [POLICY-QUICKREF.md](./POLICY-QUICKREF.md) | Wrapper policy field reference (English) |
@@ -30,7 +31,9 @@
 
 | 技能 | 说明 |
 |------|------|
-| [finsafe-enterprise-setup/SKILL-zh.md](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-enterprise-setup/SKILL-zh.md) · [English](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-enterprise-setup/SKILL.md) | **`finsafe-enterprise-setup`**：托管舰队端到端（仅发行包 + Finogeeks 许可证） |
+| [finsafe-agent-sandbox-run/SKILL-zh.md](../skills/finsafe-agent-sandbox-run/SKILL-zh.md) | **Agent 沙箱：** 运行 + **`learn` / `explain`** 迭代 |
+| [finsafe-agent-sandbox-verify/SKILL.md](../skills/finsafe-agent-sandbox-verify/SKILL.md) | 证明隔离 |
+| [finsafe-enterprise-setup/SKILL-zh.md](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-enterprise-setup/SKILL-zh.md) · [English](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-enterprise-setup/SKILL.md) | 托管舰队端到端 |
 | [finsafe-bundlectl/SKILL-zh.md](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL-zh.md) · [English](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL.md) | **`finsafe-bundlectl`**：bundle 发布 + MDM 哨兵 |
 | [../skills/README-zh.md](../skills/README-zh.md) | 公开运维技能索引 |
 

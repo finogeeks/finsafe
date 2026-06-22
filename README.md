@@ -2,7 +2,7 @@
 
 **中文：** [README-zh.md](README-zh.md)
 
-FinSafe is a host execution boundary toolkit: namespaces, cgroup limits, syscall filtering (Linux), path restrictions, and Seatbelt-backed profiles (macOS), with auditable outcomes. The **`finsafe`** command-line tool is the operator front door for **local wrapper** workflows (`run`, `self-confine`, `learn`, `explain`, `probe`, `doctor`, and related helpers).
+FinSafe is a host execution boundary toolkit: namespaces, cgroup limits, syscall filtering (Linux), path restrictions, Seatbelt-backed profiles (macOS), and AppContainer-backed profiles (Windows), with auditable outcomes. The **`finsafe`** command-line tool is the operator front door for **local wrapper** workflows (`run`, `self-confine`, `learn`, `explain`, `probe`, `doctor`, and related helpers).
 
 This repository holds **public release binaries** and **end-user documentation** only. It does **not** contain FinSafe engine source code.
 
@@ -27,8 +27,12 @@ IT pilot scripts download a release, verify `SHA256SUMS`, install binaries, and 
 
 **Operator skills for AI agents:**
 
-- [finsafe-enterprise-setup](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-enterprise-setup/SKILL.md) — managed fleet end-to-end (releases + Finogeeks `license.jws`)
-- [finsafe-bundlectl](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL.md) — policy bundle publish + MDM sentinel
+- [finsafe-agent-sandbox-run](skills/finsafe-agent-sandbox-run/SKILL.md) — run Hermes / OpenCode / agy; **`learn` / `explain`** policy iteration
+- [finsafe-agent-sandbox-verify](skills/finsafe-agent-sandbox-verify/SKILL.md) — prove sandbox isolation
+- [finsafe-enterprise-setup](skills/finsafe-enterprise-setup/SKILL.md) — managed fleet (Finogeeks `license.jws`)
+- [finsafe-bundlectl](skills/finsafe-bundlectl/SKILL.md) — policy bundle publish + MDM sentinel
+
+**Agent sandbox guide:** [docs/agent-sandbox-guide.md](docs/agent-sandbox-guide.md) (includes **`learn` / `explain`** for agents)
 
 ## Install a release
 
@@ -236,7 +240,8 @@ When a sandbox run fails, use **`finsafe learn`** to generate reviewable YAML, *
 
 | Document | Description |
 |----------|-------------|
-| [docs/USER-GUIDE.md](docs/USER-GUIDE.md) | English operator guide (`run` vs `self-confine`, **learn / explain**, policy YAML, exit codes). |
+| [docs/agent-sandbox-guide.md](docs/agent-sandbox-guide.md) · [agent-sandbox-guide-zh.md](docs/agent-sandbox-guide-zh.md) | **Agent sandbox** — Hermes, OpenCode, agy; **`learn` / `explain`** for agents. |
+| [docs/USER-GUIDE.md](docs/USER-GUIDE.md) | English operator guide (`run` vs `self-confine`, generic learn / explain). |
 | [docs/USER-GUIDE-zh.md](docs/USER-GUIDE-zh.md) | Chinese user guide. |
 | [docs/POLICY-QUICKREF.md](docs/POLICY-QUICKREF.md) | Wrapper policy (`kind: local-wrapper`) field reference (English). |
 | [docs/POLICY-QUICKREF-zh.md](docs/POLICY-QUICKREF-zh.md) | 包装策略字段速查（中文）. |
