@@ -10,6 +10,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.5] - 2026-06-22
+
+### Fixed
+
+- **Windows AppContainer / Hermes:** Avoid duplicate inheritable DACL work when wrapper policy lists paths that overlap the auto-detected Python venv (`Scripts` / `Lib`). First launch may still label a large `site-packages` tree once; re-launches stay fast. Do not list the venv in `read_only_paths` — see Windows sandbox operator notes.
+
 ## [0.9.4] - 2026-06-22
 
 ### Added
