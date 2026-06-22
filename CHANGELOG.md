@@ -10,6 +10,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.3] - 2026-06-22
+
+<!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
+
+### Fixed
+
+- **fix(windows): AppContainer execute grants for read_only/read_write paths** (public issue [finogeeks/finsafe#9](https://github.com/finogeeks/finsafe/issues/9), PR [Geeksfino/finsafe#64](https://github.com/Geeksfino/finsafe/pull/64))
+
 ## [0.9.2] - 2026-06-20
 
 ### Added
