@@ -10,6 +10,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.6] - 2026-06-23
+
+### Fixed
+
+- **fix(windows): allow cmd.exe to spawn child processes under AppContainer** (public issue [finogeeks/finsafe#10](https://github.com/finogeeks/finsafe/issues/10), PR [Geeksfino/finsafe#68](https://github.com/Geeksfino/finsafe/pull/68))
+- **Windows AppContainer nested `cmd` children:** AppContainer pipe-capture console hosts (`cmd`, PowerShell) use `CREATE_NEW_CONSOLE` with inherited pipe std handles so nested external children (`cmd /c whoami`) capture stdout after the desktop-isolation skip (#68). Non-console images keep `DETACHED_PROCESS`.
+
+<!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
+
 ## [0.9.5] - 2026-06-22
 
 ### Fixed
