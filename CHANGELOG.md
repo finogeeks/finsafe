@@ -10,14 +10,22 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.7] - 2026-06-23
+
+### Fixed
+
+- **Windows nested `cmd` stdout capture:** Non-interactive AppContainer console hosts (`cmd`, PowerShell) use **PipeCapture** with `CREATE_NEW_CONSOLE` so nested external children (`cmd /c whoami`) capture stdout without `STATUS_DLL_INIT_FAILED` (`0xC0000142`). Restores the stable path after a Buffered ConPTY default regression (PR [Geeksfino/finsafe#72](https://github.com/Geeksfino/finsafe/pull/72)).
+
+### Added
+
+- **Windows launch attestation:** `windows_stdio_strategy` and `windows_creation_flags` on `finsafe run --json` and self-confine reports — the resolved stdio strategy and `CreateProcess` flags for operator diagnostics (distinct from the coarse `windows_pty_mode` label).
+
 ## [0.9.6] - 2026-06-23
 
 ### Fixed
 
 - **fix(windows): allow cmd.exe to spawn child processes under AppContainer** (public issue [finogeeks/finsafe#10](https://github.com/finogeeks/finsafe/issues/10), PR [Geeksfino/finsafe#68](https://github.com/Geeksfino/finsafe/pull/68))
 - **Windows AppContainer nested `cmd` children:** AppContainer pipe-capture console hosts (`cmd`, PowerShell) use `CREATE_NEW_CONSOLE` with inherited pipe std handles so nested external children (`cmd /c whoami`) capture stdout after the desktop-isolation skip (#68). Non-console images keep `DETACHED_PROCESS`.
-
-<!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
 ## [0.9.5] - 2026-06-22
 
