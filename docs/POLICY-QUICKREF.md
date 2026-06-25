@@ -98,13 +98,16 @@ Windows AppContainer needs an **inheritable** DACL (Package SID ACE) and a **Low
 | Phase | What happens | Operator impact |
 |-------|----------------|-----------------|
 | **First launch** on a large tree (default guard: ≥ **10 000** immediate children under a policy root) | FinSAFE **refuses** by default (`refusing to apply inheritable AppContainer ACLs`) to avoid multi-minute ACL storms (worse under endpoint DLP/EDR that intercepts every `SetNamedSecurityInfoW`). | **Narrow paths** — do not put an entire agent checkout, project root, or tree containing `node_modules` in `read_only_paths` / `read_write_paths`. List only directories the workload truly needs. |
-| **First launch** when you accept the one-time cost | Set `FINSAFE_WINSAFE_INHERIT_ROOT_FAIL=0` for a **single** labeling run (expect warnings). After labels exist, unset it so later misconfigurations still fail closed. | Use a maintenance window; prefer narrowing paths over labeling a 10k+ tree. |
-| **Repeat launch** on the **same** already-labeled roots | FinSAFE skips the large-tree guard when the root already has inheritable Package ACE + Low-IL posture, and skips redundant `SetNamedSecurityInfoW` when grants are satisfied. Typical relaunch stays **under one second** even when the tree is large. | Steady-state Hermes / `finsafe run` loops should be fast once roots are labeled; slowness on every launch usually means paths are not yet labeled or policy roots keep changing. |
+| **First launch** when you accept the one-time cost | Set `FINSAFE_WINSAFE_INHERIT_ROOT_FAIL=0` for a **single** labeling run (expect progress lines every 5 000 objects). **Let it finish** — interrupting mid-label leaves descendants without execute bits. | Use a maintenance window; prefer pointing the command at a venv/`node_modules` launcher so FinSAFE auto-grants the runtime tree instead of listing the whole checkout in policy. |
+| **Repeat launch** on the **same** fully labeled roots | FinSAFE records a completion sentinel under `%LOCALAPPDATA%\FinSAFE\label-complete\` and skips redundant tree relabels. Typical relaunch stays **under one second** even when the tree is large. | Steady-state agent loops should be fast once labeling completes; slowness on every launch means labeling never finished or policy roots keep changing. |
+| **Upgrading from an interrupted 0.9.7 (or earlier) label** | Root-only DACL probes could skip a partial tree, leaving `.exe` files without execute permission. | Reset ACLs on the affected tree (`icacls <root> /reset /T /C`) or delete matching files under `%LOCALAPPDATA%\FinSAFE\label-complete\`, then run once with `FINSAFE_WINSAFE_INHERIT_ROOT_FAIL=0` until labeling completes. |
+
+**Node.js agents:** when the resolved command lives under `node_modules` (for example `node_modules\.bin\…`), FinSAFE auto-grants read+execute on that `node_modules` tree (same size-guard exemption as Python venvs). Do **not** list the whole checkout in `read_write_paths` when the launcher path is enough.
 
 | Variable | Default | Effect |
 |----------|---------|--------|
 | `FINSAFE_WINSAFE_INHERIT_ROOT_WARN_LIMIT` | `10000` | Immediate-child count at/above this triggers the large-tree guard (walk is capped at this limit). |
-| `FINSAFE_WINSAFE_INHERIT_ROOT_FAIL` | `1` (fail closed) | `0` = warn and apply inheritable ACLs anyway (one-time labeling). |
+| `FINSAFE_WINSAFE_INHERIT_ROOT_FAIL` | `1` (fail closed) | `0` = warn and apply inheritable ACLs anyway (one-time labeling). Does **not** skip labeling — only downgrades the size guard from abort to warning. |
 
 **Not a production workaround:** `windows.backend: restricted_token` is experimental and not GA; it does not replace AppContainer ACL labeling for large read-only trees.
 

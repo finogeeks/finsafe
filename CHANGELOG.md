@@ -10,6 +10,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.8] - 2026-06-24
+
+### Fixed
+
+- **Windows AppContainer large dependency trees (`node_modules`, `venv`, agent checkouts):** Inheritable DACL relabels now use `TreeSetNamedSecurityInfoW` with coarse progress reporting, and only skip repeat work when a **completion sentinel** proves the whole tree was labeled. Fixes interrupted first launches that left the root tagged but descendants without `FILE_EXECUTE` (no execute permission on nested `.exe` files). `FINSAFE_WINSAFE_INHERIT_ROOT_FAIL=0` still only downgrades the size guard — it does not bypass labeling.
+- **Windows Node.js agent runtimes:** Auto-detect `node_modules` behind the resolved command target and grant read+execute on that tree (same exemption from the large-tree fail-closed guard as Python venvs).
+- **Windows tree DACL FFI:** Correct `TreeSetNamedSecurityInfoW` parameter order and progress-callback signature for Windows 10/11.
+
 ## [0.9.7] - 2026-06-23
 
 ### Fixed
