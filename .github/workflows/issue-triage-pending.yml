@@ -43,19 +43,26 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          for spec in \
-            "triage:pending:Awaiting automated or maintainer triage:FBCA04" \
-            "triage:needs-info:Missing version, OS, or reproduction detail:D4C5F9" \
-            "triage:upstream-runtime:Eligible for upstream runtime fix:0E8A16" \
-            "bot:priority-blocked:Trusted priority dispatch blocked; needs maintainer:E99695"
-          do
-            IFS=: read -r name desc color <<<"$spec"
-            gh label create "$name" \
-              --repo "${{ github.repository }}" \
-              --description "$desc" \
-              --color "$color" \
-              --force
-          done
+          gh label create "triage:pending" \
+            --repo "${{ github.repository }}" \
+            --description "Awaiting automated or maintainer triage" \
+            --color "FBCA04" \
+            --force
+          gh label create "triage:needs-info" \
+            --repo "${{ github.repository }}" \
+            --description "Missing version, OS, or reproduction detail" \
+            --color "D4C5F9" \
+            --force
+          gh label create "triage:upstream-runtime" \
+            --repo "${{ github.repository }}" \
+            --description "Eligible for upstream runtime fix" \
+            --color "0E8A16" \
+            --force
+          gh label create "bot:priority-blocked" \
+            --repo "${{ github.repository }}" \
+            --description "Trusted priority dispatch blocked; needs maintainer" \
+            --color "E99695" \
+            --force
 
       - name: Add triage:pending on open or bug label
         if: >-
