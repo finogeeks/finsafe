@@ -10,6 +10,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.9] - 2026-06-25
+
+<!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
+
+### Fixed
+
+- **Allow inotify, io_uring, and legacy file syscalls in Linux seccomp profile** (public issue [finogeeks/finsafe#12](https://github.com/finogeeks/finsafe/issues/12), PR [Geeksfino/finsafe#74](https://github.com/Geeksfino/finsafe/pull/74))
+
 ## [0.9.8] - 2026-06-24
 
 ### Fixed
