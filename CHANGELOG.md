@@ -10,9 +10,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
-## [0.9.9] - 2026-06-25
+## [0.9.10] - 2026-06-26
 
-<!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
+### Security
+
+- **macOS restricted egress + `allow_local_binding`:** Seatbelt outbound rule now uses `(remote ip "localhost:*")` instead of `(local ip "*:*")`, which previously matched unbound `connect()` sources and bypassed the egress allowlist when clients ignored proxy env vars (aligned with upstream [sandbox-runtime#316](https://github.com/anthropic-experimental/sandbox-runtime/pull/316)). Injects `JAVA_TOOL_OPTIONS=-Djava.net.preferIPv4Stack=true` for Java/Gradle loopback clients under the same posture.
+
+## [0.9.9] - 2026-06-25
 
 ### Fixed
 
