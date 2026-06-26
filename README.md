@@ -2,9 +2,33 @@
 
 **中文：** [README-zh.md](README-zh.md)
 
-FinSafe is a host execution boundary toolkit: namespaces, cgroup limits, syscall filtering (Linux), path restrictions, Seatbelt-backed profiles (macOS), and AppContainer-backed profiles (Windows), with auditable outcomes. The **`finsafe`** command-line tool is the operator front door for **local wrapper** workflows (`run`, `self-confine`, `learn`, `explain`, `probe`, `doctor`, and related helpers).
+FinSafe is a **cross-platform** host execution boundary toolkit for running third-party agents safely on **Linux, macOS, and Windows**. It applies namespaces, cgroup limits, and syscall filtering (Linux), Seatbelt profiles (macOS), and AppContainer / WFP / DACL confinement (Windows), with auditable outcomes. The **`finsafe`** command-line tool is the operator front door for **local wrapper** workflows (`run`, `self-confine`, `learn`, `explain`, `probe`, `doctor`, and related helpers).
 
 This repository holds **public release binaries** and **end-user documentation** only. It does **not** contain FinSafe engine source code.
+
+## Supported platforms
+
+FinSAFE ships **first-class desktop sandboxes** on all three operator platforms. The same wrapper policy YAML (`kind: local-wrapper`) compiles to the best native confinement available on each host:
+
+| Platform | Confinement stack | Personal CLI | Managed fleet |
+|----------|-------------------|:------------:|:-------------:|
+| **Linux** x86_64 | bubblewrap, cgroup v2, seccomp, Landlock (when available) | ✓ | ✓ |
+| **macOS** (Intel + Apple Silicon) | Seatbelt (`sandbox-exec`), loopback egress proxy | ✓ | ✓ |
+| **Windows** x86_64 | AppContainer / LowBox, Job Object, DACL deny-read, WFP egress, ConPTY / PipeCapture stdio | ✓ | ✓ |
+
+Run **`finsafe probe`** and **`finsafe doctor`** on any platform before authoring policy. **Policy Authority** (`finsafe-admin-server-v*`) is published for **Linux and macOS** server hosts; enrolled **Windows desktops** use the fleet archive (`finsafe-fleet-v*-x86_64-pc-windows-msvc.tar.zst`).
+
+## Capabilities (personal wrapper)
+
+Across Linux, macOS, and Windows, the public `finsafe` CLI supports:
+
+- **Declarative wrapper policies** — `finsafe --policy wrapper.yaml run …` (short-lived) and `self-confine …` (interactive brokers)
+- **Network modes** — deny-all, host, and domain allowlist with a loopback forward proxy (optional TLS MITM / L7 inspection where licensed)
+- **Policy iteration** — `learn`, `explain`, and `--audit` when a deny blocks legitimate agent work
+- **Auditable outcomes** — JSON envelopes with attestation digests ([isolation audit mode](docs/isolation-audit-mode.md))
+- **Agent templates** — Hermes, OpenCode, Codex, agy under [examples/wrapper-policies/agent-sandbox/](examples/wrapper-policies/agent-sandbox/)
+
+See the [agent sandbox guide](docs/agent-sandbox-guide.md) for agent-specific workflows on every desktop OS.
 
 ## Personal vs managed (licensing)
 
@@ -13,7 +37,7 @@ This repository holds **public release binaries** and **end-user documentation**
 | **Personal / local wrapper** | Developers and power users running `finsafe --policy …` on their own machine | **Free** — public `finsafe` CLI releases include no commercial license file |
 | **Managed fleet** | IT teams running `finsafe-authority-http`, `finsafe-agent`, and MDM-delivered policy | **Commercial** — Finogeeks issues a signed `license.jws` installed on the Policy Authority |
 
-Public [GitHub Releases](https://github.com/finogeeks/finsafe/releases) ship **four archive families** on the same tag: personal CLI (`finsafe-v*`), managed fleet (`finsafe-fleet-v*`), policy authority server (`finsafe-admin-server-v*`, Linux + macOS), and operator CLI (`finsafe-bundlectl-v*`, Linux + macOS). Commercial `license.jws` is issued by Finogeeks (not on GitHub). **Release notes:** [CHANGELOG.md](CHANGELOG.md) (curated for public users; each release page mirrors the matching version section). See [binary-reference.md](docs/binary-reference.md) and [authority-deployment.md](docs/authority-deployment.md).
+Public [GitHub Releases](https://github.com/finogeeks/finsafe/releases) ship **four archive families** on the same tag: personal CLI (`finsafe-v*`), managed fleet (`finsafe-fleet-v*`), policy authority server (`finsafe-admin-server-v*`, Linux + macOS), and operator CLI (`finsafe-bundlectl-v*`, Linux + macOS). **Desktop targets:** Linux x86_64, macOS Intel, macOS Apple Silicon, and **Windows x86_64** (personal and fleet). Commercial `license.jws` is issued by Finogeeks (not on GitHub). **Release notes:** [CHANGELOG.md](CHANGELOG.md) (curated for public users; each release page mirrors the matching version section). See [binary-reference.md](docs/binary-reference.md) and [authority-deployment.md](docs/authority-deployment.md).
 
 ### Install scripts (all platforms)
 
@@ -47,8 +71,8 @@ curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh |
 Pin a version or install directory:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh | env FINSAFE_VERSION=0.2.0 FINSAFE_INSTALL_DIR="$HOME/.local/bin" sh
-curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh | sh -s -- --version 0.2.0
+curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh | env FINSAFE_VERSION=0.9.10 FINSAFE_INSTALL_DIR="$HOME/.local/bin" sh
+curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh | sh -s -- --version 0.9.10
 ```
 
 See **`install.sh --help`** (after downloading the script) for all environment variables.
@@ -61,11 +85,11 @@ irm https://raw.githubusercontent.com/finogeeks/finsafe/main/install.ps1 | iex
 
 The installer copies `finsafe.exe` and `finsafe-winhelper.exe`, then runs **`finsafe setup-windows`** once (Windows may show a single permission prompt). After that, use `finsafe run` normally — no admin shell required.
 
-Pin a version: `$env:FINSAFE_VERSION = '0.6.0'; irm .../install.ps1 | iex`
+Pin a version: `$env:FINSAFE_VERSION = '0.9.10'; irm https://raw.githubusercontent.com/finogeeks/finsafe/main/install.ps1 | iex`
 
 ### Manual download
 
-1. Open [**Releases**](https://github.com/finogeeks/finsafe/releases) and pick a version tag (for example `v0.2.0`).
+1. Open [**Releases**](https://github.com/finogeeks/finsafe/releases) and pick a version tag (for example `v0.9.10`).
 2. Download the archive for your platform:
    - Linux x86_64: `finsafe-v<version>-x86_64-unknown-linux-gnu.tar.zst`
    - macOS Apple Silicon: `finsafe-v<version>-aarch64-apple-darwin.tar.zst`
@@ -75,7 +99,7 @@ Pin a version: `$env:FINSAFE_VERSION = '0.6.0'; irm .../install.ps1 | iex`
 4. Verify and extract:
 
 ```bash
-VERSION=0.2.0   # replace with the release you downloaded
+VERSION=0.9.10   # replace with the release you downloaded
 shasum -a 256 -c SHA256SUMS
 tar -xvf "finsafe-v${VERSION}-<target>.tar.zst"
 # Binary path: finsafe-v<version>-<target>/finsafe
@@ -86,7 +110,7 @@ tar -xvf "finsafe-v${VERSION}-<target>.tar.zst"
 **Windows (manual extract):** use `tar --zstd` (built in on Windows 11 / recent Windows 10):
 
 ```powershell
-$VERSION = "0.2.0"   # replace with the release you downloaded
+$VERSION = "0.9.10"   # replace with the release you downloaded
 tar --zstd -xf "finsafe-v$VERSION-x86_64-pc-windows-msvc.tar.zst"
 # Binary: finsafe-v<version>-x86_64-pc-windows-msvc\finsafe.exe
 # Companion: finsafe-winhelper.exe (same folder; required for network-locked policies)
@@ -135,6 +159,23 @@ sudo FINSAFE_AUTHORITY_URL='https://gov.example.com/policy-authority' \
 | **`finsafe-v<version>-<target>.tar.zst`** | Personal-mode `finsafe` only (`install.sh`) |
 
 Install authority binaries on the policy server; run `finsafe-bundlectl` from a secure operator workstation. Install **`license.jws`** (from Finogeeks, not on GitHub) before enroll or admin APIs. Setup: [docs/authority-deployment.md](docs/authority-deployment.md) · fleet rollout: [docs/enterprise-deployment-runbook.md](docs/enterprise-deployment-runbook.md).
+
+## Quick start (Windows)
+
+After [`install.ps1`](install.ps1) (copies `finsafe.exe` + `finsafe-winhelper.exe` and runs **`finsafe setup-windows`** once — a single permission prompt is normal):
+
+```powershell
+irm https://raw.githubusercontent.com/finogeeks/finsafe/main/install.ps1 | iex
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/windows-version-smoke.yaml -OutFile windows-version-smoke.yaml
+New-Item -ItemType Directory -Force -Path workspace | Out-Null
+finsafe --policy .\windows-version-smoke.yaml run -- cmd /c ver
+```
+
+- **`run`** with `program_mode: short-lived` is the default for batch / one-shot agent tools on Windows.
+- **`self-confine`** supports interactive console brokers (Hermes, PowerShell) via ConPTY when run from a real terminal.
+- Nested `cmd` / PowerShell in non-interactive scripts uses **PipeCapture** stdio (see [CHANGELOG.md](CHANGELOG.md) 0.9.7+).
+
+More Windows examples: [examples/wrapper-policies/windows-sandbox-smoke.yaml](examples/wrapper-policies/windows-sandbox-smoke.yaml), [hermes-windows-oneshot.yaml](examples/wrapper-policies/hermes-windows-oneshot.yaml).
 
 ## Quick start (Hermes)
 

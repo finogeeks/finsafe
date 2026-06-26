@@ -2,9 +2,33 @@
 
 English: [README.md](README.md)
 
-FinSafe 是一套**主机执行边界**工具集：Linux 命名空间、cgroup 限制、系统调用过滤、路径约束，以及基于 Seatbelt（macOS）的配置文件约束，并提供可审计的运行结果。**`finsafe`** 命令行是 **local wrapper** 流程的运维入口（`run`、`self-confine`、`probe`、`doctor` 及相关子命令）。
+FinSafe 是一套**跨平台**主机执行边界工具集，用于在 **Linux、macOS 与 Windows** 上安全运行第三方智能体。Linux 侧提供命名空间、cgroup 限制、seccomp 与 Landlock；macOS 使用 Seatbelt（`sandbox-exec`）与回环出口代理；Windows 使用 AppContainer / LowBox、Job Object、DACL 拒绝读、WFP 网络围栏与 ConPTY / PipeCapture 标准 I/O，并提供可审计的运行结果。**`finsafe`** 命令行是 **local wrapper** 流程的运维入口（`run`、`self-confine`、`learn`、`explain`、`probe`、`doctor` 及相关子命令）。
 
 本仓库仅提供**公开发行的二进制文件**与**终端用户文档**，**不包含** FinSafe 引擎源码。
+
+## 支持的平台
+
+FinSAFE 在三大桌面操作系统上提供**一等公民**沙箱能力。同一份 wrapper 策略 YAML（`kind: local-wrapper`）会编译为各主机上可用的原生隔离机制：
+
+| 平台 | 隔离技术栈 | 个人 CLI | 托管舰队 |
+|------|------------|:--------:|:--------:|
+| **Linux** x86_64 | bubblewrap、cgroup v2、seccomp、Landlock（若内核支持） | ✓ | ✓ |
+| **macOS**（Intel + Apple 芯片） | Seatbelt（`sandbox-exec`）、回环出口代理 | ✓ | ✓ |
+| **Windows** x86_64 | AppContainer / LowBox、Job Object、DACL 拒绝读、WFP 出口、ConPTY / PipeCapture | ✓ | ✓ |
+
+编写策略前请在各平台运行 **`finsafe probe`** 与 **`finsafe doctor`**。**Policy Authority**（`finsafe-admin-server-v*`）仅发布 **Linux 与 macOS** 服务端构建；已纳管的 **Windows 桌面** 使用舰队包（`finsafe-fleet-v*-x86_64-pc-windows-msvc.tar.zst`）。
+
+## 能力概览（个人 wrapper）
+
+在 Linux、macOS 与 Windows 上，公开发行的 `finsafe` CLI 支持：
+
+- **声明式 wrapper 策略** — `finsafe --policy wrapper.yaml run …`（短期）与 `self-confine …`（交互式 broker）
+- **网络模式** — 全拒绝、host、域名白名单 + 回环正向代理（授权场景下可选 TLS MITM / L7 检查）
+- **策略迭代** — 合法工作被拦截时使用 `learn`、`explain` 与 `--audit`
+- **可审计结果** — 带 attestation 摘要的 JSON 信封（[隔离审计模式](docs/isolation-audit-mode.md)）
+- **Agent 模板** — Hermes、OpenCode、Codex、agy 等，见 [examples/wrapper-policies/agent-sandbox/](examples/wrapper-policies/agent-sandbox/)
+
+各桌面系统的 Agent 工作流见 [agent-sandbox-guide-zh.md](docs/agent-sandbox-guide-zh.md)。
 
 ## 个人模式 vs 托管模式（许可）
 
@@ -13,7 +37,7 @@ FinSafe 是一套**主机执行边界**工具集：Linux 命名空间、cgroup �
 | **个人 / local wrapper** | 在本机使用 `finsafe --policy …` 的开发者 | **免费** — 公开发行的 `finsafe` CLI 无需商业许可证 |
 | **托管舰队** | 部署 `finsafe-authority-http`、`finsafe-agent` 与 MDM 策略的 IT 团队 | **商业许可** — 由 Finogeeks 签发 `license.jws` 并安装在 Policy Authority 上 |
 
-GitHub [Releases](https://github.com/finogeeks/finsafe/releases) 提供个人 CLI（`finsafe-v*`）、托管舰队（`finsafe-fleet-v*`）、authority 服务（`finsafe-admin-server-v*`，Linux + macOS）与运维 CLI（`finsafe-bundlectl-v*`，Linux + macOS）。详见 **[binary-reference-zh.md](docs/binary-reference-zh.md)**。Authority 与 `license.jws`：[authority-deployment-zh.md](docs/authority-deployment-zh.md)。
+GitHub [Releases](https://github.com/finogeeks/finsafe/releases) 在同一版本标签下提供个人 CLI（`finsafe-v*`）、托管舰队（`finsafe-fleet-v*`）、authority 服务（`finsafe-admin-server-v*`，Linux + macOS）与运维 CLI（`finsafe-bundlectl-v*`，Linux + macOS）。**桌面目标：** Linux x86_64、macOS Intel、macOS Apple 芯片与 **Windows x86_64**（个人与舰队）。**发行说明：** [CHANGELOG.md](CHANGELOG.md)。详见 **[binary-reference-zh.md](docs/binary-reference-zh.md)**。Authority 与 `license.jws`：[authority-deployment-zh.md](docs/authority-deployment-zh.md)。
 
 ### 安装脚本（全平台）
 
@@ -27,8 +51,12 @@ IT 试点脚本会下载发行包、校验 `SHA256SUMS`、安装二进制并配�
 
 **供 AI Agent 使用的运维技能：**
 
-- [finsafe-enterprise-setup](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-enterprise-setup/SKILL-zh.md) — 托管舰队端到端（发行包 + Finogeeks `license.jws`）
-- [finsafe-bundlectl](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL-zh.md) — 策略包发布 + MDM 哨兵
+- [finsafe-agent-sandbox-run](skills/finsafe-agent-sandbox-run/SKILL-zh.md) — 运行 Hermes / OpenCode / agy；**`learn` / `explain`** 策略迭代
+- [finsafe-agent-sandbox-verify](skills/finsafe-agent-sandbox-verify/SKILL-zh.md) — 验证沙箱隔离
+- [finsafe-enterprise-setup](skills/finsafe-enterprise-setup/SKILL-zh.md) — 托管舰队（Finogeeks `license.jws`）
+- [finsafe-bundlectl](skills/finsafe-bundlectl/SKILL-zh.md) — 策略包发布 + MDM 哨兵
+
+**Agent 沙箱指南：** [docs/agent-sandbox-guide-zh.md](docs/agent-sandbox-guide-zh.md)（含 **`learn` / `explain`**）
 
 ## 企业 IT 全景（推荐）
 
@@ -60,8 +88,8 @@ curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh |
 固定版本或安装目录：
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh | env FINSAFE_VERSION=0.2.0 FINSAFE_INSTALL_DIR="$HOME/.local/bin" sh
-curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh | sh -s -- --version 0.2.0
+curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh | env FINSAFE_VERSION=0.9.10 FINSAFE_INSTALL_DIR="$HOME/.local/bin" sh
+curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh | sh -s -- --version 0.9.10
 ```
 
 下载脚本后可执行 **`install.sh --help`**，查看全部环境变量说明。
@@ -72,11 +100,11 @@ curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh |
 irm https://raw.githubusercontent.com/finogeeks/finsafe/main/install.ps1 | iex
 ```
 
-固定版本：`$env:FINSAFE_VERSION = '0.6.0'; irm .../install.ps1 | iex`
+固定版本：`$env:FINSAFE_VERSION = '0.9.10'; irm https://raw.githubusercontent.com/finogeeks/finsafe/main/install.ps1 | iex`
 
 ### 手动下载
 
-1. 打开 [**Releases**](https://github.com/finogeeks/finsafe/releases)，选择某个版本标签（例如 `v0.2.0`）。
+1. 打开 [**Releases**](https://github.com/finogeeks/finsafe/releases)，选择某个版本标签（例如 `v0.9.10`）。
 2. 下载对应平台的压缩包：
    - Linux x86_64：`finsafe-v<version>-x86_64-unknown-linux-gnu.tar.zst`
    - macOS Apple 芯片：`finsafe-v<version>-aarch64-apple-darwin.tar.zst`
@@ -86,7 +114,7 @@ irm https://raw.githubusercontent.com/finogeeks/finsafe/main/install.ps1 | iex
 4. 校验并解压：
 
 ```bash
-VERSION=0.2.0   # 改为你下载的版本号
+VERSION=0.9.10   # 改为你下载的版本号
 shasum -a 256 -c SHA256SUMS
 tar -xvf "finsafe-v${VERSION}-<target>.tar.zst"
 # 二进制路径：finsafe-v<version>-<target>/finsafe
@@ -97,7 +125,7 @@ tar -xvf "finsafe-v${VERSION}-<target>.tar.zst"
 **Windows（手动解压）：** 使用 `tar --zstd`（Windows 11 / 较新 Windows 10 自带）：
 
 ```powershell
-$VERSION = "0.2.0"   # 改为你下载的版本号
+$VERSION = "0.9.10"   # 改为你下载的版本号
 tar --zstd -xf "finsafe-v$VERSION-x86_64-pc-windows-msvc.tar.zst"
 # 二进制：finsafe-v<version>-x86_64-pc-windows-msvc\finsafe.exe
 # 伴随程序：finsafe-winhelper.exe（同目录）
@@ -143,6 +171,23 @@ sudo FINSAFE_AUTHORITY_URL='https://gov.example.com/policy-authority' \
 | **`finsafe-v<version>-<target>.tar.zst`** | 个人模式 `finsafe`（`install.sh`） |
 
 `license.jws` 由 Finogeeks 单独提供（不在 GitHub）。安装后再开启注册与管理 API：[authority-deployment-zh.md](docs/authority-deployment-zh.md) · [enterprise-deployment-runbook-zh.md](docs/enterprise-deployment-runbook-zh.md)。
+
+## 快速上手（Windows）
+
+通过 [`install.ps1`](install.ps1) 安装（复制 `finsafe.exe` 与 `finsafe-winhelper.exe`，并**一次性**运行 **`finsafe setup-windows`** — 可能出现一次权限提示，属正常）：
+
+```powershell
+irm https://raw.githubusercontent.com/finogeeks/finsafe/main/install.ps1 | iex
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/windows-version-smoke.yaml -OutFile windows-version-smoke.yaml
+New-Item -ItemType Directory -Force -Path workspace | Out-Null
+finsafe --policy .\windows-version-smoke.yaml run -- cmd /c ver
+```
+
+- **`run`** + `program_mode: short-lived` 适用于 Windows 批处理 / 一次性 agent 工具。
+- **`self-confine`** 在真实终端中支持交互式 broker（Hermes、PowerShell 等），经 ConPTY 附加控制台。
+- 非交互脚本中嵌套 `cmd` / PowerShell 使用 **PipeCapture** 标准 I/O（见 [CHANGELOG.md](CHANGELOG.md) 0.9.7+）。
+
+更多 Windows 示例：[windows-sandbox-smoke.yaml](examples/wrapper-policies/windows-sandbox-smoke.yaml)、[hermes-windows-oneshot.yaml](examples/wrapper-policies/hermes-windows-oneshot.yaml)。
 
 ## 快速上手（Hermes）
 
@@ -237,6 +282,7 @@ finsafe init   # 若 CLI 支持 — 写入 ~/.config/finsafe/policies/examples/
 
 | 文档 | 说明 |
 |------|------|
+| [docs/agent-sandbox-guide-zh.md](docs/agent-sandbox-guide-zh.md) · [agent-sandbox-guide.md](docs/agent-sandbox-guide.md) | **Agent 沙箱** — Hermes、OpenCode、agy；**`learn` / `explain`** |
 | [docs/USER-GUIDE.md](docs/USER-GUIDE.md) | 英文运维指南（`run` 与 `self-confine`、**learn / explain**、策略 YAML、退出码）。 |
 | [docs/USER-GUIDE-zh.md](docs/USER-GUIDE-zh.md) | 中文用户指南。 |
 | [docs/POLICY-QUICKREF-zh.md](docs/POLICY-QUICKREF-zh.md) | 包装策略（`kind: local-wrapper`）字段速查（中文）。 |
