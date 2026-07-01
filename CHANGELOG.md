@@ -10,6 +10,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.11] - 2026-07-01
+
+<!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
+
+### Fixed
+
+- **fix(linux-seccomp): allow x86_64 epoll_wait and vfork in self-confine** (public issue [finogeeks/finsafe#13](https://github.com/finogeeks/finsafe/issues/13), PR [Geeksfino/finsafe#88](https://github.com/Geeksfino/finsafe/pull/88))
+
 ## [0.9.10] - 2026-06-26
 
 ### Security
