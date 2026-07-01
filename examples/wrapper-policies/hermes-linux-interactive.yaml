@@ -1,0 +1,67 @@
+# Wrap a long-lived interactive `hermes` broker in FinSAFE self-confine mode (Linux).
+# Use with:
+#   finsafe --policy examples/wrapper-policies/hermes-linux-interactive.yaml self-confine \
+#       /usr/bin/env HOME="$HOME" PATH="$HOME/.local/bin:/usr/bin:/bin" hermes
+#
+# One-shot query (also works with self-confine):
+#   finsafe --policy examples/wrapper-policies/hermes-linux-interactive.yaml self-confine \
+#       /usr/bin/env HOME="$HOME" PATH="$HOME/.local/bin:/usr/bin:/bin" hermes chat -q "..."
+#
+# Paths under `filesystem` use ${HOME} or ~/; FinSAFE expands these from the
+# finsafe loader process environment when the policy loads (distinct from `--` argv).
+#
+# On Linux: FinSAFE applies cgroup v2 + Landlock + seccomp to itself, then execs Hermes.
+#
+# NOTE: `self-confine` mode applies a seccomp profile that blocks `vfork` (58)
+# and `epoll_wait` (232). If Hermes crashes with "Bad system call", use
+# `finsafe run --stdio pty` as a workaround, or wait for a finsafe release that
+# adds these syscalls to the allowlist.
+schema_version: 1
+kind: local-wrapper
+program_mode: interactive
+degrade:
+  allow_fallback: true
+audit:
+  require_policy_digest: true
+  require_resolved_posture: true
+# self-confine preserves the broker's inherited terminal by execing into it.
+# Use `pty` mode to provide a controlling TTY inside bubblewrap for interactive
+# terminal applications. `inherit` mode does not grant a controlling terminal
+# on Linux bubblewrap.
+stdio:
+  mode: pty
+# host: Hermes needs outbound HTTPS for LLM API calls.
+network: host
+resources:
+  memory_max: "1G"
+  pids_max: "256"
+  cpu_max: "100000 100000"
+filesystem:
+  # skip_default_deny_read: Hermes reads API keys from ${HOME}/.hermes/.env.
+  # FinSAFE's built-in deny_read_paths blocks .env files by default under each
+  # writable root. Set this to true so Hermes can access its credentials.
+  skip_default_deny_read: true
+
+  # Linux Landlock (ABI v1+) requires every needed local path to be declared.
+  # `.` lets Hermes inspect the current working directory; the `${HOME}` entries
+  # keep the examples portable.
+  read_only_paths:
+    - "/usr"
+    - "/lib"
+    - "/lib64"
+    - "/bin"
+    - "/sbin"
+    - "/etc"
+    - "/etc/resolv.conf"
+    # uv-managed Python installations live under HOME.
+    - "${HOME}/.local/bin"
+    - "${HOME}/.local/share/uv/python"
+  read_write_paths:
+    # Hermes stores its config, credentials (.env), sessions, cache, and skills
+    # under ${HOME}/.hermes.
+    - "${HOME}/.hermes"
+    # Working directory for file I/O within the sandbox.
+    - "${HOME}/workspace"
+    # /dev/null is needed for discarding output; /tmp for temporary files.
+    - "/dev/null"
+    - "/tmp"
