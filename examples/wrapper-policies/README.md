@@ -11,7 +11,10 @@ See [docs/POLICY-QUICKREF.md](../../docs/POLICY-QUICKREF.md) or [docs/POLICY-QUI
 | File | Platform | Use |
 |------|----------|-----|
 | `managed-lab-smoke.yaml` | Linux / macOS | Default bundle for [`scripts/managed-lab.sh`](../../scripts/managed-lab.sh) (`/usr/bin/true`, minimal FHS) |
-| `hermes-version-smoke.yaml`, `hermes-oneshot-query.yaml`, `hermes-interactive*.yaml` | Linux / macOS | Hermes broker smoke (`${HOME}`, FHS paths) |
+| `hermes-version-smoke.yaml`, `hermes-oneshot-query.yaml` | Linux / macOS | Hermes one-shot smoke (`${HOME}`, FHS paths) |
+| `hermes-interactive.yaml` | macOS | Hermes interactive broker (Seatbelt, `stdio: inherit`) |
+| `hermes-linux-interactive.yaml` | Linux | Hermes interactive broker (`stdio: pty`, `skip_default_deny_read`, DNS) |
+| `hermes-interactive-deny-http.yaml` | Linux / macOS | Hermes interactive with outbound HTTP denied |
 | `hermes-windows-oneshot.yaml` | Windows | One-shot Hermes (`hermes --version`, `hermes chat -q …`) under AppContainer; venv access is granted automatically |
 | `windows-version-smoke.yaml` | Windows | Minimal `finsafe run cmd /c echo hello` |
 | `windows-sandbox-smoke.yaml` | Windows | Stricter AppContainer smoke with `network: host` |

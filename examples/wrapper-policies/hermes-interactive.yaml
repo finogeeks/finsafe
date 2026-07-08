@@ -1,10 +1,10 @@
-# Wrap a long-lived interactive `hermes` broker in FinSAFE self-confine mode.
+# Wrap a long-lived interactive `hermes` broker in FinSAFE self-confine mode (macOS).
 # Use with:
 #   finsafe --policy examples/wrapper-policies/hermes-interactive.yaml self-confine \\
 #       /usr/bin/env HOME="$HOME" PATH="/opt/homebrew/bin:$HOME/.local/bin:/usr/bin:/bin" hermes
 # Paths under `filesystem` use ${HOME}, ${XDG_CONFIG_HOME}, or ~/; FinSAFE expands these from the finsafe loader process environment when the policy loads (distinct from `--` argv).
 # On macOS: FinSAFE emits a pre-exec audit envelope, then execs Hermes via sandbox-exec (Seatbelt).
-# On Linux strict: FinSAFE applies cgroup v2 + Landlock + seccomp to itself, then execs Hermes.
+# On Linux: use `hermes-linux-interactive.yaml` instead (`stdio: pty`, `skip_default_deny_read`, `/etc/resolv.conf`).
 schema_version: 1
 kind: local-wrapper
 program_mode: interactive

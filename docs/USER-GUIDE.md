@@ -88,7 +88,8 @@ Copy-paste examples from this repository — full first-run walkthroughs: [READM
 |------|-------------|---------|
 | Short-lived wrapper smoke | [examples/wrapper-policies/hermes-version-smoke.yaml](../examples/wrapper-policies/hermes-version-smoke.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-version-smoke.yaml run -- hermes --version` |
 | One-shot broker / query style | [examples/wrapper-policies/hermes-oneshot-query.yaml](../examples/wrapper-policies/hermes-oneshot-query.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-oneshot-query.yaml run -- hermes chat -q "…"` |
-| Interactive broker (TTY) | [examples/wrapper-policies/hermes-interactive.yaml](../examples/wrapper-policies/hermes-interactive.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-interactive.yaml self-confine -- hermes` |
+| Interactive broker (TTY, macOS) | [examples/wrapper-policies/hermes-interactive.yaml](../examples/wrapper-policies/hermes-interactive.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-interactive.yaml self-confine -- hermes` |
+| Interactive broker (TTY, Linux) | [examples/wrapper-policies/hermes-linux-interactive.yaml](../examples/wrapper-policies/hermes-linux-interactive.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-linux-interactive.yaml self-confine -- hermes` |
 | OpenCode one-shot | [examples/wrapper-policies/agent-sandbox/opencode-oneshot.yaml](../examples/wrapper-policies/agent-sandbox/opencode-oneshot.yaml) | See [README § Quick start (OpenCode)](../README.md#quick-start-opencode) |
 | Interactive broker + deny outbound TCP port 80 (Seatbelt) | [examples/wrapper-policies/hermes-interactive-deny-http.yaml](../examples/wrapper-policies/hermes-interactive-deny-http.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-interactive-deny-http.yaml self-confine -- hermes` |
 

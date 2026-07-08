@@ -10,6 +10,24 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+### Added
+
+- **examples: Linux-specific Hermes interactive wrapper policy** (`hermes-linux-interactive.yaml`) — `stdio: pty`, `skip_default_deny_read` for `${HOME}/.hermes/.env`, and `/etc/resolv.conf` for DNS inside bubblewrap. Contributed via public PR [finogeeks/finsafe#14](https://github.com/finogeeks/finsafe/pull/14) by [@xulis](https://github.com/xulis).
+
+## [0.9.12] - 2026-07-08
+
+### Added
+
+- **Windows WFP egress fence verification:** Before AppContainer launch with `network: none`, FinSAFE runs a host-side TCP probe and records `windows_egress_fence_verified` and `windows_egress_fence_probe_target` on `finsafe run --json` / self-confine reports. When the current logon token lacks `finsafe-net`, the helper can refresh via S4U logon so the probe exercises the same principal the child will use.
+
+### Security
+
+- **Windows outbound deny attestation:** A successful connect to the probe target fails launch setup (fail-closed) on desktop hosts; `WSAEACCES` (Winsock 10013) counts as verified fence behavior.
+
+### Fixed
+
+- **Linux bubblewrap:** Reject shell metacharacter injection in curated argument paths (ecosystem-watch hardening).
+
 ## [0.9.11] - 2026-07-01
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->

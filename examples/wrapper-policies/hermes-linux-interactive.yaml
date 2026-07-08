@@ -12,10 +12,11 @@
 #
 # On Linux: FinSAFE applies cgroup v2 + Landlock + seccomp to itself, then execs Hermes.
 #
-# NOTE: `self-confine` mode applies a seccomp profile that blocks `vfork` (58)
-# and `epoll_wait` (232). If Hermes crashes with "Bad system call", use
-# `finsafe run --stdio pty` as a workaround, or wait for a finsafe release that
-# adds these syscalls to the allowlist.
+# For macOS (Seatbelt, Homebrew paths, inherit stdio), use `hermes-interactive.yaml`.
+#
+# NOTE: FinSAFE 0.9.11+ allows `vfork` and `epoll_wait` in self-confine seccomp.
+# On older releases, Hermes may crash with "Bad system call"; use `finsafe run --stdio pty`
+# as a workaround, or upgrade (public issue finogeeks/finsafe#13).
 schema_version: 1
 kind: local-wrapper
 program_mode: interactive

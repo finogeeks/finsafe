@@ -183,6 +183,8 @@ FinSAFE installs **only the `finsafe` binary** — install **Hermes** separately
 
 **macOS:** Seatbelt deny-default often requires an explicit `HOME`/`PATH` prefix. If bare `hermes …` fails, use the `/usr/bin/env …` form shown in each YAML file’s header comments.
 
+**Linux:** Use `hermes-linux-interactive.yaml` for interactive brokers (`stdio: pty`, `.env` credential access). `hermes-interactive.yaml` targets macOS Seatbelt paths.
+
 ### Get example policies
 
 **Option A — `finsafe init`** (when your build includes it):
@@ -198,6 +200,7 @@ export POLICY_EXAMPLES="$HOME/.config/finsafe/policies/examples"
 curl -fsSL -O https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/hermes-version-smoke.yaml
 curl -fsSL -O https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/hermes-oneshot-query.yaml
 curl -fsSL -O https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/hermes-interactive.yaml
+curl -fsSL -O https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/hermes-linux-interactive.yaml
 ```
 
 **Option C — clone this repo** and run from the repository root:
@@ -220,7 +223,10 @@ finsafe --policy "$POLICY_EXAMPLES/hermes-oneshot-query.yaml" run -- \
   hermes chat -q "Say hello in one sentence."
 
 # Interactive broker (long-lived) — use `self-confine` from a real TTY
+# macOS:
 finsafe --policy "$POLICY_EXAMPLES/hermes-interactive.yaml" self-confine -- hermes
+# Linux:
+finsafe --policy "$POLICY_EXAMPLES/hermes-linux-interactive.yaml" self-confine -- hermes
 ```
 
 If you downloaded YAML into the current directory (Option B), replace `"$POLICY_EXAMPLES/…"` with `./hermes-….yaml`.
