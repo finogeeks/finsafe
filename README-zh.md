@@ -2,7 +2,7 @@
 
 English: [README.md](README.md)
 
-FinSafe 是一套**跨平台**主机执行边界工具集，用于在 **Linux、macOS 与 Windows** 上安全运行第三方智能体。Linux 侧提供命名空间、cgroup 限制、seccomp 与 Landlock；macOS 使用 Seatbelt（`sandbox-exec`）与回环出口代理；Windows 使用 AppContainer / LowBox、Job Object、DACL 拒绝读、WFP 网络围栏与 ConPTY / PipeCapture 标准 I/O，并提供可审计的运行结果。**`finsafe`** 命令行是 **local wrapper** 流程的运维入口（`run`、`self-confine`、`learn`、`explain`、`probe`、`doctor` 及相关子命令）。
+FinSafe 是一套**跨平台**主机执行边界工具集，用于在 **Linux、macOS 与 Windows** 上安全运行第三方智能体。Linux 侧提供命名空间、cgroup 限制、seccomp 与 Landlock；macOS 使用 Seatbelt（`sandbox-exec`）与回环出口代理；Windows 默认对 `network: host` 使用 RestrictedToken（宿主机可读、写白名单），对 `network: none` / allowlist / 机密 deny-read 使用 AppContainer / LowBox，并配合 Job Object、WFP 与 ConPTY / PipeCapture，提供可审计的运行结果。**`finsafe`** 命令行是 **local wrapper** 流程的运维入口（`run`、`self-confine`、`learn`、`explain`、`probe`、`doctor` 及相关子命令）。
 
 本仓库仅提供**公开发行的二进制文件**与**终端用户文档**，**不包含** FinSafe 引擎源码。
 
@@ -14,7 +14,7 @@ FinSAFE 在三大桌面操作系统上提供**一等公民**沙箱能力。同�
 |------|------------|:--------:|:--------:|
 | **Linux** x86_64 | bubblewrap、cgroup v2、seccomp、Landlock（若内核支持） | ✓ | ✓ |
 | **macOS**（Intel + Apple 芯片） | Seatbelt（`sandbox-exec`）、回环出口代理 | ✓ | ✓ |
-| **Windows** x86_64 | AppContainer / LowBox、Job Object、DACL 拒绝读、WFP 出口、ConPTY / PipeCapture | ✓ | ✓ |
+| **Windows** x86_64 | RestrictedToken（默认 `network: host`）+ AppContainer / LowBox（none/allowlist / deny-read）、Job Object、WFP、ConPTY / PipeCapture | ✓ | ✓ |
 
 编写策略前请在各平台运行 **`finsafe probe`** 与 **`finsafe doctor`**。**Policy Authority**（`finsafe-admin-server-v*`）仅发布 **Linux 与 macOS** 服务端构建；已纳管的 **Windows 桌面** 使用舰队包（`finsafe-fleet-v*-x86_64-pc-windows-msvc.tar.zst`）。
 
@@ -187,7 +187,7 @@ finsafe --policy .\windows-version-smoke.yaml run -- cmd /c ver
 - **`self-confine`** 在真实终端中支持交互式 broker（Hermes、PowerShell 等），经 ConPTY 附加控制台。
 - 非交互脚本中嵌套 `cmd` / PowerShell 使用 **PipeCapture** 标准 I/O（见 [CHANGELOG.md](CHANGELOG.md) 0.9.7+）。
 
-更多 Windows 示例：[windows-sandbox-smoke.yaml](examples/wrapper-policies/windows-sandbox-smoke.yaml)、[hermes-windows-oneshot.yaml](examples/wrapper-policies/hermes-windows-oneshot.yaml)。
+更多 Windows 示例：[windows-sandbox-smoke.yaml](examples/wrapper-policies/windows-sandbox-smoke.yaml)、[hermes-windows-oneshot.yaml](examples/wrapper-policies/hermes-windows-oneshot.yaml)（RestrictedToken）、[hermes-windows-oneshot-appcontainer.yaml](examples/wrapper-policies/hermes-windows-oneshot-appcontainer.yaml)。
 
 ## 快速上手（Hermes）
 

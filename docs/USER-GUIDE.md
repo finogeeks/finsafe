@@ -4,7 +4,7 @@ This guide is for **operators and developers** who run programs and agent broker
 
 ## What FinSafe does
 
-FinSafe constrains **how** code runs on a host: namespaces, cgroup limits, syscall filtering (Linux), path restrictions, Seatbelt-backed profiles (macOS), and AppContainer-backed profiles (Windows), with **auditable** outcomes. It is **not** an AI product; agent runtimes decide *what* to do—the boundary defines *inside which isolation posture* work runs.
+FinSafe constrains **how** code runs on a host: namespaces, cgroup limits, syscall filtering (Linux), path restrictions, Seatbelt-backed profiles (macOS), and on Windows either **RestrictedToken** (default `network: host`) or **AppContainer** (stronger / locked-down network), with **auditable** outcomes. It is **not** an AI product; agent runtimes decide *what* to do—the boundary defines *inside which isolation posture* work runs.
 
 - **CLI (`finsafe`):** Local wrapper front door — `run` for short-lived commands, `self-confine` for long-lived interactive brokers.
 - **Server mode:** Multi-tenant submission and scheduling use a separate execution platform (not covered in this repository). Most local users only need the CLI and a wrapper policy file.
@@ -26,7 +26,7 @@ directory (the installer does this automatically).
 |------|-------------------------------|
 | **Linux** (bubblewrap / cgroup toolchain available) | Strict stack: Bubblewrap-oriented isolation plus cgroup / Landlock / seccomp as resolved from policy. Missing bubblewrap may cause **fail closed** for strict postures. |
 | **macOS** (arm64 or x86_64) | **`mac-seatbelt`**: children run via `/usr/bin/sandbox-exec`. Bubblewrap-style namespaces are **not** used for the local tool wrapper; `probe` / `doctor` describe capabilities. |
-| **Windows** (10/11 desktop) | **`appcontainer`**: AppContainer + Job limits. Run **`finsafe setup-windows` once** after install (installer does this automatically) so `network: none` policies work. Hermes and other **`network: host`** policies work without that step. |
+| **Windows** (10/11 desktop) | **Default for `network: host`:** RestrictedToken (host-wide read, write allowlist — Codex-aligned weaker posture; no ProjFS). **`network: none` / allowlist / confidential deny-read:** AppContainer / LowBox. Run **`finsafe setup-windows` once** after install (installer does this) for helper / WFP. ProjFS is optional and only needed for AppContainer + large runtime-tree projection (may reboot once). |
 
 **Windows quick start (personal):**
 
@@ -39,6 +39,22 @@ finsafe --policy examples/wrapper-policies/windows-sandbox-smoke.yaml run cmd /c
 FinSAFE auto-creates `./workspace` when missing and uses it as the child cwd when it is the sole `read_write_paths` entry. Pass `--work-dir <path>` only when you need a different child working directory; policy filesystem paths always resolve from your shell cwd.
 
 If install did not finish setup, or `finsafe doctor` warns about the Windows helper, run **`finsafe setup-windows`** once (accept the permission prompt if Windows asks).
+
+### Windows backends (RestrictedToken vs AppContainer)
+
+Desktop Windows has **two** launch backends. Operators choose with `windows.backend` (or leave `Auto`):
+
+| Backend | When selected | What it isolates | What it does **not** do |
+|---------|---------------|------------------|-------------------------|
+| **RestrictedToken** (`windows_restricted_token`) | **Default** for `network: host` + empty YAML `deny_read_paths` (Auto), or explicit `windows.backend: restricted_token` | Deny-by-default **writes** allowlisted on `read_write_paths` (+ cwd); Job Object resource limits | No AppContainer LowBox; **host-wide read** (Codex-aligned); no confidential deny-read; no ProjFS; attestation sets `degraded_execution=true` |
+| **AppContainer** (`windows_appcontainer`) | `network: none` / allowlist, any explicit `deny_read_paths`, explicit `windows.backend: appcontainer`, managed fleet | Package SID, DACL grants/denies, WFP egress fencing, optional ProjFS projection of large `venv` / `node_modules` | Recursive ACL labeling / ProjFS may need `setup-windows` (+ reboot if Client-ProjFS returns `restart_required`) |
+
+**Shipped Hermes examples:**
+
+- [`hermes-windows-oneshot.yaml`](../examples/wrapper-policies/hermes-windows-oneshot.yaml) — RestrictedToken (recommended default)
+- [`hermes-windows-oneshot-appcontainer.yaml`](../examples/wrapper-policies/hermes-windows-oneshot-appcontainer.yaml) — AppContainer (stronger)
+
+`finsafe doctor` treats missing ProjFS as a **warning**, not a hard error: most Hermes / `network: host` policies do not need it.
 
 Quick checks:
 
@@ -104,7 +120,7 @@ When you prefer a **named posture** instead of hand-writing `kind: local-wrapper
 Resolution order: CLI **`--host-profile`** → **`FINSAFE_HOST_PROFILE`** → **`finsafe.yaml`** `isolation.host_profile`. There is no silent default; **`legacy`** is rejected for `self-confine`.
 
 ```bash
-# Windows desktop (AppContainer)
+# Windows desktop (backend follows policy / Auto)
 finsafe --host-profile windows-desktop-isolated self-confine -- powershell
 
 # Optional YAML overrides (scalars from file win; path lists merge)

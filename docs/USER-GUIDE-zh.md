@@ -4,7 +4,7 @@
 
 ## FinSafe 能做什么
 
-FinSafe 约束的是 **代码如何运行**：命名空间、cgroup、seccomp（Linux）、路径限制、macOS 上基于 **Seatbelt** 的配置，以及 Windows 上基于 **AppContainer** 的配置，并提供 **可审计** 的执行结果。它 **不是** 大模型产品本身；智能体决定 **做什么**，FinSafe 决定 **在什么隔离姿态下执行**。
+FinSafe 约束的是 **代码如何运行**：命名空间、cgroup、seccomp（Linux）、路径限制、macOS 上基于 **Seatbelt** 的配置，以及 Windows 上默认的 **RestrictedToken**（`network: host`）或更强的 **AppContainer** 配置，并提供 **可审计** 的执行结果。它 **不是** 大模型产品本身；智能体决定 **做什么**，FinSafe 决定 **在什么隔离姿态下执行**。
 
 - **CLI (`finsafe`)：** 本地「包装器」入口 —— 短命任务用 **`run`**，常驻交互式 Broker 用 **`self-confine`**。
 - **服务端多租户**调度与准入由**单独的执行平台**承担（不在本仓库说明范围内）。多数本地场景只需 CLI + 包装策略 YAML。
@@ -25,7 +25,23 @@ Linux 发行包除 `finsafe` 外还包含 `finsafe-helper`、`finsafe-supervisor
 |------|---------------------|
 | **Linux**（已安装 bubblewrap / cgroup 等工具链） | 严格栈：Bubblewrap 等隔离 + 按策略解析的 cgroup / Landlock / seccomp。缺少 bwrap 时，严格姿态可能 **拒绝启动**。 |
 | **macOS**（arm64 或 x86_64） | **`mac-seatbelt`**：通过 `/usr/bin/sandbox-exec` 运行子进程；本地工具封装 **不使用** Bubblewrap 命名空间栈。`probe` / `doctor` 可查看能力说明。 |
-| **Windows**（10/11 桌面） | **AppContainer / LowBox**：AppContainer + Job 限制。安装后运行一次 **`finsafe setup-windows`**（安装器会自动执行），使 helper 支持的 DACL/WFP 设置可用。 |
+| **Windows**（10/11 桌面） | **默认 `network: host`：** RestrictedToken（宿主机可读、写路径白名单，对齐 Codex 弱化姿态，无需 ProjFS）。**`network: none` / allowlist / 机密 deny-read：** AppContainer / LowBox。安装后运行一次 **`finsafe setup-windows`**（安装器会自动执行）以启用 helper / WFP；ProjFS 仅在 AppContainer + 大体积运行时树投影时需要（可能重启一次）。 |
+
+### Windows 后端（RestrictedToken 与 AppContainer）
+
+桌面 Windows 有 **两种** 启动后端，由 `windows.backend`（或 `Auto`）选择：
+
+| 后端 | 何时选用 | 隔离内容 | 不做的事 |
+|------|----------|----------|----------|
+| **RestrictedToken**（`windows_restricted_token`） | **默认**：`network: host` 且 YAML `deny_read_paths` 为空（Auto），或显式 `windows.backend: restricted_token` | 默认拒绝写，仅 `read_write_paths`（+ cwd）白名单；Job 资源限制 | 无 AppContainer LowBox；**整机可读**（对齐 Codex）；无机密 deny-read；无需 ProjFS；证明字段 `degraded_execution=true` |
+| **AppContainer**（`windows_appcontainer`） | `network: none` / allowlist、显式 `deny_read_paths`、显式 `windows.backend: appcontainer`、托管舰队 | Package SID、DACL 授权/拒绝、WFP 出口围栏；大体积 `venv` / `node_modules` 可用 ProjFS 投影 | 递归 ACL / ProjFS 可能需要 `setup-windows`（Client-ProjFS 返回需重启时重启一次） |
+
+**随发行附带的 Hermes 示例：**
+
+- [`hermes-windows-oneshot.yaml`](../examples/wrapper-policies/hermes-windows-oneshot.yaml) — RestrictedToken（推荐默认）
+- [`hermes-windows-oneshot-appcontainer.yaml`](../examples/wrapper-policies/hermes-windows-oneshot-appcontainer.yaml) — AppContainer（更强）
+
+`finsafe doctor` 将 ProjFS 未就绪视为 **警告** 而非硬错误：多数 Hermes / `network: host` 策略不需要 ProjFS。
 
 快速自检：
 
@@ -90,7 +106,7 @@ finsafe --policy <PATH> self-confine <broker> [参数...]
 解析顺序：**`--host-profile`** → 环境变量 **`FINSAFE_HOST_PROFILE`** → **`finsafe.yaml`** 的 `isolation.host_profile`。无静默默认值；**`legacy`** 不能用于 `self-confine`。
 
 ```bash
-# Windows 桌面（AppContainer）
+# Windows 桌面（后端随策略 / Auto）
 finsafe --host-profile windows-desktop-isolated self-confine -- powershell
 
 # 可选 YAML 覆盖（标量以文件为准；路径列表合并）

@@ -89,27 +89,45 @@ Unless `skip_default_deny_read: true` or `skip_default_protected_paths: true`, t
 
 After a fleet upgrade, Hermes and similar programs may fail to read `.env` or credential dirs under the user profile even when bundle YAML is unchanged. Workloads that relied on implicit access to Docker/containerd sockets without declaring `allow_unix_socket_paths` will see `connect()` failures under `network: host` or proxy modes—add explicit allows only when required. To preserve prior behavior entirely, set `skip_default_deny_read: true` on the relevant sandbox policy (and review protected segments).
 
+### Windows backends: RestrictedToken (default host) vs AppContainer
+
+**Linux/macOS do not have this split.** On Windows desktop, FinSAFE selects a launch backend from `windows.backend` (default `Auto`):
+
+| Backend | Wire / attestation | Selected when | Isolation summary |
+|---------|--------------------|---------------|-------------------|
+| **RestrictedToken** | `windows_restricted_token`, `degraded_execution=true` | **Auto** + `network: host` + empty YAML `deny_read_paths`, or explicit `windows.backend: restricted_token` | `CreateRestrictedToken` + **WRITE_RESTRICTED**: child largely retains the user identity for **reads** (host-wide); **writes** are deny-by-default and allowed only on `read_write_paths` (+ cwd) via capability ACEs. Job Object still applies. No LowBox AppContainer profile, no recursive DACL labeling of `venv`/`node_modules`, **no ProjFS**. Built-in confidential deny-read is **skipped** on this path (Codex-aligned weaker posture). |
+| **AppContainer** | `windows_appcontainer` | Auto + `network: none` / allowlist, any YAML `deny_read_paths`, explicit `windows.backend: appcontainer`, managed fleet | AppContainer / LowBox Package SID, inheritable DACL grants, optional deny-read ACEs, WFP egress fencing. Large runtime trees prefer **ProjFS projection** (enable via `finsafe setup-windows`; reboot only if enable returns `restart_required` / exit **3010**). |
+
+**Examples (both shipped):**
+
+| Policy | Backend |
+|--------|---------|
+| [`hermes-windows-oneshot.yaml`](../examples/wrapper-policies/hermes-windows-oneshot.yaml) | RestrictedToken |
+| [`hermes-windows-oneshot-appcontainer.yaml`](../examples/wrapper-policies/hermes-windows-oneshot-appcontainer.yaml) | AppContainer |
+
+Constraints for RestrictedToken: `network: host`, empty YAML `deny_read_paths` (use AppContainer if you need confidential deny-read or locked-down network).
+
 ### Windows AppContainer: large `read_only_paths` / `read_write_paths` roots
 
-**Linux/macOS do not have this behavior.** Landlock and Seatbelt apply path rules without walking every file under a policy root or calling per-file `SetNamedSecurityInfoW`. The notes below are **Windows-only**.
+**Only applies to AppContainer launches.** RestrictedToken does not walk trees to apply Package SID ACLs.
 
-Windows AppContainer needs an **inheritable** DACL (Package SID ACE) and a **Low mandatory integrity label** on each filesystem root FinSAFE uses: `work_dir`, every `read_only_paths` entry, and every `read_write_paths` entry. Child processes inherit those ACLs; FinSAFE must materialize them on the root (and, on first launch, may touch descendants when applying inheritable grants).
+Windows AppContainer needs an **inheritable** DACL (Package SID ACE) and a **Low mandatory integrity label** on each filesystem root FinSAFE uses: `work_dir`, every `read_only_paths` entry, and every `read_write_paths` entry. Child processes inherit those ACLs; FinSAFE must materialize them on the root (and, on first launch, may touch descendants when applying inheritable grants). For large `venv` / `node_modules`, prefer **ProjFS projection** of the runtime tree instead of listing those trees in policy paths.
 
 | Phase | What happens | Operator impact |
 |-------|----------------|-----------------|
-| **First launch** on a large tree (default guard: ≥ **10 000** immediate children under a policy root) | FinSAFE **refuses** by default (`refusing to apply inheritable AppContainer ACLs`) to avoid multi-minute ACL storms (worse under endpoint DLP/EDR that intercepts every `SetNamedSecurityInfoW`). | **Narrow paths** — do not put an entire agent checkout, project root, or tree containing `node_modules` in `read_only_paths` / `read_write_paths`. List only directories the workload truly needs. |
-| **First launch** when you accept the one-time cost | Set `FINSAFE_WINSAFE_INHERIT_ROOT_FAIL=0` for a **single** labeling run (expect progress lines every 5 000 objects). **Let it finish** — interrupting mid-label leaves descendants without execute bits. | Use a maintenance window; prefer pointing the command at a venv/`node_modules` launcher so FinSAFE auto-grants the runtime tree instead of listing the whole checkout in policy. |
+| **First launch** on a large tree (default guard: ≥ **10 000** immediate children under a policy root) | FinSAFE **refuses** by default (`refusing to apply inheritable AppContainer ACLs`) to avoid multi-minute ACL storms (worse under endpoint DLP/EDR that intercepts every `SetNamedSecurityInfoW`). | **Narrow paths** — do not put an entire agent checkout, project root, or tree containing `node_modules` in `read_only_paths` / `read_write_paths`. List only directories the workload truly needs. Or switch to RestrictedToken for `network: host` agents. |
+| **First launch** when you accept the one-time cost | Set `FINSAFE_WINSAFE_INHERIT_ROOT_FAIL=0` for a **single** labeling run (expect progress lines every 5 000 objects). **Let it finish** — interrupting mid-label leaves descendants without execute bits. | Use a maintenance window; prefer ProjFS or RestrictedToken over listing the whole checkout in policy. |
 | **Repeat launch** on the **same** fully labeled roots | FinSAFE records a completion sentinel under `%LOCALAPPDATA%\FinSAFE\label-complete\` and skips redundant tree relabels. Typical relaunch stays **under one second** even when the tree is large. | Steady-state agent loops should be fast once labeling completes; slowness on every launch means labeling never finished or policy roots keep changing. |
 | **Upgrading from an interrupted 0.9.7 (or earlier) label** | Root-only DACL probes could skip a partial tree, leaving `.exe` files without execute permission. | Reset ACLs on the affected tree (`icacls <root> /reset /T /C`) or delete matching files under `%LOCALAPPDATA%\FinSAFE\label-complete\`, then run once with `FINSAFE_WINSAFE_INHERIT_ROOT_FAIL=0` until labeling completes. |
 
-**Node.js agents:** when the resolved command lives under `node_modules` (for example `node_modules\.bin\…`), FinSAFE auto-grants read+execute on that `node_modules` tree (same size-guard exemption as Python venvs). Do **not** list the whole checkout in `read_write_paths` when the launcher path is enough.
+**Node.js agents:** when the resolved command lives under `node_modules` (for example `node_modules\.bin\…`), FinSAFE auto-grants read+execute on that `node_modules` tree under AppContainer (same size-guard exemption as Python venvs). Do **not** list the whole checkout in `read_write_paths` when the launcher path is enough.
 
 | Variable | Default | Effect |
 |----------|---------|--------|
 | `FINSAFE_WINSAFE_INHERIT_ROOT_WARN_LIMIT` | `10000` | Immediate-child count at/above this triggers the large-tree guard (walk is capped at this limit). |
 | `FINSAFE_WINSAFE_INHERIT_ROOT_FAIL` | `1` (fail closed) | `0` = warn and apply inheritable ACLs anyway (one-time labeling). Does **not** skip labeling — only downgrades the size guard from abort to warning. |
 
-**Not a production workaround:** `windows.backend: restricted_token` is experimental and not GA; it does not replace AppContainer ACL labeling for large read-only trees.
+**ProjFS:** optional advanced path for AppContainer + large runtime trees. `setup-windows` may exit **3010** when a reboot is required after enabling Client-ProjFS; `doctor` reports this as a **warning** (RestrictedToken / typical Hermes does not need ProjFS).
 
 Regression coverage: `scripts/dev/run-windows-acceptance.ps1` suite `inherit-guard` case *inherit-relaunch-fast* (second launch on the same labeled directory must complete in &lt;3 s).
 

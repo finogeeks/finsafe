@@ -2,7 +2,7 @@
 
 **中文：** [README-zh.md](README-zh.md)
 
-FinSafe is a **cross-platform** host execution boundary toolkit for running third-party agents safely on **Linux, macOS, and Windows**. It applies namespaces, cgroup limits, and syscall filtering (Linux), Seatbelt profiles (macOS), and AppContainer / WFP / DACL confinement (Windows), with auditable outcomes. The **`finsafe`** command-line tool is the operator front door for **local wrapper** workflows (`run`, `self-confine`, `learn`, `explain`, `probe`, `doctor`, and related helpers).
+FinSafe is a **cross-platform** host execution boundary toolkit for running third-party agents safely on **Linux, macOS, and Windows**. It applies namespaces, cgroup limits, and syscall filtering (Linux), Seatbelt profiles (macOS), and on Windows a dual-track stack: **RestrictedToken** (default for `network: host`) plus **AppContainer / WFP / DACL** for stronger postures, with auditable outcomes. The **`finsafe`** command-line tool is the operator front door for **local wrapper** workflows (`run`, `self-confine`, `learn`, `explain`, `probe`, `doctor`, and related helpers).
 
 This repository holds **public release binaries** and **end-user documentation** only. It does **not** contain FinSafe engine source code.
 
@@ -14,7 +14,7 @@ FinSAFE ships **first-class desktop sandboxes** on all three operator platforms.
 |----------|-------------------|:------------:|:-------------:|
 | **Linux** x86_64 | bubblewrap, cgroup v2, seccomp, Landlock (when available) | ✓ | ✓ |
 | **macOS** (Intel + Apple Silicon) | Seatbelt (`sandbox-exec`), loopback egress proxy | ✓ | ✓ |
-| **Windows** x86_64 | AppContainer / LowBox, Job Object, DACL deny-read, WFP egress, ConPTY / PipeCapture stdio | ✓ | ✓ |
+| **Windows** x86_64 | RestrictedToken (default `network: host`) + AppContainer / LowBox (none/allowlist / deny-read), Job Object, WFP, ConPTY / PipeCapture | ✓ | ✓ |
 
 Run **`finsafe probe`** and **`finsafe doctor`** on any platform before authoring policy. **Policy Authority** (`finsafe-admin-server-v*`) is published for **Linux and macOS** server hosts; enrolled **Windows desktops** use the fleet archive (`finsafe-fleet-v*-x86_64-pc-windows-msvc.tar.zst`).
 
@@ -175,7 +175,7 @@ finsafe --policy .\windows-version-smoke.yaml run -- cmd /c ver
 - **`self-confine`** supports interactive console brokers (Hermes, PowerShell) via ConPTY when run from a real terminal.
 - Nested `cmd` / PowerShell in non-interactive scripts uses **PipeCapture** stdio (see [CHANGELOG.md](CHANGELOG.md) 0.9.7+).
 
-More Windows examples: [examples/wrapper-policies/windows-sandbox-smoke.yaml](examples/wrapper-policies/windows-sandbox-smoke.yaml), [hermes-windows-oneshot.yaml](examples/wrapper-policies/hermes-windows-oneshot.yaml).
+More Windows examples: [windows-sandbox-smoke.yaml](examples/wrapper-policies/windows-sandbox-smoke.yaml), [hermes-windows-oneshot.yaml](examples/wrapper-policies/hermes-windows-oneshot.yaml) (RestrictedToken), [hermes-windows-oneshot-appcontainer.yaml](examples/wrapper-policies/hermes-windows-oneshot-appcontainer.yaml).
 
 ## Quick start (Hermes)
 

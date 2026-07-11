@@ -231,6 +231,24 @@ finsafe-agent-sandbox-verify (optional) → prove isolation
 
 ---
 
+## Windows agents (Hermes)
+
+On Windows desktop, prefer the **RestrictedToken** example for typical Hermes
+(`network: host`) — host-wide read covers the Python venv without ProjFS or
+recursive AppContainer ACL labeling:
+
+```powershell
+mkdir workspace -ErrorAction SilentlyContinue
+finsafe --policy examples/wrapper-policies/hermes-windows-oneshot.yaml run hermes --version
+```
+
+For stronger AppContainer isolation (deny-read / LowBox / optional ProjFS for
+large trees), use `hermes-windows-oneshot-appcontainer.yaml`. Details:
+[USER-GUIDE.md § Windows backends](./USER-GUIDE.md) ·
+[POLICY-QUICKREF.md § Windows backends](./POLICY-QUICKREF.md).
+
+---
+
 ## Common symptoms
 
 | Symptom | Likely cause | Fix |

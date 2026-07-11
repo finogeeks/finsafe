@@ -89,16 +89,34 @@ filesystem:
 
 托管 bundle 升级后，即使未改 YAML，Hermes 等程序也可能因上述默认项而无法读取 `.env` 或用户配置目录下的凭证路径。在 `network: host` 或代理模式下，曾隐式使用 Docker/containerd 套接字且未声明 `allow_unix_socket_paths` 的工作负载将看到 `connect()` 失败——仅在确有需要时显式放行。需要完全恢复旧行为时：在相关 sandbox 策略中设置 `skip_default_deny_read: true`（并评估受保护子目录）。
 
+### Windows 后端：RestrictedToken（默认 host）与 AppContainer
+
+**Linux/macOS 无此双轨。** 桌面 Windows 根据 `windows.backend`（默认 `Auto`）选择启动后端：
+
+| 后端 | 证明字段 | 何时选用 | 隔离摘要 |
+|------|----------|----------|----------|
+| **RestrictedToken** | `windows_restricted_token`，`degraded_execution=true` | **Auto** + `network: host` + YAML `deny_read_paths` 为空，或显式 `windows.backend: restricted_token` | `CreateRestrictedToken` + **WRITE_RESTRICTED**：**读**基本保留用户身份（整机可读）；**写**默认拒绝，仅 `read_write_paths`（+ cwd）经 capability ACE 放行。仍有 Job Object。无 LowBox、不对 `venv`/`node_modules` 递归打 ACL、**无需 ProjFS**。此路径**跳过**内置机密 deny-read（对齐 Codex 弱化姿态）。 |
+| **AppContainer** | `windows_appcontainer` | Auto + `network: none` / allowlist、任意 YAML `deny_read_paths`、显式 `windows.backend: appcontainer`、托管舰队 | AppContainer / LowBox Package SID、可继承 DACL、可选 deny-read ACE、WFP 出口围栏。大运行时树优先 **ProjFS 投影**（`finsafe setup-windows`；仅当启用 Client-ProjFS 返回需重启 / 退出码 **3010** 时重启）。 |
+
+**示例（均随发行附带）：**
+
+| 策略 | 后端 |
+|------|------|
+| [`hermes-windows-oneshot.yaml`](../examples/wrapper-policies/hermes-windows-oneshot.yaml) | RestrictedToken |
+| [`hermes-windows-oneshot-appcontainer.yaml`](../examples/wrapper-policies/hermes-windows-oneshot-appcontainer.yaml) | AppContainer |
+
+RestrictedToken 约束：`network: host`、YAML `deny_read_paths` 为空（需要机密 deny-read 或锁定网络时改用 AppContainer）。
+
 ### Windows AppContainer：大体积 `read_only_paths` / `read_write_paths` 根目录
 
-**Linux/macOS 无此问题。** Landlock 与 Seatbelt 按路径规则约束，不会对策略根下每个文件做枚举或逐文件 `SetNamedSecurityInfoW`。以下说明 **仅适用于 Windows**。
+**仅适用于 AppContainer 启动。** RestrictedToken 不会为打 Package SID ACL 而遍历目录树。
 
-Windows AppContainer 要求 FinSAFE 使用的每个文件系统根（`work_dir`、`read_only_paths`、`read_write_paths` 各项）具备**可继承**的 DACL（Package SID ACE）与 **Low 强制完整性标签**。子进程继承这些 ACL；首次启动时 FinSAFE 会在根上（必要时在子项上）写入可继承授权。
+Windows AppContainer 要求 FinSAFE 使用的每个文件系统根（`work_dir`、`read_only_paths`、`read_write_paths` 各项）具备**可继承**的 DACL（Package SID ACE）与 **Low 强制完整性标签**。子进程继承这些 ACL；首次启动时 FinSAFE 会在根上（必要时在子项上）写入可继承授权。对大体积 `venv` / `node_modules`，优先用 **ProjFS 投影**运行时树，而不是把整棵树写进策略路径。
 
 | 阶段 | 行为 | 运维建议 |
 |------|------|----------|
-| **首次启动**且策略根下子项过多（默认守卫：≥ **10000** 个直接子项） | 默认 **拒绝**启动（`refusing to apply inheritable AppContainer ACLs`），避免对大树逐文件改 ACL 导致数分钟卡顿（端点 DLP/EDR 拦截每次 `SetNamedSecurityInfoW` 时更严重）。 | **收窄路径**——不要把整个 agent 目录、项目根或含 `node_modules` 的树放进 `read_only_paths` / `read_write_paths`；只列工作负载真正需要的目录。 |
-| **首次启动**且接受一次性打标成本 | 设 `FINSAFE_WINSAFE_INHERIT_ROOT_FAIL=0` 完成**一次**打标（会有 WARNING）。打标完成后取消该变量，以便后续误配仍 fail closed。 | 安排在维护窗口；优先收窄路径，而非给 1 万+ 文件树打标。 |
+| **首次启动**且策略根下子项过多（默认守卫：≥ **10000** 个直接子项） | 默认 **拒绝**启动（`refusing to apply inheritable AppContainer ACLs`），避免对大树逐文件改 ACL 导致数分钟卡顿（端点 DLP/EDR 拦截每次 `SetNamedSecurityInfoW` 时更严重）。 | **收窄路径**——不要把整个 agent 目录、项目根或含 `node_modules` 的树放进 `read_only_paths` / `read_write_paths`；只列工作负载真正需要的目录。或对 `network: host` 智能体改用 RestrictedToken。 |
+| **首次启动**且接受一次性打标成本 | 设 `FINSAFE_WINSAFE_INHERIT_ROOT_FAIL=0` 完成**一次**打标（会有 WARNING）。打标完成后取消该变量，以便后续误配仍 fail closed。 | 安排在维护窗口；优先 ProjFS 或 RestrictedToken，而非给 1 万+ 文件树打标。 |
 | **同一已打标根**上的 **重复启动** | 若根上已有可继承 Package ACE + Low-IL 姿态，FinSAFE 跳过大树守卫，并在授权已满足时跳过冗余 `SetNamedSecurityInfoW`。典型重复启动 **1 秒内**完成，即使树下文件很多。 | Hermes / `finsafe run` 稳态循环应在首次打标后变快；若每次仍慢，通常是根尚未打标或策略根路径在变。 |
 
 | 变量 | 默认 | 作用 |
@@ -106,7 +124,7 @@ Windows AppContainer 要求 FinSAFE 使用的每个文件系统根（`work_dir`�
 | `FINSAFE_WINSAFE_INHERIT_ROOT_WARN_LIMIT` | `10000` | 直接子项数达到该值即触发大树守卫（遍历上限同此值）。 |
 | `FINSAFE_WINSAFE_INHERIT_ROOT_FAIL` | `1`（fail closed） | `0` = 警告后继续应用可继承 ACL（一次性打标）。 |
 
-**不能作为生产绕行：** `windows.backend: restricted_token` 为实验能力、未 GA；不能替代对大只读树做 AppContainer ACL 打标。
+**ProjFS：** AppContainer + 大运行时树的可选高级路径。`setup-windows` 在启用 Client-ProjFS 需重启时可能以 **3010** 退出；`doctor` 将其报为 **警告**（RestrictedToken / 典型 Hermes 不需要 ProjFS）。
 
 回归：`scripts/dev/run-windows-acceptance.ps1` 的 `inherit-guard` 套件含 *inherit-relaunch-fast*（同一目录第二次启动须在 3 秒内完成）。
 

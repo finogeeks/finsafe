@@ -1,0 +1,44 @@
+# Windows: wrap one-shot Hermes under AppContainer (stronger isolation).
+# From a PowerShell prompt in your project directory:
+#   mkdir workspace 2>$null
+#   finsafe --policy examples/wrapper-policies/hermes-windows-oneshot-appcontainer.yaml run hermes --version
+#
+# Backend: AppContainer / LowBox
+# - Package SID + Job Object + DACL grants on policy roots.
+# - Built-in deny-read (confidential paths) applies unless you set
+#   skip_default_deny_read: true.
+# - Large Python venvs / node_modules: FinSAFE prefers ProjFS projection of
+#   runtime trees (may need `finsafe setup-windows` + one reboot if Client-ProjFS
+#   enable returns restart_required). Do NOT list the venv in read_only_paths.
+#
+# Use this when you need confidential deny-read, network: none / allowlist, or
+# managed-fleet AppContainer posture. For the default Hermes desktop path
+# (host-wide read, write allowlist, no ProjFS), prefer hermes-windows-oneshot.yaml.
+#
+# Notes:
+# - Do NOT add the venv (or `.`) to read_only_paths; large trees trip the
+#   inheritable-ACL guard / need ProjFS. Auto-detected runtime grants cover it.
+# - Do NOT set `stdio: { mode: inherit }` for interactive PowerShell use; the
+#   default capture mode replays output after the child exits.
+# - Paths use ${USERPROFILE}; create `./workspace` first.
+schema_version: 1
+kind: local-wrapper
+program_mode: short-lived
+degrade:
+  allow_fallback: false
+audit:
+  require_policy_digest: true
+  require_resolved_posture: true
+network: host
+resources:
+  memory_max: "1G"
+  pids_max: "256"
+  cpu_max: "100000 100000"
+  timeout_ms: 120000
+windows:
+  backend: appcontainer
+filesystem:
+  read_only_paths: []
+  read_write_paths:
+    - "./workspace"
+    - "${USERPROFILE}/.hermes"

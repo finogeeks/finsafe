@@ -137,6 +137,19 @@ finsafe explain envelope.json
 
 ---
 
+## Windows Agent（Hermes）
+
+桌面 Windows 上，典型 Hermes（`network: host`）优先使用 **RestrictedToken** 示例——整机可读覆盖 Python venv，无需 ProjFS / 递归 AppContainer ACL：
+
+```powershell
+mkdir workspace -ErrorAction SilentlyContinue
+finsafe --policy examples/wrapper-policies/hermes-windows-oneshot.yaml run hermes --version
+```
+
+更强 AppContainer（deny-read / LowBox / 可选 ProjFS）见 `hermes-windows-oneshot-appcontainer.yaml`。说明：[USER-GUIDE-zh.md § Windows 后端](./USER-GUIDE-zh.md) · [POLICY-QUICKREF-zh.md](./POLICY-QUICKREF-zh.md)。
+
+---
+
 ## 新 Agent
 
 1. 复制 `opencode-oneshot.yaml`

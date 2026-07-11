@@ -1,21 +1,26 @@
-# Windows: wrap one-shot Hermes commands under AppContainer.
+# Windows: wrap one-shot Hermes under RestrictedToken (default desktop path).
 # From a PowerShell prompt in your project directory:
 #   mkdir workspace 2>$null
 #   finsafe --policy examples/wrapper-policies/hermes-windows-oneshot.yaml run hermes --version
 #   finsafe --policy examples/wrapper-policies/hermes-windows-oneshot.yaml run hermes chat -q "Reply with exactly: ok" -Q --source tool
 #
-# No venv paths needed: FinSAFE detects the Python venv behind `hermes.exe`
-# (and the base interpreter from its pyvenv.cfg) and grants the sandbox read
-# access automatically. The FIRST launch labels that tree once and prints
-#   finsafe: granting sandbox read access to agent runtime …
-# — large venvs can take a minute there; later launches are fast.
+# Backend: WRITE_RESTRICTED RestrictedToken (Codex-aligned weaker posture)
+# - Host-wide read (Hermes can read its venv / site-packages without recursive
+#   AppContainer DACL labeling or ProjFS projection).
+# - Writes are deny-by-default and allowlisted on read_write_paths only.
+# - Built-in confidential deny-read is skipped for this path (host-wide read).
+# - No AppContainer LowBox profile; attestation reports windows_restricted_token
+#   and degraded_execution=true.
+#
+# Prefer this for typical Hermes / network:host agents. For stronger AppContainer
+# isolation (deny-read, WFP fencing on none/allowlist), see
+# hermes-windows-oneshot-appcontainer.yaml.
 #
 # Notes:
-# - Do NOT add the venv (or `.`) to read_only_paths; large trees trip the
-#   inheritable-ACL guard and the automatic runtime grant already covers it.
+# - Do NOT add the venv (or `.`) to read_only_paths — unnecessary on RestrictedToken
+#   and harmful on AppContainer (large-tree ACL guard).
 # - Do NOT set `stdio: { mode: inherit }` for interactive PowerShell use; the
-#   default capture mode replays output after the child exits. (Since 0.8.9,
-#   inherit auto-falls back to capture on a console anyway.)
+#   default capture mode replays output after the child exits.
 # - Paths use ${USERPROFILE}; FinSAFE expands them when the policy loads, and
 #   only paths that exist are applied — create `./workspace` first.
 schema_version: 1
@@ -34,8 +39,10 @@ resources:
   cpu_max: "100000 100000"
   timeout_ms: 120000
 windows:
-  backend: appcontainer
+  backend: restricted_token
 filesystem:
+  # Explicit opt-out documents the weaker path; Auto+host also skips builtins.
+  skip_default_deny_read: true
   read_only_paths: []
   read_write_paths:
     - "./workspace"

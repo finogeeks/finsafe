@@ -97,8 +97,9 @@
 
 | 术语（中 / En） | 含义 | FinSAFE 落点 |
 |-----------------|------|----------------|
-| **AppContainer** | Windows 低特权应用容器：能力 SID、隔离级别。 | `finsafe-winsafe`；`windows-managed` 等 profile。 |
-| **Restricted Token（受限令牌）** | 剥离特权的安全上下文；enterprise strict 下不作为托管首选后端。 | 与 AppContainer 组合；设计文档中的降级边界。 |
+| **AppContainer** | Windows 低特权应用容器：能力 SID、隔离级别；用于 none/allowlist / deny-read / 托管。 | `finsafe-winsafe`；`windows-managed` 等 profile。 |
+| **Restricted Token（受限令牌）** | `CreateRestrictedToken` + WRITE_RESTRICTED：整机可读、写路径白名单；桌面 `network: host` 的 **默认**后端（对齐 Codex 弱化姿态）。 | `windows.backend: restricted_token` 或 Auto+host；证明 `degraded_execution`；enterprise strict 托管仍要求 AppContainer。 |
+| **ProjFS（投影文件系统）** | 可选：AppContainer 下大体积 venv/node_modules 的只读投影，避免递归 ACL。 | `setup-windows` / `doctor`（警告级）；典型 Hermes RestrictedToken 不需要。 |
 | **Job Object** | 进程组资源与生命周期限制（CPU、内存、UI 隔离等）。 | Windows 沙箱栈组件之一。 |
 | **DACL deny ACE** |  discretionary ACL 拒绝项，用于路径级 deny-read（如 `%USERPROFILE%\.ssh`）。 | Windows 内置 deny-read 默认项的强制执行方式。 |
 | **Capability SID** | AppContainer 授予的细粒度能力标识。 | Windows 能力缺失时的常见失败原因（见 isolation audit 文档）。 |

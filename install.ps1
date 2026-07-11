@@ -1,5 +1,12 @@
 # Install personal-mode finsafe from GitHub releases (finogeeks/finsafe).
-# Installs finsafe.exe (and finsafe-winhelper.exe when bundled) into FINSAFE_INSTALL_DIR.
+#
+# Preferred path: download the signed Windows installer
+# (`finsafe-<version>-x64-setup.exe`) when published. That bootstrapper enables
+# Client-ProjFS (may reboot once), installs finsafe + winhelper, and does not
+# report success until `finsafe probe` reports projection readiness.
+#
+# Fallback: archive install of finsafe.exe + finsafe-winhelper.exe into
+# FINSAFE_INSTALL_DIR, then `finsafe setup-windows` (same ProjFS contract).
 #
 # Intended usage (PowerShell 5.1+):
 #   irm https://raw.githubusercontent.com/finogeeks/finsafe/main/install.ps1 | iex
@@ -186,15 +193,45 @@ if ($env:FINSAFE_INSECURE_SKIP_CHECKSUM -eq "1") {
 $releaseInfo = Resolve-ReleaseVersion -RepoName $Repo -RequestedVersion $Version
 $versionTag = $releaseInfo.Tag
 $versionStrip = $releaseInfo.Strip
+$baseUrl = "https://github.com/$Repo/releases/download/$versionTag"
+$setupName = "finsafe-${versionStrip}-x64-setup.exe"
+$setupUrl = "$baseUrl/$setupName"
 $archiveName = "finsafe-v${versionStrip}-${TargetTriple}.tar.zst"
 $innerDirName = "finsafe-v${versionStrip}-${TargetTriple}"
-$baseUrl = "https://github.com/$Repo/releases/download/$versionTag"
 $archiveUrl = "$baseUrl/$archiveName"
 $sumsUrl = "$baseUrl/SHA256SUMS"
 
 $stage = Join-Path $env:TEMP ("finsafe-install-" + [Guid]::NewGuid().ToString("n"))
 New-Item -ItemType Directory -Force -Path $stage | Out-Null
 try {
+  # Prefer the signed Burn bootstrapper when the release publishes it.
+  $setupPath = Join-Path $stage $setupName
+  $usedInstaller = $false
+  try {
+    Write-Info "trying signed installer $setupUrl"
+    Invoke-WebRequest -Uri $setupUrl -OutFile $setupPath -UseBasicParsing
+    if ((Test-Path -LiteralPath $setupPath) -and ((Get-Item -LiteralPath $setupPath).Length -gt 0)) {
+      Write-Info "launching installer (UAC / optional reboot may follow; setup resumes after reboot)"
+      $p = Start-Process -FilePath $setupPath -Wait -PassThru
+      if ($p.ExitCode -eq 3010) {
+        Write-Info "Windows requires a reboot to finish Projected File System setup (exit 3010)."
+        Write-Info "Reboot, then re-run install.ps1 or finsafe setup-windows (idempotent)."
+        exit 3010
+      }
+      if ($p.ExitCode -ne 0) {
+        throw "installer exited $($p.ExitCode)"
+      }
+      Write-Info "installer completed"
+      $usedInstaller = $true
+    }
+  } catch {
+    Write-Info "signed installer not used ($($_.Exception.Message)); falling back to archive install"
+  }
+  if ($usedInstaller) {
+    Write-Info "done (installer path)"
+    exit 0
+  }
+
   $archivePath = Join-Path $stage $archiveName
   Write-Info "downloading $archiveUrl"
   Invoke-WebRequest -Uri $archiveUrl -OutFile $archivePath -UseBasicParsing
@@ -231,10 +268,16 @@ try {
   Install-OptionalCompanion -BundleDir $bundleDir -Name $WinhelperBinaryName -InstallDirectory $InstallDir
 
   if (Test-Path -LiteralPath $destHelper) {
-    Write-Info "running one-time Windows setup (helper service; accept the permission prompt if shown)"
+    Write-Info "running one-time Windows setup (helper + ProjFS; accept the permission prompt if shown)"
     & $destExe setup-windows
+    if ($LASTEXITCODE -eq 3010) {
+      Write-Info "Windows requires a reboot to finish Projected File System setup (exit 3010)."
+      Write-Info "Reboot, then re-run '$CliBinaryName setup-windows' (idempotent)."
+      exit 3010
+    }
     if ($LASTEXITCODE -ne 0) {
       Write-Info "WARNING: setup-windows exited $LASTEXITCODE — run '$CliBinaryName setup-windows' after install"
+      Write-Info "Large venv/node_modules launches fail closed until projection_smoke_works is true."
     }
   } else {
     Write-Info "WARNING: $WinhelperBinaryName not in archive; network-locked policies will not work on Windows"
