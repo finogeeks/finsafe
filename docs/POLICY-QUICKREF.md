@@ -91,6 +91,8 @@ After a fleet upgrade, Hermes and similar programs may fail to read `.env` or cr
 
 ### Windows backends: RestrictedToken (default host) vs AppContainer
 
+**Operator journey (install → choose backend → verify → troubleshoot):** [WINDOWS-GUIDE.md](WINDOWS-GUIDE.md) · [WINDOWS-GUIDE-zh.md](WINDOWS-GUIDE-zh.md).
+
 **Linux/macOS do not have this split.** On Windows desktop, FinSAFE selects a launch backend from `windows.backend` (default `Auto`):
 
 | Backend | Wire / attestation | Selected when | Isolation summary |

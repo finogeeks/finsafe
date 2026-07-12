@@ -42,6 +42,8 @@ If install did not finish setup, or `finsafe doctor` warns about the Windows hel
 
 ### Windows backends (RestrictedToken vs AppContainer)
 
+**Dedicated Windows onboarding:** [WINDOWS-GUIDE.md](WINDOWS-GUIDE.md) · [WINDOWS-GUIDE-zh.md](WINDOWS-GUIDE-zh.md) (install → pick a backend → verify → Hermes → AppContainer/ProjFS → troubleshooting).
+
 Desktop Windows has **two** launch backends. Operators choose with `windows.backend` (or leave `Auto`):
 
 | Backend | When selected | What it isolates | What it does **not** do |

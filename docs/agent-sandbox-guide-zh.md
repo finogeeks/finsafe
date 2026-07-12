@@ -146,7 +146,7 @@ mkdir workspace -ErrorAction SilentlyContinue
 finsafe --policy examples/wrapper-policies/hermes-windows-oneshot.yaml run hermes --version
 ```
 
-更强 AppContainer（deny-read / LowBox / 可选 ProjFS）见 `hermes-windows-oneshot-appcontainer.yaml`。说明：[USER-GUIDE-zh.md § Windows 后端](./USER-GUIDE-zh.md) · [POLICY-QUICKREF-zh.md](./POLICY-QUICKREF-zh.md)。
+更强 AppContainer（deny-read / LowBox / 可选 ProjFS）见 `hermes-windows-oneshot-appcontainer.yaml`。完整 Windows 入门：[WINDOWS-GUIDE-zh.md](./WINDOWS-GUIDE-zh.md)。字段细节：[USER-GUIDE-zh.md § Windows 后端](./USER-GUIDE-zh.md) · [POLICY-QUICKREF-zh.md](./POLICY-QUICKREF-zh.md)。
 
 ---
 

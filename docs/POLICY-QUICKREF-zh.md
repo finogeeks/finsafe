@@ -91,6 +91,8 @@ filesystem:
 
 ### Windows 后端：RestrictedToken（默认 host）与 AppContainer
 
+**运维入门（安装 → 选后端 → 校验 → 排障）：** [WINDOWS-GUIDE-zh.md](WINDOWS-GUIDE-zh.md) · [WINDOWS-GUIDE.md](WINDOWS-GUIDE.md)。
+
 **Linux/macOS 无此双轨。** 桌面 Windows 根据 `windows.backend`（默认 `Auto`）选择启动后端：
 
 | 后端 | 证明字段 | 何时选用 | 隔离摘要 |

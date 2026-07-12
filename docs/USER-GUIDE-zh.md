@@ -29,6 +29,8 @@ Linux 发行包除 `finsafe` 外还包含 `finsafe-helper`、`finsafe-supervisor
 
 ### Windows 后端（RestrictedToken 与 AppContainer）
 
+**Windows 专用入门：** [WINDOWS-GUIDE-zh.md](WINDOWS-GUIDE-zh.md) · [WINDOWS-GUIDE.md](WINDOWS-GUIDE.md)（安装 → 选后端 → 校验 → Hermes → AppContainer/ProjFS → 排障）。
+
 桌面 Windows 有 **两种** 启动后端，由 `windows.backend`（或 `Auto`）选择：
 
 | 后端 | 何时选用 | 隔离内容 | 不做的事 |

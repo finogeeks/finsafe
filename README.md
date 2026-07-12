@@ -175,6 +175,8 @@ finsafe --policy .\windows-version-smoke.yaml run -- cmd /c ver
 - **`self-confine`** supports interactive console brokers (Hermes, PowerShell) via ConPTY when run from a real terminal.
 - Nested `cmd` / PowerShell in non-interactive scripts uses **PipeCapture** stdio (see [CHANGELOG.md](CHANGELOG.md) 0.9.7+).
 
+**Full Windows onboarding** (RestrictedToken vs AppContainer, `setup-windows`, ProjFS, troubleshooting): [docs/WINDOWS-GUIDE.md](docs/WINDOWS-GUIDE.md) · [WINDOWS-GUIDE-zh.md](docs/WINDOWS-GUIDE-zh.md).
+
 More Windows examples: [windows-sandbox-smoke.yaml](examples/wrapper-policies/windows-sandbox-smoke.yaml), [hermes-windows-oneshot.yaml](examples/wrapper-policies/hermes-windows-oneshot.yaml) (RestrictedToken), [hermes-windows-oneshot-appcontainer.yaml](examples/wrapper-policies/hermes-windows-oneshot-appcontainer.yaml).
 
 ## Quick start (Hermes)
@@ -287,6 +289,7 @@ When a sandbox run fails, use **`finsafe learn`** to generate reviewable YAML, *
 
 | Document | Description |
 |----------|-------------|
+| [docs/WINDOWS-GUIDE.md](docs/WINDOWS-GUIDE.md) · [WINDOWS-GUIDE-zh.md](docs/WINDOWS-GUIDE-zh.md) | **Windows desktop** — install, RestrictedToken vs AppContainer, ProjFS, troubleshooting. |
 | [docs/agent-sandbox-guide.md](docs/agent-sandbox-guide.md) · [agent-sandbox-guide-zh.md](docs/agent-sandbox-guide-zh.md) | **Agent sandbox** — Hermes, OpenCode, agy; **`learn` / `explain`** for agents. |
 | [docs/USER-GUIDE.md](docs/USER-GUIDE.md) | English operator guide (`run` vs `self-confine`, generic learn / explain). |
 | [docs/USER-GUIDE-zh.md](docs/USER-GUIDE-zh.md) | Chinese user guide. |

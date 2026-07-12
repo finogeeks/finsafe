@@ -21,6 +21,7 @@
 
 | Document | Description |
 |----------|-------------|
+| [WINDOWS-GUIDE.md](./WINDOWS-GUIDE.md) · [WINDOWS-GUIDE-zh.md](./WINDOWS-GUIDE-zh.md) | **Windows desktop** — install, RestrictedToken vs AppContainer, ProjFS, troubleshooting |
 | [agent-sandbox-guide.md](./agent-sandbox-guide.md) · [agent-sandbox-guide-zh.md](./agent-sandbox-guide-zh.md) | **Agent sandbox** — Hermes, OpenCode, agy; **`learn` / `explain`** iteration for agents |
 | [USER-GUIDE.md](./USER-GUIDE.md) | Install, `run` vs `self-confine`, generic **`learn` / `explain`**, wrapper policies |
 | [USER-GUIDE-zh.md](./USER-GUIDE-zh.md) | 中文用户指南 |

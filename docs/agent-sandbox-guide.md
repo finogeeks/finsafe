@@ -243,7 +243,8 @@ finsafe --policy examples/wrapper-policies/hermes-windows-oneshot.yaml run herme
 ```
 
 For stronger AppContainer isolation (deny-read / LowBox / optional ProjFS for
-large trees), use `hermes-windows-oneshot-appcontainer.yaml`. Details:
+large trees), use `hermes-windows-oneshot-appcontainer.yaml`. Full Windows
+onboarding: [WINDOWS-GUIDE.md](./WINDOWS-GUIDE.md). Field detail:
 [USER-GUIDE.md § Windows backends](./USER-GUIDE.md) ·
 [POLICY-QUICKREF.md § Windows backends](./POLICY-QUICKREF.md).
 

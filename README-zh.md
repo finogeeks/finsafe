@@ -187,6 +187,8 @@ finsafe --policy .\windows-version-smoke.yaml run -- cmd /c ver
 - **`self-confine`** 在真实终端中支持交互式 broker（Hermes、PowerShell 等），经 ConPTY 附加控制台。
 - 非交互脚本中嵌套 `cmd` / PowerShell 使用 **PipeCapture** 标准 I/O（见 [CHANGELOG.md](CHANGELOG.md) 0.9.7+）。
 
+**完整 Windows 入门**（RestrictedToken 与 AppContainer、`setup-windows`、ProjFS、排障）：[docs/WINDOWS-GUIDE-zh.md](docs/WINDOWS-GUIDE-zh.md) · [WINDOWS-GUIDE.md](docs/WINDOWS-GUIDE.md)。
+
 更多 Windows 示例：[windows-sandbox-smoke.yaml](examples/wrapper-policies/windows-sandbox-smoke.yaml)、[hermes-windows-oneshot.yaml](examples/wrapper-policies/hermes-windows-oneshot.yaml)（RestrictedToken）、[hermes-windows-oneshot-appcontainer.yaml](examples/wrapper-policies/hermes-windows-oneshot-appcontainer.yaml)。
 
 ## 快速上手（Hermes）
@@ -282,6 +284,7 @@ finsafe init   # 若 CLI 支持 — 写入 ~/.config/finsafe/policies/examples/
 
 | 文档 | 说明 |
 |------|------|
+| [docs/WINDOWS-GUIDE-zh.md](docs/WINDOWS-GUIDE-zh.md) · [WINDOWS-GUIDE.md](docs/WINDOWS-GUIDE.md) | **Windows 桌面** — 安装、RestrictedToken 与 AppContainer、ProjFS、排障 |
 | [docs/agent-sandbox-guide-zh.md](docs/agent-sandbox-guide-zh.md) · [agent-sandbox-guide.md](docs/agent-sandbox-guide.md) | **Agent 沙箱** — Hermes、OpenCode、agy；**`learn` / `explain`** |
 | [docs/USER-GUIDE.md](docs/USER-GUIDE.md) | 英文运维指南（`run` 与 `self-confine`、**learn / explain**、策略 YAML、退出码）。 |
 | [docs/USER-GUIDE-zh.md](docs/USER-GUIDE-zh.md) | 中文用户指南。 |
