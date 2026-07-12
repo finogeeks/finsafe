@@ -32,7 +32,7 @@ finsafe setup-windows
 | Piece | Required for | Notes |
 |-------|----------------|-------|
 | **finsafe-winhelper** service | `network: none` / allowlist (WFP fence), managed fleet | `doctor` warns if missing |
-| **ProjFS** (`Client-ProjFS`) | Optional: AppContainer + large `venv` / `node_modules` projection | May reboot once (exit **3010**). **Not** required for typical Hermes / `network: host` |
+| **ProjFS** (`Client-ProjFS`) | Optional: AppContainer + large `venv` / `node_modules` projection | May reboot once (exit **3010**). **Not** required for typical Hermes / `network: host`. Install manually: `Enable-WindowsOptionalFeature -Online -FeatureName Client-ProjFS` (Admin) |
 
 ---
 
@@ -134,7 +134,14 @@ Prefer:
 
 1. **Narrow paths** — only directories the workload needs
 2. **RestrictedToken** for host-network agents that only need write allowlisting
-3. **ProjFS projection** for large runtime trees under AppContainer (`setup-windows`; reboot only if exit **3010** / `restart_required`)
+3. **ProjFS projection** for large runtime trees under AppContainer (`setup-windows`; reboot only if exit **3010** / `restart_required`). To enable ProjFS manually:
+
+   ```powershell
+   # Requires Administrator
+   Enable-WindowsOptionalFeature -Online -FeatureName Client-ProjFS
+   ```
+
+   Verify with `finsafe probe --json | ConvertFrom-Json | Select-Object -ExpandProperty projfs`.
 
 Deep table, env vars (`FINSAFE_WINSAFE_INHERIT_ROOT_*`), and interrupted-label recovery: [POLICY-QUICKREF.md § Windows AppContainer: large roots](POLICY-QUICKREF.md).
 

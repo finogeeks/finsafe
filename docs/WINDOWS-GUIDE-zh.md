@@ -32,7 +32,7 @@ finsafe setup-windows
 | 组件 | 何时需要 | 说明 |
 |------|----------|------|
 | **finsafe-winhelper** 服务 | `network: none` / allowlist（WFP 围栏）、托管舰队 | 缺失时 `doctor` 会告警 |
-| **ProjFS**（`Client-ProjFS`） | 可选：AppContainer + 大体积 `venv` / `node_modules` 投影 | 可能重启一次（退出码 **3010**）。典型 Hermes / `network: host` **不需要** |
+| **ProjFS**（`Client-ProjFS`） | 可选：AppContainer + 大体积 `venv` / `node_modules` 投影 | 可能重启一次（退出码 **3010**）。典型 Hermes / `network: host` **不需要**。手动安装：`Enable-WindowsOptionalFeature -Online -FeatureName Client-ProjFS`（管理员） |
 
 ---
 
@@ -134,7 +134,14 @@ AppContainer 必须在 FinSAFE 使用的每个文件系统根（`work_dir`、`re
 
 1. **收窄路径** — 只列真正需要的目录
 2. **RestrictedToken** — 仅需写白名单的 host 网络 agent
-3. **ProjFS 投影** — AppContainer 下的大体积运行时树（`setup-windows`；仅当退出码 **3010** / `restart_required` 时重启）
+3. **ProjFS 投影** — AppContainer 下的大体积运行时树（`setup-windows`；仅当退出码 **3010** / `restart_required` 时重启）。手动安装 ProjFS：
+
+   ```powershell
+   # 需要管理员权限
+   Enable-WindowsOptionalFeature -Online -FeatureName Client-ProjFS
+   ```
+
+   用 `finsafe probe --json | ConvertFrom-Json | Select-Object -ExpandProperty projfs` 验证。
 
 详细表格、环境变量（`FINSAFE_WINSAFE_INHERIT_ROOT_*`）与中断标注恢复：[POLICY-QUICKREF-zh.md § Windows AppContainer 大目录](POLICY-QUICKREF-zh.md)。
 
