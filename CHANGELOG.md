@@ -10,9 +10,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.14] - 2026-07-12
+
+<!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
+
 ### Added
 
 - **docs: dedicated Windows desktop guide** — [WINDOWS-GUIDE.md](docs/WINDOWS-GUIDE.md) / [WINDOWS-GUIDE-zh.md](docs/WINDOWS-GUIDE-zh.md) covers install → RestrictedToken vs AppContainer decision tree → `probe`/`doctor` → Hermes examples → AppContainer/ProjFS → troubleshooting. Linked from README, USER-GUIDE, POLICY-QUICKREF, and agent-sandbox-guide.
+
+### Fixed
+
+- **fix(windows): load ProjFS dynamically so finsafe starts without projectedfslib.dll** (public issue [finogeeks/finsafe#15](https://github.com/finogeeks/finsafe/issues/15), PR [Geeksfino/finsafe#106](https://github.com/Geeksfino/finsafe/pull/106))
 
 ## [0.9.13] - 2026-07-11
 
