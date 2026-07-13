@@ -32,7 +32,7 @@ finsafe setup-windows
 | 组件 | 何时需要 | 说明 |
 |------|----------|------|
 | **finsafe-winhelper** 服务 | `network: none` / allowlist（WFP 围栏）、托管舰队 | 缺失时 `doctor` 会告警 |
-| **ProjFS**（`Client-ProjFS`） | 可选：AppContainer + 大体积 `venv` / `node_modules` 投影 | 可能重启一次（退出码 **3010**）。典型 Hermes / `network: host` **不需要** |
+| **ProjFS**（`Client-ProjFS`） | 可选：AppContainer + 大体积 `venv` / `node_modules` 投影 | 可能重启一次（退出码 **3010**）。典型 Hermes / `network: host` **不需要**。手动安装：`Enable-WindowsOptionalFeature -Online -FeatureName Client-ProjFS`（管理员） |
 
 ---
 
@@ -116,7 +116,8 @@ finsafe --policy .\hermes-windows-oneshot-appcontainer.yaml run -- hermes --vers
 ```
 
 - 短命工具 → `finsafe run` + `program_mode: short-lived`
-- 真实终端里的交互式 broker → `finsafe self-confine`（ConPTY）
+- 真实终端里的交互式 broker → `finsafe self-confine`（AppContainer **与** RestrictedToken 在可用时均走 Live ConPTY）
+- 可选：broker 不沙箱、工具仍沙箱 → `broker_confine: tools-only`（见 `hermes-interactive-tools-only.yaml`）
 - Agent 专项说明 → [agent-sandbox-guide-zh.md § Windows agents](agent-sandbox-guide-zh.md)
 
 ---
@@ -134,7 +135,14 @@ AppContainer 必须在 FinSAFE 使用的每个文件系统根（`work_dir`、`re
 
 1. **收窄路径** — 只列真正需要的目录
 2. **RestrictedToken** — 仅需写白名单的 host 网络 agent
-3. **ProjFS 投影** — AppContainer 下的大体积运行时树（`setup-windows`；仅当退出码 **3010** / `restart_required` 时重启）
+3. **ProjFS 投影** — AppContainer 下的大体积运行时树（`setup-windows`；仅当退出码 **3010** / `restart_required` 时重启）。手动安装 ProjFS：
+
+   ```powershell
+   # 需要管理员权限
+   Enable-WindowsOptionalFeature -Online -FeatureName Client-ProjFS
+   ```
+
+   用 `finsafe probe --json | ConvertFrom-Json | Select-Object -ExpandProperty projfs` 验证。
 
 详细表格、环境变量（`FINSAFE_WINSAFE_INHERIT_ROOT_*`）与中断标注恢复：[POLICY-QUICKREF-zh.md § Windows AppContainer 大目录](POLICY-QUICKREF-zh.md)。
 
@@ -150,6 +158,7 @@ AppContainer 必须在 FinSAFE 使用的每个文件系统根（`work_dir`、`re
 | `refusing to apply inheritable AppContainer ACLs` | 策略根是巨大目录树 | 收窄路径、改用 RestrictedToken，或走 ProjFS — 见 §5 |
 | 首次 AppContainer 启动极慢 | 一次性 ACL 标注 | 让它跑完，不要中断；优先 ProjFS / 更窄路径 |
 | AppContainer 下 Hermes 读不到 `.env` / 凭据 | 内置或显式 deny-read | 改用 RestrictedToken 示例，或审阅后设 `skip_default_deny_read: true` |
+| `self-confine` 退出 `0xC0000142` / `STATUS_DLL_INIT_FAILED`（RestrictedToken） | 0.9.15 之前的启动路径 | 升级到 **0.9.15+**（默认 Live ConPTY）；或设 `FINSAFE_WIN_PTY_MODE=pipe` |
 | 嵌套 `cmd /c …` 无输出 | 标准 I/O 路径 / 旧版本回归 | 升级到 **0.9.7+**；非交互控制台主机走 PipeCapture |
 | `network: none` 仍能连外网 | Helper / WFP 未就绪 | `setup-windows`，再用 `probe --json` / 验收围栏检查 |
 | 托管/企业姿态在 RestrictedToken 上失败 | 舰队要求 AppContainer | 使用 AppContainer + helper；已签名包不得把 RT 当作 AC 对等 |

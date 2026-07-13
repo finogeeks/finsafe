@@ -13,6 +13,7 @@ See [docs/POLICY-QUICKREF.md](../../docs/POLICY-QUICKREF.md) or [docs/POLICY-QUI
 | `managed-lab-smoke.yaml` | Linux / macOS | Default bundle for [`scripts/managed-lab.sh`](../../scripts/managed-lab.sh) (`/usr/bin/true`, minimal FHS) |
 | `hermes-version-smoke.yaml`, `hermes-oneshot-query.yaml` | Linux / macOS | Hermes one-shot smoke (`${HOME}`, FHS paths) |
 | `hermes-interactive.yaml` | macOS | Hermes interactive broker (Seatbelt, `stdio: inherit`) |
+| `hermes-interactive-tools-only.yaml` | Windows | Hermes interactive broker with `broker_confine: tools-only` (live TTY; tools via `finsafe run`) |
 | `hermes-linux-interactive.yaml` | Linux | Hermes interactive broker (`stdio: pty`, `skip_default_deny_read`, DNS) |
 | `hermes-interactive-deny-http.yaml` | Linux / macOS | Hermes interactive with outbound HTTP denied |
 | `hermes-windows-oneshot.yaml` | Windows | One-shot Hermes under **RestrictedToken** (default desktop `network: host` path; host-wide read, write allowlist; no ProjFS) |

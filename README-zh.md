@@ -319,6 +319,10 @@ finsafe init   # 若 CLI 支持 — 写入 ~/.config/finsafe/policies/examples/
 - 解压或执行下载的二进制前，请先校验 **`SHA256SUMS`**。
 - Wrapper 策略为**声明式**：通过 **`--policy`** 传入 YAML；CLI 按当前主机应用相应的隔离。上线生产前请阅读 [POLICY-QUICKREF-zh.md](docs/POLICY-QUICKREF-zh.md)（或英文 [POLICY-QUICKREF.md](docs/POLICY-QUICKREF.md)）。
 
+## 贡献
+
+本仓库为**发行镜像**（二进制 + 文档）。请参阅 **[CONTRIBUTING-zh.md](CONTRIBUTING-zh.md)** · [English](CONTRIBUTING.md) 了解如何报告缺陷、提交文档建议，以及为何 PR 会 cherry-port 到上游而非直接合并。
+
 ## 许可
 
 本仓库中的二进制与资料由 **Finogeeks** 发布，适用您所获得的发行版或订阅中附带的许可条款。若某次发行未附带单独的许可文件，则使用范围以您与发布方签署的协议为准。

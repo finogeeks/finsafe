@@ -328,6 +328,10 @@ Central policy authority, `finsafe-agent`, MDM deployment, and fleet enforcement
 - Verify `SHA256SUMS` before extracting or executing downloaded binaries.
 - Wrapper policies are **declarative**: you pass a YAML file with `--policy`; the CLI applies host-appropriate confinement. Review [POLICY-QUICKREF.md](docs/POLICY-QUICKREF.md) or [POLICY-QUICKREF-zh.md](docs/POLICY-QUICKREF-zh.md) before deploying to production.
 
+## Contributing
+
+This repo is a **release mirror** (binaries + docs). See **[CONTRIBUTING.md](CONTRIBUTING.md)** · [中文](CONTRIBUTING-zh.md) for how to report bugs, suggest doc fixes, and why pull requests here are cherry-ported upstream rather than merged directly.
+
 ## License
 
 Binaries and materials in this repository are published by **Finogeeks** under the license terms supplied with your distribution or subscription. If no separate license file is attached to a release, treat use as governed by your agreement with the publisher.

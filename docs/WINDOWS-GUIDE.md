@@ -32,7 +32,7 @@ finsafe setup-windows
 | Piece | Required for | Notes |
 |-------|----------------|-------|
 | **finsafe-winhelper** service | `network: none` / allowlist (WFP fence), managed fleet | `doctor` warns if missing |
-| **ProjFS** (`Client-ProjFS`) | Optional: AppContainer + large `venv` / `node_modules` projection | May reboot once (exit **3010**). **Not** required for typical Hermes / `network: host` |
+| **ProjFS** (`Client-ProjFS`) | Optional: AppContainer + large `venv` / `node_modules` projection | May reboot once (exit **3010**). **Not** required for typical Hermes / `network: host`. Install manually: `Enable-WindowsOptionalFeature -Online -FeatureName Client-ProjFS` (Admin) |
 
 ---
 
@@ -135,7 +135,14 @@ Prefer:
 
 1. **Narrow paths** — only directories the workload needs
 2. **RestrictedToken** for host-network agents that only need write allowlisting
-3. **ProjFS projection** for large runtime trees under AppContainer (`setup-windows`; reboot only if exit **3010** / `restart_required`)
+3. **ProjFS projection** for large runtime trees under AppContainer (`setup-windows`; reboot only if exit **3010** / `restart_required`). To enable ProjFS manually:
+
+   ```powershell
+   # Requires Administrator
+   Enable-WindowsOptionalFeature -Online -FeatureName Client-ProjFS
+   ```
+
+   Verify with `finsafe probe --json | ConvertFrom-Json | Select-Object -ExpandProperty projfs`.
 
 Deep table, env vars (`FINSAFE_WINSAFE_INHERIT_ROOT_*`), and interrupted-label recovery: [POLICY-QUICKREF.md § Windows AppContainer: large roots](POLICY-QUICKREF.md).
 
@@ -151,6 +158,7 @@ Deep table, env vars (`FINSAFE_WINSAFE_INHERIT_ROOT_*`), and interrupted-label r
 | `refusing to apply inheritable AppContainer ACLs` | Policy root is a huge tree | Narrow paths, switch to RestrictedToken, or use ProjFS — see §5 |
 | First AppContainer launch is very slow | One-time ACL labeling | Let it finish; do not interrupt. Prefer ProjFS / narrower paths |
 | Hermes cannot read `.env` / credentials under AppContainer | Built-in or explicit deny-read | Use RestrictedToken example, or set `skip_default_deny_read: true` after review |
+| `self-confine` exits `0xC0000142` / `STATUS_DLL_INIT_FAILED` (RestrictedToken) | Pre-0.9.15 spawn path | Upgrade to **0.9.15+** (Live ConPTY default); or `FINSAFE_WIN_PTY_MODE=pipe` |
 | Nested `cmd /c …` prints nothing | Stdio path / older regression | Upgrade to **0.9.7+**; non-interactive console hosts use PipeCapture |
 | `network: none` connect still succeeds | Helper / WFP not ready | `setup-windows`, then `probe --json` / acceptance fence checks |
 | Managed / enterprise posture fails on RestrictedToken | Fleet requires AppContainer | Use AppContainer + helper; signed bundles must not treat RT as AC parity |

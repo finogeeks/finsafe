@@ -22,6 +22,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- **Windows RestrictedToken interactive `self-confine`:** child could exit with `STATUS_DLL_INIT_FAILED` (`0xC0000142`) on the legacy `CreateProcessAsUserW` spawn path (public issue [finogeeks/finsafe#17](https://github.com/finogeeks/finsafe/issues/17), PR [Geeksfino/finsafe#109](https://github.com/Geeksfino/finsafe/pull/109)). **0.9.15+** defaults to Live ConPTY; escape hatch `FINSAFE_WIN_PTY_MODE=pipe`.
 - **Windows:** export `preflight_windows_launch` from `finsafe-winsafe` so `finsafe-cli` cross-compile and Windows acceptance builds resolve the symbol.
 
 ## [0.9.14] - 2026-07-12

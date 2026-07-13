@@ -1,0 +1,142 @@
+# Public PR intake on finogeeks/finsafe (synced from docs/public-finsafe/.github/workflows/).
+#
+# - Posts a mirror-policy comment on every new external PR ($0 LLM)
+# - Labels doc-only PRs triage:docs-only for maintainer cherry-port into docs/public-finsafe/
+# - Does NOT merge or auto-close — maintainers port upstream and close manually
+#
+# See CONTRIBUTING.md and docs/operations/public-issue-automation.md § Public pull requests.
+name: Public PR mirror intake
+
+on:
+  pull_request:
+    types: [opened]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  intake:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: finsafe-pr-intake-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
+    steps:
+      - name: Ensure intake labels exist
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh label create "triage:docs-only" \
+            --repo "${{ github.repository }}" \
+            --description "Public docs / install script only (mirror PR)" \
+            --color "C5DEF5" \
+            --force
+
+      - name: Classify changed files
+        id: classify
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          gh pr view "${PR_NUMBER}" \
+            --repo "${{ github.repository }}" \
+            --json files \
+            -q '.files[].path' > /tmp/pr-files.txt
+
+          python3 <<'PY' > /tmp/classify.txt
+          from pathlib import Path
+
+          DOCS_PREFIXES = (
+              "docs/",
+              "examples/",
+              "packaging/",
+              "skills/",
+              "scripts/",
+          )
+          DOCS_FILES = {
+              "README.md",
+              "README-zh.md",
+              "CHANGELOG.md",
+              "CONTRIBUTING.md",
+              "CONTRIBUTING-zh.md",
+              "install.sh",
+              "install-fleet.sh",
+              "install.ps1",
+              "install-fleet-windows.ps1",
+          }
+
+          paths = [
+              line.strip()
+              for line in Path("/tmp/pr-files.txt").read_text().splitlines()
+              if line.strip()
+          ]
+          if not paths:
+              print("empty")
+              raise SystemExit(0)
+
+          def allowed(path: str) -> bool:
+              if path in DOCS_FILES:
+                  return True
+              return any(path.startswith(prefix) for prefix in DOCS_PREFIXES)
+
+          if all(allowed(p) for p in paths):
+              print("docs-only")
+          else:
+              print("runtime-or-mixed")
+          PY
+
+          echo "verdict=$(cat /tmp/classify.txt)" >> "${GITHUB_OUTPUT}"
+
+      - name: Comment on pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          VERDICT: ${{ steps.classify.outputs.verdict }}
+        run: |
+          set -euo pipefail
+          if [[ "${VERDICT}" == "docs-only" ]]; then
+            cat > /tmp/pr-comment.md <<'EOF'
+          Thanks for the contribution!
+
+          **This repository is a release mirror** — end-user docs are authored upstream in `docs/public-finsafe/` and synced to `finogeeks/finsafe` on each public release. We **do not merge PRs here as the long-term fix**; maintainers cherry-port substantive edits upstream and close this PR with a link to the upstream change.
+
+          Your PR touches **documentation / examples only**, so it may be labeled `triage:docs-only`. A maintainer will review and port it when convenient; the update will appear on public `main` after the next release sync (or a manual docs push).
+
+          - [CONTRIBUTING.md](https://github.com/finogeeks/finsafe/blob/main/CONTRIBUTING.md)
+          - For **bugs in `finsafe` behavior**, please also consider opening an [issue](https://github.com/finogeeks/finsafe/issues/new) with the `bug` label so release automation can link a fix version.
+          EOF
+          elif [[ "${VERDICT}" == "empty" ]]; then
+            cat > /tmp/pr-comment.md <<'EOF'
+          Thanks for opening a PR. This repository is a **release mirror** (binaries + docs only). Please see [CONTRIBUTING.md](https://github.com/finogeeks/finsafe/blob/main/CONTRIBUTING.md) for how we intake changes.
+          EOF
+          else
+            cat > /tmp/pr-comment.md <<'EOF'
+          Thanks for the contribution!
+
+          **This repository is a release mirror** — it ships release binaries and documentation only. It does **not** contain FinSAFE engine source code, so we **cannot merge runtime or mixed code PRs** here.
+
+          Please **open a [GitHub Issue](https://github.com/finogeeks/finsafe/issues/new)** with the `bug` label instead (include `finsafe --version`, OS, and reproduction steps). Runtime fixes are implemented in the private upstream repo, released, and linked back to your issue.
+
+          If your PR also included documentation suggestions, you may split those into a **docs-only** follow-up PR under `docs/` or describe them in the issue.
+
+          - [CONTRIBUTING.md](https://github.com/finogeeks/finsafe/blob/main/CONTRIBUTING.md)
+          EOF
+          fi
+
+          # Strip common leading whitespace from heredoc indentation.
+          sed -i 's/^          //' /tmp/pr-comment.md
+
+          gh pr comment "${PR_NUMBER}" \
+            --repo "${{ github.repository }}" \
+            --body-file /tmp/pr-comment.md
+
+      - name: Label docs-only pull requests
+        if: steps.classify.outputs.verdict == 'docs-only'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          gh pr edit "${PR_NUMBER}" \
+            --repo "${{ github.repository }}" \
+            --add-label "triage:docs-only"

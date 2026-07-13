@@ -1,0 +1,34 @@
+# Windows: opt-in Codex-shaped posture — broker is NOT OS-confined; confine tools via
+# `finsafe run` / execution cells instead.
+#
+# Use when you need a live interactive TTY without AppContainer/ProjFS, and
+# accept that the broker process itself runs with the operator's privileges.
+#
+#   mkdir workspace 2>$null
+#   finsafe --policy examples/wrapper-policies/hermes-interactive-tools-only.yaml self-confine hermes
+#
+# Audit will show broker_confined=false and confine_scope=tools_only.
+schema_version: 1
+kind: local-wrapper
+program_mode: interactive
+broker_confine: tools-only
+degrade:
+  allow_fallback: true
+audit:
+  require_policy_digest: true
+  require_resolved_posture: true
+stdio:
+  mode: inherit
+network: host
+resources:
+  memory_max: "1G"
+  pids_max: "256"
+  cpu_max: "100000 100000"
+windows:
+  backend: restricted_token
+filesystem:
+  skip_default_deny_read: true
+  read_only_paths: []
+  read_write_paths:
+    - "./workspace"
+    - "${USERPROFILE}/.hermes"
