@@ -76,6 +76,7 @@ Operators pass a **wrapper policy** (`kind: local-wrapper`) with **`--policy`**.
 Summary of important fields:
 
 - **`program_mode`:** Must match the subcommand (`short-lived` → `run`, `interactive` → `self-confine`).
+- **`broker_confine`:** Optional. Default confines the broker. Opt-in `tools-only` leaves the broker unsandboxed (live TTY); tool cells via **`finsafe run`** remain the enforcement boundary. Audit shows `broker_confined=false`.
 - **`network`:** `none`, `host`, or `allowlist` with proxy configuration.
 - **`filesystem.read_only_paths` / `read_write_paths`:** Paths relative to your workspace layout.
 - **`macos_seatbelt.deny_outbound_ports`** (optional, macOS): Block specific outbound TCP ports when `network: host`.
@@ -108,6 +109,7 @@ Copy-paste examples from this repository — full first-run walkthroughs: [READM
 | One-shot broker / query style | [examples/wrapper-policies/hermes-oneshot-query.yaml](../examples/wrapper-policies/hermes-oneshot-query.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-oneshot-query.yaml run -- hermes chat -q "…"` |
 | Interactive broker (TTY, macOS) | [examples/wrapper-policies/hermes-interactive.yaml](../examples/wrapper-policies/hermes-interactive.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-interactive.yaml self-confine -- hermes` |
 | Interactive broker (TTY, Linux) | [examples/wrapper-policies/hermes-linux-interactive.yaml](../examples/wrapper-policies/hermes-linux-interactive.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-linux-interactive.yaml self-confine -- hermes` |
+| Interactive tools-only broker (opt-in) | [examples/wrapper-policies/hermes-interactive-tools-only.yaml](../examples/wrapper-policies/hermes-interactive-tools-only.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-interactive-tools-only.yaml self-confine -- hermes` |
 | OpenCode one-shot | [examples/wrapper-policies/agent-sandbox/opencode-oneshot.yaml](../examples/wrapper-policies/agent-sandbox/opencode-oneshot.yaml) | See [README § Quick start (OpenCode)](../README.md#quick-start-opencode) |
 | Interactive broker + deny outbound TCP port 80 (Seatbelt) | [examples/wrapper-policies/hermes-interactive-deny-http.yaml](../examples/wrapper-policies/hermes-interactive-deny-http.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-interactive-deny-http.yaml self-confine -- hermes` |
 

@@ -10,6 +10,20 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.15] - 2026-07-13
+
+### Added
+
+- **`broker_confine: tools-only` (opt-in):** leave the interactive broker unsandboxed for a live TTY; confine tools via `finsafe run` / execution cells. Audit attests `broker_confined=false` / `confine_scope=tools_only`. Example: `examples/wrapper-policies/hermes-interactive-tools-only.yaml`.
+
+### Changed
+
+- **Windows RestrictedToken interactive `self-confine`:** defaults to **Live ConPTY** when available (Codex-aligned spawn: no console-window flags; `lpDesktop=Winsta0\Default`). Escape hatch: `FINSAFE_WIN_PTY_MODE=pipe`.
+
+### Fixed
+
+- **Windows:** export `preflight_windows_launch` from `finsafe-winsafe` so `finsafe-cli` cross-compile and Windows acceptance builds resolve the symbol.
+
 ## [0.9.14] - 2026-07-12
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->

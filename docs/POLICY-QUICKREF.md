@@ -39,6 +39,7 @@ Instead of authoring wrapper YAML, **`finsafe --host-profile <NAME> self-confine
 | `schema_version` | Wrapper policy schema version. Use `1` for current Stage 1 policies. |
 | `kind` | Must be `local-wrapper`. |
 | `program_mode` | `interactive` → use **`finsafe self-confine`**. `short-lived` → use **`finsafe run`**. Mismatch with the CLI verb is rejected. |
+| `broker_confine` | Optional. Default `self-confine` confines the broker. Opt-in `tools-only` runs the broker unsandboxed (live TTY without AppContainer/ProjFS); audit shows `broker_confined=false`. Confine tools with **`finsafe run`** / execution cells. Example: [`hermes-interactive-tools-only.yaml`](../../examples/wrapper-policies/hermes-interactive-tools-only.yaml). |
 | `degrade.allow_fallback` | When `false`, FinSafe fails closed if the strictest posture cannot be applied. When `true`, explicit fallback may be allowed and audited. |
 | `degrade.prompt_on_macos_arm64_missing_apple_container` | **Deprecated / ignored** for native macOS Seatbelt wrapper flows; omit in new files. Legacy files may still include it. |
 | `audit.require_policy_digest` | Refuse to start unless the wrapper policy digest is recorded in the audit envelope. |

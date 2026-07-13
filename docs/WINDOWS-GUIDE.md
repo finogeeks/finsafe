@@ -116,7 +116,8 @@ finsafe --policy .\hermes-windows-oneshot-appcontainer.yaml run -- hermes --vers
 ```
 
 - Short-lived tools → `finsafe run` + `program_mode: short-lived`
-- Interactive brokers in a real terminal → `finsafe self-confine` (ConPTY)
+- Interactive brokers in a real terminal → `finsafe self-confine` (Live ConPTY under AppContainer **and** RestrictedToken when available)
+- Opt-in unsandboxed broker (tools still sandboxed) → `broker_confine: tools-only` (see `hermes-interactive-tools-only.yaml`)
 - Agent-focused notes → [agent-sandbox-guide.md § Windows agents](agent-sandbox-guide.md)
 
 ---

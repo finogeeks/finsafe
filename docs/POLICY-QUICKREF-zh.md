@@ -39,6 +39,7 @@ filesystem:
 | `schema_version` | 包装策略 schema 版本。当前 Stage 1 使用 `1`。 |
 | `kind` | 必须为 `local-wrapper`。 |
 | `program_mode` | `interactive` → 使用 **`finsafe self-confine`**；`short-lived` → 使用 **`finsafe run`**。与 CLI 子命令不一致会被拒绝。 |
+| `broker_confine` | 可选。默认 `self-confine` 会限制 broker 进程。显式选择 `tools-only` 时 broker **不**做 OS 级沙箱（保留交互式 TTY）；工具侧仍通过 **`finsafe run`** / execution cell 约束。审计字段：`broker_confined=false`。示例：[`hermes-interactive-tools-only.yaml`](../../examples/wrapper-policies/hermes-interactive-tools-only.yaml)。 |
 | `degrade.allow_fallback` | 为 `false` 时，若无法施加最严格姿态则 **拒绝启动**；为 `true` 时，允许在审计约束下的显式降级。 |
 | `degrade.prompt_on_macos_arm64_missing_apple_container` | 原生 macOS Seatbelt 包装流程下 **已弃用 / 忽略**；新文件请省略。旧文件若仍含此项可保留。 |
 | `audit.require_policy_digest` | 若审计信封中未记录包装策略摘要，则拒绝启动。 |
