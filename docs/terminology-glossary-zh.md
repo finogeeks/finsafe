@@ -14,7 +14,8 @@
 |-----------------|------|----------------|
 | **Local Program Wrapper** / 本地程序包装器 | 在操作系统层用声明式策略包装任意本地二进制（`run` 短任务、`self-confine` 交互式），输出审计信封。 | `finsafe` CLI；`kind: local-wrapper` 策略。见 [USER-GUIDE-zh.md](./USER-GUIDE-zh.md)。 |
 | **个人模式（Personal）** | 用户自备 wrapper YAML（`--policy`），策略可被本地修改。 | 无 `managed-required.json` 且未注册 agent 时的默认路径。 |
-| **托管模式（Managed）** | 组织通过 Policy Authority 下发已签名 bundle，本机 agent 强制策略，禁止本地 `--policy`。 | `finsafe-agent`、`finsafe-authority-http`、MDM 哨兵。见 [managed-mode-zh.md](./managed-mode-zh.md)。 |
+| **舰队（Fleet）** | 由组织统一纳管的一批员工终端（Mac/Linux/Windows），安装 fleet 构建的 FinSAFE 组件，并从 Policy Authority 拉取已签名策略。口语里常说「桌面舰队」「设备舰队」；**不是**云上容器集群。 | `finsafe-fleet` 发行包、`finsafe-agent`、MDM 下发、enroll。见 [FAQ-zh.md](./FAQ-zh.md)「阅读前：什么是舰队」、[managed-mode-zh.md](./managed-mode-zh.md)。 |
+| **托管模式（Managed）** | 组织通过 Policy Authority 下发已签名 bundle，本机 agent 强制策略，禁止本地 `--policy`。舰队场景的默认运行方式。 | `finsafe-agent`、`finsafe-authority-http`、MDM 哨兵。见 [managed-mode-zh.md](./managed-mode-zh.md)。 |
 | **Policy Authority（策略权威）** | 中央 HTTPS 服务：JWKS、bundle 分发、设备注册、心跳、管理 API、审计接收。 | `finsafe-authority-http`；需 `/etc/finsafe/license.jws`。 |
 | **边缘 / 桌面（Edge）** | 策略与执行发生在员工本机（Mac/Linux/Windows 本地沙箱）。 | `finsafe run`、`finsafe-agent`、Seatbelt / bwrap 栈。 |
 | **中心 / 云（Center）** | 多租户执行平面：提交、调度、路由、远程执行。 | `finsafe-server`、Execution Scheduler、Policy Router。见 [product-one-pager-zh.md](./product-one-pager-zh.md)。 |

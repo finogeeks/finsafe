@@ -6,6 +6,7 @@ The Chinese glossary is the **canonical, full** reference for FinSAFE concepts: 
 
 Use it when you encounter unfamiliar terms such as:
 
+- **Fleet（舰队）** — org-managed employee endpoints (not a cloud container cluster); Policy Authority + `finsafe-agent` + MDM  
 - **MITM / TLS terminate** — HTTPS inspection via `tls_terminate`, `mitm_tls_terminate` license, inspection CA  
 - **WFP / deny-only group / permit-loopback** — Windows persistent filters and loopback proxy ports `60080–60089`  
 - **Corporate / parent proxy** — upstream enterprise HTTP(S) gateway (planned chaining from FinSAFE loopback proxy)  

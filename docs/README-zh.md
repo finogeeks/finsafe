@@ -6,6 +6,7 @@
 
 | 文档 | 说明 |
 |------|------|
+| [FAQ-zh.md](./FAQ-zh.md) | **常见问题（三大部分）**：① 商业与客户价值 / 独特优势 / 市场教育；② 与市场沙箱竞争互补与对比；③ 架构实现与 Findesk/FinClaw/Hermes 价值链 |
 | [terminology-glossary-zh.md](./terminology-glossary-zh.md) · [English](./terminology-glossary.md) | **概念术语表**：MITM、WFP、企业代理、L7、Landlock、Bundle/托管、对标 sandbox-runtime/Codex 等 |
 
 ## 企业 IT 全景（首选）

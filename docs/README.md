@@ -6,6 +6,7 @@
 
 | Document | Description |
 |----------|-------------|
+| [FAQ-zh.md](./FAQ-zh.md) | **FAQ (Chinese, three parts)**: (1) commercial value & GTM messaging; (2) market comparison / compete-vs-complement; (3) architecture & Findesk/FinClaw/Hermes value chain |
 | [terminology-glossary-zh.md](./terminology-glossary-zh.md) · [terminology-glossary.md](./terminology-glossary.md) | **Glossary**: MITM, WFP, corporate proxy, L7 hooks, isolation primitives, managed fleet terms, sandbox-runtime/Codex comparison context |
 
 ## Enterprise IT panorama (start here)
