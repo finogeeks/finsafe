@@ -10,6 +10,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.16] - 2026-07-17
+
+### Added
+
+- **Sandbox-as-a-Service public delivery:** Linux archive `finsafe-saas-server-v*`
+  (`finsafe-server-http` + public `finsafe` + helper/shim/supervisor) and multi-arch
+  OCI image `ghcr.io/finogeeks/finsafe-saas` (`linux/amd64`, `linux/arm64`) via
+  `release-public-cli.yml`. Prefer the image for Docker sidecars (including macOS
+  Docker Desktop); use the tarball for bare-metal Linux installs.
+
 ## [0.9.15] - 2026-07-13
 
 ### Added

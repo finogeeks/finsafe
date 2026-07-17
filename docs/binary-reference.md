@@ -124,15 +124,22 @@ CI checks each archive family: personal **`finsafe-v*`** must exclude agent/auth
 - **Install:** Sibling of `finsafe` on Linux fleet hosts
 - **Archive:** Inside public Linux `finsafe-v*` archive
 
+### `finsafe-server-http` (Sandbox-as-a-Service)
+
+- **Audience:** Platform teams running remote sandbox cells (DeerFlow, adapters, SaaS)
+- **Install path:** Native Linux tarball or OCI sidecar
+- **Archive:** `finsafe-saas-server-v*` (**Linux x86_64 only** — includes public `finsafe` + helper/shim/supervisor + `daemon.docker.yaml`)
+- **Container:** `ghcr.io/finogeeks/finsafe-saas:v<version>` (`linux/amd64`, `linux/arm64`; use this on macOS Docker hosts)
+- **Not published:** apple-darwin / Windows saas-server archives (use the OCI image instead)
+
 ---
 
 ## Non-shipped workspace binaries (out of scope for fleet admins)
 
-These exist in the FinSAFE source tree for adapters, tests, or future platform APIs. **Fleet administrators do not install them** for managed-mode rollout:
+These exist in the FinSAFE source tree for adapters, tests, or internal tooling. **Fleet administrators do not install them** for managed-mode rollout:
 
 | Binary / crate | Role |
 |----------------|------|
-| `finsafe-server-http` | Separate platform-layer HTTP API (not Policy Authority) |
 | Library crates (`finsafe-bwrap`, `finsafe-bundle`, …) | Linked into the binaries above |
 
 ---

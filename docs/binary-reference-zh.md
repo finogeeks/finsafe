@@ -119,15 +119,22 @@ CI 按发行包族校验：个人 **`finsafe-v*`** 不得含 agent/authority；*
 - **安装：** Linux 舰队主机上作为 `finsafe` 的兄弟二进制
 - **发行包：** 公开 Linux `finsafe-v*` 包内
 
+### `finsafe-server-http`（Sandbox-as-a-Service）
+
+- **对象：** 运行远程沙箱 cell 的平台团队（DeerFlow、适配器、SaaS）
+- **安装：** Linux 原生 tarball 或 OCI 侧车
+- **发行包：** `finsafe-saas-server-v*`（**仅 Linux x86_64** — 含公开版 `finsafe` + helper/shim/supervisor + `daemon.docker.yaml`）
+- **容器：** `ghcr.io/finogeeks/finsafe-saas:v<version>`（`linux/amd64`、`linux/arm64`；macOS Docker 主机用此镜像）
+- **不发布：** apple-darwin / Windows 的 saas-server 包（请用 OCI 镜像）
+
 ---
 
 ## 不随舰队交付的工作区二进制
 
-以下存在于 FinSAFE 源码树，供适配器、测试或未来平台 API 使用。**托管模式上线无需安装：**
+以下存在于 FinSAFE 源码树，供适配器、测试或内部工具使用。**托管模式上线无需安装：**
 
 | 二进制 / crate | 角色 |
 |----------------|------|
-| `finsafe-server-http` | 独立平台层 HTTP API（非 Policy Authority） |
 | 库 crate（`finsafe-bwrap`、`finsafe-bundle` 等） | 链接进上述二进制 |
 
 ---
