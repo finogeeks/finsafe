@@ -10,6 +10,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.18] - 2026-07-19
+
+### Added
+
+- **SaaS daemon `host_capabilities` config** — `daemon.yaml` can declare `allowlist_supported` and `proxy_profiles` for the policy router. Short-lived `HighLevelPolicyV1` executions (one-shot submits and workspace session turns) honor this setting; Phase Y resident brokers remain on `self-confine` wrapper templates. When `allowlist_supported: true`, the executor starts an embedded `finsafe-net-proxy` per execution (fail-closed if the proxy fails to start).
+
 ## [0.9.17] - 2026-07-18
 
 ### Added
