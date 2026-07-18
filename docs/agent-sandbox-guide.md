@@ -242,6 +242,15 @@ mkdir workspace -ErrorAction SilentlyContinue
 finsafe --policy examples/wrapper-policies/hermes-windows-oneshot.yaml run hermes --version
 ```
 
+For a live interactive Hermes session use `self-confine` with the interactive
+policy (from a real terminal; FinSAFE hosts the sandboxed TUI over Live ConPTY
+with raw/VT console passthrough and resize forwarding — Ctrl+C goes to Hermes,
+Ctrl+Break kills the session):
+
+```powershell
+finsafe --policy examples/wrapper-policies/hermes-windows-interactive.yaml self-confine -- hermes
+```
+
 For stronger AppContainer isolation (deny-read / LowBox / optional ProjFS for
 large trees), use `hermes-windows-oneshot-appcontainer.yaml`. Full Windows
 onboarding: [WINDOWS-GUIDE.md](./WINDOWS-GUIDE.md). Field detail:

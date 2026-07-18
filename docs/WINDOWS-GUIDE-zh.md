@@ -115,6 +115,20 @@ Invoke-WebRequest -Uri https://raw.githubusercontent.com/finogeeks/finsafe/main/
 finsafe --policy .\hermes-windows-oneshot-appcontainer.yaml run -- hermes --version
 ```
 
+交互式 Hermes 会话（RestrictedToken + `self-confine`，请在真实终端中运行 —
+Windows Terminal 或交互式 PowerShell 窗口）：
+
+```powershell
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/hermes-windows-interactive.yaml -OutFile hermes-windows-interactive.yaml
+finsafe --policy .\hermes-windows-interactive.yaml self-confine -- hermes
+```
+
+FinSAFE 常驻为 supervisor，并为沙箱内的 broker 充当终端宿主：会话期间控制台
+切换为 raw/VT 模式（逐键输入、彩色、TUI 实时重绘、窗口大小变化转发），Hermes
+退出后自动恢复。**Ctrl+C 发给 Hermes；Ctrl+Break 终止整个会话。**不要把
+oneshot 策略复用给 `self-confine` — 它是 `program_mode: short-lived` 且带
+120 秒超时，会中断交互会话。
+
 - 短命工具 → `finsafe run` + `program_mode: short-lived`
 - 真实终端里的交互式 broker → `finsafe self-confine`（AppContainer **与** RestrictedToken 在可用时均走 Live ConPTY）
 - 可选：broker 不沙箱、工具仍沙箱 → `broker_confine: tools-only`（见 `hermes-interactive-tools-only.yaml`）

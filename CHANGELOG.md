@@ -10,6 +10,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.17] - 2026-07-18
+
+### Added
+
+- **examples: Hermes Windows interactive policy** (`hermes-windows-interactive.yaml`) — RestrictedToken + `self-confine` recipe for a live Hermes session (`program_mode: interactive`, no session timeout). The Unix-path `hermes-interactive.yaml` does not apply on Windows, and the oneshot policy's `short-lived` mode + 120 s timeout must not be reused for interactive sessions.
+
+### Fixed
+
+- **Windows interactive `self-confine` (both backends):** FinSAFE now performs the terminal-host half of the Live ConPTY contract. The supervisor's real console is switched to raw/VT mode for the session — per-key stdin (no line buffering / double echo), arrow and function keys delivered as VT input, ANSI rendering on classic conhost — and **Ctrl+C is forwarded to the broker** instead of killing the FinSAFE supervisor (which previously tore down the whole session via the Job object; Ctrl+Break remains the session kill). Console window resizes are forwarded to the broker via `ResizePseudoConsole`. Original console modes are restored on exit. This is what prevented interactive TUI agents (e.g. Hermes) from being usable under `self-confine` even after the 0.9.15 spawn fix; one-shot `run` was unaffected.
+
 ## [0.9.16] - 2026-07-17
 
 ### Added

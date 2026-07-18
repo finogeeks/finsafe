@@ -146,6 +146,14 @@ mkdir workspace -ErrorAction SilentlyContinue
 finsafe --policy examples/wrapper-policies/hermes-windows-oneshot.yaml run hermes --version
 ```
 
+交互式 Hermes 会话用 `self-confine` + 交互策略（在真实终端中运行；FinSAFE 通过
+Live ConPTY + raw/VT 控制台直通与窗口大小转发承载沙箱内 TUI —— Ctrl+C 发给
+Hermes，Ctrl+Break 终止会话）：
+
+```powershell
+finsafe --policy examples/wrapper-policies/hermes-windows-interactive.yaml self-confine -- hermes
+```
+
 更强 AppContainer（deny-read / LowBox / 可选 ProjFS）见 `hermes-windows-oneshot-appcontainer.yaml`。完整 Windows 入门：[WINDOWS-GUIDE-zh.md](./WINDOWS-GUIDE-zh.md)。字段细节：[USER-GUIDE-zh.md § Windows 后端](./USER-GUIDE-zh.md) · [POLICY-QUICKREF-zh.md](./POLICY-QUICKREF-zh.md)。
 
 ---

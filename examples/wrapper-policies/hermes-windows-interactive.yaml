@@ -1,0 +1,53 @@
+# Windows: run the interactive Hermes broker under RestrictedToken via
+# `self-confine` (supervisor-spawn + Live ConPTY).
+# From an interactive PowerShell / Windows Terminal prompt in your project dir:
+#   mkdir workspace 2>$null
+#   finsafe --policy examples/wrapper-policies/hermes-windows-interactive.yaml self-confine -- hermes
+#
+# What happens:
+# - FinSAFE compiles this policy, spawns Hermes under a WRITE_RESTRICTED
+#   RestrictedToken + Job object (Codex-aligned weaker posture: host-wide
+#   read, deny-by-default writes allowlisted below), and stays resident as
+#   the supervisor until Hermes exits.
+# - On a real TTY the broker is attached to a Live ConPTY and FinSAFE acts
+#   as the terminal host: the real console is switched to raw/VT mode for
+#   the session (per-key input, arrow keys, colors, live redraws) and
+#   window resizes are forwarded to the broker. Ctrl+C is delivered to
+#   Hermes; Ctrl+Break remains the emergency stop for the whole session.
+# - Without a TTY (CI, redirection) output is captured and replayed after
+#   exit — use the oneshot policy for scripted runs instead.
+#
+# Notes:
+# - `program_mode: interactive` + no `resources.timeout_ms`: interactive
+#   sessions are open-ended. (The oneshot example's 120s timeout would kill
+#   a live session.)
+# - Do NOT add the venv (or `.`) to read_only_paths — unnecessary on
+#   RestrictedToken (host-wide read).
+# - Paths use ${USERPROFILE}; FinSAFE expands them when the policy loads,
+#   and only paths that exist get write grants — create `./workspace` first.
+# - For stronger AppContainer isolation see the oneshot AppContainer example;
+#   for an unsandboxed broker with sandboxed tools use
+#   `broker_confine: tools-only` (hermes-interactive-tools-only.yaml).
+schema_version: 1
+kind: local-wrapper
+program_mode: interactive
+degrade:
+  allow_fallback: false
+audit:
+  require_policy_digest: true
+  require_resolved_posture: true
+# host: hermes needs outbound HTTPS for LLM API calls
+network: host
+resources:
+  memory_max: "2G"
+  pids_max: "256"
+  cpu_max: "100000 100000"
+windows:
+  backend: restricted_token
+filesystem:
+  # Explicit opt-out documents the weaker path; Auto+host also skips builtins.
+  skip_default_deny_read: true
+  read_only_paths: []
+  read_write_paths:
+    - "./workspace"
+    - "${USERPROFILE}/.hermes"

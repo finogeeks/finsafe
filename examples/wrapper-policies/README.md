@@ -18,6 +18,7 @@ See [docs/POLICY-QUICKREF.md](../../docs/POLICY-QUICKREF.md) or [docs/POLICY-QUI
 | `hermes-interactive-deny-http.yaml` | Linux / macOS | Hermes interactive with outbound HTTP denied |
 | `hermes-windows-oneshot.yaml` | Windows | One-shot Hermes under **RestrictedToken** (default desktop `network: host` path; host-wide read, write allowlist; no ProjFS) |
 | `hermes-windows-oneshot-appcontainer.yaml` | Windows | Same Hermes one-shot under **AppContainer** (stronger; large venvs may need ProjFS) |
+| `hermes-windows-interactive.yaml` | Windows | Interactive Hermes session under **RestrictedToken** via `self-confine` (Live ConPTY terminal host; no session timeout) |
 | `windows-version-smoke.yaml` | Windows | Minimal `finsafe run cmd /c echo hello` |
 | `windows-sandbox-smoke.yaml` | Windows | Stricter AppContainer smoke with `network: host` |
 | `agent-sandbox/` | Linux / macOS / Windows | Agent CLI samples (Hermes, Codex, OpenCode, agy) and isolation probes — see [agent-sandbox/README.md](agent-sandbox/README.md) |

@@ -115,6 +115,22 @@ Invoke-WebRequest -Uri https://raw.githubusercontent.com/finogeeks/finsafe/main/
 finsafe --policy .\hermes-windows-oneshot-appcontainer.yaml run -- hermes --version
 ```
 
+Interactive Hermes session (RestrictedToken + `self-confine`, run from a real
+terminal — Windows Terminal or an interactive PowerShell window):
+
+```powershell
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/hermes-windows-interactive.yaml -OutFile hermes-windows-interactive.yaml
+finsafe --policy .\hermes-windows-interactive.yaml self-confine -- hermes
+```
+
+FinSAFE stays resident as the supervisor and acts as the terminal host for the
+sandboxed broker: your console is switched to raw/VT mode for the session
+(per-key input, colors, live TUI redraws, window-resize forwarding) and
+restored when Hermes exits. **Ctrl+C goes to Hermes; Ctrl+Break kills the
+whole session.** Do not reuse the oneshot policy for `self-confine` — it is
+`program_mode: short-lived` and carries a 120 s timeout that would end a live
+session.
+
 - Short-lived tools → `finsafe run` + `program_mode: short-lived`
 - Interactive brokers in a real terminal → `finsafe self-confine` (Live ConPTY under AppContainer **and** RestrictedToken when available)
 - Opt-in unsandboxed broker (tools still sandboxed) → `broker_confine: tools-only` (see `hermes-interactive-tools-only.yaml`)
