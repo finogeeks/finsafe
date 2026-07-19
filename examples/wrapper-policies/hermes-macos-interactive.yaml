@@ -1,0 +1,77 @@
+# Wrap a long-lived interactive `hermes` broker in FinSAFE self-confine mode (macOS).
+# Use with:
+#   finsafe --policy hermes-macos-interactive.yaml self-confine \
+#       /usr/bin/env HOME="$HOME" PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/bin:/bin" hermes
+#
+# One-shot query (also works with self-confine):
+#   finsafe --policy hermes-macos-interactive.yaml self-confine \
+#       /usr/bin/env HOME="$HOME" PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/bin:/bin" hermes chat -q "..."
+#
+# Paths under `filesystem` use ${HOME} or ~/; FinSAFE expands these from the
+# finsafe loader process environment when the policy loads (distinct from `--` argv).
+#
+# On macOS: FinSAFE applies Apple Sandbox (Seatbelt) to confine Hermes.
+# No bubblewrap, cgroups, or seccomp is involved — Seatbelt enforces file access
+# and basic resource limits via its own profile language.
+#
+# NOTE: Apple SIP (System Integrity Protection) must be enabled for Seatbelt
+# to function correctly. Disabling SIP breaks sandbox_apply().
+#
+# NOTE: FinSAFE self-confine on macOS execs directly into Hermes with an
+# inherited terminal. No pty/bubblewrap layer is needed.
+schema_version: 1
+kind: local-wrapper
+program_mode: interactive
+degrade:
+  allow_fallback: true
+audit:
+  require_policy_digest: true
+  require_resolved_posture: true
+# On macOS, `inherit` mode is the correct choice — no bubblewrap PTY layer to
+# allocate. FinSAFE preserves the terminal by execing into Hermes directly.
+stdio:
+  mode: inherit
+# host: Hermes needs outbound HTTPS for LLM API calls.
+network: host
+resources:
+  memory_max: "1G"
+  pids_max: "256"
+  cpu_max: "100000 100000"
+filesystem:
+  # skip_default_deny_read: Hermes reads API keys from ${HOME}/.hermes/.env.
+  # FinSAFE's built-in deny_read_paths blocks .env files by default under each
+  # writable root. Set this to true so Hermes can access its credentials.
+  skip_default_deny_read: true
+
+  # macOS Apple Sandbox (Seatbelt) requires every needed path to be declared.
+  # Unlike Linux Landlock, Seatbelt denies by default — anything not explicitly
+  # allowed is blocked, including Mach IPC, IOKit, and syscall-level access.
+  read_only_paths:
+    - "."
+    - "/usr"
+    - "/System/Library"
+    # macOS /bin and /sbin are symlinks to /usr/bin and /usr/sbin (macOS 10.15+).
+    # Declaring /usr covers them, but keeping /bin and /sbin explicitly here
+    # is a no-op and harmless.
+    - "/bin"
+    - "/sbin"
+    # /lib and /lib64 do NOT exist on macOS — removed (Linux-only paths).
+    # /etc and /etc/resolv.conf are uncommented below if needed for DNS.
+    # - "/etc"
+    # - "/etc/resolv.conf"
+    # uv-managed Python installations live under HOME.
+    - "${HOME}/.local/bin"
+    - "${HOME}/.local/share/uv/python"
+    - "/opt/homebrew/bin"
+    - "/usr/local/bin"
+  read_write_paths:
+    # Hermes stores its config, credentials (.env), sessions, cache, and skills
+    # under ${HOME}/.hermes.
+    - "${HOME}/.hermes"
+    # Working directory for file I/O within the sandbox.
+    # NOTE: If you launch Hermes from a different directory, add that path here
+    # or symlink it into ~/workspace.
+    - "${HOME}/workspace"
+    # /dev/null is needed for discarding output; /tmp for temporary files.
+    - "/dev/null"
+    - "/tmp"
