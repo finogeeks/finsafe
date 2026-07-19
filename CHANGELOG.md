@@ -10,6 +10,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.19] - 2026-07-19
+
+### Fixed
+
+- **macOS Seatbelt `self-confine` symlink path spelling:** policy `read_only_paths` / `read_write_paths` that are themselves symlinks (for example a CLI-safe home alias under `~/.findesk-dev/...` pointing at `~/Library/Application Support/...`) are now emitted under **both** the literal and canonical spellings. Previously `prepare_macos_seatbelt_self_confine` canonicalized those entries first, so a Hermes (or other) shebang/argv that still referenced the literal alias failed with `EPERM` even though the resolved target was allowed.
+
 ## [0.9.18] - 2026-07-19
 
 ### Added
