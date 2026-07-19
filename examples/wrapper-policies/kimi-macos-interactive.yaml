@@ -1,0 +1,95 @@
+# Wrap an interactive `kimi` (Kimi Code CLI) agent in FinSAFE self-confine mode (macOS).
+# Use with:
+#   finsafe --policy kimi-macos-interactive.yaml self-confine \
+#       /usr/bin/env HOME="$HOME" PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/bin:/bin" kimi
+#
+# One-shot query (also works with self-confine):
+#   finsafe --policy kimi-macos-interactive.yaml self-confine \
+#       /usr/bin/env HOME="$HOME" PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/bin:/bin" kimi chat -q "..."
+#
+# Paths under `filesystem` use ${HOME} or ~/; FinSAFE expands these from the
+# finsafe loader process environment when the policy loads (distinct from `--` argv).
+#
+# On macOS: FinSAFE applies Apple Sandbox (Seatbelt) to confine Kimi Code CLI.
+# No bubblewrap, cgroups, or seccomp is involved — Seatbelt enforces file access
+# and basic resource limits via its own profile language.
+#
+# NOTE: Apple SIP (System Integrity Protection) must be enabled for Seatbelt
+# to function correctly. Disabling SIP breaks sandbox_apply().
+#
+# NOTE: FinSAFE self-confine on macOS execs directly into Kimi CLI with an
+# inherited terminal. No pty/bubblewrap layer is needed.
+#
+# Kimi CLI data locations (https://moonshotai.github.io/kimi-cli/en/configuration/data-locations):
+#   ~/.kimi/        — config, credentials, sessions, logs, plans, MCP config
+#   ~/.kimi/config.toml   — main configuration (providers, models, services)
+#   ~/.kimi/credentials/  — OAuth credentials
+#   ~/.kimi/mcp-oauth/    — MCP server OAuth tokens
+#   ~/.kimi/sessions/     — session data (context.jsonl, wire.jsonl, state.json)
+#   ~/.kimi/plans/        — plan mode markdown files
+#   ~/.kimi/logs/         — kimi.log
+#
+# Kimi is a coding agent — the current working directory must be writable
+# for file read/edit/create operations (unlike Hermes which primarily reads).
+schema_version: 1
+kind: local-wrapper
+program_mode: interactive
+degrade:
+  allow_fallback: true
+audit:
+  require_policy_digest: true
+  require_resolved_posture: true
+# On macOS, `inherit` mode is the correct choice — no bubblewrap PTY layer to
+# allocate. FinSAFE preserves the terminal by execing into Kimi CLI directly.
+stdio:
+  mode: inherit
+# host: Kimi CLI needs outbound HTTPS for LLM API calls (Kimi API, search, fetch).
+network: host
+resources:
+  memory_max: "2G"
+  pids_max: "512"
+  cpu_max: "100000 100000"
+filesystem:
+  # skip_default_deny_read: Kimi CLI reads API keys from config.toml and
+  # OAuth tokens from ~/.kimi/credentials/. No .env files involved.
+  skip_default_deny_read: true
+
+  # macOS Apple Sandbox (Seatbelt) requires every needed path to be declared.
+  # Unlike Linux Landlock, Seatbelt denies by default — anything not explicitly
+  # allowed is blocked, including Mach IPC, IOKit, and syscall-level access.
+  #
+  # Kimi CLI is a coding agent — it reads AND writes files in the working
+  # directory. The current directory "." is placed in read_write_paths below
+  # rather than read_only_paths.
+  read_only_paths:
+    # System paths for command execution (git, node, python, etc.)
+    - "/usr"
+    - "/System/Library"
+    # macOS /bin and /sbin are symlinks to /usr/bin and /usr/sbin (macOS 10.15+).
+    - "/bin"
+    - "/sbin"
+    # /etc for system config (resolv.conf, etc.)
+    - "/etc"
+    - "/etc/resolv.conf"
+    # uv-managed Python installations (pip install kimi-cli)
+    - "${HOME}/.local/bin"
+    - "${HOME}/.local/share/uv/python"
+    # Homebrew-installed tools (kimi, git, node, etc.)
+    - "/opt/homebrew/bin"
+    - "/opt/homebrew/lib"
+    - "/usr/local/bin"
+    # Xcode developer tools (git, etc.) — uncomment if needed:
+    # - "/Applications/Xcode.app"
+  read_write_paths:
+    # Kimi CLI stores all data under ~/.kimi/:
+    # config.toml, kimi.json, mcp.json, credentials/, sessions/, plans/, logs/
+    - "${HOME}/.kimi"
+    - "${HOME}/.kimi-code"
+    # Working directory for code file I/O (Kimi edits files in the current
+    # directory). Change this to the specific project path if needed.
+    - "."
+    # Alternative workspace directory
+    - "${HOME}/workspace"
+    # /dev/null is needed for discarding output; /tmp for temporary files.
+    - "/dev/null"
+    - "/tmp"
