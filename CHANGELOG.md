@@ -10,6 +10,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.20] - 2026-07-20
+
+### Fixed
+
+- **SaaS Docker allowlist launch** — Pre-create `/run/finsafe-proxy.sock` in `Dockerfile.saas`, `Dockerfile.saas.prebuilt`, and recreate it in `docker-entrypoint.sh` on each start. Without this mount target, `network.mode=allowlist` cells failed at launch with `Bubblewrap mount target(s) missing in rootfs: /run/finsafe-proxy.sock` (exit 3) even when `host_capabilities.allowlist_supported=true`. Published to `ghcr.io/geeksfino/finsafe-saas:v0.9.20`.
+
 ## [0.9.19] - 2026-07-19
 
 ### Fixed
