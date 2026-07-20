@@ -4,15 +4,21 @@
 # - Labels doc-only PRs triage:docs-only for maintainer cherry-port into docs/public-finsafe/
 # - Does NOT merge or auto-close — maintainers port upstream and close manually
 #
+# Trigger: pull_request_target (not pull_request). Fork PRs only get a read-only
+# GITHUB_TOKEN on pull_request; pull_request_target runs in the base-repo context
+# with the permissions below. Safe here because this workflow never checks out
+# PR head code — it only reads the file list via `gh pr view` and comments/labels.
+#
 # See CONTRIBUTING.md and docs/operations/public-issue-automation.md § Public pull requests.
 name: Public PR mirror intake
 
 on:
-  pull_request:
+  pull_request_target:
     types: [opened]
 
 permissions:
   pull-requests: write
+  issues: write
 
 jobs:
   intake:
