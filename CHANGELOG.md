@@ -10,6 +10,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.21] - 2026-07-21
+
+<!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
+
 ### Added
 
 - **SaaS allowlist works with standard HTTP clients (Linux)** — allowlist proxy-cell executions now wrap the payload with an in-cell loopback relay (`finsafe proxy-relay-exec`): the cell gets `HTTP_PROXY`/`HTTPS_PROXY=http://127.0.0.1:60080` (plus lowercase aliases and `NO_PROXY`), and the relay forwards loopback TCP to the per-execution egress-proxy UDS at `/run/finsafe-proxy.sock`. Unmodified curl, Python `requests`, and Node fetch now traverse the FQDN allowlist without `unix://` proxy support. Previously the cell only received `HTTP_PROXY=unix:///run/finsafe-proxy.sock`, which mainstream clients reject (`curl: (7) Unsupported proxy scheme`). The relay is fail-closed (payload never spawns if the listener or proxy socket is unavailable) and adds no reachability: the cell netns still has no external routes, and all egress terminates at the host-side allowlist proxy. Requires the executor to resolve an absolute `finsafe` path (`FINSAFE_CLI_PATH` or `PATH`); otherwise the legacy `unix://` env is kept.
@@ -19,6 +23,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - This applies to **short-lived SaaS one-shot / workspace-turn executions on Linux** (`finsafe-server` executor). It does **not** change `self-confine` / resident-broker allowlist, which remains `proxy_uds` (UDS-only); standard-HTTP-client allowlist there is not yet wired. macOS/Windows allowlist behavior is unchanged.
 - **`wrapper_launch.compiler_version` is now 2** — probe/attestation/router details report the bumped wrapper-policy compiler revision so audit can distinguish loopback-relay derivation from the legacy `unix://` proxy-cell path (v1).
+
+### Fixed
+
+- **fix(linux): Landlock read_write_paths under bwrap + shim (finogeeks#20)** (public issue [finogeeks/finsafe#20](https://github.com/finogeeks/finsafe/issues/20), PR [Geeksfino/finsafe#140](https://github.com/Geeksfino/finsafe/pull/140))
 
 ## [0.9.20] - 2026-07-20
 
