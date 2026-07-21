@@ -10,6 +10,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.22] - 2026-07-21
+
+<!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
+
+### Fixed
+
+- **fix(linux): enforce deny_write_globs under read_write Landlock grants** (public issue [finogeeks/finsafe#22](https://github.com/finogeeks/finsafe/issues/22), PR [Geeksfino/finsafe#142](https://github.com/Geeksfino/finsafe/pull/142))
+
 ## [0.9.21] - 2026-07-21
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
