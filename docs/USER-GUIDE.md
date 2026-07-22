@@ -77,7 +77,7 @@ Summary of important fields:
 
 - **`program_mode`:** Must match the subcommand (`short-lived` → `run`, `interactive` → `self-confine`).
 - **`broker_confine`:** Optional. Default confines the broker. Opt-in `tools-only` leaves the broker unsandboxed (live TTY); tool cells via **`finsafe run`** remain the enforcement boundary. Audit shows `broker_confined=false`.
-- **`network`:** `none`, `host`, or `allowlist` with proxy configuration.
+- **`network`:** `none`, `host`, or `allowlist` with proxy configuration. For domain allowlist + loopback proxy smoke (personal CLI, no MITM), see [network-allowlist-proxy-runbook.md](network-allowlist-proxy-runbook.md).
 - **`filesystem.read_only_paths` / `read_write_paths`:** Paths relative to your workspace layout.
 - **`macos_seatbelt.deny_outbound_ports`** (optional, macOS): Block specific outbound TCP ports when `network: host`.
 - **`resources`:** Memory, PIDs, CPU strings where the platform can enforce them; optional `timeout_ms` for wall-clock limits on **`run`**.
@@ -370,7 +370,7 @@ Typical meanings (see `finsafe --help` for the authoritative list for your versi
 |---------|----------------|
 | **Bubblewrap not available** on macOS | Expected for the local wrapper; macOS uses **Seatbelt**. Use **`probe`** / **`doctor`**. |
 | **`program_mode` mismatch** | Policy **`short-lived`** must pair with **`run`**; **`interactive`** with **`self-confine`**. |
-| **No network** under `network: none` | Use **`network: host`** if the workload needs outbound HTTPS (subject to your threat model). |
+| **No network** under `network: none` | Use **`network: host`** if the workload needs outbound HTTPS (subject to your threat model), or **`network: allowlist` + `start_internal_proxy`** for a domain allowlist — [network-allowlist-proxy-runbook.md](network-allowlist-proxy-runbook.md). |
 | **Paths denied on macOS** | Widen **`read_only_paths`** / **`read_write_paths`**, ensure declared directories exist, inspect **`--json`** attestation fields. |
 | **Sandbox run failed — where to start** | **Agents (Hermes/OpenCode/agy):** [agent-sandbox-guide.md](agent-sandbox-guide.md) § **Policy iteration with learn and explain**. **Other workloads:** [USER-GUIDE § Creating and iterating policies](USER-GUIDE.md) — **`finsafe learn`**, **`finsafe explain`**, **`--audit`**. |
 | **`/dev/tty` fails inside Linux `run`** | Use **`stdio: pty`** in policy or **`finsafe run --stdio pty`**. Do not expect **`inherit`** to provide a controlling terminal under bubblewrap. |

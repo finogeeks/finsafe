@@ -23,6 +23,8 @@ See [docs/POLICY-QUICKREF.md](../../docs/POLICY-QUICKREF.md) or [docs/POLICY-QUI
 | `hermes-windows-interactive.yaml` | Windows | Interactive Hermes session under **RestrictedToken** via `self-confine` (Live ConPTY terminal host; no session timeout) |
 | `windows-version-smoke.yaml` | Windows | Minimal `finsafe run cmd /c echo hello` |
 | `windows-sandbox-smoke.yaml` | Windows | Stricter AppContainer smoke with `network: host` |
+| `network-allowlist-proxy.yaml` | Linux / macOS / Windows | Domain allowlist + `start_internal_proxy` (no MITM) — [runbook](../../docs/network-allowlist-proxy-runbook.md) |
+| `enterprise-https-inspection.yaml` | Linux / macOS / Windows | Allowlist + `tls_terminate` (licensed MITM) — [HTTPS inspection runbook](../../docs/https-inspection-runbook.md) |
 | `agent-sandbox/` | Linux / macOS / Windows | Agent CLI samples (Hermes, Codex, OpenCode, agy) and isolation probes — see [agent-sandbox/README.md](agent-sandbox/README.md) |
 
 **Maintainers:** edit YAML in this directory; keep comments and paths consistent with [managed-lab.md](../../docs/testing/managed-lab.md) and [POLICY-QUICKREF.md](../../docs/POLICY-QUICKREF.md).

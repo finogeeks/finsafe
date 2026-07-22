@@ -23,7 +23,7 @@ FinSAFE 在三大桌面操作系统上提供**一等公民**沙箱能力。同�
 在 Linux、macOS 与 Windows 上，公开发行的 `finsafe` CLI 支持：
 
 - **声明式 wrapper 策略** — `finsafe --policy wrapper.yaml run …`（短期）与 `self-confine …`（交互式 broker）
-- **网络模式** — 全拒绝、host、域名白名单 + 回环正向代理（授权场景下可选 TLS MITM / L7 检查）
+- **网络模式** — 全拒绝、host、域名白名单 + 回环正向代理（授权场景下可选 TLS MITM / L7 检查）。**白名单 + 代理怎么跑：** [network-allowlist-proxy-runbook-zh.md](docs/network-allowlist-proxy-runbook-zh.md)
 - **策略迭代** — 合法工作被拦截时使用 `learn`、`explain` 与 `--audit`
 - **可审计结果** — 带 attestation 摘要的 JSON 信封（[隔离审计模式](docs/isolation-audit-mode.md)）
 - **Agent 模板** — Hermes、OpenCode、Codex、agy 等，见 [examples/wrapper-policies/agent-sandbox/](examples/wrapper-policies/agent-sandbox/)

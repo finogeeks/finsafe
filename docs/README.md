@@ -26,6 +26,7 @@
 | [agent-sandbox-guide.md](./agent-sandbox-guide.md) · [agent-sandbox-guide-zh.md](./agent-sandbox-guide-zh.md) | **Agent sandbox** — Hermes, OpenCode, agy; **`learn` / `explain`** iteration for agents |
 | [USER-GUIDE.md](./USER-GUIDE.md) | Install, `run` vs `self-confine`, generic **`learn` / `explain`**, wrapper policies |
 | [USER-GUIDE-zh.md](./USER-GUIDE-zh.md) | 中文用户指南 |
+| [network-allowlist-proxy-runbook.md](./network-allowlist-proxy-runbook.md) · [network-allowlist-proxy-runbook-zh.md](./network-allowlist-proxy-runbook-zh.md) | **Domain allowlist + loopback proxy** — personal/local smoke (no MITM) |
 | [POLICY-QUICKREF.md](./POLICY-QUICKREF.md) | Wrapper policy field reference |
 | [POLICY-QUICKREF-zh.md](./POLICY-QUICKREF-zh.md) | 包装策略字段速查 |
 | [isolation-audit-mode.md](./isolation-audit-mode.md) | `--audit` and saving JSON envelopes for `explain` |
@@ -50,7 +51,7 @@ Deploy **Policy Authority**, **finsafe-agent**, and signed bundles to employee d
 | [binary-reference.md](./binary-reference.md) · [binary-reference-zh.md](./binary-reference-zh.md) | All shipped binaries, release archives, admin verification checklist |
 | [sandbox-management-model.md](./sandbox-management-model.md) · [sandbox-management-model-zh.md](./sandbox-management-model-zh.md) | **Sandbox management model**: bundles as policy sets, groups, assignments, rollout, and conflict handling |
 | [authority-deployment.md](./authority-deployment.md) · [authority-deployment-zh.md](./authority-deployment-zh.md) | Installing and running `finsafe-authority-http`, license, env vars, `finsafe-bundlectl` |
-| [https-inspection-runbook.md](./https-inspection-runbook.md) · [https-inspection-runbook-zh.md](./https-inspection-runbook-zh.md) | **HTTPS inspection (TLS terminate)** — license, CA, publish, pilot verification |
+| [https-inspection-runbook.md](./https-inspection-runbook.md) · [https-inspection-runbook-zh.md](./https-inspection-runbook-zh.md) | **HTTPS inspection (TLS terminate)** — license, CA, publish, pilot verification (build on [allowlist + proxy](./network-allowlist-proxy-runbook.md) first) |
 | [admin-ui.md](./admin-ui.md) · [admin-ui-zh.md](./admin-ui-zh.md) | Admin console reference (devices, enrollment tokens, kill switch, API equivalents) |
 | [managed-mode.md](./managed-mode.md) · [managed-mode-zh.md](./managed-mode-zh.md) | Overview, components, paths, CLI errors |
 | [managed-cli-authority-connectivity.md](./managed-cli-authority-connectivity.md) · [managed-cli-authority-connectivity-zh.md](./managed-cli-authority-connectivity-zh.md) | **CLI ↔ agent ↔ authority** topology, discovery, IPC, enrollment |

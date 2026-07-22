@@ -1,13 +1,18 @@
 # Managed fleet example: restricted egress + HTTPS inspection (TLS termination).
 #
+# Prefer allowlist-only smoke first (no license, no MITM):
+#   examples/wrapper-policies/network-allowlist-proxy.yaml
+#   docs/network-allowlist-proxy-runbook.md
+#
 # Requires on the Policy Authority:
 #   - license.jws feature: mitm_tls_terminate
 #   - POST /v1/admin/mitm/ca (inspection CA) before publish
 #
 # Pair with finsafe-bundlectl bundle build/sign/publish — see:
-#   docs/public-finsafe/docs/https-inspection-runbook.md
+#   docs/https-inspection-runbook.md
 #
-# Pilot (unmanaged, local policy file):
+# Pilot (unmanaged, local policy file — also needs FINSAFE_LICENSE_MITM=1 for
+# personal/dev without a commercial license on the proxy host):
 #   finsafe --policy examples/wrapper-policies/enterprise-https-inspection.yaml run -- \
 #     curl -fsS https://example.com/
 #
@@ -23,12 +28,11 @@ audit:
 stdio:
   mode: capture
 # Restricted egress: only listed domains via loopback forward proxy (127.0.0.1:60080).
-network:
-  allowlist:
-    domains:
-      - example.com
-      - api.openai.com
-      - api.anthropic.com
+network: !allowlist
+  domains:
+    - example.com
+    - api.openai.com
+    - api.anthropic.com
 # Decrypt HTTPS at the proxy for L7 policy and richer proxy_egress audit (schema v3).
 tls_terminate: true
 # Spawn bundled loopback proxy in-process (managed desktops do not need a separate finsafe-net-proxy).

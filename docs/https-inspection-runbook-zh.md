@@ -4,6 +4,8 @@
 
 面向企业运维的端到端指南：在 FinSAFE **出口代理**上启用 **TLS 终止**（HTTPS 检查 / MITM），在沙箱出口路径内解密 HTTPS，以支持域名 allowlist、L7 决策及更丰富的 `proxy_egress` 审计（`tls_terminated`、method、path）。
 
+**只做白名单、不要 MITM？** 请先看 [network-allowlist-proxy-runbook-zh.md](./network-allowlist-proxy-runbook-zh.md) — 个人 CLI，无需商业许可证。
+
 **相关文档：** [authority-deployment-zh.md](./authority-deployment-zh.md#tls-检查mitm)、[POLICY-QUICKREF-zh.md](./POLICY-QUICKREF-zh.md)、[enterprise-deployment-runbook-zh.md](./enterprise-deployment-runbook-zh.md)。
 
 **示例策略：** [`examples/wrapper-policies/enterprise-https-inspection.yaml`](../examples/wrapper-policies/enterprise-https-inspection.yaml)
@@ -73,7 +75,7 @@ curl -sf "$AUTHORITY/v1/mitm/ca/cert" | jq -r '.cert_pem' | head -5
 
 策略须包含：
 
-- `network.allowlist.domains`
+- `network: !allowlist` 与 `domains:`
 - `tls_terminate: true`
 - `start_internal_proxy: true`（回环代理 **`127.0.0.1:60080`**）
 
@@ -134,13 +136,14 @@ finsafe run --json -- /usr/bin/curl -fsS https://example.com/ | jq '.envelope.po
 试点机可启用代理审计：
 
 ```bash
-export FINSAFE_NET_PROXY_AUDIT_LOG=/tmp/finsafe-proxy-audit.jsonl
+export FINSAFE_NET_PROXY_AUDIT_LOG=1
 ```
 
-执行托管 HTTPS 请求后：
+执行托管 HTTPS 请求并捕获 stderr，然后检查记录：
 
 ```bash
-grep '"tls_terminated":true' /tmp/finsafe-proxy-audit.jsonl | tail -1 | jq .
+finsafe run --json -- /usr/bin/curl -fsS https://example.com/ 2>proxy-audit.stderr
+grep finsafe_net_proxy_audit proxy-audit.stderr | grep '"tls_terminated":true' | tail -1 | jq -R 'sub("^finsafe_net_proxy_audit ";"") | fromjson'
 ```
 
 已终止 TLS 的流量为 **`proxy_egress` schema 版本 `3`**（可见 method/path）；不透明 CONNECT 隧道仍为 **2**。

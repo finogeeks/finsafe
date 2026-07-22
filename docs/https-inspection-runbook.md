@@ -4,6 +4,8 @@
 
 End-to-end guide for enterprise operators enabling **TLS termination** at the FinSAFE egress proxy (often called HTTPS inspection or MITM). This decrypts HTTPS inside the sandbox egress path for domain allowlists, L7 decisions, and richer `proxy_egress` audit (`tls_terminated`, method, path).
 
+**Start with allowlist only (no MITM)?** Use [network-allowlist-proxy-runbook.md](./network-allowlist-proxy-runbook.md) first — personal CLI, no commercial license.
+
 **Related docs:** [authority-deployment.md](./authority-deployment.md#tls-inspection-mitm) (summary), [POLICY-QUICKREF.md](./POLICY-QUICKREF.md) (policy fields), [enterprise-deployment-runbook.md](./enterprise-deployment-runbook.md) (fleet rollout).
 
 **Example policy:** [`examples/wrapper-policies/enterprise-https-inspection.yaml`](../examples/wrapper-policies/enterprise-https-inspection.yaml)
@@ -76,7 +78,7 @@ Returns **`404`** until Step 2 succeeds. Returns **`402`** if the license lacks 
 
 Use a wrapper policy with:
 
-- `network.allowlist.domains` — allowed destination hostnames
+- `network: !allowlist` with `domains:` — allowed destination hostnames
 - `tls_terminate: true` — proxy terminates TLS
 - `start_internal_proxy: true` — bundled loopback proxy on **`127.0.0.1:60080`** (typical managed setup)
 
@@ -143,13 +145,14 @@ Expect `policy_source` **`managed`** and exit code **`0`** when `example.com` is
 Enable proxy audit logging on the pilot host if needed:
 
 ```bash
-export FINSAFE_NET_PROXY_AUDIT_LOG=/tmp/finsafe-proxy-audit.jsonl
+export FINSAFE_NET_PROXY_AUDIT_LOG=1
 ```
 
-Run a managed HTTPS request, then inspect records:
+Run a managed HTTPS request while capturing stderr, then inspect records:
 
 ```bash
-grep '"tls_terminated":true' /tmp/finsafe-proxy-audit.jsonl | tail -1 | jq .
+finsafe run --json -- /usr/bin/curl -fsS https://example.com/ 2>proxy-audit.stderr
+grep finsafe_net_proxy_audit proxy-audit.stderr | grep '"tls_terminated":true' | tail -1 | jq -R 'sub("^finsafe_net_proxy_audit ";"") | fromjson'
 ```
 
 Terminated flows use **`proxy_egress` schema version `3`** (method/path visible). Opaque CONNECT tunnels remain at schema **`2`**.

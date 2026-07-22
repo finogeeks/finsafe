@@ -26,6 +26,7 @@
 | [agent-sandbox-guide-zh.md](./agent-sandbox-guide-zh.md) · [English](./agent-sandbox-guide.md) | **Agent 沙箱** — Hermes、OpenCode、agy；Agent 专用 **`learn` / `explain`** |
 | [USER-GUIDE-zh.md](./USER-GUIDE-zh.md) | 安装、`run` 与 `self-confine`、通用 learn/explain |
 | [USER-GUIDE.md](./USER-GUIDE.md) | English user guide |
+| [network-allowlist-proxy-runbook-zh.md](./network-allowlist-proxy-runbook-zh.md) · [network-allowlist-proxy-runbook.md](./network-allowlist-proxy-runbook.md) | **域名白名单 + 回环代理** — 个人/本地冒烟（无需 MITM） |
 | [POLICY-QUICKREF-zh.md](./POLICY-QUICKREF-zh.md) | 包装策略字段速查 |
 | [POLICY-QUICKREF.md](./POLICY-QUICKREF.md) | Wrapper policy field reference (English) |
 
@@ -48,7 +49,7 @@
 | [binary-reference-zh.md](./binary-reference-zh.md) · [binary-reference.md](./binary-reference.md) | **全部二进制**、发行包、Linux 配套、管理员验证清单 |
 | [sandbox-management-model-zh.md](./sandbox-management-model-zh.md) · [sandbox-management-model.md](./sandbox-management-model.md) | **沙箱管理模型**：Bundle 作为策略集合、Group、Assignment、rollout 与冲突处理 |
 | [authority-deployment-zh.md](./authority-deployment-zh.md) · [authority-deployment.md](./authority-deployment.md) | Authority 安装、商业许可证、`finsafe-bundlectl` |
-| [https-inspection-runbook-zh.md](./https-inspection-runbook-zh.md) · [https-inspection-runbook.md](./https-inspection-runbook.md) | **HTTPS 检查（TLS 终止）** — 许可证、CA、发布、试点验证 |
+| [https-inspection-runbook-zh.md](./https-inspection-runbook-zh.md) · [https-inspection-runbook.md](./https-inspection-runbook.md) | **HTTPS 检查（TLS 终止）** — 许可证、CA、发布、试点验证（请先完成 [白名单 + 代理](./network-allowlist-proxy-runbook-zh.md)） |
 | [managed-mode-zh.md](./managed-mode-zh.md) | 概述、组件、路径、CLI 错误 |
 | [managed-cli-authority-connectivity-zh.md](./managed-cli-authority-connectivity-zh.md) · [English](./managed-cli-authority-connectivity.md) | **CLI ↔ agent ↔ 权威** 拓扑、发现、IPC、注册 |
 | [endpoint-deployment-options-zh.md](./endpoint-deployment-options-zh.md) · [endpoint-deployment-options.md](./endpoint-deployment-options.md) | 部署路径决策（不强制 MDM） |

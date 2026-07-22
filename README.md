@@ -23,7 +23,7 @@ Run **`finsafe probe`** and **`finsafe doctor`** on any platform before authorin
 Across Linux, macOS, and Windows, the public `finsafe` CLI supports:
 
 - **Declarative wrapper policies** — `finsafe --policy wrapper.yaml run …` (short-lived) and `self-confine …` (interactive brokers)
-- **Network modes** — deny-all, host, and domain allowlist with a loopback forward proxy (optional TLS MITM / L7 inspection where licensed)
+- **Network modes** — deny-all, host, and domain allowlist with a loopback forward proxy (optional TLS MITM / L7 inspection where licensed). **How to run allowlist + proxy:** [network-allowlist-proxy-runbook.md](docs/network-allowlist-proxy-runbook.md)
 - **Policy iteration** — `learn`, `explain`, and `--audit` when a deny blocks legitimate agent work
 - **Auditable outcomes** — JSON envelopes with attestation digests ([isolation audit mode](docs/isolation-audit-mode.md))
 - **Agent templates** — Hermes, OpenCode, Codex, agy under [examples/wrapper-policies/agent-sandbox/](examples/wrapper-policies/agent-sandbox/)

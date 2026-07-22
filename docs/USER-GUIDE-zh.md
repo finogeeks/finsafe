@@ -63,7 +63,7 @@ finsafe doctor
 常用字段简要说明：
 
 - **`program_mode`：** 必须与子命令一致（**`short-lived`** 配 **`run`**，**`interactive`** 配 **`self-confine`**）。
-- **`network`：** **`none`**、**`host`**，或带代理配置的 **`allowlist`**。
+- **`network`：** **`none`**、**`host`**，或带代理配置的 **`allowlist`**。域名白名单 + 回环代理冒烟（个人 CLI，无需 MITM）见 [network-allowlist-proxy-runbook-zh.md](network-allowlist-proxy-runbook-zh.md)。
 - **`filesystem.read_only_paths` / `read_write_paths`：** 声明路径，与工作目录、`./workspace` 等布局一致。
 - **`macos_seatbelt.deny_outbound_ports`**（可选，macOS）：在 **`network: host`** 时按端口拒绝出站 TCP。
 - **`resources`：** 内存、pids、CPU 字符串（按平台能力执行）；短命 **`run`** 可用 **`timeout_ms`** 限制墙上时钟。
@@ -346,7 +346,7 @@ macOS **不可**与 Linux「完全等价隔离」：
 |------|----------|
 | macOS 上提示 **bubblewrap 不可用** | **属预期**；本地走 **Seatbelt**；看 **`probe` / `doctor`**。 |
 | **`program_mode` 不匹配** | **`short-lived`** 须配 **`run`**，**`interactive`** 须配 **`self-confine`**。 |
-| **`network: none` 下无法访问 API** | 若需出站 HTTPS，在威胁模型允许时使用 **`network: host`**。 |
+| **`network: none` 下无法访问 API** | 若需出站 HTTPS：威胁模型允许时用 **`network: host`**；若只需部分域名，用 **`network: allowlist` + `start_internal_proxy`** — [network-allowlist-proxy-runbook-zh.md](network-allowlist-proxy-runbook-zh.md)。 |
 | macOS 上路径访问被拒 | 放宽 **`read_only_paths` / `read_write_paths`**，确认 **`./workspace`** 等存在，结合 **`run --json`** 佐证字段排查。 |
 | **沙箱失败从何入手** | **Agent（Hermes/OpenCode/agy）：** [agent-sandbox-guide-zh.md](agent-sandbox-guide-zh.md) § **用 learn 与 explain 迭代策略**。**其他：** [USER-GUIDE-zh § 创建与迭代策略](USER-GUIDE-zh.md) — **`learn`**、**`explain`**、**`--audit`**。 |
 | Linux **`run` 内 `/dev/tty` 失败** | 策略设 **`stdio: pty`** 或使用 **`finsafe run --stdio pty`**；勿指望 **`inherit`** 在 bubblewrap 内提供 controlling terminal。 |

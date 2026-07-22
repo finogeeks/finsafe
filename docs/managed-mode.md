@@ -62,7 +62,7 @@ Published bundles contain **sandbox policies** (wrapper YAML). FinSAFE also appl
 
 After upgrading `finsafe` / agent binaries without republishing bundle content, agents may still change enforcement on Linux/macOS and Windows desktops. Review [POLICY-QUICKREF.md](./POLICY-QUICKREF.md) — sections **Built-in filesystem defaults** and **`filesystem.deny_read_paths`** — before wide rollout. Use `skip_default_deny_read: true` only when a program legitimately must read paths covered by the default set.
 
-**Network allowlist:** Policies may use `network.allowlist.domains`; endpoints need `finsafe-net-proxy` at launch (or `start_internal_proxy: true` for a bundled loopback proxy on `127.0.0.1:60080`). See [POLICY-QUICKREF.md](./POLICY-QUICKREF.md) and optional proxy env vars (`FINSAFE_NET_PROXY_AUDIT_LOG`).
+**Network allowlist:** Policies use `network: !allowlist` with `domains:`; endpoints need `finsafe-net-proxy` at launch (or `start_internal_proxy: true` for a bundled loopback proxy on `127.0.0.1:60080`). **Personal/local how-to:** [network-allowlist-proxy-runbook.md](./network-allowlist-proxy-runbook.md). Fields and `FINSAFE_NET_PROXY_AUDIT_LOG`: [POLICY-QUICKREF.md](./POLICY-QUICKREF.md).
 
 **HTTPS inspection (`tls_terminate`):** Optional commercial add-on (`mitm_tls_terminate` license feature). The authority issues an inspection CA; published bundles carry `inspection_ca_cert_pem`; the agent installs the cert and injects trust-store env vars into sandbox children. Operators must disclose inspection to users. Setup: [https-inspection-runbook.md](./https-inspection-runbook.md) (full runbook), [authority-deployment.md](./authority-deployment.md#tls-inspection-mitm), and [POLICY-QUICKREF.md](./POLICY-QUICKREF.md) — **TLS inspection**.
 

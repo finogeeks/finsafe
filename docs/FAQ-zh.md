@@ -651,6 +651,8 @@ filesystem:
 | `host` | 继承主机网络 |
 | `allowlist` | 强制经代理，仅允许列出域名 |
 
+**怎么跑（个人 / 本地冒烟，无需 MITM）：** [network-allowlist-proxy-runbook-zh.md](./network-allowlist-proxy-runbook-zh.md) — 示例策略 [`network-allowlist-proxy.yaml`](../examples/wrapper-policies/network-allowlist-proxy.yaml)。
+
 **MITM（此处指企业主动 HTTPS 检查，须合规告知用户）：** 策略设 `tls_terminate: true` + 许可证功能位 `mitm_tls_terminate` + 检查 CA（证书颁发）+ 用户告知。手册：[https-inspection-runbook-zh.md](./https-inspection-runbook-zh.md)。
 
 ## C6. 与 Findesk / FinClaw 如何配合完成价值链？
@@ -715,6 +717,7 @@ Hermes 是文档与示例覆盖较好的外部 runtime 之一：**不是** FinSA
 |------|------|
 | [product-one-pager-zh.md](./product-one-pager-zh.md) | 产品定位与部署形态 |
 | [terminology-glossary-zh.md](./terminology-glossary-zh.md) | **完整概念术语表**（比文首速查更细） |
+| [network-allowlist-proxy-runbook-zh.md](./network-allowlist-proxy-runbook-zh.md) | **白名单 + 回环代理**怎么跑（个人/本地） |
 | [enterprise-it-overview-zh.md](./enterprise-it-overview-zh.md) | 企业 IT 全景 |
 | [POLICY-QUICKREF-zh.md](./POLICY-QUICKREF-zh.md) | 策略字段 |
 | [agent-sandbox-ecosystem-comparison.md](../../reference/agent-sandbox-ecosystem-comparison.md) | 与 Codex/srt/OpenSandbox/MXC 深度比较 |

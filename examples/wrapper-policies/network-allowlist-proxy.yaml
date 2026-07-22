@@ -1,0 +1,54 @@
+# Personal / local smoke: domain allowlist via loopback egress proxy.
+#
+# No commercial license. No TLS termination (MITM). The child may only reach
+# listed hostnames through the bundled proxy on 127.0.0.1:60080.
+#
+# Runbook: docs/network-allowlist-proxy-runbook.md
+#          docs/network-allowlist-proxy-runbook-zh.md
+#
+# From a directory that contains ./workspace (or create it):
+#
+#   mkdir -p workspace
+#   finsafe --policy examples/wrapper-policies/network-allowlist-proxy.yaml run -- \
+#     curl -fsS --max-time 15 https://example.com/
+#
+# Expect exit code 0. A host not on the list (e.g. https://example.org/) fails.
+# Use hostnames in URLs — not raw IP literals (proxy returns ip_literal_denied).
+#
+# For HTTPS inspection (tls_terminate), see enterprise-https-inspection.yaml
+# and docs/https-inspection-runbook.md (commercial license feature).
+schema_version: 1
+kind: local-wrapper
+program_mode: short-lived
+degrade:
+  allow_fallback: true
+audit:
+  require_policy_digest: true
+  require_resolved_posture: true
+stdio:
+  mode: capture
+# Restricted egress: only listed domains via loopback forward proxy.
+network: !allowlist
+  domains:
+    - example.com
+# Spawn bundled loopback proxy in-process (no separate finsafe-net-proxy).
+start_internal_proxy: true
+resources:
+  memory_max: "256M"
+  pids_max: "64"
+  cpu_max: "100000 100000"
+  timeout_ms: 30000
+filesystem:
+  read_only_paths:
+    - "/usr"
+    - "/lib"
+    - "/lib64"
+    - "/bin"
+    - "/sbin"
+    - "/etc/ssl"
+    - "/etc/pki"
+    - "${HOME}/.local/bin"
+    - "/opt/homebrew/bin"
+    - "/opt/homebrew/etc/ca-certificates"
+  read_write_paths:
+    - "./workspace"
