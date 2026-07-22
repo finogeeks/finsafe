@@ -10,6 +10,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.23] - 2026-07-22
+
+<!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
+
+### Fixed
+
+- **fix(linux): self-confine adds network host Landlock paths like run mode** (public issue [finogeeks/finsafe#23](https://github.com/finogeeks/finsafe/issues/23), PR [Geeksfino/finsafe#147](https://github.com/Geeksfino/finsafe/pull/147))
+
 ## [0.9.22] - 2026-07-21
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
