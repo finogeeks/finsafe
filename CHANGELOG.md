@@ -10,6 +10,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.25] - 2026-07-23
+
+### Fixed
+
+- **fix(windows): restricted-token `self-confine` uses console inherit instead of ConPTY** — Interactive restricted-token self-confine previously spawned brokers through Live ConPTY, which failed at DLL init (`0xC0000142`) when the child could not attach to a foreign-token conhost. That path now uses **ConsoleInherit** (inherits the supervisor console, `WinSta0\Default` desktop) so agents such as Hermes can start under restricted-token self-confine on Windows. (PR [Geeksfino/finsafe#148](https://github.com/Geeksfino/finsafe/pull/148))
+
 ## [0.9.24] - 2026-07-22
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
