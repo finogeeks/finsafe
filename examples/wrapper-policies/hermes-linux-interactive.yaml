@@ -1,4 +1,5 @@
 # Wrap a long-lived interactive `hermes` broker in FinSAFE self-confine mode (Linux).
+# finSAFE 0.9.25+ recommended (compiler auto-adds network paths in self-confine).
 # Use with:
 #   finsafe --policy examples/wrapper-policies/hermes-linux-interactive.yaml self-confine \
 #       /usr/bin/env HOME="$HOME" PATH="$HOME/.local/bin:/usr/bin:/bin" hermes
@@ -14,25 +15,22 @@
 #
 # For macOS (Seatbelt, Homebrew paths, inherit stdio), use `hermes-macos-interactive.yaml`
 # (preferred) or the older `hermes-interactive.yaml` sample.
-#
-# NOTE: FinSAFE 0.9.11+ allows `vfork` and `epoll_wait` in self-confine seccomp.
-# On older releases, Hermes may crash with "Bad system call"; use `finsafe run --stdio pty`
-# as a workaround, or upgrade (public issue finogeeks/finsafe#13).
 schema_version: 1
 kind: local-wrapper
 program_mode: interactive
 degrade:
   allow_fallback: true
 audit:
-  require_policy_digest: true
-  require_resolved_posture: true
+  require_policy_digest: false
+  require_resolved_posture: false
 # self-confine preserves the broker's inherited terminal by execing into it.
-# Use `pty` mode to provide a controlling TTY inside bubblewrap for interactive
-# terminal applications. `inherit` mode does not grant a controlling terminal
-# on Linux bubblewrap.
+# When running with `finsafe run` instead of self-confine, use `stdio.mode: pty`
+# to provide a controlling TTY inside bubblewrap.
 stdio:
-  mode: pty
+  mode: inherit
 # host: Hermes needs outbound HTTPS for LLM API calls.
+# The compiler auto-adds network-related paths (resolv.conf, SSL certs, /etc/hosts)
+# when network: host is set (0.9.25+).
 network: host
 resources:
   memory_max: "1G"
@@ -54,7 +52,6 @@ filesystem:
     - "/bin"
     - "/sbin"
     - "/etc"
-    - "/etc/resolv.conf"
     # uv-managed Python installations live under HOME.
     - "${HOME}/.local/bin"
     - "${HOME}/.local/share/uv/python"
@@ -62,6 +59,7 @@ filesystem:
     # Hermes stores its config, credentials (.env), sessions, cache, and skills
     # under ${HOME}/.hermes.
     - "${HOME}/.hermes"
+    - "${HOME}/.cache"
     # Working directory for file I/O within the sandbox.
     - "${HOME}/workspace"
     # /dev/null is needed for discarding output; /tmp for temporary files.
