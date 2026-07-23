@@ -10,6 +10,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.27] - 2026-07-23
+
+<!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
+
+### Fixed
+
+- **fix(landlock): allow O_CREAT at rw workspace root after carveout split** (public issue [finogeeks/finsafe#27](https://github.com/finogeeks/finsafe/issues/27), PR [Geeksfino/finsafe#151](https://github.com/Geeksfino/finsafe/pull/151))
+
 ## [0.9.26] - 2026-07-23
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
