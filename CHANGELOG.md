@@ -10,6 +10,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.28] - 2026-07-24
+
+### Fixed
+
+- **Managed `self-confine` now reports fleet audit events** — Interactive brokers under managed mode previously resolved policy from the agent but never spooled `SandboxStarted` / `RunCompleted` to the authority, so Admin **Audit** / **Runs** stayed empty while short-lived `finsafe run` showed up normally. Managed `self-confine` now registers the run and emits `SandboxStarted` (reason includes `mode=self-confine`) before launch/exec; supervised paths (Windows, tools-only, macOS `--audit` spawn) also emit `RunCompleted`. Linux/macOS `execve` handoff still only reports start. (PR [Geeksfino/finsafe#161](https://github.com/Geeksfino/finsafe/pull/161))
+
+### Changed
+
+- **Managed egress proxy cells inject `WS_PROXY` / `WSS_PROXY`** — Loopback and UDS proxy environment injection now includes WebSocket proxy aliases (and lowercase forms on the loopback path) so WebSocket clients cannot bypass the managed proxy under restricted egress. (PR [Geeksfino/finsafe#158](https://github.com/Geeksfino/finsafe/pull/158))
+
 ## [0.9.27] - 2026-07-23
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->

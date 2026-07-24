@@ -160,7 +160,7 @@ source "$(./scripts/managed-lab.sh env)"
 |------|------|
 | 每次 `run` 都报 `usage: … run [--json] -- <program>` | 使用已修复、会转发参数的脚本（`cmd_run … "$@"`）。冒烟：`./scripts/managed-lab.sh run -- /usr/bin/true` |
 | `/admin/` 404 但 `/admin` 可打开 | 使用 **`http://<bind>/admin`**（末尾不要 `/`）。根路径 `/` 会重定向到该地址。旧版 authority 需重新安装/构建以包含 `/admin/` 路由。 |
-| 管理 UI 审计/运行为空 | 先成功执行至少一次托管命令；agent 约每秒上传审计。可用 `run --json -- /usr/bin/true` 后刷新管理 UI。 |
+| 管理 UI 审计/运行为空 | 用 **managed** feature 的 `finsafe`。短命：`./scripts/managed-lab.sh run -- /usr/bin/true`。交互：`./scripts/managed-lab.sh interactive -- /bin/true`（应出现带 `mode=self-confine` 的 `SandboxStarted`；仅当 FinSAFE 仍监督 broker 时才有 `RunCompleted`）。约 2 秒后刷新管理 UI。 |
 | `license status expected valid` | 检查 `FINSAFE_LICENSE_PATH`、席位与过期 — `curl -s http://127.0.0.1:8095/v1/license/status \| jq` |
 | `MANAGED_DAEMON_UNREACHABLE` | `./scripts/managed-lab.sh status`；`stop` 后 `start`，或 `restart-agent` |
 | Hermes `env: hermes: No such file` | 仍在 `managed-lab-smoke` bundle — 发布 `hermes-version-smoke.yaml` 并重启 agent |

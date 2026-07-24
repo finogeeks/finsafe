@@ -8,6 +8,7 @@ Manual run book for managed-mode acceptance.
 |---|----------|----------|------------------------|
 | 1 | Fresh enroll + pull | Agent writes `enrolled.json`, serves policy on UDS | Enroll script + `test -f /etc/finsafe/enrolled.json` |
 | 2 | Managed `finsafe run -- true` | Exit 0, managed audit metadata when enrolled | `finsafe run --json -- /usr/bin/true` |
+| 2b | Managed `finsafe self-confine` | Admin **Audit** shows `SandboxStarted` (`mode=self-confine` in reason); supervised paths also emit `RunCompleted` | Publish interactive wrapper, then `./scripts/managed-lab.sh interactive -- /bin/true` (or a short broker); refresh Audit after ~2s |
 | 3 | `--policy` while enrolled | `MANAGED_POLICY_LOCAL_OVERRIDE` | Pass `--policy` on fleet binary |
 | 4 | `--personal` with sentinel | `MANAGED_FORCED_BY_POLICY` | Manual |
 | 5 | Kill switch active | New runs denied; in-flight notified | Admin UI kill switch |

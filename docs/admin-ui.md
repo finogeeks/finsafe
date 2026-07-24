@@ -191,7 +191,7 @@ Typical causes (reported in audit `reason` when emitted):
 
 The **Devices → Denials 24h** column and **Dashboard → Denials (24h)** count events
 stored in the authority database from `POST /v1/audit/events` (agent uploads spooled
-audit from managed `finsafe` runs).
+audit from managed `finsafe run` and managed `finsafe self-confine`).
 
 ### When to use this metric
 

@@ -160,7 +160,7 @@ Interactive Hermes REPL:
 |---------|------------|
 | `usage: … run [--json] -- <program>` on every `run` | Upgrade to a script that forwards args (`cmd_run … "$@"`). Smoke: `./scripts/managed-lab.sh run -- /usr/bin/true` |
 | Admin UI 404 at `/admin/` but `/admin` works | Open **`http://<bind>/admin`** (no trailing slash). Root `/` redirects there. Rebuild authority if an older binary lacks the `/admin/` route. |
-| Empty audit / runs in Admin UI | Rebuild **`finsafe`** with the `managed` feature (enterprise packages do). Run `./scripts/managed-lab.sh run -- /usr/bin/true`, wait ~2s for agent upload, refresh Admin. Check `enrolled.json` **`authority_url`** is reachable from the agent (not `http://0.0.0.0:…`). Inspect spool: `$FINSAFE_LAB_DIR/desktop/audit/*.ndjson`. |
+| Empty audit / runs in Admin UI | Rebuild **`finsafe`** with the `managed` feature (enterprise packages do). Smoke short-lived: `./scripts/managed-lab.sh run -- /usr/bin/true`. Smoke interactive: `./scripts/managed-lab.sh interactive -- /bin/true` (expect `SandboxStarted` with `mode=self-confine`; `RunCompleted` only when FinSAFE still supervises the broker). Wait ~2s for agent upload, refresh Admin. Check `enrolled.json` **`authority_url`** is reachable from the agent (not `http://0.0.0.0:…`). Inspect spool: `$FINSAFE_LAB_DIR/desktop/audit/*.ndjson`. |
 | `license status expected valid` | Check `FINSAFE_LICENSE_PATH`, seats, and expiry — `curl -s http://127.0.0.1:8095/v1/license/status \| jq` |
 | `MANAGED_DAEMON_UNREACHABLE` | `./scripts/managed-lab.sh status`; `stop` then `start`, or `restart-agent` |
 | Hermes `env: hermes: No such file` | Still on `managed-lab-smoke` bundle — publish `hermes-version-smoke.yaml` and restart agent |
