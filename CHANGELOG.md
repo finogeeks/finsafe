@@ -10,6 +10,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.29] - 2026-07-29
+
+### Fixed
+
+- **Windows warm launch no longer re-labels AppContainer trees that are already complete** — Repeat `self-confine` / sandbox starts probe label-completion sentinels and root DACL posture before opening paths for `WRITE_DAC`, share helper-written sentinels under `%ProgramData%`, and drop the per-launch ProjFS smoke rehearsal so large workspace/venv trees are not relabeled on every start. Stale sentinels that outlive a recreated directory are cleared and re-granted. (PR [Geeksfino/finsafe#170](https://github.com/Geeksfino/finsafe/pull/170))
+- **RestrictedToken write allowlist no longer TreeSets the whole project root** — When `work_dir` is a strict ancestor of a `read_write_paths` root (typical `./workspace` policies), FinSAFE skips the inheritable cwd grant that previously rewrote DACLs across `target/` and overwrote the child workspace capability ACE (`Access is denied` on allowlisted writes). (PR [Geeksfino/finsafe#170](https://github.com/Geeksfino/finsafe/pull/170))
+- **RestrictedToken self-confine smoke policy uses `network: host`** — Matches release-ready preflight (WFP fencing for `network: none` stays on AppContainer) and the Hermes desktop path. (PR [Geeksfino/finsafe#170](https://github.com/Geeksfino/finsafe/pull/170))
+
 ## [0.9.28] - 2026-07-24
 
 ### Fixed
