@@ -10,6 +10,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.30] - 2026-07-31
+
+### Added
+
+- **Windows PipeCapture / Buffered ConPTY sessions report operator interrupt** — Ctrl+C or Ctrl+Break on a console-attached supervisor terminates the sandboxed Job (exit code `1`) and attests `termination_reason=operator_interrupted`, distinct from policy timeout kill (`124` / `timeout_killed`). Live ConPTY keeps its existing Ctrl+C-forward contract. (PR [Geeksfino/finsafe#176](https://github.com/Geeksfino/finsafe/pull/176))
+
+### Fixed
+
+- **Linux personal CLI allowlist + `start_internal_proxy` no longer fails when `/run/finsafe-proxy.sock` is missing** — FinSAFE now creates a bubblewrap-compatible guest mount stub (prefer `/run/finsafe-proxy.sock`, fall back to `/tmp/finsafe-proxy.sock` when `/run` is permission-denied or read-only) and wires that path through the loopback relay, env, and bind-mount. Fixes public issue [finogeeks/finsafe#28](https://github.com/finogeeks/finsafe/issues/28). (PR [Geeksfino/finsafe#177](https://github.com/Geeksfino/finsafe/pull/177))
+- **Windows operator-interrupt handler cleanup no longer leaves Ctrl+C ignored** — After an interruptible wait, the supervisor removes its console handler instead of calling `SetConsoleCtrlHandler(NULL, TRUE)`. (PR [Geeksfino/finsafe#176](https://github.com/Geeksfino/finsafe/pull/176))
+
 ## [0.9.29] - 2026-07-29
 
 ### Fixed
