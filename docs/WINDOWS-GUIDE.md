@@ -136,6 +136,21 @@ session.
 - Opt-in unsandboxed broker (tools still sandboxed) → `broker_confine: tools-only` (see `hermes-interactive-tools-only.yaml`)
 - Agent-focused notes → [agent-sandbox-guide.md § Windows agents](agent-sandbox-guide.md)
 
+> **Note on git-bash / MSYS2 (Cygwin) agents:** the Windows sandbox is designed for
+> **native Windows binaries**. MSYS2/Cygwin runtimes such as git-bash are **not**
+> compatible with the `RestrictedToken` backend: the restricted token denies the
+> `CreateFileMapping` of the user-SID-named shared-memory object that the MSYS2
+> runtime needs to initialize, so git-bash aborts (`Win32 error 5` /
+> `STATUS_DLL_INIT_FAILED`) and every tool that shells out through it fails.
+> Hermes' `write_file` / `terminal` / `execute_code` tools route through git-bash
+> (`HERMES_GIT_BASH_PATH`), so a Hermes agent confined under RestrictedToken
+> cannot perform file/tool operations even though direct `cmd.exe` writes to the
+> same `read_write_paths` succeed. If you need full Hermes tool execution under
+> the sandbox, keep an eye on the upstream fix
+> ([finogeeks/finsafe#29](https://github.com/finogeeks/finsafe/issues/29)) or run
+> Hermes tools through a native Windows entry point (cmd.exe / PowerShell)
+> instead of git-bash.
+
 ---
 
 ## 5. AppContainer-only: large trees and ProjFS
