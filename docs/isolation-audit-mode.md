@@ -16,7 +16,7 @@ Not valid with `run --high-level` or enterprise-strict profiles.
 |------|-------------------|
 | **Linux** | Seccomp **permissive** (`log` / `audit`) — syscalls may complete while misses are logged. Same as `FINSAFE_BWRAP_SECCOMP=audit` for bubblewrap `run`. |
 | **macOS** | Seatbelt **enforcement unchanged**; kernel Sandbox `deny(...)` events streamed; stderr policy hints (`seatbelt_mode: diagnostic`). |
-| **Windows** | AppContainer **enforcement unchanged**; ETW kernel-file/network capture + marker hints in `policy_derivation_notes`; inline remediation on stderr when denials are classified. |
+| **Windows** | AppContainer **enforcement unchanged**. On Win11 24H2+ hosts where `finsafe probe` reports Learning Mode APIs available, `--audit` / `finsafe learn` prefer **deny-and-record** Learning Mode capture (structured denials in `policy_derivation_notes`); otherwise kernel ETW file/network capture + marker hints. Inline remediation on stderr when denials are classified. RestrictedToken and older hosts stay on ETW. |
 
 On macOS and Windows the wrapped command may still exit non-zero on the first denial — that is expected. The value is **path discovery**, not running without a sandbox.
 

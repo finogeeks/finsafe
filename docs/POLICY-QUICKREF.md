@@ -230,5 +230,6 @@ finsafe run → repeat until clean
 On Linux, `finsafe --audit run -- cmd` also runs seccomp permissive so the
 command may complete while syscall misses are logged. On macOS, `--audit` keeps
 Seatbelt enforcement and streams kernel deny events (`seatbelt_mode: diagnostic`).
-On Windows, `--audit` adds ETW capture and marker hints without weakening
+On Windows, `--audit` prefers Learning Mode deny-and-record capture when available
+(Win11 24H2+; see `finsafe probe`), otherwise ETW capture and marker hints, without weakening
 AppContainer enforcement.

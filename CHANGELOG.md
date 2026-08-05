@@ -10,6 +10,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.31] - 2026-08-05
+
+### Added
+
+- **Windows Learning Mode deny-and-record audit capture** — On Win11 24H2+ AppContainer hosts where `finsafe probe` reports Learning Mode APIs available, `finsafe --audit` and `finsafe learn` capture structured denials (JSON + `policy_derivation_notes`) without weakening enforcement. Older hosts and RestrictedToken keep kernel ETW + marker hints as the fallback. (PR [Geeksfino/finsafe#188](https://github.com/Geeksfino/finsafe/pull/188))
+
+### Fixed
+
+- **Windows deny-read seals and absent-path placeholders** — Deny-read DACLs no longer treat extended local paths as UNC, seal against inherited write/create more reliably, and materialize missing deny-read placeholders under RW roots so absent-path acceptance matches production behavior. Learning Mode denial notes with spaces in paths round-trip correctly. (PR [Geeksfino/finsafe#188](https://github.com/Geeksfino/finsafe/pull/188))
+
 ## [0.9.30] - 2026-07-31
 
 ### Added
