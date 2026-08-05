@@ -10,6 +10,20 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.32] - 2026-08-05
+
+### Added
+
+- **Per-run loopback proxy ports (`60080–60089`)** — Concurrent `controlled` / self-confine agents no longer collide on a single fixed proxy port; allocation is fail-closed when the range is exhausted (macOS sibling proxy and Windows in-process). (PR [Geeksfino/finsafe#191](https://github.com/Geeksfino/finsafe/pull/191))
+- **Linux self-confine private network namespace + loopback proxy relay** — When netns and the relay binary are available, guest traffic is forced through the host loopback proxy; otherwise FinSAFE falls back to the existing UDS proxy path. (PR [Geeksfino/finsafe#191](https://github.com/Geeksfino/finsafe/pull/191))
+- **`proxy-serve --audit-log`** — Compact JSONL audit (`ts`, `host`, `port`, `decision`, `reason`) for allow/deny decisions. (PR [Geeksfino/finsafe#191](https://github.com/Geeksfino/finsafe/pull/191))
+- **`proxy-serve --allowlist-file` hot reload** — Polls/debounces the allowlist file and atomically swaps the matcher; garbage reloads keep the previous allowlist (fail-closed). (PR [Geeksfino/finsafe#191](https://github.com/Geeksfino/finsafe/pull/191))
+
+### Fixed
+
+- **Seatbelt allows the declared ephemeral proxy port** within the `60080–60089` range so sandboxed children can reach their allocated sibling proxy. (PR [Geeksfino/finsafe#191](https://github.com/Geeksfino/finsafe/pull/191))
+- **Ready-marker isolation across loopback port retries** so concurrent proxy startups do not race on a shared ready file. (PR [Geeksfino/finsafe#191](https://github.com/Geeksfino/finsafe/pull/191))
+
 ## [0.9.31] - 2026-08-05
 
 ### Added
