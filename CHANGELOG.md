@@ -10,6 +10,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.33] - 2026-08-06
+
+### Added
+
+- **`FINSAFE_PROXY_AUDIT_LOG` / `FINSAFE_PROXY_ALLOWLIST_FILE` env passthrough for `run` and `self-confine`** — Integrators launching `finsafe --policy <yaml> run <cmd>` or `finsafe --policy <yaml> self-confine <cmd>` can now enable the FS-2 JSONL egress audit log and the FS-3 hot-reloaded `host[:port]` allowlist file per run by exporting these variables (empty values are treated as unset). The detached `proxy-serve` sibling (macOS/Linux self-confine) receives the equivalent `--audit-log` / `--allowlist-file` flags; the in-process proxy (`run`, Windows self-confine) installs the JSONL sink directly (fail-closed on open error) and seeds + watches the allowlist file with the same fail-closed reload semantics as `proxy-serve`.
+
 ## [0.9.32] - 2026-08-05
 
 ### Added
