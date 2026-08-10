@@ -10,6 +10,26 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.34] - 2026-08-10
+
+### Added
+
+- **Unified `SandboxViolation` audit records** — Normalized filesystem/network deny events on the shared execution audit envelope: blocked proxy egress dual-emits legacy `ProxyEgressRecord` plus `sandbox_violation`; macOS `--audit` Seatbelt capture populates `attestation.sandbox_violations`. Windows Learning Mode mapping remains helper-only until wired into the launch path. (PR [Geeksfino/finsafe#199](https://github.com/Geeksfino/finsafe/pull/199))
+- **macOS `allow_local_binding` AF_UNIX IPC** — Under restricted egress, scoped Seatbelt AF_UNIX bind/connect allows for workspace, `$TMPDIR`, `/tmp`, and `/var/folders` so Node/TS toolchain pipes work; sensitive sockets such as `docker.sock` stay denied unless opted in. (PR [Geeksfino/finsafe#202](https://github.com/Geeksfino/finsafe/pull/202))
+
+### Changed
+
+- **Linux bubblewrap minimum version 0.5.0** — `finsafe probe` / launch fail closed when `bwrap` is missing, unparsable, or older than **0.5.0** (binding constraint: `--clearenv`). Doctor reports `bwrap_version_too_old` with upgrade remediation instead of opaque `bwrap: unknown option` at spawn. (PR [Geeksfino/finsafe#203](https://github.com/Geeksfino/finsafe/pull/203))
+
+### Security
+
+- **MITM / L7 path-authorization hardening** — Ambiguous request paths (encoded traversal, backslashes, malformed `%`) are fail-closed before L7 `path_prefix` matching (`l7_path_ambiguous`). When MITM is licensed and wired, opaque CONNECT and cleartext HTTP-forward bypasses are blocked (`mitm_required`). Post-CONNECT classification waits briefly on non-blocking sockets so missing ClientHello fails closed as `mitm_required` instead of racing to `client_io_error:WouldBlock`. (PR [Geeksfino/finsafe#198](https://github.com/Geeksfino/finsafe/pull/198))
+
+### Fixed
+
+- **Linux Landlock grants write on `/dev/null` (and `/dev/zero`)** — Platform device baseline previously put `/dev/null` in Landlock **read-only**, so shell redirects (`>/dev/null`) failed inside bwrap cells with `Permission denied`. Baseline now adds `/dev/null`/`/dev/zero` as Landlock **read-write** (no bwrap bind; still served by `--dev`), keeps `/dev/urandom`/`/dev/random` read-only, and skips non-directory RW roots when expanding deny-read `.env` masks. Do not list `/dev` itself as Landlock RO (nested-rule intersection would strip `/dev/null` write). The ancestor-read walker also skips character-device RW grants so `/dev/null`/`/dev/tty` do not inject RO `/dev`.
+- **Linux bwrap RW mount fixup no longer strips sticky/world-writable mode** — `try_fixup_mount_sources_for_bwrap_identity` previously `chown`ed RW bind sources to the sandbox identity and forced `0755`. That undid entrypoint/`session.rs` `chmod 1777` on `/tmp` and session workspaces, so the first cell launch failed with `bwrap: Can't create file at /tmp/.env: Permission denied` (deny-read mask creation under `--unshare-user` without `CAP_DAC_OVERRIDE`). Fixup now keeps/restores `01777` and also upgrades already-owned `0755` leftovers.
+
 ## [0.9.33] - 2026-08-06
 
 ### Added
