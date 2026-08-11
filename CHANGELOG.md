@@ -10,6 +10,22 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.36] - 2026-08-11
+
+<!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
+
+### Fixed
+
+- **Allow legacy creat(2) in x86_64 seccomp overlay for self-confine** (public issue [finogeeks/finsafe#33](https://github.com/finogeeks/finsafe/issues/33), PR [Geeksfino/finsafe#206](https://github.com/Geeksfino/finsafe/pull/206))
+
+## [0.9.35] - 2026-08-11
+
+<!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
+
+### Fixed
+
+- **fix(linux): scope run timeout kill to sandbox only** (public issue [finogeeks/finsafe#32](https://github.com/finogeeks/finsafe/issues/32), PR [Geeksfino/finsafe#205](https://github.com/Geeksfino/finsafe/pull/205))
+
 ## [0.9.34] - 2026-08-10
 
 ### Added
