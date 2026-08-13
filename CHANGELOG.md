@@ -10,6 +10,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.37] - 2026-08-13
+
+### Security
+
+- **Fail-closed deny-read globs** — Glob patterns in `filesystem.deny_read_paths` that have invalid syntax or match no paths under `read_write_paths` now fail policy compile instead of launching unenforced. Deny-write globs stay lenient. Migration hatch: `skip_deny_read_glob_fail_closed: true`. (PR [Geeksfino/finsafe#217](https://github.com/Geeksfino/finsafe/pull/217))
+
+### Fixed
+
+- **Linux host-rootfs `/dev/shm`** — After `--dev /dev` shadows host devices, FinSAFE re-binds `/dev/shm` when the host provides it so POSIX shared-memory IPC works for `linux-desktop-isolated` and similar host-rootfs plans. Curated rootfs plans are unchanged. (PR [Geeksfino/finsafe#218](https://github.com/Geeksfino/finsafe/pull/218))
+- **macOS Seatbelt Homebrew Python / dyld** — Read-only path grants and platform defaults for `/opt/homebrew` and `/usr/local` emit `file-map-executable` so dyld can mmap interpreters and libs. Writable workspaces stay W^X (no map-exec on `read_write_paths` / writable work_dir). (PR [Geeksfino/finsafe#219](https://github.com/Geeksfino/finsafe/pull/219))
+
 ## [0.9.36] - 2026-08-11
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
