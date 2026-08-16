@@ -1,10 +1,11 @@
-# Network isolation test: denies outbound TCP 80 and 443 (HTTP/HTTPS).
-# Any LLM API call or web fetch should fail.
-# Usage:
+# macOS Seatbelt only: `network: host` plus deny outbound TCP 80 and 443.
+# Linux/Windows `finsafe run` fail-closes on `macos_seatbelt.*` (#223). For those
+# hosts use `network-none.yaml` (Suite C curl probe).
+# Usage (macOS):
 #   finsafe --policy examples/wrapper-policies/agent-sandbox/deny-https.yaml run -- \
 #       /usr/bin/env HOME="$HOME" PATH="/opt/homebrew/bin:/usr/bin:/bin" \
 #       curl -sf --max-time 5 https://httpbin.org/get
-# Expected: connection refused / network error (non-zero exit)
+# Expected: connection refused / network error (non-zero exit, often inner 7)
 schema_version: 1
 kind: local-wrapper
 program_mode: short-lived

@@ -10,6 +10,21 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.38] - 2026-08-16
+
+### Added
+
+- **`finsafe prelabel`** — Apply Windows AppContainer filesystem grants and write completion sentinels without launching a payload. Use the same `--high-level`/`--policy` file and command tail as the later `run` so sentinel keys match. No-op on Linux and macOS. (PR [Geeksfino/finsafe#234](https://github.com/Geeksfino/finsafe/pull/234))
+- **`finsafe doctor --high-level` / `--policy`** — Windows inheritable-root size preflight: names over-cap trees and points operators at `finsafe prelabel`. Volume / `%USERPROFILE%` / AppData product-folder roots stay errors, not a reason to raise the cap. (PR [Geeksfino/finsafe#234](https://github.com/Geeksfino/finsafe/pull/234))
+
+### Changed
+
+- **Faster AppContainer ACL labeling** — Package SID plus All Application Packages / All Restricted Application Packages are applied in one tree walk instead of three. Warm relaunches skip when all three grants are already present. (PR [Geeksfino/finsafe#234](https://github.com/Geeksfino/finsafe/pull/234))
+
+### Security
+
+- **Refuse inheritable DACL walks on Electron `userData` / AppData product folders** — AppContainer and RestrictedToken both refuse listing those roots as inheritable `read_write_paths` / `work_dir`. Use a dedicated empty home under `%LOCALAPPDATA%\FinSAFE\...`. Empty RestrictedToken homes get a directory ACE without `TreeSetNamedSecurityInfoW`. (PR [Geeksfino/finsafe#233](https://github.com/Geeksfino/finsafe/pull/233))
+
 ## [0.9.37] - 2026-08-13
 
 ### Security

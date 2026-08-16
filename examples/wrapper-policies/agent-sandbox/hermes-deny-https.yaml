@@ -1,5 +1,8 @@
-# Hermes oneshot with HTTPS (443) blocked.
-# Tests that hermes starts normally but its LLM API call fails.
+# Hermes oneshot with outbound network denied (`network: none`).
+# Tests that hermes starts but LLM/API HTTPS cannot complete.
+# Cross-platform: do not use `macos_seatbelt.deny_outbound_ports` here — Linux
+# `finsafe run` fail-closes on that field (#223). Prefer `network: none` (fails
+# fast; see F3) over Seatbelt port denies.
 # Key difference from deny-https.yaml: includes uv Python runtime path.
 # Usage:
 #   finsafe --policy examples/wrapper-policies/agent-sandbox/hermes-deny-https.yaml run -- \
@@ -15,9 +18,7 @@ audit:
   require_resolved_posture: true
 stdio:
   mode: inherit
-macos_seatbelt:
-  deny_outbound_ports: [80, 443]
-network: host
+network: none
 resources:
   memory_max: "512M"
   pids_max: "64"

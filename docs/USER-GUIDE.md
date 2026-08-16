@@ -111,7 +111,7 @@ Copy-paste examples from this repository — full first-run walkthroughs: [READM
 | Interactive broker (TTY, Linux) | [examples/wrapper-policies/hermes-linux-interactive.yaml](../examples/wrapper-policies/hermes-linux-interactive.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-linux-interactive.yaml self-confine -- hermes` |
 | Interactive tools-only broker (opt-in) | [examples/wrapper-policies/hermes-interactive-tools-only.yaml](../examples/wrapper-policies/hermes-interactive-tools-only.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-interactive-tools-only.yaml self-confine -- hermes` |
 | OpenCode one-shot | [examples/wrapper-policies/agent-sandbox/opencode-oneshot.yaml](../examples/wrapper-policies/agent-sandbox/opencode-oneshot.yaml) | See [README § Quick start (OpenCode)](../README.md#quick-start-opencode) |
-| Interactive broker + deny outbound TCP port 80 (Seatbelt) | [examples/wrapper-policies/hermes-interactive-deny-http.yaml](../examples/wrapper-policies/hermes-interactive-deny-http.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-interactive-deny-http.yaml self-confine -- hermes` |
+| Interactive broker + deny outbound TCP 80/443 (Seatbelt, **macOS**) | [examples/wrapper-policies/hermes-interactive-deny-http.yaml](../examples/wrapper-policies/hermes-interactive-deny-http.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-interactive-deny-http.yaml self-confine -- hermes` |
 
 There is **no** `finsafe --agent <name>` shortcut yet — always pass an explicit YAML path with **`--policy`**.
 

@@ -55,10 +55,10 @@ Full workflow: [agent-sandbox-guide.md](../../../docs/agent-sandbox-guide.md) §
 
 | File | Purpose |
 |------|---------|
-| `deny-https.yaml` | `network: host` + deny ports 80/443; curl should fail |
-| `network-none.yaml` | `network: none`; full outbound deny |
+| `deny-https.yaml` | **macOS:** `network: host` + Seatbelt deny ports 80/443. Linux `run` fail-closes (#223); use `network-none.yaml` |
+| `network-none.yaml` | `network: none`; full outbound deny (Linux/macOS/Windows curl probe) |
 | `isolation-test.yaml` | Minimal FS scope; isolation probes (**not** for agent launch) |
-| `hermes-deny-https.yaml` | Hermes oneshot with HTTPS blocked |
+| `hermes-deny-https.yaml` | Hermes oneshot with `network: none` (LLM/HTTPS blocked; cross-platform) |
 | `hermes-interactive-test.yaml` | `self-confine` Hermes; `skip_default_deny_read` |
 | `hermes-skip-deny.yaml` | Hermes one-shot / chat |
 | `codex-oneshot.yaml` | Codex non-interactive one-shot |

@@ -153,9 +153,29 @@ session.
 
 ---
 
-## 5. AppContainer-only: large trees and ProjFS
+## 5. Dedicated home, large trees, and ProjFS
 
-Skip this section if you stay on RestrictedToken / `network: host`.
+### Dedicated FinSAFE home (AppContainer **and** RestrictedToken)
+
+Do **not** skip this subsection if you stay on RestrictedToken / `network: host`.
+Inheritable ACL grants on both backends **refuse** volume roots, `%USERPROFILE%`,
+`%APPDATA%` / `%LOCALAPPDATA%` roots, and Electron `userData` product folders
+(for example `%APPDATA%\…`). Use a dedicated sandbox home under
+`%LOCALAPPDATA%\FinSAFE\...` instead of listing `userData` in `read_write_paths`
+or as `work_dir`.
+
+**RestrictedToken and pre-existing files:** WRITE_RESTRICTED sets a
+directory-inheritable ACE on the home directory only (`DirectoryInheritableNoWalk`).
+It does **not** rewrite existing descendants. The agent can create **new** files
+that inherit the capability SID, but it **cannot modify pre-existing files or
+subdirectories** unless those objects already carry that SID. Point the policy at
+a dedicated **empty** `%LOCALAPPDATA%\FinSAFE\...` home — do not copy a fat
+`userData` tree into that home and expect writes to succeed.
+
+### AppContainer-only: large trees and ProjFS
+
+Skip **this** subsection if you stay on RestrictedToken / `network: host`
+(the dedicated-home rule above still applies).
 
 AppContainer must place inheritable Package SID ACLs (and a Low integrity label) on every filesystem root FinSAFE uses (`work_dir`, `read_only_paths`, `read_write_paths`). Listing an entire agent checkout or a huge `node_modules` tree in those fields can:
 
@@ -165,7 +185,7 @@ AppContainer must place inheritable Package SID ACLs (and a Low integrity label)
 Prefer:
 
 1. **Narrow paths** — only directories the workload needs
-2. **RestrictedToken** for host-network agents that only need write allowlisting
+2. **RestrictedToken** for host-network agents that only need write allowlisting (still use a dedicated empty FinSAFE home)
 3. **ProjFS projection** for large runtime trees under AppContainer (`setup-windows`; reboot only if exit **3010** / `restart_required`). To enable ProjFS manually:
 
    ```powershell
@@ -186,8 +206,11 @@ Deep table, env vars (`FINSAFE_WINSAFE_INHERIT_ROOT_*`), and interrupted-label r
 | UAC / permission prompt on first use | `setup-windows` registering helper / WFP | Accept once; re-run `finsafe setup-windows` if interrupted |
 | `doctor` warns about helper | Helper service not running | `finsafe setup-windows`; needed for none/allowlist |
 | `doctor` warns about ProjFS / reboot | Client-ProjFS enabled but reboot pending, or feature missing | Ignore for RestrictedToken Hermes; reboot only for AppContainer + large projection |
-| `refusing to apply inheritable AppContainer ACLs` | Policy root is a huge tree | Narrow paths, switch to RestrictedToken, or use ProjFS — see §5 |
-| First AppContainer launch is very slow | One-time ACL labeling | Let it finish; do not interrupt. Prefer ProjFS / narrower paths |
+| `doctor` names an over-cap inherit root | Policy tree exceeds `FINSAFE_WINSAFE_INHERIT_ROOT_WARN_LIMIT` | `finsafe doctor --high-level <policy>` (or `--policy`) names the path without launching. Then `finsafe prelabel --high-level <policy> -- <command>` before `run`. Volume / `%USERPROFILE%` / AppData product folders stay refused — see §5 |
+| `refusing to apply inheritable AppContainer ACLs` (large tree) | Policy root is a huge tree (AppContainer TreeSet) | Run `finsafe prelabel --high-level <policy> -- <command>` (same tail as `run`) to pay the pass out of band. If the breadth is accidental, narrow the path. Raising `FINSAFE_WINSAFE_INHERIT_ROOT_WARN_LIMIT` or setting `FINSAFE_WINSAFE_INHERIT_ROOT_FAIL=0` is a last resort (still slow). Switching to RestrictedToken does **not** allow Electron `userData` |
+| `refusing to apply inheritable` + `product folder` / `userData` | `read_write_paths` / `work_dir` is an AppData product folder (AppContainer **or** RestrictedToken) | Use a dedicated empty home under `%LOCALAPPDATA%\FinSAFE\...` — see §5. `prelabel` also refuses these roots |
+| RestrictedToken agent cannot write existing files in the home | `DirectoryInheritableNoWalk` does not rewrite pre-existing descendants | Create a **new empty** `%LOCALAPPDATA%\FinSAFE\...` home; new files inherit the capability ACE. Do not copy a populated `userData` tree into that home |
+| First AppContainer launch is very slow | One-time ACL labeling on large policy roots | The completion line `tree relabel in progress` / `labeling sandbox access on <path>` names the root and elapsed ms. Pay it up front with `finsafe prelabel --high-level <policy> -- <command>` (command tail must match the launch). Do not interrupt a walk already in progress. Prefer ProjFS / narrower paths. **Do not** point `read_write_paths` at Electron `userData` — FinSAFE refuses those roots; use `%LOCALAPPDATA%\FinSAFE\...` |
 | Hermes cannot read `.env` / credentials under AppContainer | Built-in or explicit deny-read | Use RestrictedToken example, or set `skip_default_deny_read: true` after review |
 | `self-confine` exits `0xC0000142` / `STATUS_DLL_INIT_FAILED` (RestrictedToken) | Pre-0.9.15 spawn path | Upgrade to **0.9.15+** (Live ConPTY default); or `FINSAFE_WIN_PTY_MODE=pipe` |
 | Nested `cmd /c …` prints nothing | Stdio path / older regression | Upgrade to **0.9.7+**; non-interactive console hosts use PipeCapture |

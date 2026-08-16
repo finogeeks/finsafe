@@ -45,7 +45,7 @@ filesystem:
 | `audit.require_policy_digest` | 若审计信封中未记录包装策略摘要，则拒绝启动。 |
 | `audit.require_resolved_posture` | 若未记录解析后的主机姿态，则拒绝启动。 |
 | `stdio.mode` | 子进程标准 IO，用于 **`run`**：`capture`、`inherit`、`null` 或 `pty`。文本模式运行通常受此控制；`--json` 往往在未覆盖时偏向 capture。在 **Linux** 上，**`pty`** 会分配虚拟伪终端，使在沙箱内打开 **`/dev/tty`** 的工具（如 `vim`、`less`、密码提示或 Git 钩子）可正常工作，且无需直通宿主机 TTY。单次覆盖：**`finsafe run --stdio pty`**。Linux 上 **`inherit`** 不会在 bubblewrap 内提供 controlling terminal。 |
-| `macos_seatbelt.deny_outbound_ports` | 可选：在 `network: host` 时于 Seatbelt 配置中按 **TCP 端口** 拒绝出站（粗粒度；非按域名）。**失败模式：** 在 `network: host` 上叠加按端口 deny 时，可能立即失败（`EPERM`），也可能一直等到客户端 TCP 超时，取决于具体网络栈；部分 agent 会挂起而不给出明确错误。务必配合 `resources.timeout_ms`，以便 FinSAFE 终止子进程。若需完全网络隔离，优先使用 `network: none`（在 socket/DNS 系统调用层拒绝，通常较快失败）。 |
+| `macos_seatbelt.deny_outbound_ports` | 可选：在 `network: host` 时于 Seatbelt 配置中按 **TCP 端口** 拒绝出站（粗粒度；非按域名）。**仅 macOS。** Linux/Windows 上 `finsafe run` 若出现该字段会在编译期失败关闭（#223）；请改用 `network: none` 或 allowlist + 代理。**失败模式：** 在 `network: host` 上叠加按端口 deny 时，可能立即失败（`EPERM`），也可能一直等到客户端 TCP 超时，取决于具体网络栈；部分 agent 会挂起而不给出明确错误。务必配合 `resources.timeout_ms`，以便 FinSAFE 终止子进程。若需完全网络隔离，优先使用 `network: none`（在 socket/DNS 系统调用层拒绝，通常较快失败）。 |
 | `network` | `none` 或 `host`（Stage 1）。 |
 | `resources.memory_max` / `pids_max` / `cpu_max` | 在 Linux 严格栈下为 cgroup v2 风格的资源字符串。 |
 | `resources.timeout_ms` | 可选：**`run`** 调用的墙上时钟上限。 |

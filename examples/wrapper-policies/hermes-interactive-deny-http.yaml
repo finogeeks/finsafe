@@ -1,13 +1,16 @@
 # Demonstrate blocking outbound web access (HTTP and HTTPS) for an interactive Hermes broker.
-# Use with:
+# macOS Seatbelt only (`macos_seatbelt.deny_outbound_ports`). Linux `finsafe run`
+# fail-closes on this block (#223). Linux interactive isolation: use
+# `hermes-linux-interactive.yaml` with `network: none` (not this file).
+# Use with (macOS):
 #   finsafe --policy examples/wrapper-policies/hermes-interactive-deny-http.yaml self-confine \
 #       /usr/bin/env HOME="$HOME" PATH="/opt/homebrew/bin:$HOME/.local/bin:/usr/bin:/bin" hermes
 # Paths under `filesystem` use ${HOME}, ${XDG_CONFIG_HOME}, or ~/; FinSAFE expands these when the policy loads from the finsafe loader environment.
 # macOS Seatbelt note: this is port-based, not domain-based. It denies outbound TCP 80 and 443.
 # LLM/model-provider HTTPS also uses 443 — use `hermes-interactive.yaml` when the broker must call APIs.
-# Verify inside Hermes (both should fail with operation-not-permitted / connection errors):
-#   curl -s 'http://example.com'
-#   curl -s 'https://wttr.in/Shenzhen?format=3'
+# Verify inside Hermes (web access should fail; curl may error quickly, Hermes may stall until timeout_ms):
+#   curl -s --max-time 5 'http://example.com'
+#   curl -s --max-time 5 'https://wttr.in/Shenzhen?format=3'
 schema_version: 1
 kind: local-wrapper
 program_mode: interactive
@@ -21,11 +24,17 @@ stdio:
 macos_seatbelt:
   deny_outbound_ports: [80, 443]
 # host + denied ports 80/443: general outbound allowed in profile, then web ports blocked.
+# NOTE: deny_outbound_ports may fail fast (EPERM) or stall until TCP timeout depending on
+# the client stack; Hermes and other agents often hang rather than surfacing a clear error.
+# Always set timeout_ms when using deny_outbound_ports so the sandbox kills the agent
+# rather than letting it wait indefinitely. For full network isolation use network: none
+# instead — it blocks at the syscall level and usually fails fast.
 network: host
 resources:
   memory_max: "1G"
   pids_max: "256"
   cpu_max: "100000 100000"
+  timeout_ms: 30000
 filesystem:
   # macOS deny-default Seatbelt requires every needed local path to be declared.
   # `.` lets Hermes inspect the current working directory; the `${HOME}` / `${XDG_CONFIG_HOME}`

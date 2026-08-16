@@ -95,7 +95,7 @@ finsafe --policy <PATH> self-confine <broker> [参数...]
 | 一次性查询 / 短命令风格 | [examples/wrapper-policies/hermes-oneshot-query.yaml](../examples/wrapper-policies/hermes-oneshot-query.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-oneshot-query.yaml run -- hermes chat -q "…"` |
 | 交互式 Broker（需 TTY） | [examples/wrapper-policies/hermes-interactive.yaml](../examples/wrapper-policies/hermes-interactive.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-interactive.yaml self-confine -- hermes` |
 | OpenCode 一次性 | [examples/wrapper-policies/agent-sandbox/opencode-oneshot.yaml](../examples/wrapper-policies/agent-sandbox/opencode-oneshot.yaml) | 见 [README § 快速上手（OpenCode）](../README-zh.md#快速上手opencode) |
-| 同上，且在 Seatbelt 下拒绝出站 TCP 80 | [examples/wrapper-policies/hermes-interactive-deny-http.yaml](../examples/wrapper-policies/hermes-interactive-deny-http.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-interactive-deny-http.yaml self-confine -- hermes` |
+| 同上，且在 Seatbelt 下拒绝出站 TCP 80/443（**仅 macOS**） | [examples/wrapper-policies/hermes-interactive-deny-http.yaml](../examples/wrapper-policies/hermes-interactive-deny-http.yaml) | `finsafe --policy ./examples/wrapper-policies/hermes-interactive-deny-http.yaml self-confine -- hermes` |
 
 尚无 **`finsafe --agent <名称>`** 快捷方式 —— 请始终用 **`--policy <yaml 路径>`** 指定策略。
 

@@ -1,6 +1,6 @@
 ---
 created: 2026-06-20
-updated: 2026-06-20
+updated: 2026-08-15
 name: finsafe-agent-sandbox-verify
 description: >-
   Methodology for verifying FinSAFE sandboxes arbitrary CLI agents (Hermes,
@@ -90,7 +90,7 @@ Suite D / R2 cwd escape tests — see **F7**.
 |-------|------|--------|------------------------|
 | **A — normal ops smoke** | Agent launches + trivial work | **Per-agent** (`*-oneshot.yaml`, `hermes-version-smoke.yaml`) | `agent --version`; one-shot LLM → marker |
 | **B — filesystem isolation** | Shell probes only | **`isolation-test.yaml`** | read `$HOME/.ssh/id_rsa` → denied; write `$HOME/evil.txt` → denied; workspace write → allowed |
-| **C — network isolation** | Network posture | `deny-https.yaml`, `network-none.yaml` | curl inner exit 7 / 6 (see verify table) |
+| **C — network isolation** | Network posture | **macOS:** `deny-https.yaml` then `network-none.yaml`. **Linux/Windows:** `network-none.yaml` only (`deny-https.yaml` fail-closes on `macos_seatbelt.*`) | curl inner exit 7 (macOS port-deny) / 6 (`network: none`) |
 | **D — write confinement** | Real agents | Per-agent policy | R1/R2/R3 (below) |
 
 **Suite A trap:** `isolation-test.yaml` does **not** declare agent binary paths —
@@ -166,7 +166,7 @@ For B-suite denial probes, use **absolute paths** (e.g. `$HOME/.ssh/id_rsa`) —
 |-----------------|-----------------|
 | "writes were blocked" | **R2-agent:** `git diff` clean + `test ! -f` escape path. **R2-seatbelt:** shell `Operation not permitted` |
 | "LLM / R1 / R3 succeeded" | Unique **marker in `./workspace/<file>`** (preferred) or stdout |
-| "network was blocked" | **Inner** exit code: stderr `exit_code=Some(7)` (deny-https) or `Some(6)` (network-none) — wrapper exit may still be 0 |
+| "network was blocked" | **Inner** exit code: stderr `exit_code=Some(7)` (macOS `deny-https.yaml`) or `Some(6)` (`network-none.yaml`, all platforms) — wrapper exit may still be 0 |
 | "agent actually ran" | `termination_reason=… exit_code=Some(N) timed_out=…` on stderr |
 | "Seatbelt not just agent UI" | R2-seatbelt direct `/bin/sh` write denied |
 
@@ -221,7 +221,7 @@ https://github.com/finogeeks/finsafe/blob/main/scripts/dev/finsafe-trace.sh
 | Read-only / repo source protected | High | R2 repo: all tools denied; `git diff` clean |
 | Agents do real read + LLM work | High | R1/R3 markers in `workspace/` files |
 | Writes confined to workspace | High | R3 ok; R2 blocked |
-| Network posture enforced | High | C1 inner exit 7; C2 inner exit 6 |
+| Network posture enforced | High | macOS C1 inner exit 7 + C2 inner exit 6; Linux/Windows C1 `network-none` inner exit 6 |
 | `self-confine` profile survives `execve` | High | SC-1–SC-5 (do not skip) |
 | Policy completeness for NEW agent | Medium ⚠️ | F1/F2 path discovery |
 | Silent-hang on blocked network | Known-gap | F3 |
@@ -231,7 +231,7 @@ https://github.com/finogeeks/finsafe/blob/main/scripts/dev/finsafe-trace.sh
 
 - Example fixtures:
   https://github.com/finogeeks/finsafe/tree/main/examples/wrapper-policies/agent-sandbox
-- Port-deny + `timeout_ms`:
+- Port-deny + `timeout_ms` (macOS):
   https://github.com/finogeeks/finsafe/blob/main/examples/wrapper-policies/hermes-interactive-deny-http.yaml
 - POLICY-QUICKREF:
   https://github.com/finogeeks/finsafe/blob/main/docs/POLICY-QUICKREF.md

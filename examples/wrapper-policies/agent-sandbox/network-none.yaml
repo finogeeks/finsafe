@@ -1,4 +1,6 @@
 # Full network isolation (`network: none`). Outbound syscalls denied; fails fast.
+# Use this for Linux/Windows Suite C (and macOS C2). Do not use deny-https.yaml on
+# Linux `run` — that file is Seatbelt port-deny and fail-closes (#223).
 # Usage:
 #   finsafe --policy examples/wrapper-policies/agent-sandbox/network-none.yaml run -- \
 #       /usr/bin/env PATH="/usr/bin:/bin" curl -sf --max-time 3 https://example.com

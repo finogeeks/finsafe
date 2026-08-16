@@ -148,9 +148,25 @@ oneshot 策略复用给 `self-confine` — 它是 `program_mode: short-lived` �
 
 ---
 
-## 5. 仅 AppContainer：大目录与 ProjFS
+## 5. 专用主目录、大目录与 ProjFS
 
-若你停留在 RestrictedToken / `network: host`，可跳过本节。
+### 专用 FinSAFE 主目录（AppContainer **与** RestrictedToken）
+
+即使你停留在 RestrictedToken / `network: host`，也**不要跳过**本小节。
+两个后端的可继承 ACL 授权都会**拒绝**卷根、`%USERPROFILE%`、`%APPDATA%` /
+`%LOCALAPPDATA%` 根，以及 Electron `userData` 产品目录（例如 `%APPDATA%\…`）。
+请使用 `%LOCALAPPDATA%\FinSAFE\...` 下的专用沙箱主目录，不要把 `userData`
+列入 `read_write_paths` 或当作 `work_dir`。
+
+**RestrictedToken 与已有文件：** WRITE_RESTRICTED 只在主目录对象上设置可继承 ACE
+（`DirectoryInheritableNoWalk`），**不会**改写已有子孙。Agent 可以创建**新**文件
+（它们会继承 capability SID），但**不能修改预先存在的文件或子目录**，除非那些对象
+已经带有该 SID。请把策略指向一个专用的**空** `%LOCALAPPDATA%\FinSAFE\...` 主目录
+——不要把庞大的 `userData` 树拷进去并指望写入能成功。
+
+### 仅 AppContainer：大目录与 ProjFS
+
+若你停留在 RestrictedToken / `network: host`，可跳过**本小节**（上面的专用主目录规则仍然适用）。
 
 AppContainer 必须在 FinSAFE 使用的每个文件系统根（`work_dir`、`read_only_paths`、`read_write_paths`）上放置可继承的 Package SID ACL（以及 Low 完整性标签）。若在这些字段中列出整个 agent 检出目录或巨大的 `node_modules`，可能：
 
@@ -160,7 +176,7 @@ AppContainer 必须在 FinSAFE 使用的每个文件系统根（`work_dir`、`re
 优先：
 
 1. **收窄路径** — 只列真正需要的目录
-2. **RestrictedToken** — 仅需写白名单的 host 网络 agent
+2. **RestrictedToken** — 仅需写白名单的 host 网络 agent（仍须使用空的专用 FinSAFE 主目录）
 3. **ProjFS 投影** — AppContainer 下的大体积运行时树（`setup-windows`；仅当退出码 **3010** / `restart_required` 时重启）。手动安装 ProjFS：
 
    ```powershell
@@ -181,8 +197,11 @@ AppContainer 必须在 FinSAFE 使用的每个文件系统根（`work_dir`、`re
 | 首次使用出现 UAC / 权限提示 | `setup-windows` 注册 helper / WFP | 接受一次；中断后可再跑 `finsafe setup-windows` |
 | `doctor` 提示 helper | Helper 服务未运行 | `finsafe setup-windows`；none/allowlist 需要它 |
 | `doctor` 提示 ProjFS / 重启 | Client-ProjFS 已启用但待重启，或功能缺失 | RestrictedToken Hermes 可忽略；仅 AppContainer + 大投影时重启 |
-| `refusing to apply inheritable AppContainer ACLs` | 策略根是巨大目录树 | 收窄路径、改用 RestrictedToken，或走 ProjFS — 见 §5 |
-| 首次 AppContainer 启动极慢 | 一次性 ACL 标注 | 让它跑完，不要中断；优先 ProjFS / 更窄路径 |
+| `doctor` 指出超限可继承根 | 策略树超过 `FINSAFE_WINSAFE_INHERIT_ROOT_WARN_LIMIT` | `finsafe doctor --high-level <policy>`（或 `--policy`）会在不启动的情况下指出路径。然后先 `finsafe prelabel --high-level <policy> -- <command>` 再 `run`。卷根 / `%USERPROFILE%` / AppData 产品目录仍会被拒绝 — 见 §5 |
+| `refusing to apply inheritable AppContainer ACLs`（大树） | 策略根是巨大目录树（AppContainer TreeSet） | 用 `finsafe prelabel --high-level <policy> -- <command>`（命令尾与 `run` 相同）在交互路径外支付这次 walk。若范围过宽则收窄路径。提高 `FINSAFE_WINSAFE_INHERIT_ROOT_WARN_LIMIT` 或设 `FINSAFE_WINSAFE_INHERIT_ROOT_FAIL=0` 是最后手段（仍然很慢）。改用 RestrictedToken **并不能**让 Electron `userData` 通过 |
+| `refusing to apply inheritable` 且含 `product folder` / `userData` | `read_write_paths` / `work_dir` 是 AppData 产品目录（AppContainer **或** RestrictedToken） | 改用 `%LOCALAPPDATA%\FinSAFE\...` 下的专用空主目录 — 见 §5。`prelabel` 同样拒绝这些根 |
+| RestrictedToken agent 无法写入主目录里已有文件 | `DirectoryInheritableNoWalk` 不会改写预先存在的子孙 | 创建**新的空** `%LOCALAPPDATA%\FinSAFE\...` 主目录；新文件会继承 capability ACE。不要把已填充的 `userData` 树拷进去 |
+| 首次 AppContainer 启动极慢 | 大策略根上的一次性 ACL 标注 | 完成行 `tree relabel in progress` / `labeling sandbox access on <path>` 会指出根路径和耗时。用 `finsafe prelabel --high-level <policy> -- <command>` 提前支付（命令尾必须与启动一致）。不要中断正在进行的 walk。优先 ProjFS / 更窄路径。**不要**把 `read_write_paths` 指向 Electron `userData` — FinSAFE 会拒绝这些根；请使用 `%LOCALAPPDATA%\FinSAFE\...` |
 | AppContainer 下 Hermes 读不到 `.env` / 凭据 | 内置或显式 deny-read | 改用 RestrictedToken 示例，或审阅后设 `skip_default_deny_read: true` |
 | `self-confine` 退出 `0xC0000142` / `STATUS_DLL_INIT_FAILED`（RestrictedToken） | 0.9.15 之前的启动路径 | 升级到 **0.9.15+**（默认 Live ConPTY）；或设 `FINSAFE_WIN_PTY_MODE=pipe` |
 | 嵌套 `cmd /c …` 无输出 | 标准 I/O 路径 / 旧版本回归 | 升级到 **0.9.7+**；非交互控制台主机走 PipeCapture |
