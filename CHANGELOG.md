@@ -10,6 +10,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.39] - 2026-08-20
+
+### Security
+
+- **macOS Seatbelt writable-root rename hardening** — After broad `(allow file-write*)` grants, profile generation emits `(deny file-write-unlink …)` on each writable directory root so the sandbox cannot rename/exchange the root itself. Deny-read paths also deny writes, and protected read-only / deny-read subtrees under writable roots get ancestor unlink denies. Writable roots whose path contains nested symlink components fail profile preparation (top-level aliases such as `/tmp` → `/private/tmp` remain valid). (PR [Geeksfino/finsafe#243](https://github.com/Geeksfino/finsafe/pull/243))
+- **Windows elevated DACL provisioning no longer follows reparse points** — Elevated `finsafe-winhelper` ACL setup (`ApplyPathDacl`) opens user-influenced policy roots (`work_dir`, compiled RO/RW/deny-read paths) with `OBJ_DONT_REPARSE` and applies DACLs via handle-based `SetSecurityInfo`. Directory junctions under those roots are rejected instead of receiving sandbox ACLs meant for the intended tree. Interactive (non-elevated) launches keep the previous path-based behavior. (PR [Geeksfino/finsafe#242](https://github.com/Geeksfino/finsafe/pull/242))
+
 ## [0.9.38] - 2026-08-16
 
 ### Added
