@@ -134,17 +134,13 @@ oneshot 策略复用给 `self-confine` — 它是 `program_mode: short-lived` �
 - 可选：broker 不沙箱、工具仍沙箱 → `broker_confine: tools-only`（见 `hermes-interactive-tools-only.yaml`）
 - Agent 专项说明 → [agent-sandbox-guide-zh.md § Windows agents](agent-sandbox-guide-zh.md)
 
-> **关于 git-bash / MSYS2（Cygwin）Agent 的说明：** Windows 沙箱面向**原生
-> Windows 二进制**设计。MSYS2/Cygwin 运行时（如 git-bash）与 `RestrictedToken`
-> 后端**不兼容**：受限令牌拒绝了 MSYS2 运行时初始化所需的、以用户 SID 命名的
-> 共享内存对象（`CreateFileMapping`），git-bash 因此中止（`Win32 error 5` /
-> `STATUS_DLL_INIT_FAILED`），所有经由它执行的工具都会失败。Hermes 的
-> `write_file` / `terminal` / `execute_code` 工具都通过 git-bash
-> （`HERMES_GIT_BASH_PATH`）执行，因此 RestrictedToken 沙箱中的 Hermes 无法
-> 执行文件/工具操作 — 尽管用 `cmd.exe` 直接写入相同的 `read_write_paths` 是
-> 成功的。如果需要在沙箱内完整执行 Hermes 工具，请关注上游修复
-> ([finogeeks/finsafe#29](https://github.com/finogeeks/finsafe/issues/29))，
-> 或让 Hermes 工具改用原生 Windows 入口（cmd.exe / PowerShell）而非 git-bash。
+> **关于 git-bash / MSYS2（Cygwin）Agent 的说明：** Git for Windows 的 `bash.exe`
+> 在 **RestrictedToken** 下通过给已有的、以用户 SID 命名的共享内存对象
+> （`CreateFileMapping S-1-5-21-….n`）授予 FinSAFE capability SID 来支持，使
+> WRITE_RESTRICTED 能打开主机 Git 已创建的 mapping。这不是
+> `SeCreateGlobalPrivilege`，也不会遍历 `node_modules`。AppContainer 是另一套
+> 令牌，仍不是 git-bash 路径。见
+> [finogeeks/finsafe#29](https://github.com/finogeeks/finsafe/issues/29)。
 
 ---
 

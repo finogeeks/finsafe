@@ -20,15 +20,15 @@ The **FinSAFE Policy Authority admin console** is a React operator UI served at
 | Area | Purpose |
 |------|---------|
 | **Dashboard** | Fleet KPIs: device counts, denials and runs in the last 24h, live event feed. |
-| **Devices** | Search/filter fleet; bulk-apply tags; view bundle and denial counts. |
+| **Devices** | Search/filter fleet; nested **Tags** and **Groups**; bulk-apply tags; view bundle and denial counts. |
 | **Runs** | Managed run records ingested from audit. |
 | **Audit** | Raw fleet audit events. |
 | **Bundles** | Published policy bundles (signed policy sets); policy editor (guided + YAML). |
 | **Assignments** | Connect published bundles to groups with rollout controls. |
 | **Alerts** | Security-oriented audit kinds (including policy denials). |
-| **Settings** | License/token, tag presets, device groups, **kill switch**. |
+| **Settings** | License/token and **kill switch**. |
 
-**Recommended workflow:** define **tag presets** and **device groups** under Settings,
+**Recommended workflow:** define **tag presets** and **device groups** under **Devices → Tags** and **Devices → Groups**,
 publish bundles, then assign bundles to groups on **Assignments**, and apply matching
 tags on **Devices**. See the [sandbox management model](./sandbox-management-model.md).
 
@@ -43,7 +43,7 @@ Protected APIs without a valid license return **`402 Payment Required`**.
 
 ---
 
-## Settings → Tag presets
+## Devices → Tag presets
 
 Browser-local catalog of allowed label names (e.g. `department:finance`,
 `cohort:beta`). Export/import JSON to share across operators. Tags are applied on
@@ -51,7 +51,7 @@ Browser-local catalog of allowed label names (e.g. `department:finance`,
 
 ---
 
-## Settings → Device groups
+## Devices → Device groups
 
 Groups are **named device cohorts** defined by deterministic rules over trusted tags and
 device facts. Assignment-targetable groups use an `all` rule: every required predicate
@@ -117,9 +117,15 @@ Agents **remain enrolled**; heartbeats continue so the console still shows devic
   group's label filter.
 - **Specific device IDs** — per-device rows only.
 
-**Clear** sends `until: null` for the selected scope. Per-device rows from a group
-activation must be cleared with the same scope (or cleared fleet-wide when using
-**Entire fleet**).
+**Clear** sends `until: null` for the selected scope. Agents do **not** re-block on
+that event; the next heartbeat is the source of truth (revoke/tamper can still keep
+the device blocked). Per-device rows from a group activation must be cleared with the
+same scope (or cleared fleet-wide when using **Entire fleet**).
+
+Time-bounded `until` values **auto-lift** on heartbeat after expiry. Operators do not
+need to click Clear for an elapsed 1h/4h/24h window; Clear is still required to stop a
+kill switch before `until`. Resume is heartbeat-driven — **bundle pull does not** lift
+an authority kill switch or revoke.
 
 ### API
 
@@ -155,7 +161,7 @@ See also [enterprise-deployment-runbook.md § Kill switch](./enterprise-deployme
 ## Devices
 
 Lists enrolled devices with filters (status, tag, group, search), pagination, and bulk
-tagging. Define tags under **Settings → Tag presets** first.
+tagging. Define tags under **Devices → Tags** first.
 
 | Column | Meaning |
 |--------|---------|
@@ -167,7 +173,8 @@ tagging. Define tags under **Settings → Tag presets** first.
 | **Denials 24h** | Count of **policy denial** audit events for this device in the last 24 hours (see below). |
 
 **Revoke** is on the device detail page; revoked devices get `revoke_device: true` on
-heartbeat and enter a local kill-switch-like state on the agent.
+heartbeat and enter a local kill-switch-like state on the agent. After unrevoke, the
+next heartbeat clears that block without requiring an agent restart.
 
 ```bash
 curl -sf -H "X-Admin-Token: $TOKEN" "$AUTHORITY/v1/admin/devices?limit=50" | jq .
@@ -227,7 +234,7 @@ times belong to the assignment, not the bundle.
 Typical flow:
 
 1. Publish a bundle on **Bundles**.
-2. Create or verify an assignment-targetable group under **Settings → Device groups**.
+2. Create or verify an assignment-targetable group under **Devices → Groups**.
 3. On **Assignments**, preview matched devices, then save or activate the assignment.
 
 When active assignments exist, `/v1/bundles/current` resolves the effective bundle through

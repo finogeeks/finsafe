@@ -54,7 +54,7 @@ JSON 规则使用 `all` 数组，每个子表达式都必须匹配。Assignment 
 
 否定谓词只能作为根 `all` 的直接 `not` 子项。Assignment 可用分组不允许嵌套布尔表达式和 `any`（OR）——请将 OR 拆分为独立 Group 或 Assignment。
 
-在管理 UI **设置 → 设备分组** 中定义 Group。
+在管理 UI **设备 → 分组** 中定义 Group。
 
 ## Assignment（分配）与 rollout
 

@@ -18,15 +18,15 @@
 | 区域 | 用途 |
 |------|------|
 | **总览** | 舰队 KPI：设备数、24 小时内拒绝次数与运行次数、事件流。 |
-| **设备** | 搜索/筛选、批量打标签、查看策略包与拒绝次数。 |
+| **设备** | 搜索/筛选；嵌套 **标签** 与 **分组**；批量打标签、查看策略包与拒绝次数。 |
 | **运行** | 来自审计的托管运行记录。 |
 | **审计** | 原始舰队审计事件。 |
 | **策略包** | 已发布 bundle（已签名策略集合）；策略编辑器（引导式 + YAML）。 |
 | **Assignments（分配）** | 将已发布 bundle 关联到分组并控制 rollout。 |
 | **告警** | 安全相关审计类型（含策略拒绝）。 |
-| **设置** | 许可证/token、标签预设、设备分组、**Kill switch**。 |
+| **设置** | 许可证/token 与 **Kill switch**。 |
 
-**推荐流程：** 在 **设置** 中定义 **标签预设** 与 **设备分组**，发布 bundle，再在 **Assignments** 页将 bundle **分配** 到分组，最后在 **设备** 页分配匹配标签。详见 [沙箱管理模型](./sandbox-management-model-zh.md)。
+**推荐流程：** 在 **设备 → 标签** 与 **设备 → 分组** 中定义 **标签预设** 与 **设备分组**，发布 bundle，再在 **Assignments** 页将 bundle **分配** 到分组，最后在 **设备** 页分配匹配标签。详见 [沙箱管理模型](./sandbox-management-model-zh.md)。
 
 ---
 
@@ -43,13 +43,13 @@
 
 ---
 
-## 设置 → 标签预设
+## 设备 → 标签预设
 
 定义可在 **设备** 页分配的 `admin:*` 标签（如 `admin:dept=finance`）。**Assignments** 与 bundle `match_spec.groups` 依赖这些标签将设备归入分组。
 
 ---
 
-## 设置 → 设备分组
+## 设备 → 设备分组
 
 **Group** 是由可信标签与设备事实上的**确定性规则**定义的**命名设备队列**。可用于 Assignment 的分组使用 `all` 规则：所有必需谓词必须同时匹配。支持 `admin:name=value` 标签、authority 已验证的 `device:*` 事实、`device_id` 以及直接 `not` 排除项。OR 情况应拆分为独立分组。
 
@@ -103,7 +103,9 @@ curl -sf "$AUTHORITY/v1/admin/mitm/ca" -H "X-Admin-Token: $TOKEN" | jq -r '.cert
 - **设备分组** — 对分组标签过滤器匹配的每台设备写入 per-device 记录。
 - **指定 device_id** — 仅列出的设备。
 
-**清除** 对所选范围发送 `until: null`。在 **全舰队** 下清除会删除 authority 中 **所有** kill switch 行（含此前按分组/设备写入的记录）。
+**清除** 对所选范围发送 `until: null`。Agent **不会**因该事件再次进入拦截；下次心跳才是权威来源（设备撤销/篡改仍可保持拦截）。在 **全舰队** 下清除会删除 authority 中 **所有** kill switch 行（含此前按分组/设备写入的记录）。
+
+带 `until` 的时限窗口在到期后会在心跳上 **自动解除**，不必再点清除。若要在到期前结束紧急制动，仍需点清除。恢复由心跳驱动 — **拉取 Bundle 不会**解除 Authority 紧急制动或设备撤销。
 
 ### API
 
@@ -127,7 +129,7 @@ curl -X POST "$AUTHORITY/v1/admin/kill-switch" \
 
 ## 设备
 
-列出已注册设备，支持筛选（状态、标签、分组、搜索）、分页与批量打标签。请先在 **设置 → 标签预设** 中定义标签。
+列出已注册设备，支持筛选（状态、标签、分组、搜索）、分页与批量打标签。请先在 **设备 → 标签** 中定义标签。
 
 | 列 | 含义 |
 |----|------|
@@ -138,7 +140,7 @@ curl -X POST "$AUTHORITY/v1/admin/kill-switch" \
 | **Last seen** | 相对与绝对最后心跳时间。 |
 | **Denials 24h** | 该设备过去 24 小时内**策略拒绝**审计事件数（见下）。 |
 
-**Revoke** 在设备详情页；撤销后心跳返回 `revoke_device: true`，agent 进入类似 kill switch 的本地状态。
+**Revoke** 在设备详情页；撤销后心跳返回 `revoke_device: true`，agent 进入类似 kill switch 的本地拦截态。取消吊销后，下一次心跳会清除该拦截，无需重启 agent。
 
 ```bash
 curl -sf -H "X-Admin-Token: $TOKEN" "$AUTHORITY/v1/admin/devices?limit=50" | jq .
@@ -187,7 +189,7 @@ curl -sf -H "X-Admin-Token: $TOKEN" "$AUTHORITY/v1/admin/devices?limit=50" | jq 
 典型流程：
 
 1. 在 **策略包** 页发布 bundle。
-2. 在 **设置 → 设备分组** 创建或确认可用于 Assignment 的 Group。
+2. 在 **设备 → 分组** 创建或确认可用于 Assignment 的 Group。
 3. 在 **Assignments** 预览匹配设备，再保存或激活 Assignment。
 
 存在 active Assignment 时，`/v1/bundles/current` 通过 Assignment 解析有效 bundle。部分 rollout 之外的设备可能回退到更宽泛的 Assignment，或收到 `no_assignment`。歧义重叠以 `assignment_conflict` **失败关闭**。

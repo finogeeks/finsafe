@@ -54,7 +54,7 @@ Rules stored as JSON use an `all` array where every child expression must match.
 
 Negative predicates may appear only as direct `not` children of the root `all`. Nested boolean expressions and `any` (OR) are not allowed in assignment-targetable groups—split OR cases into separate groups or assignments.
 
-Define groups under **Settings → Device groups** in the admin UI.
+Define groups under **Devices → Groups** in the admin UI.
 
 ## Assignments and rollout
 

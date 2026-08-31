@@ -10,6 +10,30 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.40] - 2026-08-31
+
+### Added
+
+- **Deny-first egress rules** — Allowlist policies can set `denied_hosts` and optional `denied_host_reasons` (`*`, `*:port`, FQDN, `*.suffix`, `:port`). Deny is evaluated before allow, so `github.com:22` stays blocked even when `github.com` is allowed. Blocked requests audit as `host_denied` plus the optional operator message. (PR [Geeksfino/finsafe#270](https://github.com/Geeksfino/finsafe/pull/270))
+- **JVM sandbox proxy agent** — Linux and macOS restricted-egress launches merge a `-javaagent` into `JAVA_TOOL_OPTIONS` so Java tools honor the loopback proxy. Linux self-confine extracts and injects the bundled jar. Override with `java_agent_jar_path` or `FINSAFE_JAVA_PROXY_AGENT_JAR`. (PRs [Geeksfino/finsafe#255](https://github.com/Geeksfino/finsafe/pull/255), [#258](https://github.com/Geeksfino/finsafe/pull/258))
+- **`FTP_PROXY` / `ftp_proxy`** — Allowlist child overlays inject the same loopback CONNECT URL as the other proxy env vars, so inherited FTP proxy settings cannot bypass the sandbox proxy. (PR [Geeksfino/finsafe#249](https://github.com/Geeksfino/finsafe/pull/249))
+
+### Changed
+
+- **Windows path overlap checks** use canonical containment (case-fold, extended-path strip, fail-closed) so RO/RW/deny-read overlap is not fooled by alternate spellings. (PR [Geeksfino/finsafe#263](https://github.com/Geeksfino/finsafe/pull/263))
+- **Policy Authority kill-switch** — Clear / expiry polarity is live-`until` only (expired or null no longer stay blocked); admin console copy matches the Devices IA. (PRs [Geeksfino/finsafe#256](https://github.com/Geeksfino/finsafe/pull/256), [#257](https://github.com/Geeksfino/finsafe/pull/257))
+- **Windows CreateProcess 1260** (`ERROR_ACCESS_DISABLED_BY_POLICY`) now prints IT-managed policy guidance instead of a bare numeric code. (PR [Geeksfino/finsafe#248](https://github.com/Geeksfino/finsafe/pull/248))
+
+### Fixed
+
+- **RestrictedToken + Git for Windows bash** — Before `CreateRestrictedToken`, FinSAFE grants capability SIDs on existing MSYS2 SID-named file mappings (`CreateFileMapping S-1-5-21-….n`) so WRITE_RESTRICTED git-bash can open the mapping the host already created (Win32 error 5). This is not `SeCreateGlobalPrivilege` and does not walk `node_modules`. AppContainer remains a different token. (Public issue [finogeeks/finsafe#29](https://github.com/finogeeks/finsafe/issues/29), PR [Geeksfino/finsafe#275](https://github.com/Geeksfino/finsafe/pull/275))
+- **Proxy host spelling** — Trailing-dot FQDNs and IP literals use one canonicalization path, closing false denials and an IP-literal deny bypass. (PR [Geeksfino/finsafe#269](https://github.com/Geeksfino/finsafe/pull/269))
+- **Linux netns / proxy bwrap** always pass `--die-with-parent`, including `linux-desktop` launches where argv hardening is off, so orphaned cells die with the supervisor. (PR [Geeksfino/finsafe#268](https://github.com/Geeksfino/finsafe/pull/268))
+
+### Security
+
+- **Linux capability drop is verified** in the inner sandbox stage (`capget`): empty inheritable/permitted/effective sets after `--cap-drop ALL`, instead of trusting argv hardening alone. (PR [Geeksfino/finsafe#271](https://github.com/Geeksfino/finsafe/pull/271))
+
 ## [0.9.39] - 2026-08-20
 
 ### Security
