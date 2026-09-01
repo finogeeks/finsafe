@@ -7,8 +7,11 @@
 # What happens:
 # - FinSAFE compiles this policy, spawns Hermes under a WRITE_RESTRICTED
 #   RestrictedToken + Job object (Codex-aligned weaker posture: host-wide
-#   read, deny-by-default writes allowlisted below), and stays resident as
-#   the supervisor until Hermes exits.
+#   read). `msys2_child_ipc: true` lets Hermes tools spawn Git-for-Windows
+#   bash as children (public #34) and **disables** NTFS write allowlisting
+#   for user-owned objects on this session. Omit the flag to keep the
+#   write allowlist; child bash will then die in Cygwin init (Win32 5).
+#   FinSAFE stays resident as the supervisor until Hermes exits.
 # - On a real TTY the broker is attached to a Live ConPTY and FinSAFE acts
 #   as the terminal host: the real console is switched to raw/VT mode for
 #   the session (per-key input, arrow keys, colors, live redraws) and
@@ -44,6 +47,8 @@ resources:
   cpu_max: "100000 100000"
 windows:
   backend: restricted_token
+  # Child git-bash / Cygwin IPC (Hermes tools). Weakens RT write allowlisting.
+  msys2_child_ipc: true
 filesystem:
   # Explicit opt-out documents the weaker path; Auto+host also skips builtins.
   skip_default_deny_read: true

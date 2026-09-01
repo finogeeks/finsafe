@@ -10,6 +10,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.41] - 2026-09-01
+
+### Added
+
+- **`windows.msys2_child_ipc`** — Opt-in RestrictedToken flag so child Git-for-Windows / MSYS2 `bash.exe` (Hermes tools, `cmd /c bash`) can initialize Cygwin IPC. Default off: NTFS write allowlisting stays. When true, the operator SID is a WRITE_RESTRICTED restricting SID for the whole token and write allowlisting does **not** apply to user-owned objects; attestation names `msys2_child_ipc`. The shipped Hermes Windows examples set it. Direct `bash.exe` payloads still work without the flag (public #29). (Public issue [finogeeks/finsafe#34](https://github.com/finogeeks/finsafe/issues/34))
+
+<!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
+
 ## [0.9.40] - 2026-08-31
 
 ### Added

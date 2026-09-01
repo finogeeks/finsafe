@@ -48,7 +48,7 @@ Desktop Windows has **two** launch backends. Operators choose with `windows.back
 
 | Backend | When selected | What it isolates | What it does **not** do |
 |---------|---------------|------------------|-------------------------|
-| **RestrictedToken** (`windows_restricted_token`) | **Default** for `network: host` + empty YAML `deny_read_paths` (Auto), or explicit `windows.backend: restricted_token` | Deny-by-default **writes** allowlisted on `read_write_paths` (+ cwd); Job Object resource limits | No AppContainer LowBox; **host-wide read** (Codex-aligned); no confidential deny-read; no ProjFS; attestation sets `degraded_execution=true` |
+| **RestrictedToken** (`windows_restricted_token`) | **Default** for `network: host` + empty YAML `deny_read_paths` (Auto), or explicit `windows.backend: restricted_token` | Deny-by-default **writes** allowlisted on `read_write_paths` (+ cwd), unless `windows.msys2_child_ipc: true`; Job Object resource limits | No AppContainer LowBox; **host-wide read** (Codex-aligned); no confidential deny-read; no ProjFS; `msys2_child_ipc` disables write allowlisting for user-owned NTFS (child git-bash); attestation sets `degraded_execution=true` |
 | **AppContainer** (`windows_appcontainer`) | `network: none` / allowlist, any explicit `deny_read_paths`, explicit `windows.backend: appcontainer`, managed fleet | Package SID, DACL grants/denies, WFP egress fencing, optional ProjFS projection of large `venv` / `node_modules` | Recursive ACL labeling / ProjFS may need `setup-windows` (+ reboot if Client-ProjFS returns `restart_required`) |
 
 **Shipped Hermes examples:**

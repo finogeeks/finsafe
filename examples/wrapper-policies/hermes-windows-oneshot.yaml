@@ -7,7 +7,11 @@
 # Backend: WRITE_RESTRICTED RestrictedToken (Codex-aligned weaker posture)
 # - Host-wide read (Hermes can read its venv / site-packages without recursive
 #   AppContainer DACL labeling or ProjFS projection).
-# - Writes are deny-by-default and allowlisted on read_write_paths only.
+# - `msys2_child_ipc: true` so Hermes tools can spawn Git-for-Windows bash as
+#   children (public #34). That puts the operator SID in WRITE_RESTRICTED
+#   restricting SIDs: NTFS write allowlisting does **not** apply to user-owned
+#   objects for this session. Omit the flag (or set false) to keep capability-ACE
+#   write allowlisting; child git-bash will then fail Cygwin init (Win32 5).
 # - Built-in confidential deny-read is skipped for this path (host-wide read).
 # - No AppContainer LowBox profile; attestation reports windows_restricted_token
 #   and degraded_execution=true.
@@ -40,6 +44,8 @@ resources:
   timeout_ms: 120000
 windows:
   backend: restricted_token
+  # Child git-bash / Cygwin IPC (Hermes tools). Weakens RT write allowlisting.
+  msys2_child_ipc: true
 filesystem:
   # Explicit opt-out documents the weaker path; Auto+host also skips builtins.
   skip_default_deny_read: true

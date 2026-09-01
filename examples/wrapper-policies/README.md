@@ -18,7 +18,7 @@ See [docs/POLICY-QUICKREF.md](../../docs/POLICY-QUICKREF.md) or [docs/POLICY-QUI
 | `hermes-interactive-tools-only.yaml` | Windows | Hermes interactive broker with `broker_confine: tools-only` (live TTY; tools via `finsafe run`) |
 | `hermes-linux-interactive.yaml` | Linux | Hermes interactive broker (`stdio: pty`, `skip_default_deny_read`, DNS) |
 | `hermes-interactive-deny-http.yaml` | macOS | Hermes interactive with Seatbelt outbound HTTP/HTTPS port deny. Linux `run` fail-closes on `macos_seatbelt.*` (#223); for Linux use `hermes-linux-interactive.yaml` + `network: none` |
-| `hermes-windows-oneshot.yaml` | Windows | One-shot Hermes under **RestrictedToken** (default desktop `network: host` path; host-wide read, write allowlist; no ProjFS) |
+| `hermes-windows-oneshot.yaml` | Windows | One-shot Hermes under **RestrictedToken** (default desktop `network: host` path; host-wide read; `msys2_child_ipc: true` so child git-bash works — write allowlisting off for user-owned NTFS; no ProjFS) |
 | `hermes-windows-oneshot-appcontainer.yaml` | Windows | Same Hermes one-shot under **AppContainer** (stronger; large venvs may need ProjFS) |
 | `hermes-windows-interactive.yaml` | Windows | Interactive Hermes session under **RestrictedToken** via `self-confine` (Live ConPTY terminal host; no session timeout) |
 | `windows-version-smoke.yaml` | Windows | Minimal `finsafe run cmd /c echo hello` |

@@ -99,7 +99,7 @@ filesystem:
 
 | 后端 | 证明字段 | 何时选用 | 隔离摘要 |
 |------|----------|----------|----------|
-| **RestrictedToken** | `windows_restricted_token`，`degraded_execution=true` | **Auto** + `network: host` + YAML `deny_read_paths` 为空，或显式 `windows.backend: restricted_token` | `CreateRestrictedToken` + **WRITE_RESTRICTED**：**读**基本保留用户身份（整机可读）；**写**默认拒绝，仅 `read_write_paths`（+ cwd）经 capability ACE 放行。仍有 Job Object。无 LowBox、不对 `venv`/`node_modules` 递归打 ACL、**无需 ProjFS**。此路径**跳过**内置机密 deny-read（对齐 Codex 弱化姿态）。 |
+| **RestrictedToken** | `windows_restricted_token`，`degraded_execution=true` | **Auto** + `network: host` + YAML `deny_read_paths` 为空，或显式 `windows.backend: restricted_token` | `CreateRestrictedToken` + **WRITE_RESTRICTED**：**读**基本保留用户身份（整机可读）；**写**默认拒绝，仅 `read_write_paths`（+ cwd）经 capability ACE 放行，**除非** `windows.msys2_child_ipc: true`（子进程 Git-for-Windows/MSYS2 bash / 公开 #34 — 操作者 SID 进入 restricting SID，该会话对用户已拥有 NTFS **不做**写白名单）。仍有 Job Object。无 LowBox、不对 `venv`/`node_modules` 递归打 ACL、**无需 ProjFS**。此路径**跳过**内置机密 deny-read（对齐 Codex 弱化姿态）。 |
 | **AppContainer** | `windows_appcontainer` | Auto + `network: none` / allowlist、任意 YAML `deny_read_paths`、显式 `windows.backend: appcontainer`、托管舰队 | AppContainer / LowBox Package SID、可继承 DACL、可选 deny-read ACE、WFP 出口围栏。大运行时树优先 **ProjFS 投影**（`finsafe setup-windows`；仅当启用 Client-ProjFS 返回需重启 / 退出码 **3010** 时重启）。 |
 
 **示例（均随发行附带）：**

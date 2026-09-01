@@ -136,13 +136,21 @@ session.
 - Opt-in unsandboxed broker (tools still sandboxed) → `broker_confine: tools-only` (see `hermes-interactive-tools-only.yaml`)
 - Agent-focused notes → [agent-sandbox-guide.md § Windows agents](agent-sandbox-guide.md)
 
-> **Note on git-bash / MSYS2 (Cygwin) agents:** Git for Windows `bash.exe` under
-> **RestrictedToken** is supported by granting FinSAFE capability SIDs on the
-> existing SID-named shared-memory object (`CreateFileMapping S-1-5-21-….n`)
-> so WRITE_RESTRICTED can open the mapping host Git already created. This is
-> not `SeCreateGlobalPrivilege` and does not walk `node_modules`. AppContainer
-> is a different token and is still not a git-bash path. See
-> [finogeeks/finsafe#29](https://github.com/finogeeks/finsafe/issues/29).
+> **Note on git-bash / MSYS2 (Cygwin) agents:** Git for Windows `bash.exe` as the
+> **direct** RestrictedToken payload is supported by granting FinSAFE capability
+> SIDs on the existing SID-named shared-memory object (`CreateFileMapping
+> S-1-5-21-….n`) and adding the operator SID as a restricting SID (public
+> [#29](https://github.com/finogeeks/finsafe/issues/29)). Hermes tools, `cmd /c
+> bash`, and other **child** git-bash processes need an explicit
+> `windows.msys2_child_ipc: true` (public
+> [#34](https://github.com/finogeeks/finsafe/issues/34)). That opt-in puts the
+> operator SID in restricting SIDs for the **whole** token, so NTFS write
+> allowlisting does **not** apply to user-owned files for that session. The
+> shipped `hermes-windows-oneshot.yaml` / `hermes-windows-interactive.yaml`
+> examples set it. Default RestrictedToken (flag omitted) keeps the write
+> allowlist; child bash then dies in Cygwin init (Win32 5). AppContainer is a
+> different token and is still not a git-bash path. This is not
+> `SeCreateGlobalPrivilege`.
 
 ---
 

@@ -134,13 +134,18 @@ oneshot 策略复用给 `self-confine` — 它是 `program_mode: short-lived` �
 - 可选：broker 不沙箱、工具仍沙箱 → `broker_confine: tools-only`（见 `hermes-interactive-tools-only.yaml`）
 - Agent 专项说明 → [agent-sandbox-guide-zh.md § Windows agents](agent-sandbox-guide-zh.md)
 
-> **关于 git-bash / MSYS2（Cygwin）Agent 的说明：** Git for Windows 的 `bash.exe`
-> 在 **RestrictedToken** 下通过给已有的、以用户 SID 命名的共享内存对象
-> （`CreateFileMapping S-1-5-21-….n`）授予 FinSAFE capability SID 来支持，使
-> WRITE_RESTRICTED 能打开主机 Git 已创建的 mapping。这不是
-> `SeCreateGlobalPrivilege`，也不会遍历 `node_modules`。AppContainer 是另一套
-> 令牌，仍不是 git-bash 路径。见
-> [finogeeks/finsafe#29](https://github.com/finogeeks/finsafe/issues/29)。
+> **关于 git-bash / MSYS2（Cygwin）Agent 的说明：** 作为 RestrictedToken **直接**
+> 载荷的 Git for Windows `bash.exe`，通过给已有 SID 命名共享内存
+> （`CreateFileMapping S-1-5-21-….n`）授予 capability SID，并把操作者 SID 加入
+> restricting SID 来支持（公开 [#29](https://github.com/finogeeks/finsafe/issues/29)）。
+> Hermes 工具、`cmd /c bash` 等 **子进程** git-bash 需要显式
+> `windows.msys2_child_ipc: true`（公开
+> [#34](https://github.com/finogeeks/finsafe/issues/34)）。该开关把操作者 SID
+> 放进整个令牌的 restricting SID，因此该会话对用户已拥有 NTFS 对象**不再**做写白名单。
+> 随附的 `hermes-windows-oneshot.yaml` / `hermes-windows-interactive.yaml` 已打开。
+> 默认 RestrictedToken（省略该字段）保留写白名单；子进程 bash 会在 Cygwin 初始化时
+> 以 Win32 5 失败。AppContainer 是另一套令牌，仍不是 git-bash 路径。这不是
+> `SeCreateGlobalPrivilege`。
 
 ---
 
