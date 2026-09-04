@@ -10,6 +10,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.42] - 2026-09-04
+
+### Added
+
+- **`finsafe --visual` / `finsafe visual-sandbox`** — Local live-compare UI in the personal CLI: file vault, web access, HTTPS inspection, runaway jobs, and an Agent tab (Hermes / FinClaw one-shot under FinSAFE). Output streams live; no Bun or source checkout required. Guide: [visual-sandbox.md](docs/visual-sandbox.md). (PR [Geeksfino/finsafe#293](https://github.com/Geeksfino/finsafe/pull/293))
+
 ## [0.9.41] - 2026-09-01
 
 ### Added

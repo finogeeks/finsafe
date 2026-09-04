@@ -30,6 +30,8 @@ Across Linux, macOS, and Windows, the public `finsafe` CLI supports:
 
 See the [agent sandbox guide](docs/agent-sandbox-guide.md) for agent-specific workflows on every desktop OS.
 
+**See it live:** after installing the personal CLI, run `finsafe --visual` — [visual-sandbox.md](docs/visual-sandbox.md).
+
 ## Personal vs managed (licensing)
 
 | Mode | Who | License |

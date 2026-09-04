@@ -30,6 +30,8 @@ FinSAFE 在三大桌面操作系统上提供**一等公民**沙箱能力。同�
 
 各桌面系统的 Agent 工作流见 [agent-sandbox-guide-zh.md](docs/agent-sandbox-guide-zh.md)。
 
+安装个人版 CLI 后可运行 `finsafe --visual` — [visual-sandbox-zh.md](docs/visual-sandbox-zh.md)。
+
 ## 个人模式 vs 托管模式（许可）
 
 | 模式 | 适用对象 | 许可证 |

@@ -25,6 +25,7 @@
 | [WINDOWS-GUIDE-zh.md](./WINDOWS-GUIDE-zh.md) · [WINDOWS-GUIDE.md](./WINDOWS-GUIDE.md) | **Windows 桌面** — 安装、RestrictedToken 与 AppContainer、ProjFS、排障 |
 | [agent-sandbox-guide-zh.md](./agent-sandbox-guide-zh.md) · [English](./agent-sandbox-guide.md) | **Agent 沙箱** — Hermes、OpenCode、agy；Agent 专用 **`learn` / `explain`** |
 | [USER-GUIDE-zh.md](./USER-GUIDE-zh.md) | 安装、`run` 与 `self-confine`、通用 learn/explain |
+| [visual-sandbox-zh.md](./visual-sandbox-zh.md) · [visual-sandbox.md](./visual-sandbox.md) | **`finsafe --visual`** — 本机网页，沙箱关 vs 开对照 |
 | [USER-GUIDE.md](./USER-GUIDE.md) | English user guide |
 | [network-allowlist-proxy-runbook-zh.md](./network-allowlist-proxy-runbook-zh.md) · [network-allowlist-proxy-runbook.md](./network-allowlist-proxy-runbook.md) | **域名白名单 + 回环代理** — 个人/本地冒烟（无需 MITM） |
 | [POLICY-QUICKREF-zh.md](./POLICY-QUICKREF-zh.md) | 包装策略字段速查 |
