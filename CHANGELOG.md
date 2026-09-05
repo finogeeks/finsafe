@@ -10,6 +10,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.43] - 2026-09-05
+
+<!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
+
+### Fixed
+
+- **fix(visual-sandbox): use kit-relative paths in File vault commands** (public issue [finogeeks/finsafe#35](https://github.com/finogeeks/finsafe/issues/35), PR [Geeksfino/finsafe#300](https://github.com/Geeksfino/finsafe/pull/300))
+
 ## [0.9.42] - 2026-09-04
 
 ### Added
