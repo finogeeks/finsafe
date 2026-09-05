@@ -10,6 +10,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.44] - 2026-09-05
+
+<!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
+
+### Fixed
+
+- **fix(visual-sandbox): emit required read_only_paths and fix Windows deny-glob containment** (public issue [finogeeks/finsafe#36](https://github.com/finogeeks/finsafe/issues/36), PR [Geeksfino/finsafe#301](https://github.com/Geeksfino/finsafe/pull/301))
+
 ## [0.9.43] - 2026-09-05
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
