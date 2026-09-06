@@ -10,6 +10,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.45] - 2026-09-06
+
+<!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
+
+### Fixed
+
+- **fix(visual-sandbox): File vault Windows deny-glob and native demo commands** (public issue [finogeeks/finsafe#38](https://github.com/finogeeks/finsafe/issues/38), PR [Geeksfino/finsafe#305](https://github.com/Geeksfino/finsafe/pull/305))
+
 ## [0.9.44] - 2026-09-05
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
