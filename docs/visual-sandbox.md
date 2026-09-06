@@ -19,7 +19,7 @@ Opens **http://127.0.0.1:8787** (loopback only by default).
 | Overview | What this page does, plus an honest table of Linux / macOS / Windows limits |
 | File vault | Read/write a path with deny-read globs vs host access |
 | Web access | Open / allowlist / offline vs a real page or a block |
-| HTTPS inspection | CONNECT+ciphertext vs decrypted method/path (needs `openssl`; commercial MITM is licensed — this UI uses a local lab CA) |
+| HTTPS inspection | CONNECT+ciphertext vs decrypted method/path (commercial MITM is licensed — this UI uses a local lab CA) |
 | Runaway job | Hang / CPU / memory / process caps, with honest OS badges |
 | Agent | Detects Hermes and FinClaw on PATH; one-shot prompt under FinSAFE; console on screen. Default prompt asks the agent to fetch a site that is **not** on the LLM allowlist |
 

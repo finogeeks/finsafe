@@ -10,6 +10,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.46] - 2026-09-06
+
+<!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
+
+### Fixed
+
+- **fix(windows): grant duplex ACL on finsafe-winhelper named pipe (#37)** (public issue [finogeeks/finsafe#37](https://github.com/finogeeks/finsafe/issues/37), PR [Geeksfino/finsafe#304](https://github.com/Geeksfino/finsafe/pull/304))
+
 ## [0.9.45] - 2026-09-06
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->

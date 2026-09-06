@@ -19,7 +19,7 @@ finsafe visual-sandbox --port 8787 --open
 | 说明 | 这页做什么，以及 Linux / macOS / Windows 各自真正拦得住什么 |
 | 文件保险箱 | 带永不可读规则的读写 vs 主机直访 |
 | 网络访问 | 开放 / 白名单 / 断网 vs 真页面或拦截 |
-| HTTPS 检查 | CONNECT+密文 vs 解密后的方法/路径（需要 `openssl`；商业 MITM 需许可证——此界面使用本地实验 CA） |
+| HTTPS 检查 | CONNECT+密文 vs 解密后的方法/路径（商业 MITM 需许可证——此界面使用本地实验 CA） |
 | 失控任务 | 挂起 / CPU / 内存 / 进程上限，并如实标注本机是否强制 |
 | 智能体 | 检测 PATH 上的 Hermes / FinClaw；在 FinSAFE 里一次性提问，控制台打在页面上。缺省提示词会让智能体去访问**不在** LLM 白名单里的网站 |
 
