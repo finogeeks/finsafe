@@ -2,7 +2,7 @@
 #
 # Preferred path: download the signed Windows installer
 # (`finsafe-<version>-x64-setup.exe`) when published. That bootstrapper enables
-# Client-ProjFS (may reboot once), installs finsafe + winhelper, and does not
+# Client-ProjFS (reboot only if probe reports restart_required), installs finsafe + winhelper, and does not
 # report success until `finsafe probe` reports projection readiness.
 #
 # Fallback: archive install of finsafe.exe + finsafe-winhelper.exe into

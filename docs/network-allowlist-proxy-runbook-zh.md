@@ -96,7 +96,7 @@ finsafe --policy "$POLICY" run -- \
 | URL | 结果 |
 |-----|------|
 | `https://example.com/` | 名单含 `example.com` 时放行 |
-| `https://93.184.216.34/` | 拒绝（`ip_literal_denied`），即使该 IP 对应 example.com |
+| `https://93.184.216.34/` | 未配置 `allowed_ip_cidrs` / `ip_cidrs` 时拒绝（`ip_literal_denied`）；配置 CIDR 后按 CIDR 名单匹配 |
 
 可选 JSON 信封：
 
@@ -153,7 +153,8 @@ grep finsafe_net_proxy_audit proxy-audit.stderr | tail -1
 | 原因码 | 含义 |
 |--------|------|
 | `host_not_in_allowlist` | 主机名不在 `network.allowlist.domains` |
-| `ip_literal_denied` | URL 或目标使用了裸 IP |
+| `ip_literal_denied` | URL 或目标使用了裸 IP，且未配置 CIDR 放行列表 |
+| `ip_not_in_allowed_cidrs` | 使用了裸 IP，但不在 `allowed_ip_cidrs` / `ip_cidrs` 内 |
 | `malformed_host` | 主机名校验失败 |
 
 仅调试时：`FINSAFE_NET_PROXY_TRACE=1`（日志很吵，不适合日常试点）。

@@ -100,7 +100,7 @@ After a fleet upgrade, Hermes and similar programs may fail to read `.env` or cr
 | Backend | Wire / attestation | Selected when | Isolation summary |
 |---------|--------------------|---------------|-------------------|
 | **RestrictedToken** | `windows_restricted_token`, `degraded_execution=true` | **Auto** + `network: host` + empty YAML `deny_read_paths`, or explicit `windows.backend: restricted_token` | `CreateRestrictedToken` + **WRITE_RESTRICTED**: child largely retains the user identity for **reads** (host-wide); **writes** are deny-by-default and allowed only on `read_write_paths` (+ cwd) via capability ACEs **unless** `windows.msys2_child_ipc: true` (child Git-for-Windows/MSYS2 bash / public #34 — operator SID in restricting SIDs; write allowlisting does not apply to user-owned NTFS for that session). Job Object still applies. No LowBox AppContainer profile, no recursive DACL labeling of `venv`/`node_modules`, **no ProjFS**. Built-in confidential deny-read is **skipped** on this path (Codex-aligned weaker posture). |
-| **AppContainer** | `windows_appcontainer` | Auto + `network: none` / allowlist, any YAML `deny_read_paths`, explicit `windows.backend: appcontainer`, managed fleet | AppContainer / LowBox Package SID, inheritable DACL grants, optional deny-read ACEs, WFP egress fencing. Large runtime trees prefer **ProjFS projection** (enable via `finsafe setup-windows`; reboot only if enable returns `restart_required` / exit **3010**). |
+| **AppContainer** | `windows_appcontainer` | Auto + `network: none` / allowlist, any YAML `deny_read_paths`, explicit `windows.backend: appcontainer`, managed fleet | AppContainer / LowBox Package SID, inheritable DACL grants, optional deny-read ACEs, WFP egress fencing. Large runtime trees prefer **ProjFS projection** (enable via `finsafe setup-windows`; reboot only if `probe` reports `restart_required`). |
 
 **Examples (both shipped):**
 
@@ -131,7 +131,7 @@ Windows AppContainer needs an **inheritable** DACL (Package SID ACE) and a **Low
 | `FINSAFE_WINSAFE_INHERIT_ROOT_WARN_LIMIT` | `10000` | Immediate-child count at/above this triggers the large-tree guard (walk is capped at this limit). |
 | `FINSAFE_WINSAFE_INHERIT_ROOT_FAIL` | `1` (fail closed) | `0` = warn and apply inheritable ACLs anyway (one-time labeling). Does **not** skip labeling — only downgrades the size guard from abort to warning. |
 
-**ProjFS:** optional advanced path for AppContainer + large runtime trees. `setup-windows` may exit **3010** when a reboot is required after enabling Client-ProjFS; `doctor` reports this as a **warning** (RestrictedToken / typical Hermes does not need ProjFS).
+**ProjFS:** optional advanced path for AppContainer + large runtime trees. `setup-windows` may exit **3010** when a reboot is still pending after enable (`probe.restart_required`); `doctor` reports this as a **warning**. DISM `Restart Required : Possible` is not a pending reboot. RestrictedToken / typical Hermes does not need ProjFS. Windows acceptance `-Suite projection` must be green without skip-green or a runner reboot.
 
 Regression coverage: `scripts/dev/run-windows-acceptance.ps1` suite `inherit-guard` case *inherit-relaunch-fast* (second launch on the same labeled directory must complete in &lt;3 s).
 

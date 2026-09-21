@@ -32,7 +32,7 @@ finsafe setup-windows
 | Piece | Required for | Notes |
 |-------|----------------|-------|
 | **finsafe-winhelper** service | `network: none` / allowlist (WFP fence), managed fleet | `doctor` warns if missing |
-| **ProjFS** (`Client-ProjFS`) | Optional: AppContainer + large `venv` / `node_modules` projection | May reboot once (exit **3010**). **Not** required for typical Hermes / `network: host`. Install manually: `Enable-WindowsOptionalFeature -Online -FeatureName Client-ProjFS` (Admin) |
+| **ProjFS** (`Client-ProjFS`) | Optional: AppContainer + large `venv` / `node_modules` projection | `setup-windows` enables the feature without a reboot when `prjflt` can start. Reboot only if `probe` reports `restart_required`. **Not** required for typical Hermes / `network: host`. Install manually: `Enable-WindowsOptionalFeature -Online -FeatureName Client-ProjFS -NoRestart` (Admin) |
 
 ---
 
@@ -55,7 +55,7 @@ managed fleet, or explicit windows.backend: appcontainer?
 | **Reads** | Host-wide (same user identity for most reads) | Package SID + DACL grants only |
 | **Writes** | Deny-by-default; allow `read_write_paths` (+ cwd) | DACL grants on declared roots |
 | **Deny-read / secrets** | Built-in confidential deny-read **skipped** | Supported (DACL deny-read) |
-| **Network fence (WFP)** | Not the primary story for host networking | Used for none / allowlist |
+| **Network fence (WFP)** | Not the primary story for host networking | Used for none / allowlist. Operator (enabled `finsafe-net`) stays online; FAIL is deny-only `WSAEACCES` on the child/probe |
 | **Large `venv` / `node_modules`** | No recursive ACL walk; **no ProjFS** | Prefer ProjFS projection; listing whole trees in policy can trigger ACL storms |
 | **Attestation** | `windows_restricted_token`, `degraded_execution=true` | `windows_appcontainer` |
 | **Hermes example** | [`hermes-windows-oneshot.yaml`](../examples/wrapper-policies/hermes-windows-oneshot.yaml) | [`hermes-windows-oneshot-appcontainer.yaml`](../examples/wrapper-policies/hermes-windows-oneshot-appcontainer.yaml) |
@@ -81,7 +81,7 @@ How to read common signals:
 | Signal | Severity for typical Hermes | What to do |
 |--------|----------------------------|------------|
 | Helper not running | Warning if you only use `network: host` | Run `finsafe setup-windows` before none/allowlist policies |
-| ProjFS not ready / `restart_required` | **Warning** (not a hard error) | Skip reboot unless you use AppContainer + large runtime projection |
+| ProjFS not ready / `restart_required` | **Warning** (not a hard error) | RestrictedToken can ignore it. For AppContainer + large projection, re-run `setup-windows` and confirm `projection_smoke_works`; reboot only if `restart_required` stays true |
 | `appcontainer_works=false` | Blocks AppContainer Auto paths | Use RestrictedToken for host agents, or fix OS / enterprise policy that disables AppContainers |
 
 ---
@@ -150,7 +150,14 @@ session.
 > examples set it. Default RestrictedToken (flag omitted) keeps the write
 > allowlist; child bash then dies in Cygwin init (Win32 5). AppContainer is a
 > different token and is still not a git-bash path. This is not
-> `SeCreateGlobalPrivilege`.
+> `SeCreateGlobalPrivilege`. **Do not** set `windows.msys2_child_ipc` on the
+> WorkBuddy GUI app seam: Git Bash is hook DENY there; the C7 language path is
+> PowerShell → python/node. `finsafe app attach` writes CodeBuddy
+> `permissions.deny: ["Bash"]`, `CODEBUDDY_CODE_SHELL=powershell`,
+> `CODEBUDDY_DISABLE_SHELL_SNAPSHOT=1`, `CODEBUDDY_SAFE_DELETE_ENABLED=0`, and
+> `sandbox.safeDeleteRuntimeEnabled: false` into **both** USER homes:
+> `.workbuddy/settings.json` (Desktop) and `.codebuddy/settings.json` +
+> `settings.local.json` (bare CLI) (see §6).
 
 ---
 
@@ -163,7 +170,9 @@ Inheritable ACL grants on both backends **refuse** volume roots, `%USERPROFILE%`
 `%APPDATA%` / `%LOCALAPPDATA%` roots, and Electron `userData` product folders
 (for example `%APPDATA%\…`). Use a dedicated sandbox home under
 `%LOCALAPPDATA%\FinSAFE\...` instead of listing `userData` in `read_write_paths`
-or as `work_dir`.
+or as `work_dir`. WorkBuddy catalog (#375) additionally grants
+`%LOCALAPPDATA%\CodeBuddyExtension` with a **NoWalk** ACE (not TreeSet, not
+Electron `userData`); other AppData product folders stay refused.
 
 **RestrictedToken and pre-existing files:** WRITE_RESTRICTED sets a
 directory-inheritable ACE on the home directory only (`DirectoryInheritableNoWalk`).
@@ -187,11 +196,11 @@ Prefer:
 
 1. **Narrow paths** — only directories the workload needs
 2. **RestrictedToken** for host-network agents that only need write allowlisting (still use a dedicated empty FinSAFE home)
-3. **ProjFS projection** for large runtime trees under AppContainer (`setup-windows`; reboot only if exit **3010** / `restart_required`). To enable ProjFS manually:
+3. **ProjFS projection** for large runtime trees under AppContainer (`setup-windows`; reboot only if `finsafe probe --json` reports `restart_required`). To enable ProjFS manually:
 
    ```powershell
    # Requires Administrator
-   Enable-WindowsOptionalFeature -Online -FeatureName Client-ProjFS
+   Enable-WindowsOptionalFeature -Online -FeatureName Client-ProjFS -NoRestart
    ```
 
    Verify with `finsafe probe --json | ConvertFrom-Json | Select-Object -ExpandProperty projfs`.
@@ -200,13 +209,71 @@ Deep table, env vars (`FINSAFE_WINSAFE_INHERIT_ROOT_*`), and interrupted-label r
 
 ---
 
-## 6. Troubleshooting
+## 6. App seams (experimental)
+
+An **app seam** is a place in an installed GUI agent where FinSAFE can change
+behaviour without editing the vendor's signed binaries. Phase 1 uses the
+app's **bundled bootstrap script**: `finsafe app attach` replaces that script
+with a FinSAFE shim, writes a guard file beside it, and keeps a byte-for-byte
+backup of the original (relative names next to the seam:
+`<seam>.finsafe-orig` and `<seam>.finsafe-guard.js`). This is
+**experimental**, not a supported product mode. On Linux and macOS,
+`finsafe app` exits 78.
+
+```powershell
+finsafe app list
+finsafe app doctor <app-id>
+finsafe app attach <app-id>
+finsafe app status
+finsafe app detach --all
+```
+
+**Run `finsafe app detach --all` before deleting or replacing `finsafe.exe`.**
+If the binary is gone while a seam is still attached, the seam is
+**orphaned** (D14): in personal mode the shim runs the original unguarded and
+appends to a local log. **No user notification is guaranteed** for an
+orphaned seam (no toast is promised). That is a broken state, not a
+supported mode.
+
+### What Phase 1 does and does not guarantee
+
+| Layer | Phase 1 | Tier (D16) |
+|-------|---------|------------|
+| Core process | Write scope through Node `fs`; Job teardown and resource limits | **User-mode** guard + Job. There is **no** kernel filesystem boundary on the core. |
+| Spawned tools (children) | Cannot write outside the catalog write roots. WorkBuddy: `%USERPROFILE%\.workbuddy`, `%USERPROFILE%\WorkBuddy`, `%USERPROFILE%\.codebuddy`, FinSAFE-owned TEMP, `%LOCALAPPDATA%\CodeBuddyExtension`, and last-component globs under `%LOCALAPPDATA%\Temp\` (`codebuddy-*`, `workbuddy-*`, `cbb-*`, `wb-session-*`, and the rest listed in `seams/workbuddy.yaml` — not all of `%TEMP%`) — not an opened project folder. FakeAgent still grants session cwd. | **Kernel** RestrictedToken (`finsafe run`) |
+| Deny-read / confidential paths | **No** | — (Phase 2) |
+| Egress allowlist | **No** (audit only) | — (Phase 2) |
+
+Do not read “attached” as “the whole GUI-agent tree is kernel-sandboxed.” The
+core still runs with the user's full token; the kernel write boundary is the
+children. FakeAgent fixture proof is not WorkBuddy G2.
+
+WorkBuddy’s model **Bash** tool is Git Bash (MSYS2), not `cmd`. The seam
+**denies** `bash` / `git-bash` / `mintty` at `CreateProcessW`. That is
+intentional: enabling `windows.msys2_child_ipc` would drop NTFS write
+allowlisting for the session and is **forbidden** on this catalog.
+`finsafe app attach` writes the same overlay into **both** USER homes
+(`%USERPROFILE%\.workbuddy\settings.json` for Desktop SettingsManager, and
+`%USERPROFILE%\.codebuddy\settings.json` + `settings.local.json` for bare CLI)
+plus an existing project `.codebuddy/` overlay under the attach cwd or
+`%USERPROFILE%\WorkBuddy`: `permissions.deny: ["Bash"]`,
+`CODEBUDDY_CODE_SHELL=powershell`, `CODEBUDDY_DISABLE_SHELL_SNAPSHOT=1`,
+`CODEBUDDY_SAFE_DELETE_ENABLED=0`, and `sandbox.safeDeleteRuntimeEnabled:
+false` (keeps `sandbox.extraAllowWrite` / claw / plugins). A project overlay
+created after attach can still later-win. Detach restores every layer from the
+first-attach snapshot. Attach reports `restart_needed` so `--prewarm` /
+`--serve` re-read settings. Do not set `CODEBUDDY_CODE_SHELL=cmd`. This is a
+product-config workaround, not Git Bash inside RestrictedToken.
+
+---
+
+## 7. Troubleshooting
 
 | Symptom | Likely cause | Fix |
 |---------|--------------|-----|
 | UAC / permission prompt on first use | `setup-windows` registering helper / WFP | Accept once; re-run `finsafe setup-windows` if interrupted |
 | `doctor` warns about helper | Helper service not running | `finsafe setup-windows`; needed for none/allowlist |
-| `doctor` warns about ProjFS / reboot | Client-ProjFS enabled but reboot pending, or feature missing | Ignore for RestrictedToken Hermes; reboot only for AppContainer + large projection |
+| `doctor` warns about ProjFS / reboot | Client-ProjFS missing, smoke failed, or a *pending* reboot | Ignore for RestrictedToken Hermes; re-run `setup-windows` and trust `probe` (`Restart Required : Possible` is not a reboot). Reboot only if `restart_required` is true |
 | `doctor` names an over-cap inherit root | Policy tree exceeds `FINSAFE_WINSAFE_INHERIT_ROOT_WARN_LIMIT` | `finsafe doctor --high-level <policy>` (or `--policy`) names the path without launching. Then `finsafe prelabel --high-level <policy> -- <command>` before `run`. Volume / `%USERPROFILE%` / AppData product folders stay refused — see §5 |
 | `refusing to apply inheritable AppContainer ACLs` (large tree) | Policy root is a huge tree (AppContainer TreeSet) | Run `finsafe prelabel --high-level <policy> -- <command>` (same tail as `run`) to pay the pass out of band. If the breadth is accidental, narrow the path. Raising `FINSAFE_WINSAFE_INHERIT_ROOT_WARN_LIMIT` or setting `FINSAFE_WINSAFE_INHERIT_ROOT_FAIL=0` is a last resort (still slow). Switching to RestrictedToken does **not** allow Electron `userData` |
 | `refusing to apply inheritable` + `product folder` / `userData` | `read_write_paths` / `work_dir` is an AppData product folder (AppContainer **or** RestrictedToken) | Use a dedicated empty home under `%LOCALAPPDATA%\FinSAFE\...` — see §5. `prelabel` also refuses these roots |
@@ -214,15 +281,18 @@ Deep table, env vars (`FINSAFE_WINSAFE_INHERIT_ROOT_*`), and interrupted-label r
 | First AppContainer launch is very slow | One-time ACL labeling on large policy roots | The completion line `tree relabel in progress` / `labeling sandbox access on <path>` names the root and elapsed ms. Pay it up front with `finsafe prelabel --high-level <policy> -- <command>` (command tail must match the launch). Do not interrupt a walk already in progress. Prefer ProjFS / narrower paths. **Do not** point `read_write_paths` at Electron `userData` — FinSAFE refuses those roots; use `%LOCALAPPDATA%\FinSAFE\...` |
 | Hermes cannot read `.env` / credentials under AppContainer | Built-in or explicit deny-read | Use RestrictedToken example, or set `skip_default_deny_read: true` after review |
 | `self-confine` exits `0xC0000142` / `STATUS_DLL_INIT_FAILED` (RestrictedToken) | Pre-0.9.15 spawn path | Upgrade to **0.9.15+** (Live ConPTY default); or `FINSAFE_WIN_PTY_MODE=pipe` |
+| WorkBuddy still offers Bash / `bash.exe` dies with Win32 5 / `0xC0000142` | Git Bash is seam DENY; MSYS2 IPC is not confineable without dropping write allowlisting; a project `.codebuddy/` overlay created after attach can later-win; GUI reads `.workbuddy/settings.json` | Attach writes **both** USER homes (`.workbuddy/settings.json` and `.codebuddy/settings.json` + `settings.local.json`: deny Bash + PowerShell env + `CODEBUDDY_DISABLE_SHELL_SNAPSHOT=1` + safe-delete off) and existing project overlays. Restart WorkBuddy so CodeBuddy re-reads settings. Do **not** set `windows.msys2_child_ipc`. |
 | Nested `cmd /c …` prints nothing | Stdio path / older regression | Upgrade to **0.9.7+**; non-interactive console hosts use PipeCapture |
-| `network: none` connect still succeeds | Helper / WFP not ready | `setup-windows`, then `probe --json` / acceptance fence checks |
+| Operator `network: none` connect still succeeds | Expected: enabled `finsafe-net` keeps the desktop online | Not a fence failure. The AppContainer child and pre-spawn probe use a deny-only `finsafe-net` stamp; FAIL is a successful connect there instead of `WSAEACCES` |
+| Deny-only probe / sandboxed child connect succeeds | Helper / WFP not ready, or deny-only stamp failed | `setup-windows`, then `probe --json` / acceptance fence checks (`windows_egress_fence_verified`) |
 | Managed / enterprise posture fails on RestrictedToken | Fleet requires AppContainer | Use AppContainer + helper; signed bundles must not treat RT as AC parity |
+| GUI agent runs unguarded after FinSAFE was removed | Orphaned seam: `finsafe.exe` deleted or replaced without `detach` (D14) | Reinstall FinSAFE and run `finsafe app detach --all`, or restore the vendor bootstrap from `<seam>.finsafe-orig`. **No toast is guaranteed** |
 
 Policy iteration (`learn` / `explain` / `--audit`) works on Windows; `learn` keeps AppContainer enforcement and ingests ETW-derived denials. Workflow: [USER-GUIDE.md § Creating and iterating policies](USER-GUIDE.md).
 
 ---
 
-## 7. Related docs
+## 8. Related docs
 
 | Doc | Role |
 |-----|------|

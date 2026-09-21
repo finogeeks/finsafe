@@ -26,7 +26,7 @@ directory (the installer does this automatically).
 |------|-------------------------------|
 | **Linux** (bubblewrap / cgroup toolchain available) | Strict stack: Bubblewrap-oriented isolation plus cgroup / Landlock / seccomp as resolved from policy. Missing bubblewrap may cause **fail closed** for strict postures. |
 | **macOS** (arm64 or x86_64) | **`mac-seatbelt`**: children run via `/usr/bin/sandbox-exec`. Bubblewrap-style namespaces are **not** used for the local tool wrapper; `probe` / `doctor` describe capabilities. |
-| **Windows** (10/11 desktop) | **Default for `network: host`:** RestrictedToken (host-wide read, write allowlist — Codex-aligned weaker posture; no ProjFS). **`network: none` / allowlist / confidential deny-read:** AppContainer / LowBox. Run **`finsafe setup-windows` once** after install (installer does this) for helper / WFP. ProjFS is optional and only needed for AppContainer + large runtime-tree projection (may reboot once). |
+| **Windows** (10/11 desktop) | **Default for `network: host`:** RestrictedToken (host-wide read, write allowlist — Codex-aligned weaker posture; no ProjFS). **`network: none` / allowlist / confidential deny-read:** AppContainer / LowBox. Run **`finsafe setup-windows` once** after install (installer does this) for helper / WFP. ProjFS is optional and only needed for AppContainer + large runtime-tree projection (reboot only if `probe` reports `restart_required`). |
 
 **Windows quick start (personal):**
 
@@ -49,7 +49,7 @@ Desktop Windows has **two** launch backends. Operators choose with `windows.back
 | Backend | When selected | What it isolates | What it does **not** do |
 |---------|---------------|------------------|-------------------------|
 | **RestrictedToken** (`windows_restricted_token`) | **Default** for `network: host` + empty YAML `deny_read_paths` (Auto), or explicit `windows.backend: restricted_token` | Deny-by-default **writes** allowlisted on `read_write_paths` (+ cwd), unless `windows.msys2_child_ipc: true`; Job Object resource limits | No AppContainer LowBox; **host-wide read** (Codex-aligned); no confidential deny-read; no ProjFS; `msys2_child_ipc` disables write allowlisting for user-owned NTFS (child git-bash); attestation sets `degraded_execution=true` |
-| **AppContainer** (`windows_appcontainer`) | `network: none` / allowlist, any explicit `deny_read_paths`, explicit `windows.backend: appcontainer`, managed fleet | Package SID, DACL grants/denies, WFP egress fencing, optional ProjFS projection of large `venv` / `node_modules` | Recursive ACL labeling / ProjFS may need `setup-windows` (+ reboot if Client-ProjFS returns `restart_required`) |
+| **AppContainer** (`windows_appcontainer`) | `network: none` / allowlist, any explicit `deny_read_paths`, explicit `windows.backend: appcontainer`, managed fleet | Package SID, DACL grants/denies, WFP egress fencing, optional ProjFS projection of large `venv` / `node_modules` | Recursive ACL labeling / ProjFS may need `setup-windows` (reboot only if `probe` reports `restart_required`) |
 
 **Shipped Hermes examples:**
 

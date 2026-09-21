@@ -1,0 +1,1282 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>WorkBuddy AI 工具安全防护概览</title>
+  <style>
+    :root {
+      --page: #f7f8fa;
+      --surface: #ffffff;
+      --surface-soft: #f5f6f7;
+      --ink: #202124;
+      --muted: #73777f;
+      --border: #dfe1e5;
+      --border-strong: #c8ccd2;
+      --blue: #3478f6;
+      --red: #e93535;
+      --red-soft: #fff0ef;
+      --yellow: #f2ad00;
+      --yellow-soft: #fff6d8;
+      --green: #08a44f;
+      --green-soft: #e8f8ee;
+      --shadow: 0 18px 50px rgba(24, 31, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      background: var(--page);
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--page);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      line-height: 1.55;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .page {
+      position: relative;
+      width: min(1500px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 10px 0;
+    }
+
+    .status {
+      position: absolute;
+      top: 10px;
+      right: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 0;
+      padding: 4px 9px;
+      color: #765400;
+      background: var(--yellow-soft);
+      border: 1px solid #f0d47b;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .status::before {
+      width: 7px;
+      height: 7px;
+      content: "";
+      background: var(--yellow);
+      border-radius: 50%;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 390px);
+      gap: 20px;
+      align-items: end;
+      margin-bottom: 10px;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 4px;
+      font-size: clamp(26px, 3vw, 38px);
+      line-height: 1.12;
+      letter-spacing: -0.035em;
+    }
+
+    header p {
+      margin-bottom: 2px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .header-note {
+      padding-left: 12px;
+      border-left: 3px solid var(--blue);
+    }
+
+    .header-note strong {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 13px;
+    }
+
+    .header-note span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .visual {
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .visual-head {
+      padding: 12px 16px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 9px;
+    }
+
+    .tab {
+      min-height: 34px;
+      padding: 5px 12px;
+      color: var(--ink);
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 11px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 650;
+      transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+    }
+
+    .tab:hover {
+      background: var(--surface-soft);
+    }
+
+    .tab:focus-visible {
+      outline: 3px solid rgba(52, 120, 246, 0.3);
+      outline-offset: 2px;
+    }
+
+    .tab[aria-selected="true"] {
+      color: #ffffff;
+      background: var(--ink);
+      border-color: var(--ink);
+    }
+
+    .scenario-copy {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 16px;
+      align-items: start;
+    }
+
+    #scenario-title {
+      margin-bottom: 3px;
+      font-size: clamp(19px, 2vw, 25px);
+      line-height: 1.25;
+    }
+
+    #scenario-description {
+      max-width: 900px;
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .scenario-signal {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .scenario-signal::before {
+      width: 8px;
+      height: 8px;
+      content: "";
+      border-radius: 50%;
+    }
+
+    .scenario-signal[data-state="red"] {
+      color: #a31b1b;
+      background: var(--red-soft);
+    }
+
+    .scenario-signal[data-state="red"]::before {
+      background: var(--red);
+    }
+
+    .scenario-signal[data-state="yellow"] {
+      color: #765400;
+      background: var(--yellow-soft);
+    }
+
+    .scenario-signal[data-state="yellow"]::before {
+      background: var(--yellow);
+    }
+
+    .scenario-signal[data-state="green"] {
+      color: #087333;
+      background: var(--green-soft);
+    }
+
+    .scenario-signal[data-state="green"]::before {
+      background: var(--green);
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px 18px;
+      margin-top: 8px;
+      color: #4f5359;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legend-line {
+      width: 26px;
+      border-top: 3px solid;
+      border-radius: 999px;
+    }
+
+    .legend-line.blue {
+      border-color: var(--blue);
+    }
+
+    .legend-line.red {
+      border-color: var(--red);
+      border-top-style: dashed;
+    }
+
+    .legend-line.yellow {
+      border-color: var(--yellow);
+      border-top-style: dashed;
+    }
+
+    .legend-line.green {
+      border-color: var(--green);
+    }
+
+    .legend-line.gray {
+      border-width: 2px;
+      border-color: #91959b;
+      border-top-style: dotted;
+    }
+
+    .diagram-wrap {
+      padding: 2px 8px 0;
+      background:
+        radial-gradient(circle at 40% 10%, rgba(52, 120, 246, 0.045), transparent 30%),
+        var(--surface);
+    }
+
+    .diagram-desktop {
+      display: block;
+      width: 100%;
+      height: auto;
+      min-height: 0;
+    }
+
+    .group-box {
+      fill: rgba(247, 248, 250, 0.42);
+      stroke: #cfd3d8;
+      stroke-width: 1.5;
+      stroke-dasharray: 7 7;
+    }
+
+    .group-title {
+      fill: #777b82;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+    }
+
+    .protected-group {
+      fill: #f1f6ff;
+      stroke: #8fb1f3;
+      stroke-width: 2;
+      stroke-dasharray: none;
+    }
+
+    .protected-group-title {
+      fill: #315fae;
+      font-size: 15px;
+      letter-spacing: 0.03em;
+    }
+
+    .protected-node .node-box {
+      fill: #ffffff;
+      stroke: #b7caf1;
+    }
+
+    .node-box {
+      fill: var(--surface-soft);
+      stroke: var(--border);
+      stroke-width: 1.5;
+    }
+
+    .node[data-state="red"] .node-box {
+      fill: var(--red-soft);
+      stroke: var(--red);
+      stroke-dasharray: 7 6;
+    }
+
+    .node[data-state="yellow"] .node-box {
+      fill: var(--yellow-soft);
+      stroke: var(--yellow);
+      stroke-dasharray: 6 5;
+    }
+
+    .node[data-state="green"] .node-box {
+      fill: var(--green-soft);
+      stroke: var(--green);
+    }
+
+    .node-content {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      color: var(--ink);
+      text-align: center;
+    }
+
+    .node-title {
+      font-size: 17px;
+      font-weight: 720;
+      line-height: 1.25;
+    }
+
+    .node-detail {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .relation {
+      fill: none;
+      stroke: #8e9298;
+      stroke-width: 2;
+      stroke-dasharray: 5 6;
+      marker-end: url(#arrow-gray);
+    }
+
+    .official {
+      fill: none;
+      stroke: var(--blue);
+      stroke-width: 3;
+      marker-start: url(#arrow-blue);
+      marker-end: url(#arrow-blue);
+    }
+
+    .official-label {
+      fill: var(--blue);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .edge path {
+      fill: none;
+      stroke-width: 3;
+    }
+
+    .edge[data-state="red"] path {
+      stroke: var(--red);
+      stroke-dasharray: 8 6;
+      marker-end: url(#arrow-red);
+    }
+
+    .edge[data-state="yellow"] path {
+      stroke: var(--yellow);
+      stroke-dasharray: 5 5;
+      marker-end: url(#arrow-yellow);
+    }
+
+    .edge[data-state="green"] path {
+      stroke: var(--green);
+      marker-end: url(#arrow-green);
+    }
+
+    .edge-label {
+      font-size: 11px;
+      font-weight: 450;
+    }
+
+    .edge[data-state="red"] .edge-label {
+      fill: var(--red);
+    }
+
+    .edge[data-state="yellow"] .edge-label {
+      fill: #a16f00;
+    }
+
+    .edge[data-state="green"] .edge-label {
+      fill: #087e3b;
+    }
+
+    .mobile-flow {
+      display: none;
+    }
+
+    .visual-foot {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 7px 16px 8px;
+      background: #fafafa;
+      border-top: 1px solid var(--border);
+    }
+
+    #scenario-conclusion {
+      margin: 0;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .structure-note {
+      color: var(--muted);
+      font-size: 10px;
+      white-space: nowrap;
+    }
+
+    .explainers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 9px;
+    }
+
+    .explainer {
+      padding: 7px 10px 8px;
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .explainer.yellow {
+      border-top: 3px solid var(--yellow);
+    }
+
+    .explainer.green {
+      border-top: 3px solid var(--green);
+    }
+
+    .explainer h3 {
+      margin-bottom: 2px;
+      font-size: 13px;
+    }
+
+    .explainer p {
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.42;
+    }
+
+    .value-section {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 16px;
+      align-items: center;
+      margin-top: 8px;
+      padding: 9px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+
+    .value-section h2 {
+      margin-bottom: 0;
+      font-size: 16px;
+      white-space: nowrap;
+    }
+
+    .value-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .value-item {
+      padding-left: 10px;
+      border-left: 3px solid var(--green);
+    }
+
+    .cases-section {
+      margin: 8px 0 12px;
+      padding: 16px 18px 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .cases-section h2 {
+      margin-bottom: 4px;
+      font-size: 18px;
+    }
+
+    .cases-lead {
+      margin-bottom: 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .case-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .case-card {
+      padding: 12px 14px;
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .case-card h3 {
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .before-after {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .before-after div {
+      padding: 8px 10px;
+      border-radius: 8px;
+    }
+
+    .before {
+      background: var(--red-soft);
+    }
+
+    .after {
+      background: var(--green-soft);
+    }
+
+    .before-after b {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 11px;
+    }
+
+    .before b { color: var(--red); }
+    .after b { color: #087333; }
+
+    .value-item strong {
+      display: block;
+      margin-bottom: 2px;
+      font-size: 12px;
+    }
+
+    .value-item span {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .boundary {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 11px;
+      text-align: center;
+    }
+
+    @media (max-width: 900px) {
+      .status {
+        position: static;
+        margin-bottom: 8px;
+      }
+
+      header,
+      .scenario-copy,
+      .visual-foot,
+      .value-section,
+      .value-grid,
+      .case-grid,
+      .before-after {
+        grid-template-columns: 1fr;
+      }
+
+      .scenario-signal {
+        justify-self: start;
+      }
+
+      .structure-note {
+        white-space: normal;
+      }
+
+      .diagram-desktop {
+        display: none;
+      }
+
+      .mobile-flow {
+        display: grid;
+        gap: 14px;
+        padding: 6px 2px 16px;
+      }
+
+      .mobile-arrow {
+        color: var(--muted);
+        font-size: 20px;
+        text-align: center;
+      }
+
+      .mobile-card,
+      .mobile-system {
+        padding: 16px;
+        background: var(--surface-soft);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+      }
+
+      .mobile-card strong,
+      .mobile-system strong {
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      .mobile-card span,
+      .mobile-system span {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .mobile-routes {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .mobile-target-title {
+        margin: 8px 0 0;
+        font-size: 17px;
+      }
+
+      .mobile-targets {
+        display: grid;
+        gap: 10px;
+      }
+
+      .mobile-system {
+        display: grid;
+        grid-template-columns: minmax(120px, 1fr) 1.35fr;
+        gap: 14px;
+        align-items: center;
+      }
+
+      .mobile-states {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 7px;
+      }
+
+      .mobile-state {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .mobile-state::before {
+        width: 7px;
+        height: 7px;
+        content: "";
+        border-radius: 50%;
+      }
+
+      .mobile-state[data-state="red"] {
+        color: #a31b1b;
+        background: var(--red-soft);
+      }
+
+      .mobile-state[data-state="red"]::before {
+        background: var(--red);
+      }
+
+      .mobile-state[data-state="yellow"] {
+        color: #765400;
+        background: var(--yellow-soft);
+      }
+
+      .mobile-state[data-state="yellow"]::before {
+        background: var(--yellow);
+      }
+
+      .mobile-state[data-state="green"] {
+        color: #087333;
+        background: var(--green-soft);
+      }
+
+      .mobile-state[data-state="green"]::before {
+        background: var(--green);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        width: min(100% - 28px, 1480px);
+        padding-top: 22px;
+      }
+
+      header {
+        gap: 20px;
+      }
+
+      h1 {
+        font-size: 34px;
+      }
+
+      .visual {
+        border-radius: 18px;
+      }
+
+      .visual-head,
+      .visual-foot,
+      .value-section {
+        padding-right: 18px;
+        padding-left: 18px;
+      }
+
+      .tabs {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .tab {
+        width: 100%;
+        text-align: left;
+      }
+
+      .legend {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .diagram-wrap {
+        padding: 14px 12px 4px;
+      }
+
+      .mobile-routes,
+      .explainers {
+        grid-template-columns: 1fr;
+      }
+
+      .mobile-system {
+        grid-template-columns: 1fr;
+      }
+
+      .mobile-states {
+        justify-content: flex-start;
+      }
+    }
+
+    @media print {
+      body,
+      html {
+        background: #ffffff;
+      }
+
+      .page {
+        width: 100%;
+        padding: 0;
+      }
+
+      .status,
+      .tabs {
+        display: none;
+      }
+
+      .visual,
+      .value-section,
+      .cases-section {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="status">可对外试用 · 陪跑对照 · 非正式支持</div>
+
+    <header>
+      <div>
+        <h1>WorkBuddy AI 工具安全防护</h1>
+        <p>大模型提出工具请求，真正触碰文件、网络和其他系统的是员工电脑上的 WorkBuddy。</p>
+      </div>
+      <div class="header-note">
+        <strong>FinSAFE 保护的是本机执行路径</strong>
+        <span>官方 LLM 通道保持正常。试用重点是：当前任务目录能改，工作区外的乱写会被拦住。</span>
+      </div>
+    </header>
+
+    <section class="cases-section">
+      <h2>装上 FinSAFE 之后，客户能看见什么</h2>
+      <p class="cases-lead">不要打开已有项目，也不要把工作区选成桌面或「文档」。在 WorkBuddy 里新建任务，用默认工作区（用户目录下的 <code>WorkBuddy</code> 文件夹）。下面四件事，是销售可以当场对照的。</p>
+      <div class="case-grid">
+        <article class="case-card">
+          <h3>1. 误改「文档」里的文件</h3>
+          <div class="before-after">
+            <div class="before"><b>装之前</b>让助手把内容写到「文档」，文件会出现。</div>
+            <div class="after"><b>装之后</b>当前任务目录里照常能写；写到「文档」会失败。</div>
+          </div>
+        </article>
+        <article class="case-card">
+          <h3>2. 点了 Full Access</h3>
+          <div class="before-after">
+            <div class="before"><b>装之前</b>原厂沙箱基本不再约束，命令按登录用户权限执行。</div>
+            <div class="after"><b>装之后</b>Full Access 跳过的是 WorkBuddy 自己的沙箱，跳不过 FinSAFE。再写「文档」仍应失败。</div>
+          </div>
+        </article>
+        <article class="case-card">
+          <h3>3. 模型手滑，或网页里藏了指令</h3>
+          <div class="before-after">
+            <div class="before"><b>装之前</b>模型真去改桌面、清文件时，没有外层拦住。</div>
+            <div class="after"><b>装之后</b>越界写入仍按第 1 条被挡；正常改当前任务不受影响。</div>
+          </div>
+        </article>
+        <article class="case-card">
+          <h3>4. 关掉 WorkBuddy 之后</h3>
+          <div class="before-after">
+            <div class="before"><b>装之前</b>终端、Python、git 有时还会留着。</div>
+            <div class="after"><b>装之后</b>从托盘退出，这些后续进程应被一起收掉。</div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="visual" aria-labelledby="scenario-title">
+      <div class="visual-head">
+        <div class="tabs" role="tablist" aria-label="选择防护方案">
+          <button class="tab" id="tab-bare" role="tab" type="button" aria-selected="true" aria-controls="scenario-panel" data-scenario="bare">1 · WorkBuddy 裸跑</button>
+          <button class="tab" id="tab-finsafe" role="tab" type="button" aria-selected="false" aria-controls="scenario-panel" data-scenario="finsafe">2 · FinSAFE 试用方案</button>
+          <button class="tab" id="tab-vendor" role="tab" type="button" aria-selected="false" aria-controls="scenario-panel" data-scenario="vendor">3 · WorkBuddy 配合方案</button>
+        </div>
+
+        <div id="scenario-panel" role="tabpanel" aria-labelledby="tab-bare">
+          <div class="scenario-copy" aria-live="polite">
+            <div>
+              <h2 id="scenario-title"></h2>
+              <p id="scenario-description"></p>
+            </div>
+            <div class="scenario-signal" id="scenario-signal"></div>
+          </div>
+
+          <div class="legend" aria-label="颜色说明">
+            <span class="legend-item"><span class="legend-line blue"></span>蓝：官方 LLM 正常通道</span>
+            <span class="legend-item"><span class="legend-line red"></span>红虚线：未受控路径</span>
+            <span class="legend-item"><span class="legend-line yellow"></span>黄虚线：正常防护</span>
+            <span class="legend-item"><span class="legend-line green"></span>绿实线：内核级防护</span>
+            <span class="legend-item"><span class="legend-line gray"></span>细灰线：仅表示关系</span>
+          </div>
+
+          <section class="explainers" aria-label="黄色与绿色的区别">
+            <article class="explainer yellow">
+              <h3>黄色：正常入口有门卫</h3>
+              <p>LLM 使用 WorkBuddy 的正常工具时，FinSAFE 可以检查、阻止并记录操作。它能有效降低模型误判、提示词注入和常见越权风险，但特殊的内部路径仍可能绕开这个入口。</p>
+            </article>
+            <article class="explainer green">
+              <h3>绿色：门本身已经上锁</h3>
+              <p>限制由 Windows 或不可绕过的统一出口强制执行。程序即使更换工具或执行方式，只要不符合策略，系统仍会拒绝，保证强度更高。</p>
+            </article>
+          </section>
+        </div>
+      </div>
+
+      <div class="diagram-wrap">
+        <svg class="diagram-desktop" viewBox="0 0 1440 420" role="img" aria-labelledby="diagram-title diagram-description">
+          <title id="diagram-title">WorkBuddy 三种安全方案对比图</title>
+          <desc id="diagram-description">左侧是 WorkBuddy，中间是 LLM 可以触发的本机执行路径，右侧是需要保护的本地文件、Web 网络和 MCP。</desc>
+
+          <defs>
+            <marker id="arrow-gray" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#8e9298"></path>
+            </marker>
+            <marker id="arrow-blue" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#3478f6"></path>
+            </marker>
+            <marker id="arrow-red" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#e93535"></path>
+            </marker>
+            <marker id="arrow-yellow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#f2ad00"></path>
+            </marker>
+            <marker id="arrow-green" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#08a44f"></path>
+            </marker>
+          </defs>
+
+          <rect class="group-box" x="18" y="72" width="310" height="325" rx="20"></rect>
+          <text class="group-title" x="40" y="101">WORKBUDDY</text>
+
+          <rect class="group-box" x="360" y="72" width="240" height="325" rx="20"></rect>
+          <text class="group-title" x="382" y="101">LLM 可触发的本机路径</text>
+
+          <rect class="group-box protected-group" x="680" y="52" width="742" height="355" rx="22"></rect>
+          <text class="group-title protected-group-title" x="706" y="82">需要保护的系统</text>
+
+          <g class="node">
+            <rect class="node-box" x="161" y="4" width="170" height="52" rx="14"></rect>
+            <foreignObject x="161" y="4" width="170" height="52">
+              <div xmlns="http://www.w3.org/1999/xhtml" class="node-content">
+                <div class="node-title">官方远端 LLM</div>
+                <div class="node-detail">提示词 / tool_call</div>
+              </div>
+            </foreignObject>
+          </g>
+
+          <path class="official" d="M248 158 L248 60"></path>
+          <text class="official-label" x="261" y="112">正常 HTTPS 业务通道</text>
+
+          <g class="node">
+            <rect class="node-box" x="40" y="235" width="112" height="92" rx="16"></rect>
+            <foreignObject x="40" y="235" width="112" height="92">
+              <div xmlns="http://www.w3.org/1999/xhtml" class="node-content">
+                <div class="node-title">WorkBuddy</div>
+                <div class="node-detail">桌面与后台<br>登录用户权限</div>
+              </div>
+            </foreignObject>
+          </g>
+
+          <path class="relation" d="M152 281 L172 281"></path>
+
+          <g class="node" data-node="core" data-state="red">
+            <rect class="node-box" x="176" y="158" width="144" height="150" rx="17"></rect>
+            <foreignObject x="176" y="158" width="144" height="150">
+              <div xmlns="http://www.w3.org/1999/xhtml" class="node-content">
+                <div class="node-title">Agent Core</div>
+                <div class="node-detail">执行工具请求<br><span data-node-detail="core"></span></div>
+              </div>
+            </foreignObject>
+          </g>
+
+          <path class="relation" d="M320 196 C340 196 350 169 376 169"></path>
+          <text x="329" y="180" fill="#777b82" font-size="10.5">进程内调用</text>
+
+          <g class="node" data-node="in-process" data-state="red">
+            <rect class="node-box" x="380" y="128" width="200" height="82" rx="16"></rect>
+            <foreignObject x="380" y="128" width="200" height="82">
+              <div xmlns="http://www.w3.org/1999/xhtml" class="node-content">
+                <div class="node-title">进程内工具</div>
+                <div class="node-detail" data-node-detail="in-process"></div>
+              </div>
+            </foreignObject>
+          </g>
+
+          <g class="node" data-node="local-tool" data-state="red">
+            <rect class="node-box" x="380" y="275" width="200" height="82" rx="16"></rect>
+            <foreignObject x="380" y="275" width="200" height="82">
+              <div xmlns="http://www.w3.org/1999/xhtml" class="node-content">
+                <div class="node-title">本地工具进程</div>
+                <div class="node-detail" data-node-detail="local-tool"></div>
+              </div>
+            </foreignObject>
+          </g>
+
+          <g class="edge" data-edge="sandbox" data-state="yellow">
+            <path d="M320 230 C345 230 342 298 376 298"></path>
+            <text class="edge-label" data-edge-label="sandbox" x="369" y="288" text-anchor="end"></text>
+          </g>
+
+          <g class="edge" data-edge="full-access" data-state="red">
+            <path d="M320 275 C345 275 342 334 376 334"></path>
+            <text class="edge-label" data-edge-label="full-access" x="369" y="324" text-anchor="end"></text>
+          </g>
+
+          <g class="node protected-node">
+            <rect class="node-box" x="1040" y="88" width="340" height="82" rx="17"></rect>
+            <foreignObject x="1040" y="88" width="340" height="82">
+              <div xmlns="http://www.w3.org/1999/xhtml" class="node-content">
+                <div class="node-title">本地文件</div>
+                <div class="node-detail">读取：按产品策略允许<br>图中着色的是写入 / 删除</div>
+              </div>
+            </foreignObject>
+          </g>
+
+          <g class="node protected-node">
+            <rect class="node-box" x="1040" y="188" width="340" height="82" rx="17"></rect>
+            <foreignObject x="1040" y="188" width="340" height="82">
+              <div xmlns="http://www.w3.org/1999/xhtml" class="node-content">
+                <div class="node-title">Web 网络</div>
+                <div class="node-detail">其他工具出站<br>不含官方 LLM 通道</div>
+              </div>
+            </foreignObject>
+          </g>
+
+          <g class="node protected-node">
+            <rect class="node-box" x="1040" y="288" width="340" height="82" rx="17"></rect>
+            <foreignObject x="1040" y="288" width="340" height="82">
+              <div xmlns="http://www.w3.org/1999/xhtml" class="node-content">
+                <div class="node-title">本地或远程 MCP</div>
+                <div class="node-detail">本地 stdio / 远程 HTTP</div>
+              </div>
+            </foreignObject>
+          </g>
+
+          <g class="edge" data-edge="internal-file" data-state="red">
+            <path d="M580 145 L1036 115"></path>
+            <text class="edge-label" data-edge-label="internal-file" x="1020" y="103" text-anchor="end"></text>
+          </g>
+
+          <g class="edge" data-edge="tool-file" data-state="red">
+            <path d="M580 296 L1036 145"></path>
+            <text class="edge-label" data-edge-label="tool-file" x="1020" y="133" text-anchor="end"></text>
+          </g>
+
+          <g class="edge" data-edge="internal-network" data-state="red">
+            <path d="M580 165 L1036 215"></path>
+            <text class="edge-label" data-edge-label="internal-network" x="1020" y="203" text-anchor="end"></text>
+          </g>
+
+          <g class="edge" data-edge="tool-network" data-state="red">
+            <path d="M580 316 L1036 245"></path>
+            <text class="edge-label" data-edge-label="tool-network" x="1020" y="233" text-anchor="end"></text>
+          </g>
+
+          <g class="edge" data-edge="remote-mcp" data-state="red">
+            <path d="M580 185 L1036 315"></path>
+            <text class="edge-label" data-edge-label="remote-mcp" x="1020" y="303" text-anchor="end"></text>
+          </g>
+
+          <g class="edge" data-edge="local-mcp" data-state="red">
+            <path d="M580 337 L1036 345"></path>
+            <text class="edge-label" data-edge-label="local-mcp" x="1020" y="333" text-anchor="end"></text>
+          </g>
+        </svg>
+
+        <div class="mobile-flow" aria-label="移动端架构图">
+          <div class="mobile-card">
+            <strong>官方远端 LLM ↔ WorkBuddy Agent Core</strong>
+            <span>蓝色通道用于发送提示词和接收工具请求，本身不是图中的危险路径。</span>
+          </div>
+          <div class="mobile-arrow" aria-hidden="true">↓</div>
+          <div class="mobile-routes">
+            <div class="mobile-card">
+              <strong>进程内工具</strong>
+              <span data-mobile-node="in-process"></span>
+            </div>
+            <div class="mobile-card">
+              <strong>本地工具进程</strong>
+              <span data-mobile-node="local-tool"></span>
+            </div>
+          </div>
+          <div class="mobile-arrow" aria-hidden="true">↓</div>
+          <h3 class="mobile-target-title">需要保护的系统</h3>
+          <div class="mobile-targets">
+            <div class="mobile-system">
+              <div><strong>本地文件</strong><span>读取、写入和删除</span></div>
+              <div class="mobile-states">
+                <span class="mobile-state" data-mobile-edge="internal-file"></span>
+                <span class="mobile-state" data-mobile-edge="tool-file"></span>
+              </div>
+            </div>
+            <div class="mobile-system">
+              <div><strong>Web 网络</strong><span>不含官方 LLM 通道</span></div>
+              <div class="mobile-states">
+                <span class="mobile-state" data-mobile-edge="internal-network"></span>
+                <span class="mobile-state" data-mobile-edge="tool-network"></span>
+              </div>
+            </div>
+            <div class="mobile-system">
+              <div><strong>本地或远程 MCP</strong><span>本地 stdio / 远程 HTTP</span></div>
+              <div class="mobile-states">
+                <span class="mobile-state" data-mobile-edge="remote-mcp"></span>
+                <span class="mobile-state" data-mobile-edge="local-mcp"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="visual-foot">
+        <p id="scenario-conclusion" aria-live="polite"></p>
+        <span class="structure-note">三个方案使用同一结构，只改变保护状态</span>
+      </div>
+    </section>
+
+    <section class="value-section">
+      <h2>FinSAFE 为客户带来的价值</h2>
+      <div class="value-grid">
+        <div class="value-item">
+          <strong>高风险工具进入外层边界</strong>
+          <span>shell、PowerShell、Python、git 和本地 MCP 不再只依赖 WorkBuddy 自身判断。</span>
+        </div>
+        <div class="value-item">
+          <strong>Full Access 不等于完全放开</strong>
+          <span>用户可以跳过原厂沙箱，但本地工具仍不能跳过 FinSAFE。</span>
+        </div>
+        <div class="value-item">
+          <strong>策略与审计更加统一</strong>
+          <span>文件写入、工具启动、网络目的地和拦截结果可以集中记录。</span>
+        </div>
+      </div>
+    </section>
+
+    <p class="boundary">FinSAFE 重点保护 LLM 能触发的本机工具路径，不是把整个 WorkBuddy 装进沙箱。试用默认仍允许读取文件，也不锁外网——读机密、锁网是下一步，不要拿来当本周演示。</p>
+  </main>
+
+  <script>
+    const scenarios = {
+      bare: {
+        title: 'WorkBuddy 裸跑：原厂只部分管住本地工具',
+        description: '进程内写入、Full Access、本地 MCP 和非官方网络出站仍存在未受控路径。',
+        signal: { state: 'red', label: '仍有多条未受控路径' },
+        conclusion: '结论：WorkBuddy 自带沙箱有价值，但无法覆盖 LLM 能触发的全部本机路径。',
+        nodes: {
+          core: { state: 'red', detail: '以登录用户权限运行' },
+          'in-process': { state: 'red', detail: '文件 / Web / 远程 MCP' },
+          'local-tool': { state: 'red', detail: 'shell / Python / git / 本地 MCP' },
+        },
+        edges: {
+          sandbox: { state: 'yellow', label: '原厂沙箱' },
+          'full-access': { state: 'red', label: 'Full Access' },
+          'internal-file': { state: 'red', label: '内置写入', mobile: '内置工具' },
+          'tool-file': { state: 'red', label: '工具写入', mobile: '工具进程' },
+          'internal-network': { state: 'red', label: 'Web 工具', mobile: 'Web 工具' },
+          'tool-network': { state: 'red', label: '工具出站', mobile: '工具进程' },
+          'remote-mcp': { state: 'red', label: '远程 MCP', mobile: '远程' },
+          'local-mcp': { state: 'red', label: '本地 MCP', mobile: '本地' },
+        },
+      },
+      finsafe: {
+        title: 'FinSAFE 试用方案：已知工具写入进入治理',
+        description: '高风险本地工具由 Windows 强制约束；进程内写入由 FinSAFE 在正常入口把关。网络这次试用仍走主机，可记录、不锁定。',
+        signal: { state: 'yellow', label: '写入已分层 · 网络未锁' },
+        conclusion: '结论：不要求厂商改代码，也能拦住工作区外的乱写；黄色路径有效但仍不是不可绕过的强隔离。',
+        nodes: {
+          core: { state: 'yellow', detail: 'FinSAFE 在正常入口把关' },
+          'in-process': { state: 'yellow', detail: '文件 / Web / 远程 MCP' },
+          'local-tool': { state: 'green', detail: 'Windows 强制限制' },
+        },
+        edges: {
+          sandbox: { state: 'green', label: '原厂沙箱' },
+          'full-access': { state: 'green', label: 'Full Access' },
+          'internal-file': { state: 'yellow', label: '内置写入', mobile: '内置工具' },
+          'tool-file': { state: 'green', label: '工具写入', mobile: '工具进程' },
+          'internal-network': { state: 'yellow', label: '网络审计', mobile: '审计' },
+          'tool-network': { state: 'yellow', label: '出站审计', mobile: '审计' },
+          'remote-mcp': { state: 'yellow', label: '远程 MCP', mobile: '远程' },
+          'local-mcp': { state: 'green', label: '本地 MCP', mobile: '本地' },
+        },
+      },
+      vendor: {
+        title: 'WorkBuddy 配合方案：核心与本地工具都进入强制边界',
+        description: 'Agent Core 从启动时就处于受限环境，文件、网络和 MCP 再统一经过不可绕过的安全控制。',
+        signal: { state: 'green', label: 'LLM 工具路径全部强制受控' },
+        conclusion: '结论：厂商配合后的安全模型最清晰，LLM 可触达的已知执行路径全部进入强制边界。',
+        nodes: {
+          core: { state: 'green', detail: '从启动时进入受限环境' },
+          'in-process': { state: 'green', detail: '文件 / Web / 远程 MCP' },
+          'local-tool': { state: 'green', detail: '继承同一强制边界' },
+        },
+        edges: {
+          sandbox: { state: 'green', label: '原厂沙箱' },
+          'full-access': { state: 'green', label: 'Full Access' },
+          'internal-file': { state: 'green', label: '内置写入', mobile: '内置工具' },
+          'tool-file': { state: 'green', label: '工具写入', mobile: '工具进程' },
+          'internal-network': { state: 'green', label: 'Web 工具', mobile: 'Web 工具' },
+          'tool-network': { state: 'green', label: '工具出站', mobile: '工具进程' },
+          'remote-mcp': { state: 'green', label: '远程 MCP', mobile: '远程' },
+          'local-mcp': { state: 'green', label: '本地 MCP', mobile: '本地' },
+        },
+      },
+    };
+
+    const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
+    const panel = document.getElementById('scenario-panel');
+
+    function renderScenario(name, focusTab = false) {
+      const scenario = scenarios[name];
+      const activeTab = tabs.find((tab) => tab.dataset.scenario === name);
+
+      tabs.forEach((tab) => {
+        const selected = tab === activeTab;
+        tab.setAttribute('aria-selected', String(selected));
+        tab.tabIndex = selected ? 0 : -1;
+      });
+
+      panel.setAttribute('aria-labelledby', activeTab.id);
+      document.getElementById('scenario-title').textContent = scenario.title;
+      document.getElementById('scenario-description').textContent = scenario.description;
+      document.getElementById('scenario-conclusion').textContent = scenario.conclusion;
+
+      const signal = document.getElementById('scenario-signal');
+      signal.dataset.state = scenario.signal.state;
+      signal.textContent = scenario.signal.label;
+
+      Object.entries(scenario.nodes).forEach(([key, value]) => {
+        const node = document.querySelector(`[data-node="${key}"]`);
+        node.dataset.state = value.state;
+        document.querySelector(`[data-node-detail="${key}"]`).textContent = value.detail;
+        const mobileNode = document.querySelector(`[data-mobile-node="${key}"]`);
+        if (mobileNode) mobileNode.textContent = value.detail;
+      });
+
+      Object.entries(scenario.edges).forEach(([key, value]) => {
+        const edge = document.querySelector(`[data-edge="${key}"]`);
+        edge.dataset.state = value.state;
+        document.querySelector(`[data-edge-label="${key}"]`).textContent = value.label;
+
+        const mobileEdge = document.querySelector(`[data-mobile-edge="${key}"]`);
+        if (mobileEdge) {
+          mobileEdge.dataset.state = value.state;
+          mobileEdge.textContent = value.mobile || value.label;
+        }
+      });
+
+      if (focusTab) activeTab.focus();
+    }
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => renderScenario(tab.dataset.scenario));
+      tab.addEventListener('keydown', (event) => {
+        if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+        event.preventDefault();
+
+        let nextIndex = index;
+        if (event.key === 'ArrowLeft') nextIndex = (index - 1 + tabs.length) % tabs.length;
+        if (event.key === 'ArrowRight') nextIndex = (index + 1) % tabs.length;
+        if (event.key === 'Home') nextIndex = 0;
+        if (event.key === 'End') nextIndex = tabs.length - 1;
+        renderScenario(tabs[nextIndex].dataset.scenario, true);
+      });
+    });
+
+    renderScenario('bare');
+  </script>
+</body>
+</html>

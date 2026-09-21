@@ -96,7 +96,7 @@ Expect **exit code 0** and HTML (or a redirect body) from `example.com`.
 | URL | Result |
 |-----|--------|
 | `https://example.com/` | Allowed if `example.com` is on the list |
-| `https://93.184.216.34/` | Denied (`ip_literal_denied`) even if that IP serves example.com |
+| `https://93.184.216.34/` | Denied (`ip_literal_denied`) when **no** `allowed_ip_cidrs` / `ip_cidrs` are configured; with CIDR allow entries, IP literals are matched against those lists instead |
 
 Optional JSON envelope:
 
@@ -153,8 +153,13 @@ Denied requests carry stable reasons such as:
 | Reason | Meaning |
 |--------|---------|
 | `host_not_in_allowlist` | Hostname not on `network.allowlist.domains` |
-| `ip_literal_denied` | URL or target used a raw IP |
+| `host_denied` | Matched a `denied_hosts` rule (`*`, `*:port`, FQDN). These rules also apply to **IP-literal** destinations — so `*:22` still blocks `10.1.2.3:22` when `allowed_ip_cidrs` is set |
+| `ip_denied` | Raw IP matched `denied_ip_cidrs` / wrapper `denied_ip_cidrs` |
+| `ip_literal_denied` | URL or target used a raw IP and no CIDR allow list was configured |
+| `ip_not_in_allowed_cidrs` | Raw IP used but not covered by `allowed_ip_cidrs` / `ip_cidrs` |
 | `malformed_host` | Host string failed validation |
+
+CIDR fields (`allowed_ip_cidrs` / `denied_ip_cidrs`) match the **request authority** when it is an IP literal. They do **not** re-check the addresses a hostname resolves to after DNS — FQDN traffic is governed by the hostname allow/deny lists only. A catch-all prefix (`0.0.0.0/0`, `::/0`) is rejected at policy load.
 
 Verbose debug only: `FINSAFE_NET_PROXY_TRACE=1` (noisy; not for normal pilots).
 

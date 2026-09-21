@@ -100,7 +100,7 @@ filesystem:
 | 后端 | 证明字段 | 何时选用 | 隔离摘要 |
 |------|----------|----------|----------|
 | **RestrictedToken** | `windows_restricted_token`，`degraded_execution=true` | **Auto** + `network: host` + YAML `deny_read_paths` 为空，或显式 `windows.backend: restricted_token` | `CreateRestrictedToken` + **WRITE_RESTRICTED**：**读**基本保留用户身份（整机可读）；**写**默认拒绝，仅 `read_write_paths`（+ cwd）经 capability ACE 放行，**除非** `windows.msys2_child_ipc: true`（子进程 Git-for-Windows/MSYS2 bash / 公开 #34 — 操作者 SID 进入 restricting SID，该会话对用户已拥有 NTFS **不做**写白名单）。仍有 Job Object。无 LowBox、不对 `venv`/`node_modules` 递归打 ACL、**无需 ProjFS**。此路径**跳过**内置机密 deny-read（对齐 Codex 弱化姿态）。 |
-| **AppContainer** | `windows_appcontainer` | Auto + `network: none` / allowlist、任意 YAML `deny_read_paths`、显式 `windows.backend: appcontainer`、托管舰队 | AppContainer / LowBox Package SID、可继承 DACL、可选 deny-read ACE、WFP 出口围栏。大运行时树优先 **ProjFS 投影**（`finsafe setup-windows`；仅当启用 Client-ProjFS 返回需重启 / 退出码 **3010** 时重启）。 |
+| **AppContainer** | `windows_appcontainer` | Auto + `network: none` / allowlist、任意 YAML `deny_read_paths`、显式 `windows.backend: appcontainer`、托管舰队 | AppContainer / LowBox Package SID、可继承 DACL、可选 deny-read ACE、WFP 出口围栏。大运行时树优先 **ProjFS 投影**（`finsafe setup-windows`；仅当 `probe` 报 `restart_required` 时重启）。 |
 
 **示例（均随发行附带）：**
 
@@ -128,7 +128,7 @@ Windows AppContainer 要求 FinSAFE 使用的每个文件系统根（`work_dir`�
 | `FINSAFE_WINSAFE_INHERIT_ROOT_WARN_LIMIT` | `10000` | 直接子项数达到该值即触发大树守卫（遍历上限同此值）。 |
 | `FINSAFE_WINSAFE_INHERIT_ROOT_FAIL` | `1`（fail closed） | `0` = 警告后继续应用可继承 ACL（一次性打标）。 |
 
-**ProjFS：** AppContainer + 大运行时树的可选高级路径。`setup-windows` 在启用 Client-ProjFS 需重启时可能以 **3010** 退出；`doctor` 将其报为 **警告**（RestrictedToken / 典型 Hermes 不需要 ProjFS）。
+**ProjFS：** AppContainer + 大运行时树的可选高级路径。`setup-windows` 仅在启用后仍待重启（`probe.restart_required`）时以 **3010** 退出；`doctor` 将其报为 **警告**。DISM `Restart Required : Possible` 不是待重启。RestrictedToken / 典型 Hermes 不需要 ProjFS。Windows 验收 `-Suite projection` 不得 skip-green，也不得把 runner 重启当作关闭条件。
 
 回归：`scripts/dev/run-windows-acceptance.ps1` 的 `inherit-guard` 套件含 *inherit-relaunch-fast*（同一目录第二次启动须在 3 秒内完成）。
 

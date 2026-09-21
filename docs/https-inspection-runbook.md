@@ -138,7 +138,7 @@ finsafe run --json -- /usr/bin/curl -fsS https://example.com/ | jq '.envelope.po
 
 Expect `policy_source` **`managed`** and exit code **`0`** when `example.com` is in the allowlist.
 
-**Important:** Use **hostnames** in URLs (`https://example.com/`), not bare IP literals (`https://127.0.0.1/…`). The loopback proxy rejects IP-literal targets by design (`ip_literal_denied`).
+**Important:** Use **hostnames** in URLs (`https://example.com/`) unless the compiled policy lists the destination in `allowed_ip_cidrs`. Bare IP literals without a matching CIDR are denied (`ip_literal_denied`).
 
 ### 5.2 Audit: TLS terminated
 
@@ -191,7 +191,7 @@ See [POLICY-QUICKREF.md](./POLICY-QUICKREF.md) — **TLS inspection (MITM) opera
 | `402` on `POST /v1/admin/mitm/ca` or publish | License lacks `mitm_tls_terminate` | Contact Finogeeks; reinstall `license.jws`; restart authority. |
 | Publish: “requires an authority MITM CA” | Step 2 skipped | `POST /v1/admin/mitm/ca`, retry publish. |
 | TLS errors in sandbox (`certificate verify failed`) | Agent has not pulled bundle with `inspection_ca_cert_pem` | Confirm bundle version on device; restart agent; check managed cache. |
-| `ip_literal_denied` in proxy audit | URL uses IP instead of hostname | Use `https://example.com/` not `https://93.184.216.34/`. |
+| `ip_literal_denied` in proxy audit | URL uses an IP that is not in `allowed_ip_cidrs` | Prefer `https://example.com/`, or add the IP/CIDR to the compiled allowlist. |
 | Connection refused to `127.0.0.1:60080` | `start_internal_proxy: false` or proxy not started | Set `start_internal_proxy: true` or run `finsafe-net-proxy` per [POLICY-QUICKREF.md](./POLICY-QUICKREF.md). |
 | macOS: egress blocked despite proxy | Seatbelt without loopback allowance | Use current fleet `finsafe` with `network: allowlist` + internal proxy (restricted egress parity). |
 | No `tls_terminated` in audit | `tls_terminate: false` or license bypass only on proxy host | Confirm policy YAML; managed runs need published bundle + agent CA install. |

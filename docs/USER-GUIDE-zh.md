@@ -25,7 +25,7 @@ Linux 发行包除 `finsafe` 外还包含 `finsafe-helper`、`finsafe-supervisor
 |------|---------------------|
 | **Linux**（已安装 bubblewrap / cgroup 等工具链） | 严格栈：Bubblewrap 等隔离 + 按策略解析的 cgroup / Landlock / seccomp。缺少 bwrap 时，严格姿态可能 **拒绝启动**。 |
 | **macOS**（arm64 或 x86_64） | **`mac-seatbelt`**：通过 `/usr/bin/sandbox-exec` 运行子进程；本地工具封装 **不使用** Bubblewrap 命名空间栈。`probe` / `doctor` 可查看能力说明。 |
-| **Windows**（10/11 桌面） | **默认 `network: host`：** RestrictedToken（宿主机可读、写路径白名单，对齐 Codex 弱化姿态，无需 ProjFS）。**`network: none` / allowlist / 机密 deny-read：** AppContainer / LowBox。安装后运行一次 **`finsafe setup-windows`**（安装器会自动执行）以启用 helper / WFP；ProjFS 仅在 AppContainer + 大体积运行时树投影时需要（可能重启一次）。 |
+| **Windows**（10/11 桌面） | **默认 `network: host`：** RestrictedToken（宿主机可读、写路径白名单，对齐 Codex 弱化姿态，无需 ProjFS）。**`network: none` / allowlist / 机密 deny-read：** AppContainer / LowBox。安装后运行一次 **`finsafe setup-windows`**（安装器会自动执行）以启用 helper / WFP；ProjFS 仅在 AppContainer + 大体积运行时树投影时需要（仅当 `probe` 报 `restart_required` 时才重启）。 |
 
 ### Windows 后端（RestrictedToken 与 AppContainer）
 
@@ -36,7 +36,7 @@ Linux 发行包除 `finsafe` 外还包含 `finsafe-helper`、`finsafe-supervisor
 | 后端 | 何时选用 | 隔离内容 | 不做的事 |
 |------|----------|----------|----------|
 | **RestrictedToken**（`windows_restricted_token`） | **默认**：`network: host` 且 YAML `deny_read_paths` 为空（Auto），或显式 `windows.backend: restricted_token` | 默认拒绝写，仅 `read_write_paths`（+ cwd）白名单，除非 `windows.msys2_child_ipc: true`；Job 资源限制 | 无 AppContainer LowBox；**整机可读**（对齐 Codex）；无机密 deny-read；无需 ProjFS；`msys2_child_ipc` 对该会话关闭用户已拥有 NTFS 的写白名单（子进程 git-bash）；证明字段 `degraded_execution=true` |
-| **AppContainer**（`windows_appcontainer`） | `network: none` / allowlist、显式 `deny_read_paths`、显式 `windows.backend: appcontainer`、托管舰队 | Package SID、DACL 授权/拒绝、WFP 出口围栏；大体积 `venv` / `node_modules` 可用 ProjFS 投影 | 递归 ACL / ProjFS 可能需要 `setup-windows`（Client-ProjFS 返回需重启时重启一次） |
+| **AppContainer**（`windows_appcontainer`） | `network: none` / allowlist、显式 `deny_read_paths`、显式 `windows.backend: appcontainer`、托管舰队 | Package SID、DACL 授权/拒绝、WFP 出口围栏；大体积 `venv` / `node_modules` 可用 ProjFS 投影 | 递归 ACL / ProjFS 可能需要 `setup-windows`（仅当 `probe` 报 `restart_required` 时重启） |
 
 **随发行附带的 Hermes 示例：**
 

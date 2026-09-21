@@ -129,7 +129,7 @@ finsafe run --json -- /usr/bin/curl -fsS https://example.com/ | jq '.envelope.po
 
 期望 `policy_source` 为 **`managed`**，退出码 **`0`**（`example.com` 在 allowlist 内）。
 
-**注意：** URL 使用**主机名**（`https://example.com/`），勿用 IP 字面量（`https://127.0.0.1/…`）；回环代理会返回 `ip_literal_denied`。
+**注意：** URL 优先使用**主机名**（`https://example.com/`）。未配置 `allowed_ip_cidrs` / `ip_cidrs` 时，IP 字面量会被回环代理以 `ip_literal_denied` 拒绝；配置了 CIDR 白名单后，IP 字面量按该名单匹配。CIDR **只作用于请求里的 IP 字面量**，不会在 DNS 解析后再查一次。`denied_hosts` 的 `*` / `*:port` 对 IP 字面量同样生效。
 
 ### 5.2 审计：TLS 已终止
 
@@ -182,7 +182,7 @@ curl/openssl 探测可设 `FINSAFE_MITM_FORCE_TERMINATE=1`。详见 [POLICY-QUIC
 | `POST /v1/admin/mitm/ca` 或发布返回 `402` | 许可证无 `mitm_tls_terminate` | 联系 Finogeeks；重装 `license.jws`；重启 authority。 |
 | 发布提示需要 authority MITM CA | 未执行步骤 2 | `POST /v1/admin/mitm/ca` 后重试发布。 |
 | 沙箱内 TLS 错误（`certificate verify failed`） | 设备未拉取含 `inspection_ca_cert_pem` 的 bundle | 确认设备 bundle 版本；重启 agent；检查托管缓存目录。 |
-| 审计中 `ip_literal_denied` | URL 使用 IP 而非主机名 | 使用 `https://example.com/`，勿用 `https://93.184.216.34/`。 |
+| 审计中 `ip_literal_denied` | 未配置 CIDR 白名单却使用了 IP 字面量 | 使用主机名，或在策略中配置 `allowed_ip_cidrs` / `ip_cidrs`。 |
 | `127.0.0.1:60080` 连接被拒绝 | `start_internal_proxy: false` 或未启动代理 | 策略设 `start_internal_proxy: true`，或按 [POLICY-QUICKREF-zh.md](./POLICY-QUICKREF-zh.md) 单独运行 `finsafe-net-proxy`。 |
 | macOS：有代理仍被拦截出站 | Seatbelt 未放行回环 | 使用当前舰队 `finsafe`，`network: allowlist` + 内置代理。 |
 | 审计无 `tls_terminated` | `tls_terminate: false` 或非托管策略 | 确认 YAML；托管运行需已发布 bundle + agent 安装 CA。 |

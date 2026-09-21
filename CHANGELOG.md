@@ -10,6 +10,42 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
 
+## [0.9.47] - 2026-09-21
+
+### Changed
+
+- **Ops console restyle (#409):** the managed admin UI now uses shadcn/ui with a full-width sidebar. (PR [Geeksfino/finsafe#409](https://github.com/Geeksfino/finsafe/pull/409))
+
+### Added
+
+- **Windows launch-image staging (#372):** host-portable staging copies with fail-closed execute ACE before AppContainer launch. (PR [Geeksfino/finsafe#372](https://github.com/Geeksfino/finsafe/pull/372))
+- **WorkBuddy catalog-static writes and trial first-run UX (#366).** (PR [Geeksfino/finsafe#366](https://github.com/Geeksfino/finsafe/pull/366))
+
+### Fixed
+
+- **Admit executions without blocking on cell lifetime (#404).** (PR [Geeksfino/finsafe#404](https://github.com/Geeksfino/finsafe/pull/404))
+- **WorkBuddy overlay into both USER homes (#396).** (PR [Geeksfino/finsafe#396](https://github.com/Geeksfino/finsafe/pull/396))
+- **WorkBuddy PowerShell via CodeBuddy USER settings (#389).** (PR [Geeksfino/finsafe#389](https://github.com/Geeksfino/finsafe/pull/389))
+- **Vendor `--parent-pid` rewrite onto the finsafe hop (#382).** (PR [Geeksfino/finsafe#382](https://github.com/Geeksfino/finsafe/pull/382))
+- **HighLevel session `.git` and `.finsafe` remapped as read-only overlays (#373).** (PR [Geeksfino/finsafe#373](https://github.com/Geeksfino/finsafe/pull/373))
+- **Keep app-seam attach across WorkBuddy in-app update (#368).** (PR [Geeksfino/finsafe#368](https://github.com/Geeksfino/finsafe/pull/368))
+- **Windows helper IPC fail-soft (#383):** when `finsafe-winhelper` is stopped, `finsafe run` no longer waits ~5s per helper-pipe open (about 15s across three launch probes) before RestrictedToken `CreateProcess`. A missing or busy pipe is immediate fail-soft; `wait_for_helper` after `setup-windows` / `sc start` is unchanged. The helper accept loop keeps a spare named-pipe instance so back-to-back AppContainer launches do not hit `ERROR_FILE_NOT_FOUND`.
+- **Windows WFP `network: none` fence probe (#329):** the pre-launch TCP probe and AppContainer child now use a `finsafe-net` deny-only token. Persistent filters still permit the operator's enabled group membership so the desktop stays online. A successful operator connect is no longer treated as a fence failure. A live none/allowlist AppContainer holds a per-package lease so a same-SID `network: host` launch cannot unfence it. Hosted `windows-latest` must attempt `1.1.1.1:443` under that deny-only token and attest `windows_egress_fence_verified=true`; `GITHUB_ACTIONS` / `CI` / machine-account tokens are not a reason to skip the probe or launch without the stamp. Workgroup runners mint via MSV1_0 S4U (or a helper-owned probe logon) because Kerberos S4U is invalid for local accounts.
+
+### Experimental
+
+- **Windows GUI app seams** (`finsafe app attach` / `detach` / `status`) —
+  experimental, not a supported product mode. Two enforcement tiers (D16):
+  the core process is a user-mode guard (write scope, audit) plus a Job
+  Object (teardown, limits); spawned tools are RestrictedToken (kernel write
+  scope). No deny-read, no egress, no kernel filesystem boundary on the
+  core. Run `finsafe app detach --all` before deleting or replacing
+  `finsafe.exe`; an orphaned seam is a silent fail-open (**no toast is
+  guaranteed**). See [WINDOWS-GUIDE.md § App seams](docs/WINDOWS-GUIDE.md).
+  Not G2; FakeAgent fixture ≠ WorkBuddy.
+
+<!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
+
 ## [0.9.46] - 2026-09-06
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
