@@ -27,6 +27,7 @@ FinSAFE 在三大桌面操作系统上提供**一等公民**沙箱能力。同�
 - **策略迭代** — 合法工作被拦截时使用 `learn`、`explain` 与 `--audit`
 - **可审计结果** — 带 attestation 摘要的 JSON 信封（[隔离审计模式](docs/isolation-audit-mode.md)）
 - **Agent 模板** — Hermes、OpenCode、Codex、agy 等，见 [examples/wrapper-policies/agent-sandbox/](examples/wrapper-policies/agent-sandbox/)
+- **推理前隐私防护** — 准备、验证、受保护 Agent 启动方式及覆盖限制（[隐私防护指南](docs/privacy-guard-zh.md)）
 
 各桌面系统的 Agent 工作流见 [agent-sandbox-guide-zh.md](docs/agent-sandbox-guide-zh.md)。
 
@@ -288,6 +289,7 @@ finsafe init   # 若 CLI 支持 — 写入 ~/.config/finsafe/policies/examples/
 |------|------|
 | [docs/WINDOWS-GUIDE-zh.md](docs/WINDOWS-GUIDE-zh.md) · [WINDOWS-GUIDE.md](docs/WINDOWS-GUIDE.md) | **Windows 桌面** — 安装、RestrictedToken 与 AppContainer、ProjFS、排障 |
 | [docs/agent-sandbox-guide-zh.md](docs/agent-sandbox-guide-zh.md) · [agent-sandbox-guide.md](docs/agent-sandbox-guide.md) | **Agent 沙箱** — Hermes、OpenCode、agy；**`learn` / `explain`** |
+| [docs/privacy-guard-zh.md](docs/privacy-guard-zh.md) · [privacy-guard.md](docs/privacy-guard.md) | **隐私防护** — 准备、受保护 Agent 启动、文本/图片验证与限制。 |
 | [docs/USER-GUIDE.md](docs/USER-GUIDE.md) | 英文运维指南（`run` 与 `self-confine`、**learn / explain**、策略 YAML、退出码）。 |
 | [docs/USER-GUIDE-zh.md](docs/USER-GUIDE-zh.md) | 中文用户指南。 |
 | [docs/POLICY-QUICKREF-zh.md](docs/POLICY-QUICKREF-zh.md) | 包装策略（`kind: local-wrapper`）字段速查（中文）。 |

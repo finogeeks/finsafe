@@ -27,6 +27,7 @@ Across Linux, macOS, and Windows, the public `finsafe` CLI supports:
 - **Policy iteration** — `learn`, `explain`, and `--audit` when a deny blocks legitimate agent work
 - **Auditable outcomes** — JSON envelopes with attestation digests ([isolation audit mode](docs/isolation-audit-mode.md))
 - **Agent templates** — Hermes, OpenCode, Codex, agy under [examples/wrapper-policies/agent-sandbox/](examples/wrapper-policies/agent-sandbox/)
+- **Pre-inference privacy guard** — setup, local verification, supported-agent launch, and coverage limits ([privacy guard guide](docs/privacy-guard.md))
 
 See the [agent sandbox guide](docs/agent-sandbox-guide.md) for agent-specific workflows on every desktop OS.
 
@@ -293,6 +294,7 @@ When a sandbox run fails, use **`finsafe learn`** to generate reviewable YAML, *
 |----------|-------------|
 | [docs/WINDOWS-GUIDE.md](docs/WINDOWS-GUIDE.md) · [WINDOWS-GUIDE-zh.md](docs/WINDOWS-GUIDE-zh.md) | **Windows desktop** — install, RestrictedToken vs AppContainer, ProjFS, troubleshooting. |
 | [docs/agent-sandbox-guide.md](docs/agent-sandbox-guide.md) · [agent-sandbox-guide-zh.md](docs/agent-sandbox-guide-zh.md) | **Agent sandbox** — Hermes, OpenCode, agy; **`learn` / `explain`** for agents. |
+| [docs/privacy-guard.md](docs/privacy-guard.md) · [privacy-guard-zh.md](docs/privacy-guard-zh.md) | **Privacy guard** — setup, protected-agent launch, text/image verification, and limitations. |
 | [docs/USER-GUIDE.md](docs/USER-GUIDE.md) | English operator guide (`run` vs `self-confine`, generic learn / explain). |
 | [docs/USER-GUIDE-zh.md](docs/USER-GUIDE-zh.md) | Chinese user guide. |
 | [docs/POLICY-QUICKREF.md](docs/POLICY-QUICKREF.md) | Wrapper policy (`kind: local-wrapper`) field reference (English). |

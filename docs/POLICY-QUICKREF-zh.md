@@ -63,6 +63,7 @@ filesystem:
 | `network`（allowlist） | YAML：`network: !allowlist`，其下 `domains: [example.com]`（**必须用 YAML 标签写法**；`network:` 下直接嵌套 map 无法解析）。启动时需出口代理（个人/本地用 `start_internal_proxy: true`；托管/SaaS 可用 `finsafe-net-proxy` + `proxy_cell`）；有效网络模式为 `allowlist`。**怎么跑：** [network-allowlist-proxy-runbook-zh.md](./network-allowlist-proxy-runbook-zh.md)。 |
 | `tls_terminate` | 为 `true` 时（wrapper 根或 `network.tls_terminate`），出口代理**解密 HTTPS** 以做 L7 过滤与更丰富的 `proxy_egress` 审计（`tls_terminated`、method/path）。需要 Authority 商业许可证 **`mitm_tls_terminate`**、已发布 bundle 中嵌入的 **inspection CA**（`inspection_ca_cert_pem`），以及 Agent 在托管缓存中安装的检查 CA。子进程会收到指向该证书的信任库环境变量（`SSL_CERT_FILE`、`CURL_CA_BUNDLE`、`NODE_EXTRA_CA_CERTS` 等）。**合规：**须告知用户 HTTPS 被检查。 |
 | `start_internal_proxy` | 为 `true` 时，`finsafe run` / `finsafe self-confine` 可在 **`127.0.0.1:60080`** 启动内置回环正向代理（与 Windows WFP `permit-loopback` 端口范围一致），无需单独 UDS `finsafe-net-proxy`。与 `network: allowlist` 配合实现域名受限出口。可选 `tls_terminate: true` 叠加 HTTPS 检查（需许可证）— 见 [https-inspection-runbook-zh.md](./https-inspection-runbook-zh.md)。 |
+| `network.privacy_guard` | 可选的推理前 PII 过滤。包装策略默认关闭，除非显式启用；受保护 Agent 命令默认启用，除非显式关闭。在 `network: host` 下会强制全代理 TLS 检查（`host_via_proxy`）。`no_decrypt` 排除项会降低内容覆盖范围。准备与验证方式见[隐私防护指南](./privacy-guard-zh.md)。 |
 | **父级企业代理（试点）** | 子进程仍只连回环 FinSAFE 代理；出口经 **CONNECT 链**到企业网关。凭证不进 bundle：环境变量 `FINSAFE_PARENT_PROXY_URL`、`FINSAFE_PARENT_PROXY_NO_PROXY`（逗号分隔）。设计见 [parent-proxy.md](../../../docs/design/parent-proxy.md)。 |
 
 ### TLS 检查（MITM）运维说明

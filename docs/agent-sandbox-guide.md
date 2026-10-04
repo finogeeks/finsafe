@@ -10,6 +10,8 @@ without breaking legitimate work. When something fails, use **`learn`**, **`expl
 
 **AI skills:** [finsafe-agent-sandbox-run](../skills/finsafe-agent-sandbox-run/SKILL.md) (run + fix) · [finsafe-agent-sandbox-verify](../skills/finsafe-agent-sandbox-verify/SKILL.md) (prove isolation)
 
+**Privacy guard setup, testing, and protected-agent launch:** [privacy-guard.md](./privacy-guard.md) · [中文](./privacy-guard-zh.md)
+
 ---
 
 ## One-time setup
