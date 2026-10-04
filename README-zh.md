@@ -60,6 +60,7 @@ IT 试点脚本会下载发行包、校验 `SHA256SUMS`、安装二进制并配�
 - [finsafe-bundlectl](skills/finsafe-bundlectl/SKILL-zh.md) — 策略包发布 + MDM 哨兵
 
 **Agent 沙箱指南：** [docs/agent-sandbox-guide-zh.md](docs/agent-sandbox-guide-zh.md)（含 **`learn` / `explain`**）
+**隐私防护快速入口：** [docs/privacy-guard-zh.md](docs/privacy-guard-zh.md) · [English](docs/privacy-guard.md)
 
 ## 企业 IT 全景（推荐）
 
@@ -277,6 +278,7 @@ finsafe init   # 若 CLI 支持 — 写入 ~/.config/finsafe/policies/examples/
 | 路径 | 内容 |
 |------|------|
 | [examples/wrapper-policies/](examples/wrapper-policies/) | Hermes、Windows 冒烟、managed-lab |
+| [examples/privacy-guard/](examples/privacy-guard/) | 隐私防护文本及可选图片 OCR 验证 |
 | [examples/wrapper-policies/agent-sandbox/](examples/wrapper-policies/agent-sandbox/) | Codex、OpenCode、agy 等 agent 模板 |
 
 沙箱失败时用 **`finsafe learn`** 生成可审阅 YAML、**`finsafe --audit run`** 查看 stderr 提示，或对保存的 **`--json` 信封** 运行 **`finsafe explain`**。详见 [USER-GUIDE-zh.md § 创建与迭代策略](docs/USER-GUIDE-zh.md)。
@@ -294,6 +296,7 @@ finsafe init   # 若 CLI 支持 — 写入 ~/.config/finsafe/policies/examples/
 | [docs/USER-GUIDE-zh.md](docs/USER-GUIDE-zh.md) | 中文用户指南。 |
 | [docs/POLICY-QUICKREF-zh.md](docs/POLICY-QUICKREF-zh.md) | 包装策略（`kind: local-wrapper`）字段速查（中文）。 |
 | [docs/POLICY-QUICKREF.md](docs/POLICY-QUICKREF.md) | 同上（英文）。 |
+| [examples/privacy-guard/](examples/privacy-guard/) | 隐私防护验证命令与前提说明。 |
 | [docs/isolation-audit-mode.md](docs/isolation-audit-mode.md) | `--audit` 与保存 JSON 信封供 `explain` |
 | [examples/README.md](examples/README.md) | 策略示例索引（`high-level-policies/`、`wrapper-policies/`）。 |
 | [examples/wrapper-policies/agent-sandbox/](examples/wrapper-policies/agent-sandbox/) | Agent CLI 策略模板 |
