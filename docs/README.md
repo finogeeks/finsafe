@@ -24,6 +24,7 @@
 |----------|-------------|
 | [WINDOWS-GUIDE.md](./WINDOWS-GUIDE.md) · [WINDOWS-GUIDE-zh.md](./WINDOWS-GUIDE-zh.md) | **Windows desktop** — install, RestrictedToken vs AppContainer, ProjFS, troubleshooting |
 | [agent-sandbox-guide.md](./agent-sandbox-guide.md) · [agent-sandbox-guide-zh.md](./agent-sandbox-guide-zh.md) | **Agent sandbox** — Hermes, OpenCode, agy; **`learn` / `explain`** iteration for agents |
+| [privacy-guard.md](./privacy-guard.md) · [privacy-guard-zh.md](./privacy-guard-zh.md) | **Privacy guard** — setup, protected-agent launch, text/image verification, and limitations |
 | [USER-GUIDE.md](./USER-GUIDE.md) | Install, `run` vs `self-confine`, generic **`learn` / `explain`**, wrapper policies |
 | [visual-sandbox.md](./visual-sandbox.md) · [visual-sandbox-zh.md](./visual-sandbox-zh.md) | **`finsafe --visual`** — Agent-first demo (Demo Agent, four scenarios), plus advanced lab |
 | [USER-GUIDE-zh.md](./USER-GUIDE-zh.md) | 中文用户指南 |

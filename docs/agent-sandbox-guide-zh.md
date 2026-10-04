@@ -8,6 +8,8 @@
 
 **AI 技能：** [finsafe-agent-sandbox-run](../skills/finsafe-agent-sandbox-run/SKILL-zh.md) · [finsafe-agent-sandbox-verify](../skills/finsafe-agent-sandbox-verify/SKILL.md)
 
+**隐私防护准备、测试与受保护 Agent 启动：** [privacy-guard-zh.md](./privacy-guard-zh.md) · [English](./privacy-guard.md)
+
 ---
 
 ## 一次性准备

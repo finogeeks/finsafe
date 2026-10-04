@@ -24,6 +24,7 @@
 |------|------|
 | [WINDOWS-GUIDE-zh.md](./WINDOWS-GUIDE-zh.md) · [WINDOWS-GUIDE.md](./WINDOWS-GUIDE.md) | **Windows 桌面** — 安装、RestrictedToken 与 AppContainer、ProjFS、排障 |
 | [agent-sandbox-guide-zh.md](./agent-sandbox-guide-zh.md) · [English](./agent-sandbox-guide.md) | **Agent 沙箱** — Hermes、OpenCode、agy；Agent 专用 **`learn` / `explain`** |
+| [privacy-guard-zh.md](./privacy-guard-zh.md) · [English](./privacy-guard.md) | **隐私防护** — 准备、受保护 Agent 启动、文本/图片验证与限制 |
 | [USER-GUIDE-zh.md](./USER-GUIDE-zh.md) | 安装、`run` 与 `self-confine`、通用 learn/explain |
 | [visual-sandbox-zh.md](./visual-sandbox-zh.md) · [visual-sandbox.md](./visual-sandbox.md) | **`finsafe --visual`** — 智能体优先演示（演示智能体 + 四个场景），以及高级实验室 |
 | [USER-GUIDE.md](./USER-GUIDE.md) | English user guide |
