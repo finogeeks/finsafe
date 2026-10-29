@@ -46,9 +46,7 @@ Windows content inspection differs from macOS/Linux Privacy Guard. Private-deskt
 
 ## Feature comparison and notes
 
-The [README feature table](../README.md#feature-comparison) lists permission, file, network, PII, outbound-content and encrypted-retention capabilities individually. Statuses reflect capability documentation; a detailed evaluation under matching environments, versions and cases will follow.
-
-Following the supplied material and correction, Risky System Operations keeps a qualified assessment: SRT, Codex, MXC, Docker Sandboxes and OpenShell are all Conditional. Process identity, syscall restrictions and isolation boundaries are implementation mechanisms; their presence alone must not promote this feature to Yes. Full coverage awaits per-operation evaluation. File/network entries refer to each product's supported environments: Codex varies by Windows sandbox mode, MXC networking varies by backend, and native Windows OpenShell has verification limits. PII detection, sensitive-content ask/block decisions and encrypted conversation retention refer to built-in features. Domain blocking, ordinary runtime logs and extension hooks do not by themselves establish those features. An undeclared feature is not a proven lack of support.
+The [README comparison table](../README.md#feature-comparison) reproduces the original Windows technical proposal, preserving its comparison dimensions, test conclusions and meaning of “—”. Detailed evaluation will follow; execution and integration references are listed below.
 
 Official documentation was checked on 2026-10-29:
 

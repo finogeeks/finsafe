@@ -36,18 +36,18 @@ Select a recording for its full case. These are separate Windows/DSH `0.9.79` ru
 
 ## Feature comparison
 
-**FinShield combines permission, file and network controls with sensitive-information detection, outbound-content decisions and encrypted local retention.**
+Reproduced from the original Windows technical proposal. Detailed evaluation will follow.
 
-| Feature | **FinShield** | Anthropic SRT | Codex | Microsoft MXC | Docker Sandboxes | NVIDIA OpenShell |
+| Product | Runtime | Agent integration | Risky System Operations | File permissions | PII detection | Data retention |
 | --- | --- | --- | --- | --- | --- | --- |
-| Risky System Operations | **Yes** | Conditional | Conditional | Conditional | Conditional | Conditional |
-| Files: writable, read-only and denied paths | **Yes** | Yes | Conditional | Yes | Yes | Yes |
-| Network: restrict destinations | **Yes** | Yes | Conditional | Conditional | Yes | Yes |
-| Built-in PII detection | **Yes¹** | — | — | — | — | — |
-| Ask or block based on sensitive outbound content | **Yes¹** | — | — | — | — | — |
-| Encrypt conversations and decisions locally | **Yes** | — | — | — | — | — |
+| FinShield | Native Windows | Supported | Supported | Supported | Supported | Supported |
+| SRT (Anthropic) | Native Windows | CLI Agents only | Partially supported | Supported | Unsupported | Unsupported |
+| Codex (OpenAI) | Native Windows | DSH task execution failed | Partially supported | Partially supported | Unsupported | Unsupported |
+| MXC (Microsoft) | Windows execution backend | DSH failed to start | — | — | — | — |
+| Docker Sandboxes | Linux microVM | Windows Agents unsupported | Isolates the host system | Supported | Unsupported | Unsupported |
+| OpenShell | WSL2 + Linux container | Windows Agents unsupported | Isolates the host system | Supported | Unsupported | Unsupported |
 
-Based on the earlier technical comparison and supplemental documentation; detailed evaluation will follow. “Conditional” preserves a qualified capability assessment: operation type, permissions, mode or backend matter. Having a sandbox or isolation mechanism alone does not establish full support for restricting risky system operations. “—” means the cited documentation does not declare a built-in feature; evaluation is pending. ¹ Integrated, inspectable requests only. [Sources, conditions and earlier experiments](docs/technical-overview.md#feature-comparison-and-notes).
+“—” means Agent startup failed and subsequent tests were not performed.
 
 ## Explore
 
