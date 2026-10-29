@@ -1,0 +1,91 @@
+{
+  "source_site": "https://finsafe-safety-arena.finogeeks.club/",
+  "format": "GIF",
+  "fps": 8,
+  "excerpt_seconds": 4,
+  "loop": true,
+  "synchronized": false,
+  "cases": [
+    {
+      "case_id": "UI-21",
+      "case_url": "https://finsafe-safety-arena.finogeeks.club/cases/UI-21/index.html",
+      "file": "window-storm.gif",
+      "width": 1280,
+      "height": 476,
+      "frames": 32,
+      "sources": [
+        {
+          "group": "bare",
+          "url": "https://finsafe-safety-arena.finogeeks.club/cases/UI-21/bare-preview.mp4",
+          "source_sha256": "1ccc968909168b2ee26f867314bbc16f93f6f855cff104b5bb58b789f6d7daa6",
+          "start_seconds": 8,
+          "duration_seconds": 4,
+          "crop": "crop=1920:800:0:0"
+        },
+        {
+          "group": "protected",
+          "url": "https://finsafe-safety-arena.finogeeks.club/cases/UI-21/protected-preview.mp4",
+          "source_sha256": "6201404b3ffa823cb7620db76706c8d98d07179156ad0bf828eebc63455b66f7",
+          "start_seconds": 0,
+          "duration_seconds": 4,
+          "crop": "crop=1920:800:0:0"
+        }
+      ],
+      "gif_sha256": "98f6d33530efd7c972fedc4c4e1573339da606e9072e4cbe92254766376adb5b"
+    },
+    {
+      "case_id": "UI-11",
+      "case_url": "https://finsafe-safety-arena.finogeeks.club/cases/UI-11/index.html",
+      "file": "window-shake.gif",
+      "width": 1280,
+      "height": 602,
+      "frames": 32,
+      "sources": [
+        {
+          "group": "bare",
+          "url": "https://finsafe-safety-arena.finogeeks.club/cases/UI-11/bare-preview.mp4",
+          "source_sha256": "40909e57bc30c0622daec0db77fc8b2e13240dc52fbf38bf5b3d3228ead3b7c0",
+          "start_seconds": 12,
+          "duration_seconds": 4,
+          "crop": null
+        },
+        {
+          "group": "protected",
+          "url": "https://finsafe-safety-arena.finogeeks.club/cases/UI-11/protected-preview.mp4",
+          "source_sha256": "36c756b45b3dd3447bcf2f9e1d3ce2b934afac9ee276a5ae46e50f01f552cd9f",
+          "start_seconds": 0,
+          "duration_seconds": 4,
+          "crop": null
+        }
+      ],
+      "gif_sha256": "bbe04f1fa3bdbc9f904e04ba939bd8e0566889e02465f2e24782b392ef56154e"
+    },
+    {
+      "case_id": "UI-10",
+      "case_url": "https://finsafe-safety-arena.finogeeks.club/cases/UI-10/index.html",
+      "file": "clipboard.gif",
+      "width": 1280,
+      "height": 642,
+      "frames": 32,
+      "sources": [
+        {
+          "group": "bare",
+          "url": "https://finsafe-safety-arena.finogeeks.club/cases/UI-10/bare-preview.mp4",
+          "source_sha256": "31ebc02409c5fec9b232da40036a0067beec2923f0ee67489092554bfa111284",
+          "start_seconds": 27,
+          "duration_seconds": 4,
+          "crop": "crop=940:650:980:140"
+        },
+        {
+          "group": "protected",
+          "url": "https://finsafe-safety-arena.finogeeks.club/cases/UI-10/protected-preview.mp4",
+          "source_sha256": "ccca6629234cd12f80fb74b67d295160562782300d1fc4d024866b37b97fa711",
+          "start_seconds": 140,
+          "duration_seconds": 4,
+          "crop": "crop=940:650:980:140"
+        }
+      ],
+      "gif_sha256": "e3bd34766e8d2583d66be3421162bcfb09020a68131c13e1211ee76312cc416d"
+    }
+  ]
+}
