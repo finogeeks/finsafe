@@ -44,11 +44,13 @@ This expands the inspection service in the architecture. Windows Record mode per
 
 Windows content inspection differs from macOS/Linux Privacy Guard. Private-desktop case results do not establish identical defaults for WorkBuddy GUI.
 
-## How alternatives integrate
+## Feature comparison and notes
 
-![Windows Agent protection options](../assets/comparison/windows-options.svg)
+The [README feature table](../README.md#feature-comparison) lists permission, file, network, PII, outbound-content and encrypted-retention capabilities individually. Statuses reflect capability documentation; a detailed evaluation under matching environments, versions and cases will follow.
 
-This compares product scope and integration routes, not an overall security score. Official documentation was checked on 2026-10-29:
+Permission controls constrain risky operations through process identity, syscall restrictions or isolation boundaries; they do not establish that every risky operation has been tested. File/network entries refer to each product's supported environments: Codex varies by Windows sandbox mode, MXC networking varies by backend, and native Windows OpenShell has verification limits. PII detection, sensitive-content ask/block decisions and encrypted conversation retention refer to built-in features. Domain blocking, ordinary runtime logs and extension hooks do not by themselves establish those features. An undeclared feature is not a proven lack of support.
+
+Official documentation was checked on 2026-10-29:
 
 | Option | Execution / entry | Difference and source |
 | --- | --- | --- |

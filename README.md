@@ -34,6 +34,21 @@ An Agent that edits files and runs commands can put your data, privacy, and desk
 
 Select a recording for its full case. These are separate Windows/DSH `0.9.79` runs, not synchronized footage. See [source and scope notes](assets/demos/README.md) for configuration differences.
 
+## Feature comparison
+
+**FinShield combines permission, file and network controls with sensitive-information detection, outbound-content decisions and encrypted local retention.**
+
+| Feature | **FinShield** | Anthropic SRT | Codex | Microsoft MXC | Docker Sandboxes | NVIDIA OpenShell |
+| --- | --- | --- | --- | --- | --- | --- |
+| Permissions: restrict risky system operations | **Yes** | Yes | Yes | Yes | Yes | Yes |
+| Files: writable, read-only and denied paths | **Yes** | Yes | Conditional | Yes | Yes | Yes |
+| Network: restrict destinations | **Yes** | Yes | Conditional | Conditional | Yes | Yes |
+| Built-in PII detection | **Yes¹** | — | — | — | — | — |
+| Ask or block based on sensitive outbound content | **Yes¹** | — | — | — | — | — |
+| Encrypt conversations and decisions locally | **Yes** | — | — | — | — | — |
+
+Documentation-based; detailed evaluation to follow. “Yes” refers to each product's supported environments; “Conditional” depends on mode or backend. “—” means the cited documentation does not declare a built-in feature; evaluation is pending. ¹ Integrated, inspectable requests only. [Sources, conditions and earlier experiments](docs/technical-overview.md#feature-comparison-and-notes).
+
 ## Explore
 
 - [Windows illustrated manual](docs/WINDOWS-GUIDE.md): prepare, start, and reopen from the Widget; use supporting settings/records when needed.
