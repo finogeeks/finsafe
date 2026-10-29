@@ -8,7 +8,7 @@ FinShield 是 FinSafe 的新产品名称，中文名为“智能体安全盾”�
 
 ## Windows 必须运行安装命令吗？
 
-不需要。取得匹配版本的 EXE 后，双击按向导安装。之后在产品中完成安全准备，从 FinShield 启动受支持的智能体。[Windows 使用指南](WINDOWS-GUIDE-zh.md)。
+不需要。取得匹配版本的 EXE 后，双击按向导安装。之后从桌面悬浮控件开始安全准备，选择图标启动受支持的智能体；网页控制台辅助确认权限和查记录。[Windows 使用指南](WINDOWS-GUIDE-zh.md)。
 
 ## 为什么下载页只有旧版本？
 
@@ -16,7 +16,7 @@ FinShield 是 FinSafe 的新产品名称，中文名为“智能体安全盾”�
 
 ## 三个平台体验相同吗？
 
-Windows 提供 EXE、桌面悬浮入口与本机控制台，当前集成 WorkBuddy 和 DSH CLI。macOS、Linux 主要提供命令行入口。macOS 当前发布目标为 Apple 芯片，Intel 新包暂缓；Linux 当前发布目标为 x86_64。隔离机制、应用兼容与内容检查能力随平台和版本变化。
+Windows 提供 EXE，以桌面悬浮控件作为日常入口，本机网页控制台辅助配置和查记录；当前集成 WorkBuddy 和 DSH CLI。macOS、Linux 主要提供命令行入口。macOS 当前发布目标为 Apple 芯片，Intel 新包暂缓；Linux 当前发布目标为 x86_64。隔离机制、应用兼容与内容检查能力随平台和版本变化。
 
 ## 装上以后，所有智能体都会自动受到保护吗？
 

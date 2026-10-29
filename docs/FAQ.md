@@ -8,7 +8,7 @@ FinShield is the new name for FinSafe. Its Chinese name is 智能体安全盾, s
 
 ## Do I need an installation command on Windows?
 
-No. Double-click the matching setup EXE and follow the wizard. Complete security preparation in the product, then start a supported Agent through FinShield. See the [Windows guide](WINDOWS-GUIDE.md).
+No. Double-click the matching setup EXE and follow the wizard. Prepare security and select an Agent from the desktop Widget. The browser Console supports permission review and records. See the [Windows guide](WINDOWS-GUIDE.md).
 
 ## Why does the download page still show an older release?
 
@@ -16,7 +16,7 @@ Code merges, test-package deliveries, and public releases are separate steps. As
 
 ## Is the experience identical on all platforms?
 
-Windows provides an EXE, a floating entry, and local Console, currently integrating WorkBuddy and DSH CLI. macOS and Linux primarily provide command-line entries. The current macOS release target is Apple Silicon; new Intel packages are paused. Linux targets x86_64. Isolation mechanisms, compatibility, and inspection differ by platform and version.
+Windows provides an EXE and a desktop Widget for everyday work. Its local browser Console supports configuration and records. Current integrations are WorkBuddy and DSH CLI. macOS and Linux primarily provide command-line entries. The current macOS release target is Apple Silicon; new Intel packages are paused. Linux targets x86_64. Isolation mechanisms, compatibility, and inspection differ by platform and version.
 
 ## Does installation automatically protect every Agent?
 
