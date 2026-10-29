@@ -1,8 +1,8 @@
 # FinShield · 智安盾
 
-**让 AI 智能体在你授权的范围内使用电脑和数据。**
+**Agent 操作电脑有风险，给它加个沙箱很简单。**
 
-面向 Windows、macOS 和 Linux，提供本机执行、文件访问与网络防护，以及已接入模型请求的敏感信息检查和本地留存。原名 FinSafe，现有命令和部分发行文件仍使用 `finsafe`。
+能改文件、执行命令的 Agent，一次误操作或恶意指令就可能让资料、隐私和桌面受到影响。FinShield 为 Agent 加上沙箱，让它在你授权的范围内工作。支持 Windows、macOS 和 Linux；原名 FinSafe，现有命令和部分发行文件仍使用 `finsafe`。
 
 [English](README.md) · [Windows 图文手册](docs/WINDOWS-GUIDE-zh.md) · [技术方案与产品对比](docs/technical-overview-zh.md) · [百炼场 · 完整案例库](https://finsafe-safety-arena.finogeeks.club/#overview)
 
@@ -10,13 +10,15 @@
 
 | 平台 | 发行方式 | 上手 |
 | --- | --- | --- |
-| **Windows x64** | EXE，下载后双击安装 | [图文使用手册](docs/WINDOWS-GUIDE-zh.md) |
+| **Windows x64** | EXE，双击安装后使用桌面控件 | [图文使用手册](docs/WINDOWS-GUIDE-zh.md) |
 | **macOS · Apple 芯片** | 命令行发行包 | [上手说明](docs/getting-started-zh.md#macos) |
 | **Linux x86_64** | 命令行发行包 | [上手说明](docs/getting-started-zh.md#linux) |
 
 [查看发行包](https://github.com/finogeeks/finsafe/releases) · [下载版本说明](docs/FAQ-zh.md#为什么下载页只有旧版本)。公开附件目前仍是旧版本，新版 EXE 以上架或正式交付为准；macOS Intel 新包暂缓。
 
-## 看真实录像
+**Windows 用起来就几步：安装 EXE → 首次准备并确认权限 → 在桌面控件中选择 Agent，启动后照常使用。** 日常从控件启动、重新打开，网页只在设置、查记录或排障时使用。[看图操作](docs/WINDOWS-GUIDE-zh.md)。
+
+## 没有沙箱会怎样？看真实录像
 
 **100 窗口风暴：** 普通组桌面被窗口叠压；保护组采用私有桌面，干扰未到达用户桌面。
 
@@ -34,7 +36,7 @@
 
 ## 继续了解
 
-- [Windows 图文使用手册](docs/WINDOWS-GUIDE-zh.md)：安装、安全准备、启动 WorkBuddy／DSH、查看记录。
+- [Windows 图文使用手册](docs/WINDOWS-GUIDE-zh.md)：从控件完成准备、启动和重新打开；需要时查看辅助设置与记录。
 - [技术方案与产品对比](docs/technical-overview-zh.md)：架构图、防护机制、数据流与方案差异。
 - [百炼场完整案例库](https://finsafe-safety-arena.finogeeks.club/#overview)：更多录像、原始请求和独立观测。
 - [常见问题与反馈](docs/FAQ-zh.md) · [版本记录](CHANGELOG.md)。

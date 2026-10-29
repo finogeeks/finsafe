@@ -38,7 +38,7 @@ This expands the inspection service in the architecture. Windows Record mode per
 
 | Platform | Main execution mechanisms | Entry |
 | --- | --- | --- |
-| Windows | AppContainer, ACLs, Job Objects, WFP | EXE, floating entry, Console; current desktop integrations: WorkBuddy/DSH |
+| Windows | AppContainer, ACLs, Job Objects, WFP | EXE and everyday Widget; supporting Console for settings/records; WorkBuddy/DSH |
 | macOS | Seatbelt, controlled egress proxy | CLI; current release target: Apple Silicon |
 | Linux | bubblewrap, seccomp, cgroup, available Landlock | CLI; capability depends on kernel and host authorization |
 
@@ -52,7 +52,7 @@ This compares product scope and integration routes, not an overall security scor
 
 | Option | Execution / entry | Difference and source |
 | --- | --- | --- |
-| **FinShield** | Native Windows; desktop and CLI, WorkBuddy/DSH | Combines execution permissions, PII handling on inspectable requests, and encrypted local retention; see the architecture and [manual](WINDOWS-GUIDE.md) |
+| **FinShield** | Native Windows; Widget and CLI, WorkBuddy/DSH | Combines execution permissions, PII handling on inspectable requests, and encrypted local retention; see the architecture and [manual](WINDOWS-GUIDE.md) |
 | **Anthropic SRT** | CLI/npm library; Windows alpha | Command/application wrapping, filesystem and network controls, programmable proxy; [official documentation](https://github.com/anthropics/sandbox-runtime#windows-alpha) |
 | **Codex** | Native Windows, within Codex workflows | Filesystem/network permissions for commands and children, with separate approvals; MXC and legacy implementations; [official documentation](https://developers.openai.com/codex/windows) |
 | **Microsoft MXC** | Embedded SDK, multiple execution backends | Filesystem, network, and UI policy depend on the selected backend; [official documentation](https://github.com/microsoft/mxc) |

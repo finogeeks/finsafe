@@ -8,9 +8,9 @@ Download the package for your operating system. Windows uses an EXE installer; m
 
 1. Install WorkBuddy or DSH separately. FinShield does not replace the Agent or configure its account.
 2. Download `finsafe-<version>-x64-setup.exe`, double-click it, and follow the wizard. No installation script is needed.
-3. Open FinShield. Review file and network permissions in “安全设置” (Security settings), then complete authorization and security preparation. Windows may request administrator consent.
-4. Confirm installation directories in “智能体管理” (Agent management). WorkBuddy needs its installation directory; DSH needs valid Node.js and DSH directories.
-5. Use FinShield's “安全启动” (Safe start) or floating entry to launch the application. Wait for confirmed running status before starting a task.
+3. Find the desktop Widget. At Not prepared, click its orb and choose Start preparation. Review and authorize permissions in the supporting Console when required; Windows may request administrator consent.
+4. At Agent standby, expand the Widget icons and select WorkBuddy or DSH. If a directory is invalid, correct it in the supporting Console: WorkBuddy needs its directory; DSH needs Node.js and DSH directories.
+5. Click a launchable Agent icon and wait for confirmed running status. Later, click its green-dot icon to reopen the instance. A browser page does not need to stay open for daily use.
 
 Begin with an empty test workspace. Ask the Agent to create `finshield-demo.txt` in an authorized writable directory, write “Test complete”, and read it back. Then use the [Windows guide](WINDOWS-GUIDE.md) to verify read-only and inaccessible directories.
 

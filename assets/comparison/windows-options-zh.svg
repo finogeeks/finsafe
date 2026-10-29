@@ -15,7 +15,7 @@
 <text x="38" y="197" class="product">FinShield</text>
 <text x="228" y="189" class="cell">原生 Windows</text>
 <text x="228" y="215" class="cell">AppContainer</text>
-<text x="498" y="189" class="cell">桌面端＋CLI</text>
+<text x="498" y="189" class="cell">桌面控件＋CLI</text>
 <text x="498" y="215" class="cell">WorkBuddy／DSH</text>
 <text x="758" y="189" class="cell">执行权限、文件与网络</text>
 <text x="758" y="215" class="cell">可检查请求的 PII、本机加密留存</text>

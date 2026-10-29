@@ -15,7 +15,7 @@
 <text x="38" y="197" class="product">FinShield</text>
 <text x="228" y="189" class="cell">Native Windows</text>
 <text x="228" y="215" class="cell">AppContainer</text>
-<text x="498" y="189" class="cell">Desktop + CLI</text>
+<text x="498" y="189" class="cell">Widget + CLI</text>
 <text x="498" y="215" class="cell">WorkBuddy / DSH</text>
 <text x="758" y="189" class="cell">Execution, file and network permissions</text>
 <text x="758" y="215" class="cell">PII checks and encrypted local records</text>

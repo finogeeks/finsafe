@@ -5,7 +5,7 @@
 | 从哪里开始 | 内容 |
 | --- | --- |
 | [快速上手](getting-started-zh.md) | Windows、macOS、Linux 的下载与第一次使用 |
-| [Windows 图文使用手册](WINDOWS-GUIDE-zh.md) | EXE 安装、安全准备、WorkBuddy／DSH、文件权限、敏感信息与真实界面截图 |
+| [Windows 图文使用手册](WINDOWS-GUIDE-zh.md) | 控件准备、选择智能体、启动与重新打开；辅助控制台图文说明 |
 | [技术方案与产品对比](technical-overview-zh.md) | Windows 架构图、防护机制、请求数据流与方案差异 |
 | [常见问题](FAQ-zh.md) | 平台差异、防护范围、下载版本与问题反馈 |
 | [版本记录](../CHANGELOG.md) | 已公开发行版本的变化 |

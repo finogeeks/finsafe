@@ -38,7 +38,7 @@ flowchart LR
 
 | 平台 | 主要执行机制 | 用户入口 |
 | --- | --- | --- |
-| Windows | AppContainer、ACL、Job Object、WFP | EXE、桌面悬浮入口与控制台；当前桌面接入 WorkBuddy／DSH |
+| Windows | AppContainer、ACL、Job Object、WFP | EXE、日常桌面控件；控制台辅助配置与查记录，接入 WorkBuddy／DSH |
 | macOS | Seatbelt、受控出口代理 | 命令行；当前发布 Apple 芯片包 |
 | Linux | bubblewrap、seccomp、cgroup、可用的 Landlock | 命令行；能力随内核和主机授权变化 |
 
@@ -52,7 +52,7 @@ Windows 内容检查与 macOS／Linux Privacy Guard 是不同工作流。案例�
 
 | 方案 | 运行与接入 | 主要差异与来源 |
 | --- | --- | --- |
-| **FinShield** | 原生 Windows；桌面端与 CLI，接入 WorkBuddy／DSH | 将执行权限、可检查请求的 PII 处理和本机加密留存放进同一管理流程；见上方架构与[使用手册](WINDOWS-GUIDE-zh.md) |
+| **FinShield** | 原生 Windows；桌面控件与 CLI，接入 WorkBuddy／DSH | 将执行权限、可检查请求的 PII 处理和本机加密留存放进同一管理流程；见上方架构与[使用手册](WINDOWS-GUIDE-zh.md) |
 | **Anthropic SRT** | CLI 与 npm 库；提供 Windows alpha | 面向命令与应用封装，提供文件、网络及可编程代理控制；[官方说明](https://github.com/anthropics/sandbox-runtime#windows-alpha) |
 | **Codex** | 原生 Windows，围绕 Codex 自身工作流 | 命令和子进程受到文件与网络权限约束，审批单独控制额外访问；支持 MXC 与旧版实现；[官方说明](https://developers.openai.com/codex/windows) |
 | **Microsoft MXC** | 应用嵌入的 SDK，具有多种执行后端 | 文件、网络、UI 控制随后端变化，集成方选择负载与规则；[官方说明](https://github.com/microsoft/mxc) |
