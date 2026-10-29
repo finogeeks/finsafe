@@ -1,10 +1,10 @@
-# FinShield for Windows
+# FinShield Windows illustrated manual
 
 [简体中文](WINDOWS-GUIDE-zh.md) · [Home](../README.md) · [All platforms](getting-started.md)
 
 FinShield adds execution boundaries to AI agents working on your Windows computer. Keep familiar applications and tools, process files within authorized directories, restrict high-risk operations, and review supported model exchanges and sensitive-information findings.
 
-This guide describes the current desktop workflow. Use a matching installer and application version; older public releases may have different controls and capabilities.
+Follow these steps: install → review permissions → safely start an Agent → check files → review records. The four screenshots show the real local FinShield `0.9.97` Console on 2026-10-29, not a prototype. Match your installer and application version; older releases may differ.
 
 ## 1. Download and double-click the EXE
 
@@ -33,6 +33,10 @@ The floating entry shows “待准备” (Not prepared) until preparation is com
 
 Changes to file/network scope require authorization again. Do not repeatedly start an Agent during preparation. Resource limits are configured separately; a tool-task time limit does not cap the full lifetime of a desktop Agent.
 
+![Security settings after authorization](../assets/windows/02-security-settings.jpg)
+
+Figure 1: “已授权” confirms authorization on this machine. Follow this section for first-time authorization. The visible paths, network scope, and resource values are this machine's existing settings, not recommended defaults.
+
 ## 3. Start an Agent through FinShield
 
 ### WorkBuddy
@@ -42,12 +46,20 @@ Changes to file/network scope require authorization again. Do not repeatedly sta
 3. Choose “安全启动” (Safe start), then wait for confirmed running status.
 4. Use FinShield's Open action to return to the running instance.
 
+![WorkBuddy installation directory and Safe start](../assets/windows/03-workbuddy.jpg)
+
+Figure 2: Check the installation directory, then use the blue Safe start button. This is the state before launch; Installed does not mean running under protection.
+
 ### DSH CLI
 
 1. Select DSH CLI in Agent management.
 2. Confirm both Node.js and DSH installation directories. One directory alone is insufficient.
 3. Choose Safe start and wait for the workbench to become ready. Do not submit repeated launches while it is starting.
 4. Reopen the ready workbench through FinShield. Directory edits affect subsequent starts, not the existing instance.
+
+![DSH requires both Node.js and DSH directories](../assets/windows/04-dsh.jpg)
+
+Figure 3: Both directories must be valid. After Safe start, wait for workbench readiness.
 
 The floating entry and Console share the same start/open operations. **Use FinShield to select and start the Agent during daily work.** A separate process launched through its vendor shortcut must not be assumed protected. This guide does not use the old attach-and-intercept-launches workflow.
 
@@ -76,6 +88,14 @@ Use actual tool results and file state as evidence. An Agent's verbal refusal, a
 ## 5. Review sensitive-information checks and records
 
 Open “查看记录” (View records) under “对话与告警” (Conversations and alerts) in an Agent's details. When local retention is enabled, captured requests, responses, and decisions are encrypted on this computer. Approved requests still reach the configured model service; local storage does not mean offline inference.
+
+1. Open View records from the Agent details.
+2. Select the Agent source, enter a task/message keyword, and choose Search.
+3. Select a task on the left to see its messages. Use “仅看告警任务” for tasks with alerts.
+
+![Filter records by Agent and keyword](../assets/windows/05-records.jpg)
+
+Figure 4: A nonmatching sample keyword keeps real conversations out of this public screenshot, so the task list is empty. The top row shows source totals. No tasks or messages were fabricated.
 
 For supported, inspectable Windows model requests:
 

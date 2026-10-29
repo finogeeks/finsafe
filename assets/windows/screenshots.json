@@ -1,0 +1,28 @@
+{
+  "capture_date": "2026-10-29",
+  "product_version": "0.9.97",
+  "os_version": "10.0.22631",
+  "surface": "Real installed product local browser Console",
+  "alterations": "None; full-page browser JPEG captures",
+  "authorization_state": "Already authorized before capture; authorization was not changed",
+  "agent_state": "Installed, not started by this documentation task",
+  "records_filter": "finshield-public-manual-sample-20261029 (no matching tasks)",
+  "files": [
+    {
+      "file": "02-security-settings.jpg",
+      "sha256": "ded115533a64940edb5dab8d7441fde5afd9d5aacda75374febb81892bb6bbb8"
+    },
+    {
+      "file": "03-workbuddy.jpg",
+      "sha256": "97c5616e425e19b33e41436dd7f25b12c28f0477fdb3db62c81bfa35eb07c58c"
+    },
+    {
+      "file": "04-dsh.jpg",
+      "sha256": "2d8d8e1a6c742ac17dac21f9b4f86a618bc827be14056d35a56bc9125519409a"
+    },
+    {
+      "file": "05-records.jpg",
+      "sha256": "7f7d39594008846eabb26719a8ed670833e0767ec3057936c7f585d4c2f5f750"
+    }
+  ]
+}

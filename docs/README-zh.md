@@ -5,7 +5,8 @@
 | 从哪里开始 | 内容 |
 | --- | --- |
 | [快速上手](getting-started-zh.md) | Windows、macOS、Linux 的下载与第一次使用 |
-| [Windows 使用指南](WINDOWS-GUIDE-zh.md) | EXE 安装、安全准备、WorkBuddy／DSH、文件权限、敏感信息与记录 |
+| [Windows 图文使用手册](WINDOWS-GUIDE-zh.md) | EXE 安装、安全准备、WorkBuddy／DSH、文件权限、敏感信息与真实界面截图 |
+| [技术方案与产品对比](technical-overview-zh.md) | Windows 架构图、防护机制、请求数据流与方案差异 |
 | [常见问题](FAQ-zh.md) | 平台差异、防护范围、下载版本与问题反馈 |
 | [版本记录](../CHANGELOG.md) | 已公开发行版本的变化 |
 | [真实案例](https://finsafe-safety-arena.finogeeks.club/#overview) | 对照录像、独立观测和各案例的适用范围 |
