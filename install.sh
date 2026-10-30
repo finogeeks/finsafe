@@ -138,7 +138,12 @@ else
 fi
 
 version_tag="v${VERSION_STRIP}"
-archive_name="finsafe-v${VERSION_STRIP}-${TRIPLE}.tar.zst"
+legacy_archive="finsafe-v${VERSION_STRIP}-${TRIPLE}.tar.zst"
+case "$TRIPLE" in
+  x86_64-unknown-linux-gnu) archive_name="finshield-${VERSION_STRIP}-linux-x64.tar.zst" ;;
+  aarch64-apple-darwin) archive_name="finshield-${VERSION_STRIP}-macos-arm64.tar.zst" ;;
+  *) archive_name="$legacy_archive" ;;
+esac
 inner_dir="finsafe-v${VERSION_STRIP}-${TRIPLE}"
 
 # GitHub "download" URLs for release assets
@@ -155,7 +160,22 @@ trap cleanup_stage INT TERM EXIT
 cd "$stage" || die "could not enter temp directory"
 
 info "downloading ${archive_url}"
-curl -fSL --retry 3 --retry-delay 1 -o "$archive_name" "$archive_url"
+# Old releases use finsafe names. Only a missing branded asset selects that
+# historical name; network failures and other HTTP errors remain failures.
+status="$(curl -sSL --retry 3 --retry-delay 1 -o "$archive_name" --write-out '%{http_code}' "$archive_url")" \
+  || die "archive download failed: $archive_url"
+case "$status" in
+  200) ;;
+  404)
+    [ "$archive_name" != "$legacy_archive" ] || die "release archive not found: $archive_url"
+    rm -f "$archive_name"
+    archive_name="$legacy_archive"
+    archive_url="${base}/${archive_name}"
+    info "downloading historical release ${archive_url}"
+    curl -fSL --retry 3 --retry-delay 1 -o "$archive_name" "$archive_url"
+    ;;
+  *) die "archive download returned HTTP $status: $archive_url" ;;
+esac
 
 if [ "$SKIP_CHECKSUM" = "1" ]; then
   info "WARNING: skipping checksum verification (FINSAFE_INSECURE_SKIP_CHECKSUM=1)"
@@ -239,4 +259,4 @@ fi
 
 info "done"
 info "run \`finsafe init\` to create ~/.config/finsafe/policies/ with seeded example YAML (or clone https://github.com/finogeeks/finsafe for the full examples tree)"
-info "managed fleet and policy authority archives (finsafe-fleet-v*, finsafe-admin-server-v*, finsafe-bundlectl-v*) are on the same GitHub release; see README.md"
+info "FinShield downloads are available for Windows x64, macOS Apple Silicon, and Linux x64"
