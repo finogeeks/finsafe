@@ -2,47 +2,11 @@
 
 **Agent 操作电脑有风险，给它加个沙箱很简单。**
 
-能改文件、执行命令的 Agent，一次误操作或恶意指令就可能让资料、隐私和桌面受到影响。FinShield 为 Agent 加上沙箱，让它在你授权的范围内工作。支持 Windows、macOS 和 Linux；原名 FinSafe，命令仍使用 `finsafe`，发行包统一使用 `finshield` 名称。
+FinShield 为 Agent 加上沙箱，让它在你授权的范围内工作。支持 Windows、macOS 和 Linux。
 
-[English](README.md) · [Windows 图文手册](docs/WINDOWS-GUIDE-zh.md) · [技术方案与产品对比](docs/technical-overview-zh.md) · [百炼场 · 完整案例库](https://finsafe-safety-arena.finogeeks.club/#overview)
+[English](README.md)
 
-## 下载与上手
-
-最新稳定版为 [**FinShield v0.9.102**](https://github.com/finogeeks/finsafe/releases/tag/v0.9.102)。
-
-### Windows：安装助手（推荐）
-
-[**下载 Windows 安装助手 — install-finshield.cmd**](https://github.com/finogeeks/finsafe/releases/latest/download/install-finshield.cmd)
-
-1. 下载 `install-finshield.cmd` 并双击运行。需要联网，无需另下脚本或输入命令。
-2. 助手默认显示英文；输入 **L** 并按 **Enter** 可切换为中文，再按 **Enter** 开始安装。助手会自动下载最新稳定版 Windows 安装包，并校验 SHA-256。
-3. 出现管理员授权窗口时选择“是”，然后按交互式安装向导操作。如提示需要重启，请先保存工作，再重启 Windows。
-
-需要离线安装或指定本版本时，直接下载并运行 [**finshield-0.9.102-x64-setup.exe**](https://github.com/finogeeks/finsafe/releases/download/v0.9.102/finshield-0.9.102-x64-setup.exe)。EXE 已包含安装所需内容，无需另外下载 MSI。安装助手始终选择最新稳定版，即使它是从旧版本 Release 页面下载的。
-
-如果 Windows 智能应用控制拦截安装，助手会提供设置指引，设置变更需由你自行确认。关闭智能应用控制会影响整台电脑的保护，旧版 Windows 可能需要重置或重装系统才能重新启用；安全策略也可能拦截安装助手本身。
-
-**安装完成后：** 按桌面控件提示完成首次准备，确认所需权限，再选择并启动 Agent。日常从控件启动、重新打开，网页用于设置、查记录或排障。[看图操作](docs/WINDOWS-GUIDE-zh.md)。
-
-### macOS 与 Linux
-
-准备好 `curl`、`tar` 和 `zstd`（或支持 `--zstd` 的 `tar`），运行下面的命令安装最新稳定版 CLI：
-
-```sh
-curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh | sh
-```
-
-脚本会识别平台、校验下载文件，默认把 `finsafe` 命令安装到 `~/.local/bin`。环境准备与首次使用见 [macOS 上手说明](docs/getting-started-zh.md#macos)或 [Linux 上手说明](docs/getting-started-zh.md#linux)。macOS Intel 新包仍暂缓发布。
-
-### v0.9.102 手动下载
-
-| 平台 | 下载 | 上手 |
-| --- | --- | --- |
-| **Windows x64** | [离线安装 EXE](https://github.com/finogeeks/finsafe/releases/download/v0.9.102/finshield-0.9.102-x64-setup.exe) | [图文使用手册](docs/WINDOWS-GUIDE-zh.md) |
-| **macOS · Apple 芯片** | [finshield-0.9.102-macos-arm64.tar.zst](https://github.com/finogeeks/finsafe/releases/download/v0.9.102/finshield-0.9.102-macos-arm64.tar.zst) | [上手说明](docs/getting-started-zh.md#macos) |
-| **Linux x86_64** | [finshield-0.9.102-linux-x64.tar.zst](https://github.com/finogeeks/finsafe/releases/download/v0.9.102/finshield-0.9.102-linux-x64.tar.zst) | [上手说明](docs/getting-started-zh.md#linux) |
-
-手动下载后请用 [SHA256SUMS](https://github.com/finogeeks/finsafe/releases/download/v0.9.102/SHA256SUMS) 校验文件；[release.json](https://github.com/finogeeks/finsafe/releases/download/v0.9.102/release.json) 提供下载元数据，这两个文件不是额外的安装包。其他版本见[发行页面](https://github.com/finogeeks/finsafe/releases)。macOS/Linux 归档内部仍保留 `finsafe` 命令与原有目录名称。
+**安装：** Windows [下载安装助手](https://github.com/finogeeks/finsafe/releases/latest/download/install-finshield.cmd)后双击运行；macOS、Linux、离线安装包及详细步骤见[最新 Release](https://github.com/finogeeks/finsafe/releases/latest)。
 
 ## 没有沙箱会怎样？看真实录像
 
