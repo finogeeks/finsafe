@@ -1,4 +1,4 @@
-# Ansible — FinShield managed mode (Linux)
+# Ansible — FinSAFE managed mode (Linux)
 
 **中文：** [ansible-zh.md](./ansible-zh.md)
 

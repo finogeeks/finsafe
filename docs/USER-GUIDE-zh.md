@@ -1,10 +1,10 @@
-# 智安盾用户指南
+# FinSafe 用户指南
 
-本指南面向通过预构建的 **`finsafe` CLI** 在智安盾 **隔离边界内**运行程序或 Broker 的**运维人员与开发者**。完整包装策略字段见 [POLICY-QUICKREF-zh.md](POLICY-QUICKREF-zh.md)（英文：[POLICY-QUICKREF.md](POLICY-QUICKREF.md)）。
+本指南面向通过预构建的 **`finsafe` CLI** 在 FinSafe **隔离边界内**运行程序或 Broker 的**运维人员与开发者**。完整包装策略字段见 [POLICY-QUICKREF-zh.md](POLICY-QUICKREF-zh.md)（英文：[POLICY-QUICKREF.md](POLICY-QUICKREF.md)）。
 
-## 智安盾能做什么
+## FinSafe 能做什么
 
-智安盾约束的是 **代码如何运行**：命名空间、cgroup、seccomp（Linux）、路径限制、macOS 上基于 **Seatbelt** 的配置，以及 Windows 上默认的 **RestrictedToken**（`network: host`）或更强的 **AppContainer** 配置，并提供 **可审计** 的执行结果。它 **不是** 大模型产品本身；智能体决定 **做什么**，智安盾决定 **在什么隔离姿态下执行**。
+FinSafe 约束的是 **代码如何运行**：命名空间、cgroup、seccomp（Linux）、路径限制、macOS 上基于 **Seatbelt** 的配置，以及 Windows 上默认的 **RestrictedToken**（`network: host`）或更强的 **AppContainer** 配置，并提供 **可审计** 的执行结果。它 **不是** 大模型产品本身；智能体决定 **做什么**，FinSafe 决定 **在什么隔离姿态下执行**。
 
 - **CLI (`finsafe`)：** 本地「包装器」入口 —— 短命任务用 **`run`**，常驻交互式 Broker 用 **`self-confine`**。
 - **服务端多租户**调度与准入由**单独的执行平台**承担（不在本仓库说明范围内）。多数本地场景只需 CLI + 包装策略 YAML。
@@ -68,13 +68,13 @@ finsafe doctor
 - **`macos_seatbelt.deny_outbound_ports`**（可选，macOS）：在 **`network: host`** 时按端口拒绝出站 TCP。
 - **`resources`：** 内存、pids、CPU 字符串（按平台能力执行）；短命 **`run`** 可用 **`timeout_ms`** 限制墙上时钟。
 
-**可选的 `filesystem` 编译项：** Linux/macOS 可能合并默认受保护子目录和内置 deny-read。Windows 只使用选定 effective YAML（包括显式 **`deny_read_paths`**），以及 AppContainer Temp 这一运行环境需求。**`deny_read_paths` 与 `read_only_paths` 不同** — deny-read 在可写范围内禁止读；只读路径是授权。详见 [POLICY-QUICKREF-zh.md](POLICY-QUICKREF-zh.md)。
+**可选的 `filesystem` 编译项：** 包装器可能合并默认可写根下的受保护子目录（`.git` / `.finsafe`），在 Linux/macOS/Windows 上应用 **内置 deny-read**（例如工作区下的 `.env`、`$HOME` 下的 `.ssh`，除非 `skip_default_deny_read: true`），并支持显式 **`deny_read_paths`** 与 **`deny_write_globs`**（旧键名 `deny_read_globs` 仍可用）。**`deny_read_paths` 与 `read_only_paths` 不同** — deny-read 在可写范围内禁止读；只读路径是授权。YAML 可不写这些键，但受支持桌面平台的舰队升级仍会带上发行版内置默认项，除非显式关闭。详见 [POLICY-QUICKREF-zh.md](POLICY-QUICKREF-zh.md)。
 
 ---
 
 ## 命令行如何指定策略
 
-智安盾支持多种策略输入形态；**多数本地运维只需「包装策略」**（`kind: local-wrapper`）。
+FinSafe 支持多种策略输入形态；**多数本地运维只需「包装策略」**（`kind: local-wrapper`）。
 
 ### 1. 包装策略（推荐）
 
@@ -119,8 +119,6 @@ finsafe --host-profile linux-desktop-isolated self-confine -- ./my-broker
 finsafe --host-profile mac-seatbelt self-confine -- ./my-broker
 ```
 
-在 Windows 上，交互式 broker 直接共用你正在输入的控制台。Ctrl+C 交给 broker，不会结束智安盾。Ctrl+Break 结束整个会话。只有嵌入式宿主需要智安盾自己充当终端时，才设置 `FINSAFE_WIN_PTY_MODE=live`。本机没有 ConPTY 时，该设置会报错退出，而不会退回到更弱的管道模式。
-
 内置姿态包括 **`windows-desktop-isolated`**、**`linux-desktop-isolated`**、**`mac-seatbelt`**、**`windows-managed`**。默认可写根目录：Windows 为 **`./workspace`**，Linux/macOS 为 **`./workspace-sc`**（相对启动 cwd）。**`--json`** 会输出 **`resolved_host_profile`**、**`selected_backend`** 等字段。
 
 ### 2. 高层意图策略
@@ -145,8 +143,8 @@ finsafe run --high-level <PATH> -- <program> [参数...]
 
 | 子命令 | 适用场景 | 机制 |
 |--------|----------|------|
-| **`run`** | 可自然结束的任务（脚本、编译、一次性 CLI 查询等）。 | 智安盾 **启动子进程**并对其施加约束。 |
-| **`self-confine`** | 长期占用终端的 Broker（交互 REPL/TUI）。 | 智安盾 **先对自身施加约束**，再 **`execve`** 替换为 Broker 镜像，**终端仍由 Broker 占用**。 |
+| **`run`** | 可自然结束的任务（脚本、编译、一次性 CLI 查询等）。 | FinSafe **启动子进程**并对其施加约束。 |
+| **`self-confine`** | 长期占用终端的 Broker（交互 REPL/TUI）。 | FinSafe **先对自身施加约束**，再 **`execve`** 替换为 Broker 镜像，**终端仍由 Broker 占用**。 |
 
 **不要随意对调：** Broker 用 `run` 会破坏交互 IO；脚本滥用 `self-confine` 会偏离正确的生命周期与审计形态。
 

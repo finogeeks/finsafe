@@ -2,7 +2,7 @@
 
 **中文：** [vendor-neutral-checklist-zh.md](./vendor-neutral-checklist-zh.md)
 
-FinShield managed mode does **not** depend on a specific MDM product. Any tool—or manual IT process—that can install root-owned files, keep a system daemon running, and run a one-time script is sufficient.
+FinSAFE managed mode does **not** depend on a specific MDM product. Any tool—or manual IT process—that can install root-owned files, keep a system daemon running, and run a one-time script is sufficient.
 
 Use this checklist when your customer uses **Ansible, Chef, Puppet, Kandji, Workspace ONE, golden images, SSH + scripts**, or internal packaging only.
 
@@ -134,7 +134,7 @@ Example scripts (adapt parameter names to your tool):
 
 - **Windows group matching:** Windows managed mode currently reports an empty supplementary group list to policy binding; prefer explicit device, user, or OS-scoped assignments until Windows group resolution is added.
 - **Local admin adversary**: can remove sentinel/agent; needs MDM lockdown + monitoring, not software alone.
-- **Non-FinShield launches**: users can still run binaries without `finsafe run` unless you block separately.
+- **Non-FinSAFE launches**: users can still run binaries without `finsafe run` unless you block separately.
 
 ---
 

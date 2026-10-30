@@ -1,6 +1,6 @@
 # MDM deployment (managed mode)
 
-Ship FinShield to fleet machines and enforce managed mode via MDM or config management.
+Ship FinSAFE to fleet machines and enforce managed mode via MDM or config management.
 
 ## Documentation
 
@@ -9,7 +9,7 @@ Ship FinShield to fleet machines and enforce managed mode via MDM or config mana
 | Document | Description |
 |----------|-------------|
 | [Endpoint deployment options](../docs/endpoint-deployment-options.md) · [中文](../docs/endpoint-deployment-options-zh.md) | **Choose your path** — Jamf, Intune, Ansible, image, SSH, or central-only |
-| [Vendor-neutral checklist](../docs/mdm/vendor-neutral-checklist.md) · [中文](../docs/mdm/vendor-neutral-checklist-zh.md) | **No Jamf/Intune** — map any MDM or config tool to FinShield steps |
+| [Vendor-neutral checklist](../docs/mdm/vendor-neutral-checklist.md) · [中文](../docs/mdm/vendor-neutral-checklist-zh.md) | **No Jamf/Intune** — map any MDM or config tool to FinSAFE steps |
 | [Enterprise deployment runbook](../docs/enterprise-deployment-runbook.md) · [中文](../docs/enterprise-deployment-runbook-zh.md) | End-to-end IT runbook (phases A–E, rollback, checklist) |
 | [Managed mode reference](../docs/managed-mode.md) · [中文](../docs/managed-mode-zh.md) | Architecture, paths, CLI errors |
 | [Jamf playbook](../docs/mdm/jamf.md) · [中文](../docs/mdm/jamf-zh.md) | macOS + Jamf Pro |

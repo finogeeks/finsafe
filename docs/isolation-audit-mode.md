@@ -1,6 +1,6 @@
 # Isolation audit mode (`--audit`)
 
-FinShield uses different kernel mechanisms on Linux, macOS, and Windows. The portable concept is **audit mode**: load the selected reviewed profile, collect isolation-miss evidence, and print remediation hints without weakening enforcement (except Linux seccomp, which may log instead of kill).
+FinSAFE uses different kernel mechanisms on Linux, macOS, and Windows. The portable concept is **audit mode**: load the selected reviewed profile, collect isolation-miss evidence, and print remediation hints without weakening enforcement (except Linux seccomp, which may log instead of kill).
 
 Enable with global **`finsafe --audit`** before `run` or `self-confine`:
 
@@ -22,7 +22,7 @@ On macOS and Windows the wrapped command may still exit non-zero on the first de
 
 ## JSON stdout contract
 
-With **`--json`**, FinShield prints **exactly one JSON document on stdout** and it **must be the last line**. Human text and audit hints go to **stderr**. Save an envelope for `finsafe explain`:
+With **`--json`**, FinSAFE prints **exactly one JSON document on stdout** and it **must be the last line**. Human text and audit hints go to **stderr**. Save an envelope for `finsafe explain`:
 
 ```bash
 finsafe --policy my-agent.yaml run --json -- my-agent --print "hello" 2>audit.stderr \

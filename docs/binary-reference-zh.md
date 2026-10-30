@@ -1,8 +1,8 @@
-# 智安盾二进制参考（管理员）
+# FinSAFE 二进制参考（管理员）
 
 **English:** [binary-reference.md](./binary-reference.md)
 
-本文列出智安盾部署中**面向运维的二进制**、各自所在的发行包，以及需要安装的主机类型。请结合 [authority-deployment-zh.md](./authority-deployment-zh.md)（Policy Authority 与许可证）和 [enterprise-deployment-runbook-zh.md](./enterprise-deployment-runbook-zh.md)（舰队分阶段上线）使用。
+本文列出 FinSAFE 部署中**面向运维的二进制**、各自所在的发行包，以及需要安装的主机类型。请结合 [authority-deployment-zh.md](./authority-deployment-zh.md)（Policy Authority 与许可证）和 [enterprise-deployment-runbook-zh.md](./enterprise-deployment-runbook-zh.md)（舰队分阶段上线）使用。
 
 ---
 
@@ -131,7 +131,7 @@ CI 按发行包族校验：个人 **`finsafe-v*`** 不得含 agent/authority；*
 
 ## 不随舰队交付的工作区二进制
 
-以下存在于智安盾源码树，供适配器、测试或内部工具使用。**托管模式上线无需安装：**
+以下存在于 FinSAFE 源码树，供适配器、测试或内部工具使用。**托管模式上线无需安装：**
 
 | 二进制 / crate | 角色 |
 |----------------|------|

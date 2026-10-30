@@ -1,14 +1,14 @@
 ---
 name: finsafe-enterprise-setup
 description: >-
-  Self-contained guide for enterprise IT to deploy FinShield managed mode from GitHub
+  Self-contained guide for enterprise IT to deploy FinSAFE managed mode from GitHub
   releases only: Policy Authority, Finogeeks license.jws, finsafe-bundlectl bundles,
   MDM fleet rollout, and pilot verification. Use when setting up managed fleet,
   authority host, commercial license install, or enterprise deployment without the
   a Rust toolchain from source.
 ---
 
-# FinShield enterprise setup (managed fleet)
+# FinSAFE enterprise setup (managed fleet)
 
 Guide for AI agents helping **customer IT / platform engineering** deploy **managed mode** using only:
 
@@ -60,7 +60,7 @@ Full license install details: [authority-deployment §2.1](https://github.com/fi
 
 ## Phase 1 — Download release binaries
 
-Open [FinShield Releases](https://github.com/finogeeks/finsafe/releases), verify **`SHA256SUMS`**, extract.
+Open [FinSAFE Releases](https://github.com/finogeeks/finsafe/releases), verify **`SHA256SUMS`**, extract.
 
 | Archive | Install on |
 |---------|------------|

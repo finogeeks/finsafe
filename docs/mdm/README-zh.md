@@ -1,8 +1,8 @@
 # MDM 部署手册
 
-在舰队机器上分发智安盾并强制托管模式的平台专项步骤。
+在舰队机器上分发 FinSAFE 并强制托管模式的平台专项步骤。
 
-**快速了解 MDM 如何与智安盾结合：** [产品一页纸 · MDM 章节](../product-one-pager-zh.md#mdm分发安装与托管模式结合)（中央 vs 终端分工、交付清单、上线顺序）。
+**快速了解 MDM 如何与 FinSAFE 结合：** [产品一页纸 · MDM 章节](../product-one-pager-zh.md#mdm分发安装与托管模式结合)（中央 vs 终端分工、交付清单、上线顺序）。
 
 建议先阅读 **[企业 IT 全景](../enterprise-it-overview-zh.md)**，再执行 [企业部署手册](../enterprise-deployment-runbook-zh.md)。
 

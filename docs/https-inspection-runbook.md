@@ -2,7 +2,7 @@
 
 **中文：** [https-inspection-runbook-zh.md](./https-inspection-runbook-zh.md)
 
-End-to-end guide for enterprise operators enabling **TLS termination** at the FinShield egress proxy (often called HTTPS inspection or MITM). This decrypts HTTPS inside the sandbox egress path for domain allowlists, L7 decisions, and richer `proxy_egress` audit (`tls_terminated`, method, path).
+End-to-end guide for enterprise operators enabling **TLS termination** at the FinSAFE egress proxy (often called HTTPS inspection or MITM). This decrypts HTTPS inside the sandbox egress path for domain allowlists, L7 decisions, and richer `proxy_egress` audit (`tls_terminated`, method, path).
 
 **Start with allowlist only (no MITM)?** Use [network-allowlist-proxy-runbook.md](./network-allowlist-proxy-runbook.md) first — personal CLI, no commercial license.
 
@@ -203,6 +203,6 @@ See [POLICY-QUICKREF.md](./POLICY-QUICKREF.md) — **TLS inspection (MITM) opera
 1. Generate new CA (`POST /v1/admin/mitm/ca` — confirm product behavior for overwrite; plan maintenance window).
 2. Publish a **new bundle version** with `tls_terminate: true`.
 3. Roll out bundle; agents refresh `inspection_ca_cert_pem`.
-4. Redeploy trust to any tools that pin the old inspection CA outside FinShield.
+4. Redeploy trust to any tools that pin the old inspection CA outside FinSAFE.
 
 Coordinate with Finogeeks support before rotating production CAs.

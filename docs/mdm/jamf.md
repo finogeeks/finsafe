@@ -1,4 +1,4 @@
-# Jamf Pro — FinShield managed mode
+# Jamf Pro — FinSAFE managed mode
 
 **中文：** [jamf-zh.md](./jamf-zh.md)
 
@@ -150,9 +150,9 @@ Remove enrollment policy from scope or mark machine complete in Jamf group.
 
 | Group | Criteria |
 |-------|----------|
-| FinShield — Not enrolled | Extension Attribute `enrolled.json` missing |
-| FinShield — Managed active | File exists `/etc/finsafe/enrolled.json` AND daemon running |
-| FinShield — Pilot | Static subset for bundle canary |
+| FinSAFE — Not enrolled | Extension Attribute `enrolled.json` missing |
+| FinSAFE — Managed active | File exists `/etc/finsafe/enrolled.json` AND daemon running |
+| FinSAFE — Pilot | Static subset for bundle canary |
 
 **Extension Attribute example** (script):
 

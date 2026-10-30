@@ -2,7 +2,7 @@
 
 **English:** [endpoint-deployment-options.md](./endpoint-deployment-options.md)
 
-本文帮助企业在员工桌面上**选择** 智安盾托管模式的落地方式。智安盾 **不依赖** Jamf、Intune 或任何特定 MDM；文档中的厂商名称仅为常见示例。
+本文帮助企业在员工桌面上**选择** FinSAFE 托管模式的落地方式。FinSAFE **不依赖** Jamf、Intune 或任何特定 MDM；文档中的厂商名称仅为常见示例。
 
 **IT 推荐阅读顺序：**
 
@@ -16,7 +16,7 @@
 
 ## 1. 选择运营模式
 
-| 模式 | 策略执行位置 | 典型终端管控 | 智安盾组件 |
+| 模式 | 策略执行位置 | 典型终端管控 | FinSAFE 组件 |
 |------|--------------|--------------|--------------|
 | **托管桌面（分布式 Agent 推荐）** | 员工 Mac/Linux 本机 | 安装 `finsafe` + `finsafe-agent` + 哨兵 + 注册 | Policy Authority + 舰队包 + MDM **或等价手段** |
 | **仅中心执行** | 数据中心 / Kubernetes | 用户笔记本不装 Agent | `finsafe-server`（见 [product-one-pager-zh.md](./product-one-pager-zh.md)）；客户端走 HTTPS API |

@@ -1,13 +1,11 @@
-# FinShield product one-pager (enterprise IT)
-
-**FinShield (formerly FinSAFE)** is the product brand. The full Chinese name is **智能体安全盾**, shortened to **智安盾**; the combined name is **FinShield（智安盾）**. The `finsafe` command, existing identifiers, configuration, installation paths, download URLs, and release filenames stay unchanged.
+# FinSAFE product one-pager (enterprise IT)
 
 **Audience:** IT leaders, security architects, platform and endpoint engineers  
 **Full Chinese version:** [product-one-pager-zh.md](./product-one-pager-zh.md)
 
 ## In one sentence
 
-**FinShield is a multi-tenant secure execution substrate for AI agent workloads** — OS-native sandboxing (Linux / macOS) turns each tool call or code run into a policy-bound, schedulable, auditable **execution unit**. Deploy on **employee desktops (edge)** or in **datacenter / Kubernetes (central)** to offer **Sandbox-as-a-Service**.
+**FinSAFE is a multi-tenant secure execution substrate for AI agent workloads** — OS-native sandboxing (Linux / macOS) turns each tool call or code run into a policy-bound, schedulable, auditable **execution unit**. Deploy on **employee desktops (edge)** or in **datacenter / Kubernetes (central)** to offer **Sandbox-as-a-Service**.
 
 ## Platform layers (implemented in the monorepo)
 
@@ -16,7 +14,7 @@ Control plane (tenants, policies, quotas, audit, approvals)
         ↓
 Execution Scheduler + Policy Router  (finsafe-scheduler, finsafe-policy)
         ↓
-FinShield runtime / API              (finsafe-server — POST /v1/executions, OpenAPI)
+FinSAFE runtime / API              (finsafe-server — POST /v1/executions, OpenAPI)
         ↓
 Per-execution sandbox              (bwrap, cgroup, Landlock, seccomp; macOS Seatbelt)
 ```
@@ -34,14 +32,14 @@ CLI can target a remote server: `finsafe run --high-level policy.yaml --server h
 
 ## vs Docker / MicroVM / WASM / e2b / Daytona
 
-| | FinShield | Typical alternative |
+| | FinSAFE | Typical alternative |
 |---|---------|---------------------|
 | **Model** | Policy-compiled **per execution** on native Linux/macOS sandbox | Docker: long-lived containers; MicroVM: VM per task; e2b/Daytona: vendor-hosted cloud sandboxes |
 | **Multi-tenant** | Built-in scheduler admission, queues, rate limits | Often roll-your-own on top of K8s or use SaaS |
 | **Desktop data residency** | Strong story with managed edge mode | Cloud sandboxes move code/data to provider |
 | **Strongest isolation** | Shared-kernel sandbox — add MicroVM outer layer for hostile tenants | MicroVM / dedicated cloud isolation |
 
-**Rule of thumb:** vendor-managed remote dev sandboxes → e2b / Daytona; **self-hosted agent execution plane** → FinShield central; **local agents with fleet policy** → FinShield edge + managed mode; **untrusted kernel-level adversaries** → MicroVM outside FinShield.
+**Rule of thumb:** vendor-managed remote dev sandboxes → e2b / Daytona; **self-hosted agent execution plane** → FinSAFE central; **local agents with fleet policy** → FinSAFE edge + managed mode; **untrusted kernel-level adversaries** → MicroVM outside FinSAFE.
 
 ## MDM distribution (edge / managed fleet)
 

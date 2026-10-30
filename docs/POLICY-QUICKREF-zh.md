@@ -1,7 +1,5 @@
 # 包装策略速查（`kind: local-wrapper`）
 
-本页的 Privacy Guard、SOCKS 和检测器等级说明适用于 Linux、macOS。Windows 保留 trial 的内容检查与加解密实现，不支持 Privacy Guard 策略字段。
-
 运维通过 **`finsafe --policy`** 传入 **包装策略** YAML。本文汇总 **Stage 1** 字段。CLI 会将其编译为与主机相关的执行配置；**通常不需要**手写内部执行层 JSON。
 
 English: [POLICY-QUICKREF.md](POLICY-QUICKREF.md)
@@ -47,29 +45,25 @@ filesystem:
 | `audit.require_policy_digest` | 若审计信封中未记录包装策略摘要，则拒绝启动。 |
 | `audit.require_resolved_posture` | 若未记录解析后的主机姿态，则拒绝启动。 |
 | `stdio.mode` | 子进程标准 IO，用于 **`run`**：`capture`、`inherit`、`null` 或 `pty`。文本模式运行通常受此控制；`--json` 往往在未覆盖时偏向 capture。在 **Linux** 上，**`pty`** 会分配虚拟伪终端，使在沙箱内打开 **`/dev/tty`** 的工具（如 `vim`、`less`、密码提示或 Git 钩子）可正常工作，且无需直通宿主机 TTY。单次覆盖：**`finsafe run --stdio pty`**。Linux 上 **`inherit`** 不会在 bubblewrap 内提供 controlling terminal。 |
-| `macos_seatbelt.deny_outbound_ports` | 可选：在 `network: host` 时于 Seatbelt 配置中按 **TCP 端口** 拒绝出站（粗粒度；非按域名）。**仅 macOS。** Linux/Windows 上 `finsafe run` 若出现该字段会在编译期失败关闭（#223）；请改用 `network: none` 或 allowlist + 代理。**失败模式：** 在 `network: host` 上叠加按端口 deny 时，可能立即失败（`EPERM`），也可能一直等到客户端 TCP 超时，取决于具体网络栈；部分 agent 会挂起而不给出明确错误。务必配合 `resources.timeout_ms`，以便智安盾终止子进程。若需完全网络隔离，优先使用 `network: none`（在 socket/DNS 系统调用层拒绝，通常较快失败）。 |
-| `macos_seatbelt.allow_local_binding` | 在 **macOS** 上与 `network: none` 合用且为 `true` 时，Seatbelt 仅允许环回 TCP 的 bind/inbound/outbound（`127.0.0.1:*` / `localhost:*`），便于本机 broker 监听且无外网出站。不是 restricted-egress（无 `*:*` bind / 代理）。**Linux：** 不强制（仅警告）。**Windows：** 不经由该字段生效。 |
-| `local_model_endpoints` | 可选列表（最多 8 条）环回 `host:port`（`127.0.0.1:11434`、`[::1]:1234`、`localhost:8080`），使 `network: none`、以及强制代理的 `host`+privacy_guard（`host_via_proxy`）/`allowlist` 下的 agent 可访问本机模型（Ollama/LM Studio）。端口不可为 0，且不得落在智安盾代理区间 `60080–60089`。**macOS：** 在 none deny 之后仅放行这些端口的出站。**Linux：** 私有 netns + 主机固定目的地转发。**Windows：** 不支持此 main 专用字段。审计事件 `local_model_forward`（仅端口/字节/耗时，无 payload）。 |
+| `macos_seatbelt.deny_outbound_ports` | 可选：在 `network: host` 时于 Seatbelt 配置中按 **TCP 端口** 拒绝出站（粗粒度；非按域名）。**仅 macOS。** Linux/Windows 上 `finsafe run` 若出现该字段会在编译期失败关闭（#223）；请改用 `network: none` 或 allowlist + 代理。**失败模式：** 在 `network: host` 上叠加按端口 deny 时，可能立即失败（`EPERM`），也可能一直等到客户端 TCP 超时，取决于具体网络栈；部分 agent 会挂起而不给出明确错误。务必配合 `resources.timeout_ms`，以便 FinSAFE 终止子进程。若需完全网络隔离，优先使用 `network: none`（在 socket/DNS 系统调用层拒绝，通常较快失败）。 |
 | `network` | `none` 或 `host`（Stage 1）。 |
 | `resources.memory_max` / `pids_max` / `cpu_max` | 在 Linux 严格栈下为 cgroup v2 风格的资源字符串。 |
 | `resources.timeout_ms` | 可选：**`run`** 调用的墙上时钟上限。 |
 | `filesystem.read_only_paths` | 只读范围（在支持处参与挂载 / Landlock 只读层）。**仅在 `finsafe run` 编译策略时宿主机上已存在的路径**会生效；缺失项会被省略并在派生日志中记录（`read_only landlock skipped (path missing)`）。 |
 | `filesystem.read_write_paths` | 可写范围。与 `read_only_paths` 相同：**编译时须已存在**；缺失项会被省略（`read_write landlock skipped (path missing)`）。同一次运行中事后 `mkdir` 不会自动加入，须在路径存在后重新执行 `finsafe run`。 |
 | `filesystem.protected_read_only_paths` | 可选：在可写根下额外强制 **只读** 的路径（雕刻）。相对路径相对 **进程工作目录** 解析。 |
-| `filesystem.skip_default_protected_paths` | Linux/macOS 默认 `false`：若磁盘上存在，编译器可能在每个 `read_write_paths` 条目下合并 `.git` / `.finsafe`。Windows 不添加这类编译器默认项。 |
-| `filesystem.deny_read_paths` | 显式路径（或受限 glob），在可写根下 **禁止读取** — 例如允许 `./workspace` 但拒绝 `./workspace/.env`。编译为独立的 `deny_read_paths` 层（不是 `read_only_paths`）。Linux/macOS 隔离配置默认合并内置 deny-read，除非 `skip_default_deny_read: true`；Windows 只使用选定 effective YAML 中的规则。含 `*`、`?`、`[`、`{` 的 glob 仅在 `read_write_paths` 下展开；**语法无效或零匹配会使策略编译失败**，除非 `skip_deny_read_glob_fail_closed: true`。**Unix 套接字**（如 `docker.sock`）在 Linux 上通过该层（bwrap `/dev/null` 覆盖）阻断，在 macOS 上通过 Seatbelt `unix-socket` 规则阻断——不能仅靠 `read_only_paths` 或 Landlock。 |
+| `filesystem.skip_default_protected_paths` | 默认 `false`：若磁盘上存在，编译器可能在每个 `read_write_paths` 条目下合并 `.git` / `.finsafe`。设为 `true` 则跳过该合并。 |
+| `filesystem.deny_read_paths` | 显式路径（或受限 glob），在可写根下 **禁止读取** — 例如允许 `./workspace` 但拒绝 `./workspace/.env`。编译为独立的 `deny_read_paths` 层（不是 `read_only_paths`）。Linux/macOS 隔离配置与 Windows 隔离/托管配置默认合并内置 deny-read，除非 `skip_default_deny_read: true`。含 `*`、`?`、`[`、`{` 的 glob 仅在 `read_write_paths` 下展开；**语法无效或零匹配会使策略编译失败**，除非 `skip_deny_read_glob_fail_closed: true`。**Unix 套接字**（如 `docker.sock`）在 Linux 上通过该层（bwrap `/dev/null` 覆盖）阻断，在 macOS 上通过 Seatbelt `unix-socket` 规则阻断——不能仅靠 `read_only_paths` 或 Landlock。 |
 | `filesystem.allow_unix_socket_paths` | 从内置敏感套接字 deny 中 **豁免** 的主机 Unix 套接字路径（Docker/containerd/podman API）。不会移除显式 `deny_read_paths`。仅当产品有意在沙箱内驱动本地容器运行时时使用。 |
 | `filesystem.deny_write_globs` | Glob 列表（`*.ext`、`**/*.ext` 等），经有界 `globset` 展开为额外只读项（禁止写入）。旧键名 `deny_read_globs` 仍可作为别名接受。 |
-| `filesystem.skip_default_deny_read` | 为 `true` 时，在 Linux/macOS 隔离配置中跳过内置 deny-read 路径。Windows 没有编译器追加的 deny-read 默认项。 |
+| `filesystem.skip_default_deny_read` | 为 `true` 时，在 Linux/macOS 隔离配置与 Windows 隔离/托管配置中跳过内置 deny-read 路径。 |
 | `filesystem.glob_scan_max_depth` | 展开 deny 相关 glob 时的最大目录深度（省略时编译器默认 `8`）。 |
 | `filesystem.skip_deny_read_glob_fail_closed` | 为 `true` 时，允许无效或在可写根下零匹配的 deny-read glob（迁移开关）。默认 `false`（失败即关闭）。 |
 | `filesystem.toolchains` | 可选的**命名预设**列表（`homebrew`、`npm-global`、`cargo` 等），定义于 `toolchain-defaults.yaml`。通过 **`--host-profile`** 构建时，每个名称会在模板之后、运维 YAML 覆盖之前**追加** `read_write_paths` / `read_only_paths`。可重复 CLI 参数：`--toolchain <name>`。**v1 仅支持 self-confine**。内置 deny-read 仍生效；预设授予真实写入权限（非日志抑制）。`homebrew` 预设范围**较宽**（`/opt/homebrew`、`/usr/local`），因 formula 安装脚本会在这些路径执行——更严格场景请用更窄的显式 `read_write_paths`。示例：[`brew-self-confine.yaml`](../../examples/wrapper-policies/brew-self-confine.yaml)。 |
 | `network`（allowlist） | YAML：`network: !allowlist`，其下 `domains: [example.com]`（**必须用 YAML 标签写法**；`network:` 下直接嵌套 map 无法解析）。启动时需出口代理（个人/本地用 `start_internal_proxy: true`；托管/SaaS 可用 `finsafe-net-proxy` + `proxy_cell`）；有效网络模式为 `allowlist`。**怎么跑：** [network-allowlist-proxy-runbook-zh.md](./network-allowlist-proxy-runbook-zh.md)。 |
 | `tls_terminate` | 为 `true` 时（wrapper 根或 `network.tls_terminate`），出口代理**解密 HTTPS** 以做 L7 过滤与更丰富的 `proxy_egress` 审计（`tls_terminated`、method/path）。需要 Authority 商业许可证 **`mitm_tls_terminate`**、已发布 bundle 中嵌入的 **inspection CA**（`inspection_ca_cert_pem`），以及 Agent 在托管缓存中安装的检查 CA。子进程会收到指向该证书的信任库环境变量（`SSL_CERT_FILE`、`CURL_CA_BUNDLE`、`NODE_EXTRA_CA_CERTS` 等）。**合规：**须告知用户 HTTPS 被检查。 |
-| `start_internal_proxy` | 为 `true` 时，`finsafe run` / `finsafe self-confine` 可在 **`127.0.0.1:60080`** 启动内置回环正向代理（与 Windows WFP `permit-loopback` 端口范围一致），无需单独 UDS `finsafe-net-proxy`。与 `network: allowlist` 配合实现域名受限出口。可选 `tls_terminate: true` 叠加 HTTPS 检查（需许可证）— 见 [https-inspection-runbook-zh.md](./https-inspection-runbook-zh.md)。在 `network: host` 上启用 privacy guard 时，智安盾强制走有效模式 `host_via_proxy`（allowlist/`*`）。 |
-| 隐私防护 | 可选的推理前 PII 过滤。包装策略 YAML 使用顶层扁平字段 `privacy_guard`；High-level 策略 YAML 使用 `network.privacy_guard`。两者默认关闭，除非显式启用；受保护 Agent 命令默认启用，除非显式关闭。在 `network: host` 下会强制全代理 TLS 检查（`host_via_proxy`）。`no_decrypt` 排除项会降低内容覆盖范围。准备与验证方式见[隐私防护指南](./privacy-guard-zh.md)。 |
-| **SOCKS5 / SSH** | 内置代理还可在智安盾回环端口范围监听 SOCKS5 **CONNECT**（拒绝 `BIND` / `UDP ASSOCIATE`）。启用 SOCKS 时子进程环境含 `ALL_PROXY=socks5h://127.0.0.1:<socks_port>`（HTTP(S)_PROXY 不变）。经 SOCKS 使用 OpenSSH：`ssh -o ProxyCommand='nc -x 127.0.0.1:<socks_port> %h %p' user@host`。SSH 不做内容检查（不透明 / C4）。 |
-| **父级企业代理（试点）** | 子进程仍只连回环智安盾代理；出口经 **CONNECT 链**到企业网关。凭证不进 bundle：环境变量 `FINSAFE_PARENT_PROXY_URL`、`FINSAFE_PARENT_PROXY_NO_PROXY`（逗号分隔）。设计见 [parent-proxy.md](../../../docs/design/parent-proxy.md)。 |
+| `start_internal_proxy` | 为 `true` 时，`finsafe run` / `finsafe self-confine` 可在 **`127.0.0.1:60080`** 启动内置回环正向代理（与 Windows WFP `permit-loopback` 端口范围一致），无需单独 UDS `finsafe-net-proxy`。与 `network: allowlist` 配合实现域名受限出口。可选 `tls_terminate: true` 叠加 HTTPS 检查（需许可证）— 见 [https-inspection-runbook-zh.md](./https-inspection-runbook-zh.md)。 |
+| **父级企业代理（试点）** | 子进程仍只连回环 FinSAFE 代理；出口经 **CONNECT 链**到企业网关。凭证不进 bundle：环境变量 `FINSAFE_PARENT_PROXY_URL`、`FINSAFE_PARENT_PROXY_NO_PROXY`（逗号分隔）。设计见 [parent-proxy.md](../../../docs/design/parent-proxy.md)。 |
 
 ### TLS 检查（MITM）运维说明
 
@@ -81,9 +75,9 @@ filesystem:
 | **开发/实验** | 代理主机可设 `FINSAFE_LICENSE_MITM=1` 跳过许可证检查。`start_internal_proxy` 可选稳定 CA：`FINSAFE_MITM_CA_CERT_PATH` + `FINSAFE_MITM_CA_KEY_PATH`。curl/openssl 探测可设 `FINSAFE_MITM_FORCE_TERMINATE=1`。 |
 | **审计 schema** | 终止 TLS 的流量使用 `proxy_egress` schema **3**；不透明 CONNECT 隧道仍为 **2**。 |
 
-### 内置文件系统默认项（Linux/macOS）
+### 内置文件系统默认项（Linux/macOS/Windows）
 
-在未设置 `skip_default_deny_read: true` 且未设置 `skip_default_protected_paths: true` 时，**Linux/macOS 隔离**配置会合并随发行版附带的默认规则。Windows 文件系统权限只来自已 prepare 的 effective YAML，不会由编译器追加 `.env`、凭据目录、`.git` 或 `.finsafe` 条款。
+在未设置 `skip_default_deny_read: true` 且未设置 `skip_default_protected_paths: true` 时，**Linux/macOS 隔离**与 **Windows 隔离/托管**配置会合并随发行版附带的默认规则（与策略 YAML 无关）：
 
 | 类别 | 典型路径（摘要） |
 |------|------------------|
@@ -105,7 +99,7 @@ filesystem:
 
 | 后端 | 证明字段 | 何时选用 | 隔离摘要 |
 |------|----------|----------|----------|
-| **RestrictedToken** | `windows_restricted_token`，`degraded_execution=true` | **Auto** + `network: host` + YAML `deny_read_paths` 为空，或显式 `windows.backend: restricted_token` | `CreateRestrictedToken` + **WRITE_RESTRICTED**：**读**基本保留用户身份（整机可读）；**写**默认拒绝，仅 `read_write_paths`（+ cwd）经 capability ACE 放行，**除非** `windows.msys2_child_ipc: true`（子进程 Git-for-Windows/MSYS2 bash / 公开 #34 — 操作者 SID 进入 restricting SID，该会话对用户已拥有 NTFS **不做**写白名单）。仍有 Job Object。无 LowBox、不对 `venv`/`node_modules` 递归打 ACL、**无需 ProjFS**。Windows 没有隐藏的 deny-read 默认项，该后端也不执行显式 deny-read 规则。 |
+| **RestrictedToken** | `windows_restricted_token`，`degraded_execution=true` | **Auto** + `network: host` + YAML `deny_read_paths` 为空，或显式 `windows.backend: restricted_token` | `CreateRestrictedToken` + **WRITE_RESTRICTED**：**读**基本保留用户身份（整机可读）；**写**默认拒绝，仅 `read_write_paths`（+ cwd）经 capability ACE 放行，**除非** `windows.msys2_child_ipc: true`（子进程 Git-for-Windows/MSYS2 bash / 公开 #34 — 操作者 SID 进入 restricting SID，该会话对用户已拥有 NTFS **不做**写白名单）。仍有 Job Object。无 LowBox、不对 `venv`/`node_modules` 递归打 ACL、**无需 ProjFS**。此路径**跳过**内置机密 deny-read（对齐 Codex 弱化姿态）。 |
 | **AppContainer** | `windows_appcontainer` | Auto + `network: none` / allowlist、任意 YAML `deny_read_paths`、显式 `windows.backend: appcontainer`、托管舰队 | AppContainer / LowBox Package SID、可继承 DACL、可选 deny-read ACE、WFP 出口围栏。大运行时树优先 **ProjFS 投影**（`finsafe setup-windows`；仅当 `probe` 报 `restart_required` 时重启）。 |
 
 **示例（均随发行附带）：**
@@ -119,19 +113,24 @@ RestrictedToken 约束：`network: host`、YAML `deny_read_paths` 为空（需�
 
 ### Windows AppContainer：大体积 `read_only_paths` / `read_write_paths` 根目录
 
-**仅适用于 AppContainer 生命周期。** RestrictedToken 不会为打 Package SID ACL 而遍历目录树。
+**仅适用于 AppContainer 启动。** RestrictedToken 不会为打 Package SID ACL 而遍历目录树。
 
-Windows AppContainer 要求每个持久文件系统边界具备**可继承**的 DACL（Package SID ACE）与 **Low 强制完整性标签**。这些权限只来自已安装的 effective YAML 与 `finsafe prepare`；传给 `run`、`self-confine` 或 `doctor` 的 wrapper policy 不是 preparation 输入。launch 只消费已有 Package SID 与 ACL，绝不会现场 provision 或修复。对大体积 `venv` / `node_modules`，优先用 **ProjFS 投影**运行时树，而不是 preparation 整棵物理目录。
+Windows AppContainer 要求 FinSAFE 使用的每个文件系统根（`work_dir`、`read_only_paths`、`read_write_paths` 各项）具备**可继承**的 DACL（Package SID ACE）与 **Low 强制完整性标签**。子进程继承这些 ACL；首次启动时 FinSAFE 会在根上（必要时在子项上）写入可继承授权。对大体积 `venv` / `node_modules`，优先用 **ProjFS 投影**运行时树，而不是把整棵树写进策略路径。
 
 | 阶段 | 行为 | 运维建议 |
 |------|------|----------|
-| **Prepare** 显式宽边界 | 智安盾按已安装的 effective YAML 应用可继承 Package-SID 权限。显式卷根和用户配置根可被接受；每次 ACL 修改都记录在 preparation receipt 中。 | 仅在确实需要时授予宽范围持久权限。非常大的物理目录树在 EDR/DLP 下仍可能较慢；让 preparation 完成或使用 receipt 恢复。`unprepare` 会恢复已记录的改动。 |
-| 完成 preparation 后 **launch** | 智安盾消费已有 Package SID 与继承 ACL；不会遍历 wrapper-policy 根、写 completion sentinel 或修改 DACL。 | 若权限缺失，更新已安装 effective YAML 并重新运行 `finsafe prepare`；不要指望 wrapper policy 在启动时授权。 |
-| `{userData}\sandbox-images\<digest>` 的 **launch-image staging** | 先复制文件，再在创建子进程前检查 bucket 对已准备 Package SID 的实际读/执行权限。缺失即 fail closed；launch 绝不会添加 ACE。 | 在已安装 effective YAML 中加入覆盖 staging 位置的 `read_only` 或 `read_write` 边界，再运行 `finsafe prepare`。 |
+| **首次启动**且策略根下子项过多（默认守卫：≥ **10000** 个直接子项） | 默认 **拒绝**启动（`refusing to apply inheritable AppContainer ACLs`），避免对大树逐文件改 ACL 导致数分钟卡顿（端点 DLP/EDR 拦截每次 `SetNamedSecurityInfoW` 时更严重）。 | **收窄路径**——不要把整个 agent 目录、项目根或含 `node_modules` 的树放进 `read_only_paths` / `read_write_paths`；只列工作负载真正需要的目录。或对 `network: host` 智能体改用 RestrictedToken。 |
+| **首次启动**且接受一次性打标成本 | 设 `FINSAFE_WINSAFE_INHERIT_ROOT_FAIL=0` 完成**一次**打标（会有 WARNING）。打标完成后取消该变量，以便后续误配仍 fail closed。 | 安排在维护窗口；优先 ProjFS 或 RestrictedToken，而非给 1 万+ 文件树打标。 |
+| **同一已打标根**上的 **重复启动** | 若根上已有可继承 Package ACE + Low-IL 姿态，FinSAFE 跳过大树守卫，并在授权已满足时跳过冗余 `SetNamedSecurityInfoW`。典型重复启动 **1 秒内**完成，即使树下文件很多。 | Hermes / `finsafe run` 稳态循环应在首次打标后变快；若每次仍慢，通常是根尚未打标或策略根路径在变。 |
+
+| 变量 | 默认 | 作用 |
+|------|------|------|
+| `FINSAFE_WINSAFE_INHERIT_ROOT_WARN_LIMIT` | `10000` | 直接子项数达到该值即触发大树守卫（遍历上限同此值）。 |
+| `FINSAFE_WINSAFE_INHERIT_ROOT_FAIL` | `1`（fail closed） | `0` = 警告后继续应用可继承 ACL（一次性打标）。 |
 
 **ProjFS：** AppContainer + 大运行时树的可选高级路径。`setup-windows` 仅在启用后仍待重启（`probe.restart_required`）时以 **3010** 退出；`doctor` 将其报为 **警告**。DISM `Restart Required : Possible` 不是待重启。RestrictedToken / 典型 Hermes 不需要 ProjFS。Windows 验收 `-Suite projection` 不得 skip-green，也不得把 runner 重启当作关闭条件。
 
-回归：`finsafe-winsafe` 测试覆盖 prepared 继承权限与 launch-image fail-closed admission；`scripts/tests/windows/Test-PreparedAccessAclFixture.ps1` 验证 prepared ACL 的应用/恢复；`inherit-guard` 验收套件现只覆盖 RestrictedToken 授权。
+回归：`scripts/dev/run-windows-acceptance.ps1` 的 `inherit-guard` 套件含 *inherit-relaunch-fast*（同一目录第二次启动须在 3 秒内完成）。
 
 ### 出站代理可观测性（allowlist 模式）
 
@@ -153,7 +152,7 @@ Windows AppContainer 要求每个持久文件系统边界具备**可继承**的 
 
 Shell 写法如 `$HOME/bin`（无花括号）或 `%USERPROFILE%\bin` **不会**展开——请用 `${HOME}/bin` 或 `~/bin`。
 
-- **替换发生在智安盾解析 YAML/JSON 时**，环境取自 **`finsafe` 自身进程**，不会自动从你包裹的子进程 argv 推导。托管 bundle 在每台设备执行 `finsafe run` 时各自展开。
+- **替换发生在 FinSAFE 解析 YAML/JSON 时**，环境取自 **`finsafe` 自身进程**，不会自动从你包裹的子进程 argv 推导。托管 bundle 在每台设备执行 `finsafe run` 时各自展开。
 - **`policy_digest`** 仍对磁盘上的原始策略字节做摘要；占位符不会改变离线哈希比对语义。
 - **`${XDG_CONFIG_HOME}`** 未设置时会回退到 `${HOME}/.config`。若 Hermes/GitHub CLI 的配置不在默认位置，可先导出 `GH_CONFIG_DIR` / `XDG_CONFIG_HOME`，再启动 `finsafe`，或在策略中写明绝对路径。
 
@@ -163,7 +162,7 @@ Shell 写法如 `$HOME/bin`（无花括号）或 `%USERPROFILE%\bin` **不会**�
 
 ## 审计信封（概念）
 
-每次包装调用宜在 JSON 或日志中记录（具体嵌套以你所运行的智安盾版本为准）：
+每次包装调用宜在 JSON 或日志中记录（具体嵌套以你所运行的 FinSafe 版本为准）：
 
 - `wrapper_policy_digest` — 运维提供的策略字节的 SHA-256。  
 - `resolved_host_profile` — 解析后选用的主机姿态。  
@@ -182,7 +181,7 @@ Shell 写法如 `$HOME/bin`（无花括号）或 `%USERPROFILE%\bin` **不会**�
 
 ### `finsafe-trace`（仅引擎源码检出）
 
-部分智安盾引擎检出包含 `scripts/dev/finsafe-trace.sh`。**公开** [finogeeks/finsafe](https://github.com/finogeeks/finsafe) 发行树中**不包含**该脚本。已发布二进制请优先使用 **`finsafe --audit`** 与 **`finsafe learn`**。
+部分 FinSAFE 引擎检出包含 `scripts/dev/finsafe-trace.sh`。**公开** [finogeeks/finsafe](https://github.com/finogeeks/finsafe) 发行树中**不包含**该脚本。已发布二进制请优先使用 **`finsafe --audit`** 与 **`finsafe learn`**。
 
 **内置 CLI（推荐）：**
 ```bash

@@ -2,7 +2,7 @@
 
 **English:** [CONTRIBUTING.md](CONTRIBUTING.md)
 
-感谢帮助改进智安盾。本仓库是**公开发布镜像**：预编译 CLI 二进制、安装脚本、示例与终端用户文档，**不包含** 智安盾引擎源代码。
+感谢帮助改进 FinSAFE。本仓库是**公开发布镜像**：预编译 CLI 二进制、安装脚本、示例与终端用户文档，**不包含** FinSAFE 引擎源代码。
 
 ## 变更落在哪里
 
@@ -21,7 +21,7 @@
 缺陷与文档修正请用 **GitHub Issues**：
 
 1. 尽量使用 bug 模板（`Steps to reproduce`、`Expected`、`Actual`）。
-2. 写明**智安盾版本**（`finsafe --version`）、**操作系统**、相关 **策略 YAML**。
+2. 写明 **FinSAFE 版本**（`finsafe --version`）、**操作系统**、相关 **策略 YAML**。
 3. 受信任报告人带 `bug` 标签可触发自动分诊；其他报告每日批量处理。
 
 运行时修复在上游私有仓库实现、验证、发布后，会在 issue 上回复 **Resolved** 并附版本信息。

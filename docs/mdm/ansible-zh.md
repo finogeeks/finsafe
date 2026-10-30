@@ -1,4 +1,4 @@
-# Ansible — 智安盾托管模式（Linux）
+# Ansible — FinSAFE 托管模式（Linux）
 
 适用于无 Jamf/Intune 的 Linux 工作站、VDI 或服务器。与 [企业手册](../enterprise-deployment-runbook-zh.md) 对应。
 

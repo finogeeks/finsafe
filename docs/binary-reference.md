@@ -1,8 +1,8 @@
-# FinShield binary reference (administrators)
+# FinSAFE binary reference (administrators)
 
 **中文：** [binary-reference-zh.md](./binary-reference-zh.md)
 
-This document lists **every operator-facing binary** in a FinShield deployment, which release archive it ships in, and which machines need it. Use it with [authority-deployment.md](./authority-deployment.md) (Policy Authority + license) and [enterprise-deployment-runbook.md](./enterprise-deployment-runbook.md) (fleet rollout).
+This document lists **every operator-facing binary** in a FinSAFE deployment, which release archive it ships in, and which machines need it. Use it with [authority-deployment.md](./authority-deployment.md) (Policy Authority + license) and [enterprise-deployment-runbook.md](./enterprise-deployment-runbook.md) (fleet rollout).
 
 ---
 
@@ -136,7 +136,7 @@ CI checks each archive family: personal **`finsafe-v*`** must exclude agent/auth
 
 ## Non-shipped workspace binaries (out of scope for fleet admins)
 
-These exist in the FinShield source tree for adapters, tests, or internal tooling. **Fleet administrators do not install them** for managed-mode rollout:
+These exist in the FinSAFE source tree for adapters, tests, or internal tooling. **Fleet administrators do not install them** for managed-mode rollout:
 
 | Binary / crate | Role |
 |----------------|------|

@@ -56,7 +56,7 @@ finsafe-bundlectl                  finsafe-authority-http               finsafe-
 
 ## 安装二进制（运维工作站）
 
-1. 打开 [智安盾发行页面](https://github.com/finogeeks/finsafe/releases)，下载对应包：
+1. 打开 [FinSAFE Releases](https://github.com/finogeeks/finsafe/releases)，下载对应包：
    - Linux x86_64：`finsafe-bundlectl-v<version>-x86_64-unknown-linux-gnu.tar.zst`
    - macOS Apple Silicon：`finsafe-bundlectl-v<version>-aarch64-apple-darwin.tar.zst`
    - macOS Intel：`finsafe-bundlectl-v<version>-x86_64-apple-darwin.tar.zst`

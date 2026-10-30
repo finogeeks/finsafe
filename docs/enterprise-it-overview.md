@@ -1,4 +1,4 @@
-# FinShield enterprise IT overview (Personal vs Managed)
+# FinSAFE enterprise IT overview (Personal vs Managed)
 
 **中文（完整版）：** [enterprise-it-overview-zh.md](./enterprise-it-overview-zh.md)
 
@@ -6,7 +6,7 @@ This page is the **entry point for enterprise IT, MDM, and security operations**
 
 - Product background and the **distributed agents** problem (local OpenClaw/Hermes-style runtimes on employee laptops)
 - **Personal** vs **Managed** mode: purpose, workflows, and a **Hermes** walkthrough
-- Why administrators can **reliably govern** sandbox policy in managed mode, and why standard desktop users **cannot bypass** FinShield while using the org-provided CLI
+- Why administrators can **reliably govern** sandbox policy in managed mode, and why standard desktop users **cannot bypass** FinSAFE while using the org-provided CLI
 - Strategic value for **fleet governability** of decentralized agent workloads
 - **MDM deployment** panorama and links to the [enterprise deployment runbook](./enterprise-deployment-runbook.md)
 

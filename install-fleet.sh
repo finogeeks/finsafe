@@ -103,7 +103,6 @@ fi
 
 need_cmd curl
 need_cmd uname
-need_cmd bash
 need_cmd mkdir
 need_cmd mktemp
 need_cmd rm
@@ -225,7 +224,7 @@ if [ "$(id -u)" -ne 0 ]; then
     FINSAFE_SENTINEL_PATH="$SENTINEL_PATH" \
     FINSAFE_ENROLL_TOKEN="$ENROLL_TOKEN" \
     FINSAFE_AGENT_BOOTSTRAP_DEVICE_ID="$DEVICE_ID" \
-      bash "$UNIX_INSTALLER"
+    sh "$UNIX_INSTALLER"
 fi
 
 export FINSAFE_FLEET_SOURCE_DIR="$stage/$inner_dir"
@@ -233,4 +232,4 @@ export FINSAFE_AUTHORITY_URL="$AUTHORITY_URL"
 export FINSAFE_SENTINEL_PATH="$SENTINEL_PATH"
 export FINSAFE_ENROLL_TOKEN="$ENROLL_TOKEN"
 export FINSAFE_AGENT_BOOTSTRAP_DEVICE_ID="$DEVICE_ID"
-bash "$UNIX_INSTALLER"
+sh "$UNIX_INSTALLER"

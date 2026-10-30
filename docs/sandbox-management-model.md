@@ -1,8 +1,8 @@
-# FinShield sandbox management model
+# FinSAFE sandbox management model
 
 **中文：** [sandbox-management-model-zh.md](./sandbox-management-model-zh.md)
 
-FinShield managed mode is easiest to manage as five concepts:
+FinSAFE managed mode is easiest to manage as five concepts:
 
 1. **Sandbox policy** — what one allowed agent or program may access.
 2. **Bundle** — a signed, versioned policy set for a device cohort.
@@ -18,7 +18,7 @@ Field reference: [POLICY-QUICKREF.md](./POLICY-QUICKREF.md). On **Linux/macOS**,
 
 ## Bundle
 
-A bundle is not just one Hermes policy. A bundle is the signed policy set a matching device receives. Inside the bundle, FinShield selects exactly one sandbox policy for the requested program. If no policy matches, the run is denied. If multiple policies match, the bundle is considered ambiguous and fails closed.
+A bundle is not just one Hermes policy. A bundle is the signed policy set a matching device receives. Inside the bundle, FinSAFE selects exactly one sandbox policy for the requested program. If no policy matches, the run is denied. If multiple policies match, the bundle is considered ambiguous and fails closed.
 
 Example bundle contents:
 
@@ -90,7 +90,7 @@ If a device matches multiple active assignments, the most specific assignment wi
 3. required authority-verified `device:*` predicate count
 4. other positive predicate count
 
-Negative-only predicates do not increase specificity. If two assignments tie or cannot be compared, FinShield blocks activation or fails closed with `assignment_conflict`.
+Negative-only predicates do not increase specificity. If two assignments tie or cannot be compared, FinSAFE blocks activation or fails closed with `assignment_conflict`.
 
 If no active assignment matches a device (including rollout exclusion), the authority returns `no_assignment` on `/v1/bundles/current`.
 

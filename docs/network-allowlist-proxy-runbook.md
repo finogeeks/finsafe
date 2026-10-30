@@ -2,7 +2,7 @@
 
 **中文：** [network-allowlist-proxy-runbook-zh.md](./network-allowlist-proxy-runbook-zh.md)
 
-End-to-end smoke guide for **domain allowlist** enforced by FinShield’s **loopback egress proxy**. Use this when you want “the agent may only reach these hostnames” without HTTPS inspection (MITM).
+End-to-end smoke guide for **domain allowlist** enforced by FinSAFE’s **loopback egress proxy**. Use this when you want “the agent may only reach these hostnames” without HTTPS inspection (MITM).
 
 | Layer | What it does | License | This doc |
 |-------|--------------|---------|----------|
@@ -20,12 +20,12 @@ End-to-end smoke guide for **domain allowlist** enforced by FinShield’s **loop
 ```text
 sandboxed process
   → only 127.0.0.1:60080 (loopback HTTP proxy)
-  → FinShield proxy (start_internal_proxy or finsafe-net-proxy)
+  → FinSAFE proxy (start_internal_proxy or finsafe-net-proxy)
   → allowlist check (FQDN only)
   → upstream internet (allowed hosts only)
 ```
 
-With `network: allowlist`, FinShield does **not** give the child a normal host network. It injects `HTTP_PROXY` / `HTTPS_PROXY` (and related aliases) pointing at the loopback proxy. Standard clients (curl, Python `requests`, Node `fetch`) use that proxy automatically when those env vars are set.
+With `network: allowlist`, FinSAFE does **not** give the child a normal host network. It injects `HTTP_PROXY` / `HTTPS_PROXY` (and related aliases) pointing at the loopback proxy. Standard clients (curl, Python `requests`, Node `fetch`) use that proxy automatically when those env vars are set.
 
 | Policy fields (minimum) | Role |
 |-------------------------|------|

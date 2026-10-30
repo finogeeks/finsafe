@@ -1,8 +1,8 @@
-# Microsoft Intune — FinShield managed mode
+# Microsoft Intune — FinSAFE managed mode
 
 **中文：** [intune-zh.md](./intune-zh.md)
 
-Deploy FinShield on **macOS**, **Linux**, and **Windows** managed devices with Intune (Endpoint Manager).
+Deploy FinSAFE on **macOS**, **Linux**, and **Windows** managed devices with Intune (Endpoint Manager).
 
 **Prerequisites:** [enterprise runbook](../enterprise-deployment-runbook.md) Phase A (authority + signed sentinel).
 
@@ -102,7 +102,7 @@ If your tenant supports delivering a single file to `/etc/finsafe/managed-requir
 
 ## 5. macOS — One-time enrollment script
 
-Create script policy **FinShield Enroll** (pilot group only):
+Create script policy **FinSAFE Enroll** (pilot group only):
 
 ```bash
 #!/bin/bash
@@ -257,7 +257,7 @@ Test-Path "C:\ProgramData\FinSAFE\enrolled.json"
 
 | Compliance rule | Detection |
 |-----------------|-----------|
-| FinShield agent running | macOS/Linux: `test -S /run/finsafe-agent.sock`; Windows: `Get-Service finsafe-agent` |
+| FinSAFE agent running | macOS/Linux: `test -S /run/finsafe-agent.sock`; Windows: `Get-Service finsafe-agent` |
 | Sentinel present | macOS/Linux: `test -f /etc/finsafe/managed-required.json`; Windows: `Test-Path C:\ProgramData\FinSAFE\managed-required.json` |
 | Enrolled | macOS/Linux: `test -f /etc/finsafe/enrolled.json`; Windows: `Test-Path C:\ProgramData\FinSAFE\enrolled.json` |
 

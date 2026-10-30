@@ -1,341 +1,168 @@
-# FinShield on Windows (desktop)
+# FinShield Windows illustrated manual
 
-**中文:** [WINDOWS-GUIDE-zh.md](WINDOWS-GUIDE-zh.md)
+[简体中文](WINDOWS-GUIDE-zh.md) · [Home](../README.md) · [All platforms](getting-started.md)
 
-This is the **operator onboarding** page for Windows 10/11 desktop. Field-level policy detail stays in [POLICY-QUICKREF.md](POLICY-QUICKREF.md); cross-platform CLI basics stay in [USER-GUIDE.md](USER-GUIDE.md).
+**Add a sandbox to your Agent: install, prepare once, then launch from the desktop Widget.** Once prepared, select WorkBuddy or DSH and give it tasks as usual. Use the Widget to start and reopen it; open the browser Console when you need to adjust permissions, inspect records, or troubleshoot.
 
-Unlike Linux (bubblewrap) and macOS (Seatbelt), Windows has **two launch backends**. Choosing the wrong one is the main source of setup confusion (helper prompts, ProjFS reboot warnings, multi-minute ACL labeling).
+![Desktop Widget: orb expands Agent icons; the right surface opens Console](../assets/windows/widget-agent-picker.png)
 
----
+The Widget image is an unmodified native-renderer illustration identifying controls, not an installed-product state capture. The four supporting browser screenshots show the real local FinShield `0.9.97` Console.
 
-## 1. Install once
+## 1. Install and find the desktop Widget
 
-Preferred:
+Double-click `finsafe-<version>-x64-setup.exe`, follow the wizard, and open FinShield. Install WorkBuddy or DSH and configure its account separately.
 
-```powershell
-irm https://raw.githubusercontent.com/finogeeks/finsafe/main/install.ps1 | iex
+With valid preparation and no preparation in progress, opening the product primarily shows the Widget. Initial authorization, preparation in progress, or unavailable state also opens the supporting Console. Opening alone does not start a new authorization.
+
+[Public downloads](https://github.com/finogeeks/finsafe/releases) still contain older releases; use the new EXE when published or officially delivered. See [version availability](FAQ.md#why-does-the-download-page-still-show-an-older-release).
+
+## 2. Prepare and start from the Widget
+
+1. **Prepare:** At “待准备” (Not prepared), click the orb and choose “开始准备” (Start preparation). Review permissions in Console when required; Windows may request administrator consent.
+2. **Select:** Wait for “智能体待命” (Agent standby), click the orb, and hover over an icon to confirm WorkBuddy or DSH.
+3. **Start:** Click a launchable icon. Wait during Starting rather than clicking repeatedly; work after running is confirmed.
+4. **Reopen:** Click an icon with a green status dot to return to its existing instance.
+5. **Arrange:** Click the orb or empty space to fold the selection. Drag the metal body to move the Widget.
+
+Valid preparation is reused. Daily work does not require a browser page to stay open or authorization to repeat. **Selecting an Agent from the Widget is the recommended daily launch route.** A separate vendor-shortcut process must not be assumed protected.
+
+```mermaid
+flowchart LR
+    A[Open desktop Widget] --> B[Prepared and at Agent standby]
+    B --> C[Expand icons and start an Agent]
+    C --> D[Click again to reopen the instance]
+    A -.Settings or troubleshooting.-> E[Supporting Console]
+    E --> A
 ```
 
-What the installer does:
+## 3. Read Widget status and notifications
 
-1. Installs `finsafe.exe` and `finsafe-winhelper.exe` on your `PATH`
-2. Runs **`finsafe setup-windows` once** (Windows may show a single permission / UAC prompt — that is normal)
+| Indicator | Meaning and action |
+| --- | --- |
+| Not prepared | Open the orb menu and choose Start preparation |
+| Preparing | Wait; use Console for details when needed |
+| Agent standby | Expand the icons and select an Agent |
+| Starting / spinning icon | Startup is pending; duplicate clicks do not start another instance |
+| Green status dot | Running is confirmed; click to reopen the existing instance |
+| Red exclamation mark | Open the associated problem page; viewing does not repair the issue |
+| Yellow number | PII findings received during this Widget run; click for alerts. Clearing the counter does not delete history |
 
-Manual install: unpack the Windows archive from [Releases](https://github.com/finogeeks/finsafe/releases), keep both binaries in the same directory, then:
+The right-click menu contains Console and Exit Widget. **Exit Widget closes only the Widget; running Agents and security monitoring continue.**
 
-```powershell
-finsafe setup-windows
-```
+## 4. Open the supporting Console when needed
 
-`setup-windows` provisions:
+Choose Console from the expanded Widget or its right-click menu. Use the pages below for incorrect directories, preparation errors, permission changes, and records. Prefer the Widget for everyday start/reopen actions.
 
-| Piece | Required for | Notes |
-|-------|----------------|-------|
-| **finsafe-winhelper** service | `network: none` / allowlist (WFP fence), managed fleet | `doctor` warns if missing |
-| **ProjFS** (`Client-ProjFS`) | Optional: AppContainer + large `venv` / `node_modules` projection | `setup-windows` enables the feature without a reboot when `prjflt` can start. Reboot only if `probe` reports `restart_required`. **Not** required for typical Hermes / `network: host`. Install manually: `Enable-WindowsOptionalFeature -Online -FeatureName Client-ProjFS -NoRestart` (Admin) |
+<details>
+<summary>Review or change permissions: Security settings</summary>
 
----
+Open Console from the Widget and review Security settings:
 
-## 2. Pick a backend (decision tree)
+| Setting | What to check |
+| --- | --- |
+| File access | Writable task directories, read-only references, and inaccessible private directories |
+| Network access | The model and business destinations required for the task |
+| Sensitive information | Record, ask, or block, with the intended detection categories |
+| Local retention | Whether to save captured requests, responses, and decisions on this computer |
 
-```text
-Do you need network: none / allowlist, confidential deny-read,
-managed fleet, or explicit windows.backend: appcontainer?
-        │
-        ├─ YES ──► AppContainer (stronger)
-        │
-        └─ NO (typical Hermes / network: host desktop)
-                 └──► RestrictedToken (default under Auto)
-```
+Choose “授权并继续” (Authorize and continue), then wait for completion. Windows may request administrator consent. If preparation fails or is cancelled, inspect the actual error; installation success does not establish preparation success.
 
-| | **RestrictedToken** | **AppContainer** |
-|--|---------------------|------------------|
-| **When (Auto)** | `network: host` + empty YAML `deny_read_paths` | `network: none` / allowlist, any YAML `deny_read_paths`, managed fleet |
-| **Pin** | `windows.backend: restricted_token` | `windows.backend: appcontainer` |
-| **Reads** | Host-wide (same user identity for most reads) | Package SID + DACL grants only |
-| **Writes** | Deny-by-default; allow `read_write_paths` (+ cwd) | DACL grants on declared roots |
-| **Deny-read / secrets** | Explicit deny-read is unsupported | Explicit effective-YAML deny-read is supported (DACL deny-read) |
-| **Network fence (WFP)** | Not the primary story for host networking | Used for none / allowlist. Operator (enabled `finsafe-net`) stays online; FAIL is deny-only `WSAEACCES` on the child/probe |
-| **Large `venv` / `node_modules`** | No recursive ACL walk; **no ProjFS** | Prefer ProjFS projection; listing whole trees in policy can trigger ACL storms |
-| **Attestation** | `windows_restricted_token`, `degraded_execution=true` | `windows_appcontainer` |
-| **Hermes example** | [`hermes-windows-oneshot.yaml`](../examples/wrapper-policies/hermes-windows-oneshot.yaml) | [`hermes-windows-oneshot-appcontainer.yaml`](../examples/wrapper-policies/hermes-windows-oneshot-appcontainer.yaml) |
+Changes to file/network scope require authorization again. Do not repeatedly start an Agent during preparation. Resource limits are configured separately; a tool-task time limit does not cap the full lifetime of a desktop Agent.
 
-**Rule of thumb:** start with RestrictedToken for agent CLIs that need normal host networking and a Python/Node install. Switch to AppContainer when you need locked-down network or confidential deny-read.
+![Security settings after authorization](../assets/windows/02-security-settings.jpg)
 
-There is also an explicit weaker compatibility pin (`windows.backend: write_restricted`) for hosts that need RestrictedToken-family write allowlisting without AppContainer. Prefer Auto / RestrictedToken unless you know you need that pin. See [POLICY-QUICKREF.md § Windows backends](POLICY-QUICKREF.md).
+Figure 1: “已授权” confirms authorization on this machine. Follow this section for first-time authorization. The visible paths, network scope, and resource values are this machine's existing settings, not recommended defaults.
 
----
+</details>
 
-## 3. Verify the host
+<details>
+<summary>Agent missing or cannot start: installation directories</summary>
 
-```powershell
-finsafe probe
-finsafe doctor
-# JSON for automation:
-finsafe probe --json
-finsafe doctor --json
-```
+### WorkBuddy
 
-How to read common signals:
+1. Select WorkBuddy in “智能体管理” (Agent management).
+2. Confirm a directory containing `WorkBuddy.exe`. Use “重新查找” (Find again) or “选择目录” (Choose directory) when discovery is incorrect.
+3. Choose “安全启动” (Safe start), then wait for confirmed running status.
+4. Use FinShield's Open action to return to the running instance.
 
-| Signal | Severity for typical Hermes | What to do |
-|--------|----------------------------|------------|
-| Helper not running | Warning if you only use `network: host` | Run `finsafe setup-windows` before none/allowlist policies |
-| ProjFS not ready / `restart_required` | **Warning** (not a hard error) | RestrictedToken can ignore it. For AppContainer + large projection, re-run `setup-windows` and confirm `projection_smoke_works`; reboot only if `restart_required` stays true |
-| `appcontainer_works=false` | Blocks AppContainer Auto paths | Use RestrictedToken for host agents, or fix OS / enterprise policy that disables AppContainers |
+![WorkBuddy installation directory and Safe start](../assets/windows/03-workbuddy.jpg)
 
----
+Figure 2: Check the installation directory, then use the blue Safe start button. This is the state before launch; Installed does not mean running under protection.
 
-## 4. First successful runs
+### DSH CLI
 
-Create a workspace (many examples expect `./workspace` as the writable root):
+1. Select DSH CLI in Agent management.
+2. Confirm both Node.js and DSH installation directories. One directory alone is insufficient.
+3. Choose Safe start and wait for the workbench to become ready. Do not submit repeated launches while it is starting.
+4. Reopen the ready workbench through FinShield. Directory edits affect subsequent starts, not the existing instance.
 
-```powershell
-New-Item -ItemType Directory -Force -Path workspace | Out-Null
-```
+![DSH requires both Node.js and DSH directories](../assets/windows/04-dsh.jpg)
 
-Smoke (any backend that matches the policy):
+Figure 3: Both directories must be valid. After Safe start, wait for workbench readiness.
 
-```powershell
-Invoke-WebRequest -Uri https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/windows-version-smoke.yaml -OutFile windows-version-smoke.yaml
-finsafe --policy .\windows-version-smoke.yaml run -- cmd /c ver
-```
+</details>
 
-Hermes (recommended default — RestrictedToken):
+<details>
+<summary>Review conversations, sensitive-information checks, and alerts</summary>
 
-```powershell
-Invoke-WebRequest -Uri https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/hermes-windows-oneshot.yaml -OutFile hermes-windows-oneshot.yaml
-finsafe --policy .\hermes-windows-oneshot.yaml run -- hermes --version
-```
+Use the Widget's yellow notification or View records in Console.
 
-Stronger Hermes (AppContainer):
+Open “查看记录” (View records) under “对话与告警” (Conversations and alerts) in an Agent's details. When local retention is enabled, captured requests, responses, and decisions are encrypted on this computer. Approved requests still reach the configured model service; local storage does not mean offline inference.
 
-```powershell
-Invoke-WebRequest -Uri https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/hermes-windows-oneshot-appcontainer.yaml -OutFile hermes-windows-oneshot-appcontainer.yaml
-finsafe --policy .\hermes-windows-oneshot-appcontainer.yaml run -- hermes --version
-```
+1. Open View records from the Agent details.
+2. Select the Agent source, enter a task/message keyword, and choose Search.
+3. Select a task on the left to see its messages. Use “仅看告警任务” for tasks with alerts.
 
-Interactive Hermes session (RestrictedToken + `self-confine`, run from a real
-terminal — Windows Terminal or an interactive PowerShell window):
+![Filter records by Agent and keyword](../assets/windows/05-records.jpg)
 
-```powershell
-Invoke-WebRequest -Uri https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/hermes-windows-interactive.yaml -OutFile hermes-windows-interactive.yaml
-finsafe --policy .\hermes-windows-interactive.yaml self-confine -- hermes
-```
+Figure 4: A nonmatching sample keyword keeps real conversations out of this public screenshot, so the task list is empty. The top row shows source totals. No tasks or messages were fabricated.
 
-FinShield stays resident as the supervisor. The broker shares your console
-(per-key input, colors, live TUI redraws, and window resizes go straight to
-the broker). **Ctrl+C goes to Hermes; Ctrl+Break kills the whole session.**
-Set `FINSAFE_WIN_PTY_MODE=live` only when an embedded host needs FinShield to be
-the terminal host. Do not reuse the oneshot policy for `self-confine` — it is
-`program_mode: short-lived` and carries a 120 s timeout that would end a live
-session.
+For supported, inspectable Windows model requests:
 
-- Short-lived tools → `finsafe run` + `program_mode: short-lived`
-- Interactive brokers in a real terminal → `finsafe self-confine` (the broker shares your console)
-- Opt-in unsandboxed broker (tools still sandboxed) → `broker_confine: tools-only` (see `hermes-interactive-tools-only.yaml`)
-- Agent-focused notes → [agent-sandbox-guide.md § Windows agents](agent-sandbox-guide.md)
+| Mode | After a sensitive-information finding |
+| --- | --- |
+| Record | Record a warning and continue sending the original request; this is the default |
+| Ask | Hold this request and ask whether to send it once |
+| Block | Refuse this request before forwarding it to the model service |
 
-> **Note on git-bash / MSYS2 (Cygwin) agents:** Git for Windows `bash.exe` as the
-> **direct** RestrictedToken payload is supported by granting FinShield capability
-> SIDs on the existing SID-named shared-memory object (`CreateFileMapping
-> S-1-5-21-….n`) and adding the operator SID as a restricting SID (public
-> [#29](https://github.com/finogeeks/finsafe/issues/29)). Hermes tools, `cmd /c
-> bash`, and other **child** git-bash processes need an explicit
-> `windows.msys2_child_ipc: true` (public
-> [#34](https://github.com/finogeeks/finsafe/issues/34)). That opt-in puts the
-> operator SID in restricting SIDs for the **whole** token, so NTFS write
-> allowlisting does **not** apply to user-owned files for that session. The
-> shipped `hermes-windows-oneshot.yaml` / `hermes-windows-interactive.yaml`
-> examples set it. Default RestrictedToken (flag omitted) keeps the write
-> allowlist; child bash then dies in Cygwin init (Win32 5). AppContainer is a
-> different token and is still not a git-bash path. This is not
-> `SeCreateGlobalPrivilege`. **Do not** set `windows.msys2_child_ipc` on the
-> WorkBuddy GUI app seam: Git Bash is hook DENY there; the C7 language path is
-> PowerShell → python/node. `finsafe app attach` writes CodeBuddy
-> `permissions.deny: ["Bash"]`, `CODEBUDDY_CODE_SHELL=powershell`,
-> `CODEBUDDY_DISABLE_SHELL_SNAPSHOT=1` into **both** USER homes; prepared
-> AppContainer attach also writes `CODEBUDDY_SAFE_DELETE_ENABLED=1` and
-> `sandbox.safeDeleteRuntimeEnabled: true`:
-> `.workbuddy/settings.json` (Desktop) and `.codebuddy/settings.json` +
-> `settings.local.json` (bare CLI) (see §6).
+Closing, cancelling, or timing out an approval does not approve a known finding. Approval covers one request only. A refused request may appear as a client error; presentation depends on that client.
 
----
+Inspection is not exhaustive. Unsupported protocols, unreadable content, and invisible traffic do not receive the same coverage. Windows may forward a request that cannot be checked under the other network/content rules and log the reason. Selecting Block does not guarantee every sensitive value is detected or stopped.
 
-### Shared configuration for AppContainer HTTPS inspection
+</details>
 
-The AppContainer HTTPS candidate has been tested with one fixed configuration
-for its Windows `finsafe run` commands. It does not change while runs are
-active. Existing `network.mode: proxy` and `tls_terminate` settings select proxy
-routing and TLS inspection; no additional configuration entry is required.
+## 5. Verify file scope after first use
 
-CA injection and persistent Inspector reuse use this shared configuration.
-Different policy permissions for individual runs within one domain, dynamic policy
-changes, and additional isolation between those runs are deferred. Existing
-AppContainer confinement and configured network rules remain in effect.
+Use dedicated test directories and files, with permissions that are effective on your computer.
 
-Inspector does not admit proxy requests by application PID or require child-process
-registration. Each run receives a loopback-only proxy endpoint with that run's audit
-metadata. Children can use the inherited proxy and CA environment. This endpoint
-does not authenticate the source process or isolate permissions between local
-processes. Core and Explicit retention use the same user/domain store, visible in
-desktop Records.
+| Scope | Check | Expected result |
+| --- | --- | --- |
+| Writable workspace | Create, read, and edit `finshield-demo.txt` | Operations succeed and changes are visible |
+| Directory configured read-only | Read a test file, then try to change it | Reading succeeds; modification is refused; original contents remain |
+| Directory configured inaccessible | Try to read a test file already present there | Reading is refused |
 
-Windows uses one ordinary-user Inspector per **user SID +
-`security_domain_id` within one Windows logon**. Core and ordinary/tool runs in
-that domain share its fixed inspection configuration. WorkBuddy and DSH in the
-same domain can run at the same time through the existing Inspector; starting
-one does not require exiting the other. Different domains use independent
-Inspectors, CA material, and lifetime resources. Node Guard keeps its
-network adapter; Core exit releases its attachment and does not stop Inspector.
-Admitted AppContainer self-confine also uses this host. Standard HTTP forward
-requests and HTTPS CONNECT use the same engine with TLS inspection enabled or
-disabled. Future Transparent attachment is not implemented. See the
-[verification results and limits](../../design/windows-appcontainer-https-inspection.md#103-migration-verification)
-before making application compatibility claims.
+Do not assume the Desktop is always read-only or a browser directory is always inaccessible. Windows applies the paths and permissions in the effective policy.
 
-## 5. Dedicated home, large trees, and ProjFS
+Use actual tool results and file state as evidence. An Agent's verbal refusal, a missing file, or an incorrect path does not demonstrate enforcement.
 
-### Dedicated FinShield home (RestrictedToken)
+## 6. Understand the Windows boundary
 
-Do **not** skip this subsection if you stay on RestrictedToken / `network: host`.
-RestrictedToken launch-time grants **refuse** volume roots, `%USERPROFILE%`,
-`%APPDATA%` / `%LOCALAPPDATA%` roots, and Electron `userData` product folders
-(for example `%APPDATA%\…`). Use a dedicated sandbox home under
-`%LOCALAPPDATA%\FinSAFE\...` instead of listing `userData` in `read_write_paths`
-or as `work_dir`. WorkBuddy catalog (#375) additionally grants
-`%LOCALAPPDATA%\CodeBuddyExtension` with a **NoWalk** ACE (not TreeSet, not
-Electron `userData`); other AppData product folders stay refused.
+FinShield uses native Windows controls: AppContainer for confined process identity, file permissions for authorized access, Job Objects for applicable process/resource limits, and a controlled proxy/WFP for network boundaries.
 
-Prepared AppContainer access (`finsafe prepare` plus an installed effective
-YAML) is a different lifecycle: explicitly configured volume and profile roots
-are accepted, and receipt-backed `unprepare` restores the original ACL. Broad
-access must still be explicit in effective YAML; app cwd/chdir does not add it.
+Effects depend on configuration and integration. GUI compatibility, tool-process desktop placement, and model inspection have separate coverage.
 
-**RestrictedToken and pre-existing files:** WRITE_RESTRICTED sets a
-directory-inheritable ACE on the home directory only (`DirectoryInheritableNoWalk`).
-It does **not** rewrite existing descendants. The agent can create **new** files
-that inherit the capability SID, but it **cannot modify pre-existing files or
-subdirectories** unless those objects already carry that SID. Point the policy at
-a dedicated **empty** `%LOCALAPPDATA%\FinSAFE\...` home — do not copy a fat
-`userData` tree into that home and expect writes to succeed.
-
-### AppContainer-only: large trees and ProjFS
-
-Skip **this** subsection if you stay on RestrictedToken / `network: host`
-(the dedicated-home rule above still applies).
-
-AppContainer filesystem authority comes from the installed effective YAML, not from a
-wrapper policy at launch. Run `finsafe prepare` after adding the required persistent
-boundaries; `run` and `self-confine` only consume that prepared authority and never add
-or repair ACLs. Explicit volume and profile roots are accepted when configured in the
-effective YAML, and `unprepare` restores receipt-backed changes. Preparing a very large
-physical tree can still take minutes under EDR/DLP, so prefer:
-
-1. **Narrow paths** — only directories the workload needs
-2. **RestrictedToken** for host-network agents that only need write allowlisting (still use a dedicated empty FinShield home)
-3. **ProjFS projection** for large runtime trees under AppContainer (`setup-windows`; reboot only if `finsafe probe --json` reports `restart_required`). To enable ProjFS manually:
-
-   ```powershell
-   # Requires Administrator
-   Enable-WindowsOptionalFeature -Online -FeatureName Client-ProjFS -NoRestart
-   ```
-
-   Verify with `finsafe probe --json | ConvertFrom-Json | Select-Object -ExpandProperty projfs`.
-
-Preparation lifecycle and interrupted-preparation recovery: [POLICY-QUICKREF.md § Windows AppContainer: large roots](POLICY-QUICKREF.md).
-
----
-
-## 6. App seams (experimental)
-
-An **app seam** is a place in an installed GUI agent where FinShield can change
-behaviour without editing the vendor's signed binaries. Phase 1 uses the
-app's **bundled bootstrap script**: `finsafe app attach` replaces that script
-with a FinShield shim, writes a guard file beside it, and keeps a byte-for-byte
-backup of the original (relative names next to the seam:
-`<seam>.finsafe-orig` and `<seam>.finsafe-guard.js`). This is
-**experimental**, not a supported product mode. On Linux and macOS,
-`finsafe app` exits 78.
-
-```powershell
-finsafe app list
-finsafe app doctor <integration-id>
-finsafe app attach <integration-id>
-finsafe app status
-finsafe app detach --all
-```
-
-**Run `finsafe app detach --all` before deleting or replacing `finsafe.exe`.**
-If the binary is gone while a seam is still attached, the seam is
-**orphaned** (D14): in personal mode the shim runs the original unguarded and
-appends to a local log. **No user notification is guaranteed** for an
-orphaned seam (no toast is promised). That is a broken state, not a
-supported mode.
-
-### What Phase 1 does and does not guarantee
-
-| Layer | Phase 1 | Tier (D16) |
-|-------|---------|------------|
-| Core process | Write scope and configured deny-read through Node `fs`; Job teardown and resource limits | **User-mode** guard + Job. There is **no** kernel filesystem boundary on the core. |
-| Spawned tools (children) | The selected effective YAML supplies concrete roots and narrow runtime globs such as `codebuddy-*` and `workbuddy-*`; the only runtime addition is the native AppContainer profile `Temp`. FakeAgent does not add the session cwd or chdir targets. | **Kernel** AppContainer plus prepared path ACLs |
-| Deny-read / confidential paths | Effective-YAML deny rules are applied to the shared AppContainer SID and are also enforced cooperatively for Node `fs` calls in the core. | **Kernel** for children; **user-mode** on the core |
-| Egress allowlist | **No** (audit only) | — (Phase 2) |
-
-Do not read “attached” as “the whole GUI-agent tree is kernel-sandboxed.” The
-core still runs with the user's full token; the kernel write boundary is the
-children. FakeAgent fixture proof is not WorkBuddy G2.
-
-WorkBuddy’s model **Bash** tool is Git Bash (MSYS2), not `cmd`. The seam
-**denies** `bash` / `git-bash` / `mintty` at `CreateProcessW`. That is
-intentional: enabling `windows.msys2_child_ipc` would drop NTFS write
-allowlisting for the session and is **forbidden** on this catalog.
-`finsafe app attach` writes the same overlay into **both** USER homes
-(`%USERPROFILE%\.workbuddy\settings.json` for Desktop SettingsManager, and
-`%USERPROFILE%\.codebuddy\settings.json` + `settings.local.json` for bare CLI)
-plus an existing project `.codebuddy/` overlay under the attach cwd or
-`%USERPROFILE%\WorkBuddy`: `permissions.deny: ["Bash"]`,
-`CODEBUDDY_CODE_SHELL=powershell`, `CODEBUDDY_DISABLE_SHELL_SNAPSHOT=1`,
-and, for prepared AppContainer attach only, `CODEBUDDY_SAFE_DELETE_ENABLED=1`
-plus `sandbox.safeDeleteRuntimeEnabled: true` (keeps
-`sandbox.extraAllowWrite` / claw / plugins). A project overlay
-created after attach can still later-win. Detach restores every layer from the
-first-attach snapshot. Attach reports `restart_needed` so `--prewarm` /
-`--serve` re-read settings. Do not set `CODEBUDDY_CODE_SHELL=cmd`. This is a
-product-config workaround, not Git Bash inside RestrictedToken.
-
----
+The README's window/clipboard examples use their recorded case configurations, including private desktops in some cases. WorkBuddy GUI needs interactive-desktop compatibility; do not infer that it defaults to all of the isolation properties shown by those private-desktop cases.
 
 ## 7. Troubleshooting
 
-| Symptom | Likely cause | Fix |
-|---------|--------------|-----|
-| UAC / permission prompt on first use | `setup-windows` registering helper / WFP | Accept once; re-run `finsafe setup-windows` if interrupted |
-| `doctor` warns about helper | Helper service not running | `finsafe setup-windows`; needed for none/allowlist |
-| `doctor` warns about ProjFS / reboot | Client-ProjFS missing, smoke failed, or a *pending* reboot | Ignore for RestrictedToken Hermes; re-run `setup-windows` and trust `probe` (`Restart Required : Possible` is not a reboot). Reboot only if `restart_required` is true |
-| `doctor` names an over-cap inherit root | Wrapper-policy tree exceeds `FINSAFE_WINSAFE_INHERIT_ROOT_WARN_LIMIT` | Narrow the wrapper path. If broad persistent AppContainer access is intentional, add the boundary to the installed effective YAML and run `finsafe prepare`; prepare does **not** consume the wrapper policy, and explicit prepared boundaries may cover broad roots — see §5 |
-| `refusing to apply inheritable` + `product folder` / `userData` | A RestrictedToken `read_write_paths` / `work_dir` root is an AppData product folder | Use a dedicated empty home under `%LOCALAPPDATA%\FinSAFE\...` — see §5 |
-| RestrictedToken agent cannot write existing files in the home | `DirectoryInheritableNoWalk` does not rewrite pre-existing descendants | Create a **new empty** `%LOCALAPPDATA%\FinSAFE\...` home; new files inherit the capability ACE. Do not copy a populated `userData` tree into that home |
-| AppContainer launch says the launch-image bucket is not covered | `{userData}\sandbox-images\<digest>` lacks prepared Package-SID read/execute rights | Add a `read_only` or `read_write` boundary covering the staging location to the installed effective YAML, then run `finsafe prepare`. Launch verifies the effective DACL and never repairs it |
-| Hermes cannot read `.env` / credentials under AppContainer | An explicit effective-YAML deny-read rule | Review and change that YAML rule, or use the RestrictedToken example when host-wide read is intended |
-| `self-confine` exits `0xC0000142` / `STATUS_DLL_INIT_FAILED` (RestrictedToken) | Pre-0.9.15 spawn path | Upgrade to **0.9.15+** (Live ConPTY default); or `FINSAFE_WIN_PTY_MODE=pipe` |
-| WorkBuddy still offers Bash / `bash.exe` dies with Win32 5 / `0xC0000142` | Git Bash is seam DENY; MSYS2 IPC is not confineable without dropping write allowlisting; a project `.codebuddy/` overlay created after attach can later-win; GUI reads `.workbuddy/settings.json` | Attach writes **both** USER homes (`.workbuddy/settings.json` and `.codebuddy/settings.json` + `settings.local.json`: deny Bash + PowerShell env + `CODEBUDDY_DISABLE_SHELL_SNAPSHOT=1` + safe-delete on) and existing project overlays. Restart WorkBuddy so CodeBuddy re-reads settings. Do **not** set `windows.msys2_child_ipc`. |
-| Nested `cmd /c …` prints nothing | Stdio path / older regression | Upgrade to **0.9.7+**; non-interactive console hosts use PipeCapture |
-| Operator `network: none` connect still succeeds | Expected: enabled `finsafe-net` keeps the desktop online | Not a fence failure. The AppContainer child and pre-spawn probe use a deny-only `finsafe-net` stamp; FAIL is a successful connect there instead of `WSAEACCES` |
-| Deny-only probe / sandboxed child connect succeeds | Helper / WFP not ready, or deny-only stamp failed | `setup-windows`, then `probe --json` / acceptance fence checks (`windows_egress_fence_verified`) |
-| Managed / enterprise posture fails on RestrictedToken | Fleet requires AppContainer | Use AppContainer + helper; signed bundles must not treat RT as AC parity |
-| GUI agent runs unguarded after FinShield was removed | Orphaned seam: `finsafe.exe` deleted or replaced without `detach` (D14) | Reinstall FinShield and run `finsafe app detach --all`, or restore the vendor bootstrap from `<seam>.finsafe-orig`. **No toast is guaranteed** |
+| Symptom | Check first |
+| --- | --- |
+| Not prepared / preparation incomplete | Console authorization, configured scope, and the actual error |
+| WorkBuddy not found | A directory containing `WorkBuddy.exe`; rediscover or choose it |
+| DSH cannot start | Both Node.js and DSH directories, plus security preparation |
+| Access denied during normal work | Whether the file is in an authorized writable directory |
+| Data sent in Record mode | Record permits sending; choose Ask or Block if intervention is required |
+| Missing exchange records | Integration path, local retention setting, and record-service status |
+| Service unavailable | Read the actual error or retry the state read; stale UI is not current runtime evidence |
 
-Policy iteration (`learn` / `explain` / `--audit`) works on Windows; `learn` keeps AppContainer enforcement and ingests ETW-derived denials. Workflow: [USER-GUIDE.md § Creating and iterating policies](USER-GUIDE.md).
-
----
-
-## 8. Related docs
-
-| Doc | Role |
-|-----|------|
-| [USER-GUIDE.md](USER-GUIDE.md) | Cross-platform CLI (`run` / `self-confine` / learn) |
-| [POLICY-QUICKREF.md](POLICY-QUICKREF.md) | Backend table + AppContainer large-tree reference |
-| [agent-sandbox-guide.md](agent-sandbox-guide.md) | Hermes / agent recipes |
-| [README.md](../README.md) | Install one-liners and release archives |
-| [CHANGELOG.md](../CHANGELOG.md) | Windows-specific fixes by version |
+Update with the new setup EXE. Uninstall through Windows Settings → Apps → Installed apps. Use the [FAQ reporting instructions](FAQ.md#how-do-i-report-a-problem) for version details and reproduction steps.

@@ -1,4 +1,4 @@
-# FinShield operator skills (for AI agents)
+# FinSAFE operator skills (for AI agents)
 
 **中文：** [README-zh.md](./README-zh.md)
 

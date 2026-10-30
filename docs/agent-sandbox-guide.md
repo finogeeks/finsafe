@@ -1,14 +1,12 @@
-# Running CLI agents in a FinShield sandbox
+# Running CLI agents in a FinSAFE sandbox
 
 **中文：** [agent-sandbox-guide-zh.md](./agent-sandbox-guide-zh.md)
 
-Help users run **Hermes**, **OpenCode**, **agy**, and future agent CLIs inside FinShield
+Help users run **Hermes**, **OpenCode**, **agy**, and future agent CLIs inside FinSAFE
 without breaking legitimate work. When something fails, use **`learn`**, **`explain`**,
 **`--audit`**, and (on macOS) **`finsafe-trace`** — not manual YAML guessing.
 
 **Generic `learn` / `explain` reference:** [USER-GUIDE.md § Creating and iterating policies](./USER-GUIDE.md) · [`--audit` contract](./isolation-audit-mode.md)
-
-**Privacy guard:** [setup, test, and run](./privacy-guard.md) · [中文](./privacy-guard-zh.md). The privacy shortcut is `finsafe hermes`; it is separate from the manual sandbox-policy examples below.
 
 **AI skills:** [finsafe-agent-sandbox-run](../skills/finsafe-agent-sandbox-run/SKILL.md) (run + fix) · [finsafe-agent-sandbox-verify](../skills/finsafe-agent-sandbox-verify/SKILL.md) (prove isolation)
 
@@ -245,9 +243,9 @@ finsafe --policy examples/wrapper-policies/hermes-windows-oneshot.yaml run herme
 ```
 
 For a live interactive Hermes session use `self-confine` with the interactive
-policy from a real terminal. The broker shares your console. Ctrl+C goes to
-Hermes. Ctrl+Break kills the session. Set `FINSAFE_WIN_PTY_MODE=live` only
-when FinShield must be the terminal host.
+policy (from a real terminal; FinSAFE hosts the sandboxed TUI over Live ConPTY
+with raw/VT console passthrough and resize forwarding — Ctrl+C goes to Hermes,
+Ctrl+Break kills the session):
 
 ```powershell
 finsafe --policy examples/wrapper-policies/hermes-windows-interactive.yaml self-confine -- hermes

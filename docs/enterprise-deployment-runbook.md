@@ -2,7 +2,7 @@
 
 **中文：** [enterprise-deployment-runbook-zh.md](./enterprise-deployment-runbook-zh.md)
 
-This runbook is for IT / security operators rolling out FinShield fleet-wide. It complements the architecture overview in [managed-mode.md](./managed-mode.md) with phased procedures, verification steps, and rollback.
+This runbook is for IT / security operators rolling out FinSAFE fleet-wide. It complements the architecture overview in [managed-mode.md](./managed-mode.md) with phased procedures, verification steps, and rollback.
 
 **Audience:** platform engineering, endpoint management (Jamf / Intune / Ansible), security operations.
 
