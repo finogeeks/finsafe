@@ -1,10 +1,10 @@
-# FinSafe User Guide
+# FinShield User Guide
 
-This guide is for **operators and developers** who run programs and agent brokers under FinSafe confinement using the prebuilt **`finsafe`** CLI. For the full wrapper policy field list, see [POLICY-QUICKREF.md](POLICY-QUICKREF.md) ([Chinese](POLICY-QUICKREF-zh.md)) in this repository.
+This guide is for **operators and developers** who run programs and agent brokers under FinShield confinement using the prebuilt **`finsafe`** CLI. For the full wrapper policy field list, see [POLICY-QUICKREF.md](POLICY-QUICKREF.md) ([Chinese](POLICY-QUICKREF-zh.md)) in this repository.
 
-## What FinSafe does
+## What FinShield does
 
-FinSafe constrains **how** code runs on a host: namespaces, cgroup limits, syscall filtering (Linux), path restrictions, Seatbelt-backed profiles (macOS), and on Windows either **RestrictedToken** (default `network: host`) or **AppContainer** (stronger / locked-down network), with **auditable** outcomes. It is **not** an AI product; agent runtimes decide *what* to do—the boundary defines *inside which isolation posture* work runs.
+FinShield constrains **how** code runs on a host: namespaces, cgroup limits, syscall filtering (Linux), path restrictions, Seatbelt-backed profiles (macOS), and on Windows either **RestrictedToken** (default `network: host`) or **AppContainer** (stronger / locked-down network), with **auditable** outcomes. It is **not** an AI product; agent runtimes decide *what* to do—the boundary defines *inside which isolation posture* work runs.
 
 - **CLI (`finsafe`):** Local wrapper front door — `run` for short-lived commands, `self-confine` for long-lived interactive brokers.
 - **Server mode:** Multi-tenant submission and scheduling use a separate execution platform (not covered in this repository). Most local users only need the CLI and a wrapper policy file.
@@ -36,7 +36,7 @@ mkdir workspace
 finsafe --policy examples/wrapper-policies/windows-sandbox-smoke.yaml run cmd /c echo hello
 ```
 
-FinSAFE auto-creates `./workspace` when missing and uses it as the child cwd when it is the sole `read_write_paths` entry. Pass `--work-dir <path>` only when you need a different child working directory; policy filesystem paths always resolve from your shell cwd.
+FinShield auto-creates `./workspace` when missing and uses it as the child cwd when it is the sole `read_write_paths` entry. Pass `--work-dir <path>` only when you need a different child working directory; policy filesystem paths always resolve from your shell cwd.
 
 If install did not finish setup, or `finsafe doctor` warns about the Windows helper, run **`finsafe setup-windows`** once (accept the permission prompt if Windows asks).
 
@@ -82,13 +82,13 @@ Summary of important fields:
 - **`macos_seatbelt.deny_outbound_ports`** (optional, macOS): Block specific outbound TCP ports when `network: host`.
 - **`resources`:** Memory, PIDs, CPU strings where the platform can enforce them; optional `timeout_ms` for wall-clock limits on **`run`**.
 
-**Optional compiler `filesystem` fields:** The wrapper may merge default protected subtrees (`.git` / `.finsafe` under writable roots), apply a **built-in deny-read set** on Linux/macOS/Windows (for example `.env` under the workspace and `.ssh` under `$HOME` unless `skip_default_deny_read: true`), add explicit **`deny_read_paths`**, and expand **`deny_write_globs`** (legacy alias `deny_read_globs`) into extra read-only rules. **`deny_read_paths` is not the same as `read_only_paths`** — deny-read blocks reads inside writable scope; read-only paths are grants. Omitting those keys keeps older policies valid on paper, but fleet upgrades on supported desktop platforms still pick up shipped defaults unless you opt out. See [POLICY-QUICKREF.md](POLICY-QUICKREF.md) ([Chinese](POLICY-QUICKREF-zh.md)).
+**Optional compiler `filesystem` fields:** Linux/macOS may merge default protected subtrees and a built-in deny-read set. Windows uses only the selected effective YAML, including its explicit **`deny_read_paths`**, plus the AppContainer Temp runtime requirement. **`deny_read_paths` is not the same as `read_only_paths`** — deny-read blocks reads inside writable scope; read-only paths are grants. See [POLICY-QUICKREF.md](POLICY-QUICKREF.md) ([Chinese](POLICY-QUICKREF-zh.md)).
 
 ---
 
 ## Specifying policy on the command line
 
-FinSafe exposes several policy grammars; **most local operators only need the wrapper policy** (`kind: local-wrapper`).
+FinShield exposes several policy grammars; **most local operators only need the wrapper policy** (`kind: local-wrapper`).
 
 ### 1. Wrapper policy (recommended)
 
@@ -135,6 +135,8 @@ finsafe --host-profile linux-desktop-isolated self-confine -- ./my-broker
 finsafe --host-profile mac-seatbelt self-confine -- ./my-broker
 ```
 
+On Windows, an interactive broker shares the console you are typing in. Ctrl+C goes to the broker and does not stop FinShield. Ctrl+Break stops the session. Set `FINSAFE_WIN_PTY_MODE=live` only when an embedded host needs FinShield to be the terminal host. On a machine without ConPTY that setting exits with an error instead of a weaker pipe mode.
+
 Built-in profiles include **`windows-desktop-isolated`**, **`linux-desktop-isolated`**, **`mac-seatbelt`**, and **`windows-managed`**. Default writable root is **`./workspace`** on Windows and **`./workspace-sc`** on Linux/macOS (relative to launch cwd). **`--json`** includes **`resolved_host_profile`** and **`selected_backend`**.
 
 ### 2. High-level intent policy
@@ -159,8 +161,8 @@ Some integrations still use **`finsafe run --policy spec.json`** where `spec.jso
 
 | Verb | Use when | Mechanism |
 |------|----------|-----------|
-| **`run`** | One-shot or batch workloads that exit on their own (`python`, compilers, one-shot agent CLI queries). | FinSafe **starts a child** with confinement applied to that execution. |
-| **`self-confine`** | Long-lived brokers that own the terminal (REPL / TUI). | FinSafe applies posture to **itself**, then **`execve`** replaces the process with the broker—the TTY stays with the broker. |
+| **`run`** | One-shot or batch workloads that exit on their own (`python`, compilers, one-shot agent CLI queries). | FinShield **starts a child** with confinement applied to that execution. |
+| **`self-confine`** | Long-lived brokers that own the terminal (REPL / TUI). | FinShield applies posture to **itself**, then **`execve`** replaces the process with the broker—the TTY stays with the broker. |
 
 **Do not swap them:** wrapping a broker with `run` breaks normal interactive IO; wrapping a one-shot script with `self-confine` is the wrong lifecycle and audit shape.
 

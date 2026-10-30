@@ -2,7 +2,7 @@
 
 **中文：** [visual-sandbox-zh.md](./visual-sandbox-zh.md)
 
-`finsafe --visual` opens a local web UI. The first screen is a **Scenario demo**: pick an Agent, pick a scenario (that fills the chat box in the current language), then send. Demo Agent shows your prompt once and two side-by-side replies — **Without FinSAFE** and **With FinSAFE** — with the task's artifact (browser, files, upload, timer). A real Agent (Hermes / FinClaw) uses the same side-by-side comparison. Commands, JSON, and policy YAML stay under **View audit evidence**. Nothing is pre-recorded. The UI is embedded in the personal CLI; you do not need Bun, Node, or a git checkout.
+`finsafe --visual` opens a local web UI. The first screen is a **Scenario demo**: pick an Agent, pick a scenario (that fills the chat box in the current language), then send. Demo Agent shows your prompt once and two side-by-side replies — **Without FinShield** and **With FinShield** — with the task's artifact (browser, files, upload, timer). A real Agent (Hermes / FinClaw) uses the same side-by-side comparison. Commands, JSON, and policy YAML stay under **View audit evidence**. Nothing is pre-recorded. The UI is embedded in the personal CLI; you do not need Bun, Node, or a git checkout.
 
 ```bash
 finsafe --visual
@@ -33,9 +33,9 @@ Demo Agent needs nothing else. Hermes / FinClaw still have to be installed on th
 
 ## First run (no extra tools)
 
-**Demo Agent** is selected by default. It is a built-in deterministic executor (no LLM, no Hermes/FinClaw, no `curl` / `python3` / `openssl`). It attempts the same file, network, and hang actions a tool-using Agent would, twice: unprotected vs inside FinSAFE.
+**Demo Agent** is selected by default. It is a built-in deterministic executor (no LLM, no Hermes/FinClaw, no `curl` / `python3` / `openssl`). It attempts the same file, network, and hang actions a tool-using Agent would, twice: unprotected vs inside FinShield.
 
-Default scenario: open Baidu and show the page title. If this machine cannot reach the public site, the UI reports **host connectivity unavailable** — that is not a FinSAFE block.
+Default scenario: open Baidu and show the page title. If this machine cannot reach the public site, the UI reports **host connectivity unavailable** — that is not a FinShield block.
 
 Guided scenarios:
 
@@ -43,10 +43,10 @@ Guided scenarios:
 | --- | --- |
 | External website | Unapproved destination vs allowlist |
 | Sensitive files | Project brief allowed; synthetic `vault/internal-config.ini` denied |
-| Data egress | POST a non-sensitive weekly note to `https://postman-echo.com/post` (reachable); Demo Agent still delivers unprotected traffic to a loopback receiver; FinSAFE blocks the echo host |
-| Runaway task | A 60-second `sleep` / `Start-Sleep`; FinSAFE stops it at the time limit |
+| Data egress | POST a non-sensitive weekly note to `https://postman-echo.com/post` (reachable); Demo Agent still delivers unprotected traffic to a loopback receiver; FinShield blocks the echo host |
+| Runaway task | A 60-second `sleep` / `Start-Sleep`; FinShield stops it at the time limit |
 
-Detected Hermes / FinClaw appear in the same Agent picker. Free-form conversation is **Agent conversation**, also side by side (without FinSAFE / with FinSAFE). The send button is disabled when no local Agent is installed.
+Detected Hermes / FinClaw appear in the same Agent picker. Free-form conversation is **Agent conversation**, also side by side (without FinShield / with FinShield). The send button is disabled when no local Agent is installed.
 
 Existing File vault / Web access / HTTPS inspection / Runaway pages remain under **Advanced lab**.
 
@@ -72,4 +72,4 @@ Generated under a temp directory (printed at startup). They are marked **SYNTHET
 
 ## Developers
 
-Source of the UI lives in the private FinSAFE tree (`ui/visual-sandbox/`). `bun run dev` there is a hot-reload harness; release binaries serve the compiled SPA from the `finsafe` process itself.
+Source of the UI lives in the private FinShield tree (`ui/visual-sandbox/`). `bun run dev` there is a hot-reload harness; release binaries serve the compiled SPA from the `finsafe` process itself.

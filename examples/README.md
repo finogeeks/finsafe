@@ -6,8 +6,11 @@ YAML samples published with [finogeeks/finsafe](https://github.com/finogeeks/fin
 |-----------|---------|
 | [high-level-policies/](high-level-policies/) | High-level **intent** policies for the enterprise / policy-router path (no raw sandbox primitives in YAML). |
 | [wrapper-policies/](wrapper-policies/) | `kind: local-wrapper` policies for `finsafe run` and `finsafe self-confine`. |
+| [privacy-guard/](privacy-guard/) | Local privacy-guard text and optional image-OCR verification. |
 
 Wrapper field reference: [docs/POLICY-QUICKREF.md](../docs/POLICY-QUICKREF.md) · [docs/POLICY-QUICKREF-zh.md](../docs/POLICY-QUICKREF-zh.md). Command flows and **`finsafe learn` / `explain`**: [docs/USER-GUIDE.md](../docs/USER-GUIDE.md).
+
+Privacy-guard setup, launch, and testing: [docs/privacy-guard.md](../docs/privacy-guard.md) · [中文](../docs/privacy-guard-zh.md).
 
 **Note:** `install.sh` installs binaries only. Clone this repository, run **`finsafe init`**, or download individual YAML files.
 

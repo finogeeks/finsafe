@@ -97,7 +97,7 @@ a deny report is printed.
   # Add to filesystem.read_only_paths:
     - "~/.hermes"
 
-  ⚠  Hits built-in deny-read list (.env, .ssh, .aws …):
+  ⚠  Hits Linux/macOS built-in deny-read list (.env, .ssh, .aws …):
     ~/.hermes/.env
     → Set: filesystem.skip_default_deny_read: true
 ```
@@ -106,7 +106,7 @@ Key fields:
 - **DENIED OPERATIONS** — each unique (process, operation, resource) triple
 - **process tag** `[procname]` — shown when a child process (not the main command) was denied
 - **SUGGESTED POLICY ADDITIONS** — ready-to-paste YAML snippets
-- **Built-in deny-read warning** — paths like `.env`, `.ssh`, `.aws` are blocked by finsafe's built-in deny list even if you add them to `read_only_paths`; use `skip_default_deny_read: true` if intentional
+- **Deny-read warning** — on Linux/macOS, paths like `.env`, `.ssh`, `.aws` may be blocked by the compiler default list even if added to `read_only_paths`; use `skip_default_deny_read: true` if intentional. On Windows, inspect and change the explicit deny rule in the selected effective YAML.
 
 ### 3. Apply the suggested additions to your wrapper YAML
 
@@ -114,7 +114,7 @@ Key fields:
 filesystem:
   read_only_paths:
     - "~/.hermes"           # ← added based on trace output
-  skip_default_deny_read: true  # ← only if .env access is intentional
+  skip_default_deny_read: true  # ← Linux/macOS only, if .env access is intentional
 ```
 
 ### 4. Re-run under finsafe (not trace mode) to confirm

@@ -2,7 +2,7 @@
 
 **中文：** [README-zh.md](./README-zh.md)
 
-Platform-specific steps for distributing FinSAFE and enforcing managed mode. Start with the [enterprise deployment runbook](../enterprise-deployment-runbook.md).
+Platform-specific steps for distributing FinShield and enforcing managed mode. Start with the [enterprise deployment runbook](../enterprise-deployment-runbook.md).
 
 | Guide | Use when |
 |-------|----------|

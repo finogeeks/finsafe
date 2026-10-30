@@ -1,8 +1,8 @@
-# FinSAFE 托管模式
+# 智安盾托管模式
 
-企业桌面在 **托管模式** 下运行 FinSAFE：策略以经签名的 JWS bundle 形式由中央 **Policy Authority（策略权威）** 下发，由 **`finsafe-agent`** 校验并缓存后强制执行，现有 **`finsafe`** CLI 通过 Unix 域套接字消费策略。
+企业桌面在 **托管模式** 下运行智安盾：策略以经签名的 JWS bundle 形式由中央 **Policy Authority（策略权威）** 下发，由 **`finsafe-agent`** 校验并缓存后强制执行，现有 **`finsafe`** CLI 通过 Unix 域套接字消费策略。
 
-管理员心智模型——Bundle 作为已签名策略集合、确定性 Group、一等 Assignment、Assignment 上的 rollout 与冲突处理——见 [FinSAFE 沙箱管理模型](./sandbox-management-model-zh.md)。
+管理员心智模型——Bundle 作为已签名策略集合、确定性 Group、一等 Assignment、Assignment 上的 rollout 与冲突处理——见 [智安盾沙箱管理模型](./sandbox-management-model-zh.md)。
 
 若不存在纳管标记且未部署 `managed-required` 哨兵，个人/开发者用法保持不变。
 
@@ -57,12 +57,12 @@ finsafe run -- /usr/bin/true
 
 ## 策略默认项（舰队管理员）
 
-已发布的 Bundle 内含 **沙箱策略**（wrapper YAML）。FinSAFE 还会合并 **编译器默认项**，这些不会出现在每一份 bundle 文件中：
+已发布的 Bundle 内含 **沙箱策略**（wrapper YAML）。智安盾还会合并 **编译器默认项**，这些不会出现在每一份 bundle 文件中：
 
 - **Linux/macOS：** 内置 **deny-read**（例如可写工作区下的 `.env`、`$HOME` 下的 `.ssh`）以及可写根下的 **受保护** `.git` / `.finsafe`，除非策略设置 `skip_default_deny_read: true` 或 `skip_default_protected_paths: true`。
-- **Windows（隔离/托管）：** 同样应用内置 **deny-read**（可写根下的 `.env*`；`%USERPROFILE%` 下的 `.ssh`、`.aws`、`.gnupg`、`.config/gcloud`），经 DACL deny ACE 强制，除非 `skip_default_deny_read: true`。
+- **Windows（隔离/托管）：** 文件系统权限来自已 prepare 的 effective YAML。编译器不追加 `.env`、凭据目录、`.git` 或 `.finsafe` 规则；YAML 中的显式 deny 仍通过 DACL deny ACE 强制执行。
 
-仅升级 `finsafe` / agent 二进制、未重新发布 bundle 内容时，Linux/macOS 与 Windows 桌面上的强制行为仍可能变化。全量推广前请阅读 [POLICY-QUICKREF-zh.md](./POLICY-QUICKREF-zh.md) 中 **内置文件系统默认项** 与 **`filesystem.deny_read_paths`**。仅在程序确实需要读取默认拒绝路径时设置 `skip_default_deny_read: true`。
+仅升级 `finsafe` / agent 二进制、未重新发布 bundle 内容时，Linux/macOS 与 Windows 桌面上的强制行为仍可能变化。全量推广前请阅读 [POLICY-QUICKREF-zh.md](./POLICY-QUICKREF-zh.md) 中 **内置文件系统默认项** 与 **`filesystem.deny_read_paths`**。Linux/macOS 仅在程序确实需要读取默认拒绝路径时设置 `skip_default_deny_read: true`；Windows 应直接修改 effective YAML。
 
 **网络 allowlist：** 策略使用 `network: !allowlist` 与 `domains:`；启动时需 `finsafe-net-proxy`，或设置 `start_internal_proxy: true` 使用本机回环代理（`127.0.0.1:60080`）。**个人/本地怎么跑：** [network-allowlist-proxy-runbook-zh.md](./network-allowlist-proxy-runbook-zh.md)。字段与 `FINSAFE_NET_PROXY_AUDIT_LOG` 见 [POLICY-QUICKREF-zh.md](./POLICY-QUICKREF-zh.md)。
 

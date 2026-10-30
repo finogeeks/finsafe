@@ -1,16 +1,16 @@
-# FinSAFE 企业 IT 全景：个人模式与托管模式
+# 智安盾企业 IT 全景：个人模式与托管模式
 
 **English:** [enterprise-it-overview.md](./enterprise-it-overview.md)（概要）
 
 **采购 / 架构速览：** [产品一页纸](./product-one-pager-zh.md)（含中心 Sandbox-as-a-Service 与桌面边缘部署）
 
-本文面向 **企业 IT、终端管理（MDM）与安全运营** 人员，重点说明 FinSAFE 在 **员工桌面（边缘）** 上的两种运行形态——**个人模式（Personal）** 与 **托管模式（Managed）**——以及它们如何与 **中心执行平面**（`finsafe-server`、Policy Router、Execution Scheduler，常部署于 Kubernetes）配合。中心侧可提供多租户 **Sandbox-as-a-Service**；边缘侧解决「分布式智能体」本机运行时的舰队治理。部署实操请先在 [终端部署方式选型](./endpoint-deployment-options-zh.md) 选定路径，再按 [企业部署手册](./enterprise-deployment-runbook-zh.md) 与 [MDM 检查清单](./mdm/vendor-neutral-checklist-zh.md) 执行。中心 API 与 K8s 映射见仓库内 [finsafe-server API](../../../docs/api/finsafe-server.md)、[Kubernetes 架构](../../../docs/design/finsafe-kubernetes-architecture.md)。
+本文面向 **企业 IT、终端管理（MDM）与安全运营** 人员，重点说明智安盾在 **员工桌面（边缘）** 上的两种运行形态——**个人模式（Personal）** 与 **托管模式（Managed）**——以及它们如何与 **中心执行平面**（`finsafe-server`、Policy Router、Execution Scheduler，常部署于 Kubernetes）配合。中心侧可提供多租户 **Sandbox-as-a-Service**；边缘侧解决「分布式智能体」本机运行时的舰队治理。部署实操请先在 [终端部署方式选型](./endpoint-deployment-options-zh.md) 选定路径，再按 [企业部署手册](./enterprise-deployment-runbook-zh.md) 与 [MDM 检查清单](./mdm/vendor-neutral-checklist-zh.md) 执行。中心 API 与 K8s 映射见仓库内 [finsafe-server API](../../../docs/api/finsafe-server.md)、[Kubernetes 架构](../../../docs/design/finsafe-kubernetes-architecture.md)。
 
 ---
 
 ## 1. 背景：桌面上的分布式智能体
 
-企业部署 FinSAFE 通常涉及 **两条互补路径**（见 [产品一页纸](./product-one-pager-zh.md)）：
+企业部署智安盾通常涉及 **两条互补路径**（见 [产品一页纸](./product-one-pager-zh.md)）：
 
 | 路径 | 目的 |
 |------|------|
@@ -26,7 +26,7 @@
 | 审计断裂 | 安全团队难以获得一致的运行记录（策略摘要、隔离档位、退出码） |
 | 合规缺口 | 金融、政务等场景要求可证明的「执行边界」与策略溯源 |
 
-**FinSAFE** 的定位是：在 **操作系统层** 为每一次 Agent 触发的执行提供 **可声明、可审计的边界**（Linux：bubblewrap / cgroup / Landlock / seccomp；macOS：Seatbelt）。**中心层** 用 Policy Router 编译高级策略、Scheduler 做准入与排队；**边缘层** 用 **`finsafe` CLI** 直接包装本机程序。**托管模式** 则在桌面上把策略从「用户手里的文件」升级为 **组织签名的 bundle + 本机 agent 强制**，恢复舰队级可治理性。
+**智安盾**的定位是：在 **操作系统层** 为每一次 Agent 触发的执行提供 **可声明、可审计的边界**（Linux：bubblewrap / cgroup / Landlock / seccomp；macOS：Seatbelt）。**中心层** 用 Policy Router 编译高级策略、Scheduler 做准入与排队；**边缘层** 用 **`finsafe` CLI** 直接包装本机程序。**托管模式** 则在桌面上把策略从「用户手里的文件」升级为 **组织签名的 bundle + 本机 agent 强制**，恢复舰队级可治理性。
 
 ---
 
@@ -50,7 +50,7 @@
 
 ### 3.1 共同基础：Local Program Wrapper
 
-无论哪种模式，FinSAFE 都通过 **包装策略**（`kind: local-wrapper`）描述：
+无论哪种模式，智安盾都通过 **包装策略**（`kind: local-wrapper`）描述：
 
 - 程序形态：**短期**（`run`）或 **交互式常驻**（`self-confine`）；
 - 网络、文件系统、资源上限、审计字段等。
@@ -109,7 +109,7 @@ CLI 将 YAML **编译** 为内部执行规格，再调用平台相关后端完�
 
 ### 4.1 个人模式 — 研发笔记本试点
 
-**场景：** 安全团队发布经审查的 `hermes-interactive.yaml`，开发者自愿用 FinSAFE 包装 Hermes，中央服务尚未上线。
+**场景：** 安全团队发布经审查的 `hermes-interactive.yaml`，开发者自愿用智安盾包装 Hermes，中央服务尚未上线。
 
 ```bash
 # 一次性检查版本（short-lived / run）
@@ -184,9 +184,9 @@ IT 侧流程（摘要）：
 
 ## 6. 托管模式：桌面用户为何难以脱离（在威胁模型内）
 
-下列控制 **叠加** 使用；FinSAFE **不声称** 能抵御拥有长期 root/本地管理员权限、可关 MDM、可替换二进制的高级对手（见 [威胁模型 — 桌面用户作为对手](../../design/finsafe-threat-model.md#13-desktop-user-as-policy-adversary-managed-mode)）。
+下列控制 **叠加** 使用；智安盾 **不声称** 能抵御拥有长期 root/本地管理员权限、可关 MDM、可替换二进制的高级对手（见 [威胁模型 — 桌面用户作为对手](../../design/finsafe-threat-model.md#13-desktop-user-as-policy-adversary-managed-mode)）。
 
-| 用户可能的行为 | FinSAFE 的应对 | 说明 |
+| 用户可能的行为 | 智安盾的应对 | 说明 |
 |----------------|----------------|------|
 | 本地 `--policy evil.yaml` | `MANAGED_POLICY_LOCAL_OVERRIDE` | 解析期即拒绝 |
 | `finsafe run --personal` | `MANAGED_FORCED_BY_POLICY` | 哨兵/注册状态下禁止 |
@@ -197,7 +197,7 @@ IT 侧流程（摘要）：
 | 回拨系统时钟延长 bundle 有效期 | **单调时钟 floor** | 缓存目录内持久化上次权威时间 |
 | 自编译无托管功能的 CLI | 企业包应使用 **managed 构建**；公开发行包默认无托管 | 需禁止未授权开发工具链（可选） |
 
-**关键结论：** 在「标准企业桌面用户 + MDM 纳管 + 企业签名二进制」模型下，用户 **不能** 在组织提供的 FinSAFE 入口上静默放宽 Hermes/OpenClaw 的沙箱；要完全绕过，必须 **脱离 FinSAFE 入口**（例如直接运行 `hermes`），这属于 **另一类检测面**（EDR、应用控制、网络策略），FinSAFE 与它们互补而非替代。
+**关键结论：** 在「标准企业桌面用户 + MDM 纳管 + 企业签名二进制」模型下，用户 **不能** 在组织提供的智安盾入口上静默放宽 Hermes/OpenClaw 的沙箱；要完全绕过，必须 **脱离智安盾入口**（例如直接运行 `hermes`），这属于 **另一类检测面**（EDR、应用控制、网络策略），智安盾与它们互补而非替代。
 
 ---
 
@@ -211,15 +211,15 @@ IT 侧流程（摘要）：
 
 > **如何在不要求所有推理上云的前提下，仍能对「本机代理能做什么」设定一致底线？**
 
-FinSAFE 的价值可概括为：
+智安盾的价值可概括为：
 
 1. **策略一致性** — 中心：租户级 `HighLevelPolicy` 经 Router 编译；边缘：Hermes/OpenClaw 包装策略以 bundle 覆盖全舰队。
-2. **防篡改与舰队级强制托管** — 中心：API 拒绝原始 bwrap/seccomp 旋钮；边缘：已部署哨兵/注册的舰队设备禁止 `--personal` 与本地 `--policy` 覆盖（**应用/舰队契约**，见 [enrollment-boundary.md](../../../design/enrollment-boundary.md)）。**整机**拦截任意解释器属于 AppLocker/WDAC/EDR 等客户集成层，非 FinSAFE Core 默认范围。
+2. **防篡改与舰队级强制托管** — 中心：API 拒绝原始 bwrap/seccomp 旋钮；边缘：已部署哨兵/注册的舰队设备禁止 `--personal` 与本地 `--policy` 覆盖（**应用/舰队契约**，见 [enrollment-boundary.md](../../../design/enrollment-boundary.md)）。**整机**拦截任意解释器属于 AppLocker/WDAC/EDR 等客户集成层，非智安盾Core 默认范围。
 3. **审计与合规** — 统一 JSON 契约（准入、`policy_hash`、运行信封），可汇入 SIEM。
 4. **演进能力** — 中心：配额、审批、`resolve`；边缘：bundle 轮换、kill switch。
 5. **形态可组合** — 敏感交互在桌面托管；批处理或工具执行走中心 API；未纳管环境仍可用 `--policy` 试点。
 
-因此，FinSAFE 不是「又一个终端 agent」或「又一个 Docker」，而是 **Agent 时代的执行治理层**：在边缘与中心用同一套沙箱语义，衔接 MDM、K8s、IAM 与 SOC。
+因此，智安盾不是「又一个终端 agent」或「又一个 Docker」，而是 **Agent 时代的执行治理层**：在边缘与中心用同一套沙箱语义，衔接 MDM、K8s、IAM 与 SOC。
 
 ---
 
@@ -275,4 +275,4 @@ FinSAFE 的价值可概括为：
 
 ---
 
-*文档版本与 FinSAFE 公开发行版同步；组件名称与路径以当前仓库 `docs/public-finsafe` 为准。*
+*文档版本与智安盾公开发行版同步；组件名称与路径以当前仓库 `docs/public-finsafe` 为准。*

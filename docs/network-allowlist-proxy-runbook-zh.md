@@ -2,7 +2,7 @@
 
 **English:** [network-allowlist-proxy-runbook.md](./network-allowlist-proxy-runbook.md)
 
-端到端冒烟指南：用 FinSAFE **回环出口代理**强制 **域名白名单（allowlist）**。适用于「智能体只能访问这些主机名」，**不需要** HTTPS 检查（MITM）。
+端到端冒烟指南：用智安盾 **回环出口代理**强制 **域名白名单（allowlist）**。适用于「智能体只能访问这些主机名」，**不需要** HTTPS 检查（MITM）。
 
 | 层级 | 作用 | 许可证 | 本文档 |
 |------|------|--------|--------|
@@ -20,12 +20,12 @@
 ```text
 沙箱内进程
   → 仅允许连 127.0.0.1:60080（本机回环 HTTP 代理）
-  → FinSAFE 代理（start_internal_proxy 或 finsafe-net-proxy）
+  → 智安盾代理（start_internal_proxy 或 finsafe-net-proxy）
   → 白名单校验（仅 FQDN）
   → 外网（仅允许的主机）
 ```
 
-在 `network: allowlist` 下，FinSAFE **不会**给子进程普通 host 网络，而是注入指向回环代理的 `HTTP_PROXY` / `HTTPS_PROXY`（及同类别名）。curl、Python `requests`、Node `fetch` 等会在识别这些环境变量时自动走代理。
+在 `network: allowlist` 下，智安盾 **不会**给子进程普通 host 网络，而是注入指向回环代理的 `HTTP_PROXY` / `HTTPS_PROXY`（及同类别名）。curl、Python `requests`、Node `fetch` 等会在识别这些环境变量时自动走代理。
 
 | 最少策略字段 | 作用 |
 |--------------|------|

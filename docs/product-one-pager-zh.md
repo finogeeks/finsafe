@@ -1,4 +1,6 @@
-# FinSAFE 产品一页纸（企业 IT 版）
+# 智安盾产品一页纸（企业 IT 版）
+
+**智能体安全盾**，简称**智安盾**，英文品牌名为FinShield，原名FinSAFE。本次仅更新产品展示名称；`finsafe` 命令、现有技术标识、配置、安装路径、下载地址和发行文件名保持不变。
 
 **读者：** 企业 IT 负责人、安全架构师、平台与终端工程师  
 **English:** [product-one-pager.md](./product-one-pager.md)
@@ -7,7 +9,7 @@
 
 ## 一句话
 
-**FinSAFE 是面向 AI 智能体工作负载的多租户安全执行底座**——用操作系统原生隔离（Linux / macOS）把「每一次工具调用 / 代码执行」变成可策略化、可调度、可审计的**执行单元**；既可部署在**员工桌面（边缘）**，也可部署在**数据中心 / Kubernetes（中心）**，对外提供 **Sandbox-as-a-Service** 能力。
+**智安盾是面向 AI 智能体工作负载的多租户安全执行底座**——用操作系统原生隔离（Linux / macOS）把「每一次工具调用 / 代码执行」变成可策略化、可调度、可审计的**执行单元**；既可部署在**员工桌面（边缘）**，也可部署在**数据中心 / Kubernetes（中心）**，对外提供 **Sandbox-as-a-Service** 能力。
 
 ---
 
@@ -22,7 +24,7 @@
   · 高级策略（HighLevelPolicy）→ 编译执行计划（CompiledExecutionPlan）
         │
         ▼
-FinSAFE 运行时 / API     ←  finsafe-server（POST /v1/executions 等）
+智安盾运行时 / API     ←  finsafe-server（POST /v1/executions 等）
   · 与传输无关的函数 API + HTTP 覆盖层（OpenAPI）
         │
         ▼
@@ -36,7 +38,7 @@ FinSAFE 运行时 / API     ←  finsafe-server（POST /v1/executions 等）
 
 ## AI 领域我们在解决什么
 
-| 核心痛点 | 通俗说法 | FinSAFE 的切入点 |
+| 核心痛点 | 通俗说法 | 智安盾的切入点 |
 |----------|----------|------------------|
 | **Agent 即编排器** | LLM 决定「做什么」，但每次跑脚本、调工具都是真实 OS 权限 | 把每次动作变成**短生命周期执行单元**，单独编译策略再启动 |
 | **多租户与滥用** | 云上跑很多用户的 Agent，需要排队、限流、配额 | **Execution Scheduler**：按租户 / 用户 / Agent 准入与审计 |
@@ -74,7 +76,7 @@ FinSAFE 运行时 / API     ←  finsafe-server（POST /v1/executions 等）
 | **Execution Scheduler** | 准入、队列、取消、租户/用户/Agent 限制、主机预算（Stage 3） |
 | **finsafe-server API** | `submit` / `get` / `cancel` / `resolve`（审批流）；OpenAPI + JSON Schema |
 | **托管模式（桌面舰队）** | 签名 bundle、Policy Authority、`finsafe-agent`、MDM 哨兵（见 [托管模式](./managed-mode-zh.md)） |
-| **Kubernetes 目标架构** | 每执行一 Pod/Job + 集群内 FinSAFE 内层沙箱（见设计文档） |
+| **Kubernetes 目标架构** | 每执行一 Pod/Job + 集群内智安盾内层沙箱（见设计文档） |
 | **网络与制品** | 代理/白名单模式、制品收集策略（路由层声明，执行层落实） |
 
 ---
@@ -82,12 +84,12 @@ FinSAFE 运行时 / API     ←  finsafe-server（POST /v1/executions 等）
 ## 市场定位
 
 - **品类：** AI Agent 的 **安全执行底座（Secure Execution Substrate）** — 介于「纯容器平台」与「纯终端 EDR」之间。  
-- **与 ChatKit / FinClaw / Hermes 适配器：** Agent 负责对话与工具编排；FinSAFE 负责 **如何安全地执行** 每一次动作。  
+- **与 ChatKit / FinClaw / Hermes 适配器：** Agent 负责对话与工具编排；智安盾负责 **如何安全地执行** 每一次动作。\
 - **Sandbox-as-a-Service：** 企业自建执行平面（常见为 K8s + `finsafe-server`），对内部或 B2B 租户提供策略化沙箱 API，**不必**把代码迁到 e2b/Daytona 等第三方云。  
 - **桌面治理层：** 当 Agent 必须留在本机时，用托管模式 + MDM 恢复舰队级策略与审计（见 [企业 IT 全景](./enterprise-it-overview-zh.md)）。
 
 ```text
-  第三方云沙箱 (e2b / Daytona)     FinSAFE 中心平面          FinSAFE 桌面
+  第三方云沙箱 (e2b / Daytona)     智安盾中心平面           智安盾桌面
   厂商托管、秒级环境              自建 K8s / 内网 SaaS       本机 Agent + MDM
          │                              │                        │
          └──────── 可并存 ──────────────┴────────────────────────┘
@@ -101,26 +103,26 @@ FinSAFE 运行时 / API     ←  finsafe-server（POST /v1/executions 等）
 1. **比 Docker 更贴 Agent 执行模型** — 面向「一次工具调用 / 一段代码」，而非长期容器服务；比 MicroVM 更轻，适合企业可接受共享内核的场景。  
 2. **调度与策略分离** — Router 只编译策略；Scheduler 只做准入与公平性；沙箱 crate 不含 HTTP，边界清晰（见 Stage 2 矩阵）。  
 3. **契约优先** — `finsafe-json` 统一 `SchedulerRequest`、`AdmissionDecision`、审计事件；便于 SIEM 与多语言适配器。  
-4. **诚实边界** — 共享内核沙箱 **不能** 替代 MicroVM 抵御恶意内核利用；极高对抗多租户应 **外层 MicroVM / 专用节点 + 内层 FinSAFE**。
+4. **诚实边界** — 共享内核沙箱 **不能** 替代 MicroVM 抵御恶意内核利用；极高对抗多租户应 **外层 MicroVM / 专用节点 + 内层智安盾**。
 
 ---
 
 ## 与常见技术怎么选
 
-| 技术 | 典型用途 | 与 FinSAFE 的关系 |
+| 技术 | 典型用途 | 与智安盾的关系 |
 |------|----------|------------------|
-| **Docker / K8s** | 打包、编排、集群资源 | FinSAFE **可跑在** Pod 内作内层沙箱；K8s 管放置与粗粒度限额，FinSAFE 管执行单元策略与 attestation。**不是** 用 FinSAFE 取代 K8s。 |
-| **MicroVM（Firecracker 等）** | 不可信多租户、强隔离 | **更强、更重**；FinSAFE 可作内层或用于信任度较高的企业多租户。 |
+| **Docker / K8s** | 打包、编排、集群资源 | 智安盾 **可跑在** Pod 内作内层沙箱；K8s 管放置与粗粒度限额，智安盾管执行单元策略与 attestation。**不是** 用智安盾取代 K8s。 |
+| **MicroVM（Firecracker 等）** | 不可信多租户、强隔离 | **更强、更重**；智安盾可作内层或用于信任度较高的企业多租户。 |
 | **WASM 运行时** | 插件、小片段代码 | 难覆盖完整 shell + MCP + 本地工具链的 Agent 栈。 |
-| **e2b / Daytona** | 托管云沙箱、评测、Coding Agent 主机 | **第三方算力与镜像**；FinSAFE 适合 **自建执行平面**、策略与审计留在企业内，或与桌面数据驻留组合。 |
-| **仅 MDM / EDR** | 设备合规、恶意行为检测 | **互补**：FinSAFE 在 Agent 动作执行前限定文件/网络/资源，并输出策略级审计。 |
+| **e2b / Daytona** | 托管云沙箱、评测、Coding Agent 主机 | **第三方算力与镜像**；智安盾适合 **自建执行平面**、策略与审计留在企业内，或与桌面数据驻留组合。 |
+| **仅 MDM / EDR** | 设备合规、恶意行为检测 | **互补**：智安盾在 Agent 动作执行前限定文件/网络/资源，并输出策略级审计。 |
 
 **选型口诀：**
 
 - 要 **厂商托管、开箱即用** 的远程开发沙箱 → e2b / Daytona 等。  
-- 要 **自建多租户 Agent 执行平面**（K8s、内网 API、配额与审批）→ **FinSAFE 中心部署（SaaS 形态）**。  
-- 要 **员工本机跑 Agent 且统一底线** → **FinSAFE 桌面 + 托管模式**。  
-- 租户 **完全不可信**、需扛内核漏洞 → **MicroVM 外层 + FinSAFE 内层**（或纯 MicroVM）。
+- 要 **自建多租户 Agent 执行平面**（K8s、内网 API、配额与审批）→ **智安盾中心部署（SaaS 形态）**。\
+- 要 **员工本机跑 Agent 且统一底线** → **智安盾桌面 + 托管模式**。\
+- 租户 **完全不可信**、需扛内核漏洞 → **MicroVM 外层 + 智安盾内层**（或纯 MicroVM）。
 
 ---
 
@@ -141,13 +143,13 @@ FinSAFE 运行时 / API     ←  finsafe-server（POST /v1/executions 等）
 | 仅需 **固定 Docker 镜像**、无 Agent 动态工具链 | 标准容器平台可能更简单 |
 | **互联网陌生人** 多租户、零信任内核 | 外层 MicroVM 或商业云沙箱 |
 | **仅中心执行、不愿在 Windows 装舰队组件** | Windows 本地沙箱与托管组件已实现；矩阵 `windows-managed` 覆盖设备舰队 CI，Authority 全链在 Linux/macOS E2E；中心 Linux 执行仍可用 |
-| 期望 FinSAFE **单独解决** 模型安全与提示词注入 | 需上层网关与策略引擎 |
+| 期望智安盾 **单独解决** 模型安全与提示词注入 | 需上层网关与策略引擎 |
 
 ---
 
 ## MDM：分发、安装与托管模式结合
 
-本节说明 **边缘 / 桌面托管** 场景下，FinSAFE 如何通过 **MDM（或任意终端管理工具）** 完成软件分发与强制策略。中心执行平面（`finsafe-server`、K8s）通常由 **平台团队** 用镜像 / Helm / CI 部署，**不经过** 终端 MDM；二者共用同一套 Policy Authority 与签名体系时，策略可一致。
+本节说明 **边缘 / 桌面托管** 场景下，智安盾如何通过 **MDM（或任意终端管理工具）** 完成软件分发与强制策略。中心执行平面（`finsafe-server`、K8s）通常由 **平台团队** 用镜像 / Helm / CI 部署，**不经过** 终端 MDM；二者共用同一套 Policy Authority 与签名体系时，策略可一致。
 
 ### 分工：MDM 管什么、中央管什么
 
@@ -212,7 +214,7 @@ Linux 上若发行版包含 `finsafe-helper` 等伴随二进制，应与 `finsaf
 | **Ansible / Puppet / Chef** | Playbook 实现 M1–M8 全链路 | [ansible-zh.md](./mdm/ansible-zh.md) |
 | **Kandji / Workspace ONE / 黄金镜像** | 与厂商无关清单中的映射表 | [vendor-neutral-checklist-zh.md](./mdm/vendor-neutral-checklist-zh.md) |
 
-FinSAFE **不绑定** 某一 MDM；只要能以 root 安装文件、保持系统级守护进程、执行一次性脚本即可。
+智安盾 **不绑定** 某一 MDM；只要能以 root 安装文件、保持系统级守护进程、执行一次性脚本即可。
 
 | 工具 | 托管模式 v1 覆盖的端点 |
 |------|------------------------|
@@ -234,17 +236,17 @@ FinSAFE **不绑定** 某一 MDM；只要能以 root 安装文件、保持系统
 **Windows 上 IT 仍可采用的方案：**
 
 1. **中心 Sandbox-as-a-Service（推荐）**  
-   Windows 上的 ChatKit / Hermes / 自研适配器通过 HTTPS 调用 **`finsafe-server`**（`POST /v1/executions`），代码与数据在 **数据中心 / K8s 上的 Linux 执行单元** 内运行。MDM 负责 Windows 常规合规（BitLocker、补丁、应用控制），**不负责** 安装 FinSAFE 托管组件。
+   Windows 上的 ChatKit / Hermes / 自研适配器通过 HTTPS 调用 **`finsafe-server`**（`POST /v1/executions`），代码与数据在 **数据中心 / K8s 上的 Linux 执行单元** 内运行。MDM 负责 Windows 常规合规（BitLocker、补丁、应用控制），**不负责** 安装智安盾托管组件。
 
 2. **混合舰队**  
    - 需要 **本机数据驻留** 的岗位：发放 **Mac 或 Linux** 笔记本，按本文 MDM 流程纳管。  
    - 允许 **Windows 办公机** 的岗位：Agent 逻辑走 **中心 API**；敏感本地 REPL 不放在 Windows 上。
 
 3. **WSL2 / 远程 Linux（仅作补充，非官方 v1 承诺）**  
-   若组织已在 Windows 上标准化 WSL2，**理论上** 可在 WSL 发行版内按 Linux 路径安装 FinSAFE 并配合 Intune 的 Linux 脚本——但路径、服务生命周期与审计归属复杂，**不作为 v1 正式支持矩阵**；投产前需自行验证。
+   若组织已在 Windows 上标准化 WSL2，**理论上** 可在 WSL 发行版内按 Linux 路径安装智安盾并配合 Intune 的 Linux 脚本——但路径、服务生命周期与审计归属复杂，**不作为 v1 正式支持矩阵**；投产前需自行验证。
 
-4. **互补：应用控制，而非 FinSAFE 托管**  
-   在 Intune 上对 `hermes.exe`、`openclaw` 等使用 **AppLocker / WDAC** 限制未包裹启动，属于 **EDR/应用控制** 范畴，**不能** 替代 FinSAFE 的策略编译与 `policy_hash` 审计；可与 Mac/Linux 托管舰队并存。
+4. **互补：应用控制，而非智安盾托管**\
+   在 Intune 上对 `hermes.exe`、`openclaw` 等使用 **AppLocker / WDAC** 限制未包裹启动，属于 **EDR/应用控制** 范畴，**不能** 替代智安盾的策略编译与 `policy_hash` 审计；可与 Mac/Linux 托管舰队并存。
 
 **Microsoft Intune 说明：** [intune-zh.md](./mdm/intune-zh.md) 概述三平台；Windows 分步见英文 [intune.md §7](./mdm/intune.md#7-windows-deployment-intune-or-gpo) 或 IT 试点脚本 [install-fleet-windows.ps1](../install-fleet-windows.ps1)。Windows 上启用 **HTTPS 检查（TLS 终止）** 前请先小范围试点 — [https-inspection-runbook-zh.md](./https-inspection-runbook-zh.md)。
 
@@ -272,4 +274,4 @@ FinSAFE **不绑定** 某一 MDM；只要能以 root 安装文件、保持系统
 
 ---
 
-*FinSAFE 由 Finogeeks 发布。本公开文档侧重发行版 CLI 与运维手册；完整平台（server、scheduler、router）在 monorepo 内实现，企业可按需构建与部署。*
+*智安盾由 Finogeeks 发布。本公开文档侧重发行版 CLI 与运维手册；完整平台（server、scheduler、router）在 monorepo 内实现，企业可按需构建与部署。*

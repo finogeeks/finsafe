@@ -50,8 +50,6 @@ windows:
   # Child git-bash / Cygwin IPC (Hermes tools). Weakens RT write allowlisting.
   msys2_child_ipc: true
 filesystem:
-  # Explicit opt-out documents the weaker path; Auto+host also skips builtins.
-  skip_default_deny_read: true
   read_only_paths: []
   read_write_paths:
     - "./workspace"

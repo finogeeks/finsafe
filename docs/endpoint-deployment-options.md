@@ -2,7 +2,7 @@
 
 **中文：** [endpoint-deployment-options-zh.md](./endpoint-deployment-options-zh.md)
 
-Use this guide to **choose how** your organization rolls out FinSAFE managed mode on employee desktops. FinSAFE does **not** require Jamf, Intune, or any particular MDM product. Those names appear in playbooks only as common examples.
+Use this guide to **choose how** your organization rolls out FinShield managed mode on employee desktops. FinShield does **not** require Jamf, Intune, or any particular MDM product. Those names appear in playbooks only as common examples.
 
 **Read order for IT:**
 
@@ -16,13 +16,13 @@ Use this guide to **choose how** your organization rolls out FinSAFE managed mod
 
 ## 1. Choose your operating model
 
-| Model | Where policy runs | Typical endpoint control | FinSAFE components |
+| Model | Where policy runs | Typical endpoint control | FinShield components |
 |-------|-------------------|--------------------------|-------------------|
 | **Managed desktop (recommended for distributed agents)** | Employee Mac/Linux/Windows laptop | Install `finsafe` + `finsafe-agent` + sentinel + enroll | Policy Authority + fleet archives + MDM **or equivalent** |
-| **Central execution only** | Your data center / Kubernetes | No FinSAFE agent on user laptops | `finsafe-server` (see [product-one-pager.md](./product-one-pager.md)); clients call HTTPS API |
+| **Central execution only** | Your data center / Kubernetes | No FinShield agent on user laptops | `finsafe-server` (see [product-one-pager.md](./product-one-pager.md)); clients call HTTPS API |
 | **Personal / developer** | User laptop, self-managed | None required | Public `finsafe` CLI + local `--policy` YAML (free; not fleet-governed) |
 
-Most enterprises adopting FinSAFE for **local OpenClaw, Hermes, or similar agents** want **managed desktop**: policy is signed, pulled from **your** Policy Authority, and the CLI cannot fall back to a personal policy file when the sentinel is in place.
+Most enterprises adopting FinShield for **local OpenClaw, Hermes, or similar agents** want **managed desktop**: policy is signed, pulled from **your** Policy Authority, and the CLI cannot fall back to a personal policy file when the sentinel is in place.
 
 **Managed desktop platforms:** Linux, macOS, and Windows. Windows uses `C:\Program Files\FinSAFE` for binaries, `C:\ProgramData\FinSAFE` for state, and `\\.\pipe\finsafe-agent` for CLI ↔ agent IPC.
 

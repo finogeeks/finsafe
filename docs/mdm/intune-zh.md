@@ -1,6 +1,6 @@
-# Microsoft Intune — FinSAFE 托管模式
+# Microsoft Intune — 智安盾托管模式
 
-通过 Intune（Endpoint Manager）在 **macOS**、**Linux** 与 **Windows** 托管设备上部署 FinSAFE。
+通过 Intune（Endpoint Manager）在 **macOS**、**Linux** 与 **Windows** 托管设备上部署智安盾。
 
 **English:** [intune.md](./intune.md)
 
@@ -106,7 +106,7 @@ chown root:wheel /etc/finsafe/managed-required.json
 
 ## 5. macOS — 一次性注册脚本
 
-创建脚本策略 **FinSAFE Enroll**（仅试点组）：
+创建脚本策略**智安盾Enroll**（仅试点组）：
 
 ```bash
 #!/bin/bash
@@ -197,7 +197,7 @@ Environment=FINSAFE_ENROLL_TOKEN=one-time-token
 
 | 合规规则 | 检测 |
 |----------|------|
-| FinSAFE agent 运行中 | 自定义脚本：`test -S /run/finsafe-agent.sock` |
+| 智安盾agent 运行中 | 自定义脚本：`test -S /run/finsafe-agent.sock` |
 | 哨兵存在 | `test -f /etc/finsafe/managed-required.json` |
 | 已注册 | `test -f /etc/finsafe/enrolled.json` |
 

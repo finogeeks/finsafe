@@ -2,7 +2,7 @@
 
 **English:** [https-inspection-runbook.md](./https-inspection-runbook.md)
 
-面向企业运维的端到端指南：在 FinSAFE **出口代理**上启用 **TLS 终止**（HTTPS 检查 / MITM），在沙箱出口路径内解密 HTTPS，以支持域名 allowlist、L7 决策及更丰富的 `proxy_egress` 审计（`tls_terminated`、method、path）。
+面向企业运维的端到端指南：在智安盾 **出口代理**上启用 **TLS 终止**（HTTPS 检查 / MITM），在沙箱出口路径内解密 HTTPS，以支持域名 allowlist、L7 决策及更丰富的 `proxy_egress` 审计（`tls_terminated`、method、path）。
 
 **只做白名单、不要 MITM？** 请先看 [network-allowlist-proxy-runbook-zh.md](./network-allowlist-proxy-runbook-zh.md) — 个人 CLI，无需商业许可证。
 
@@ -194,6 +194,6 @@ curl/openssl 探测可设 `FINSAFE_MITM_FORCE_TERMINATE=1`。详见 [POLICY-QUIC
 1. 生成新 CA（`POST /v1/admin/mitm/ca` — 确认产品对覆盖行为；安排维护窗口）。
 2. 发布带 `tls_terminate: true` 的**新 bundle 版本**。
 3. 下发 bundle；agent 刷新 `inspection_ca_cert_pem`。
-4. 对 FinSAFE 托管范围外仍信任旧检查 CA 的工具，需另行更新信任。
+4. 对智安盾托管范围外仍信任旧检查 CA 的工具，需另行更新信任。
 
 生产环境轮换 CA 前请与 Finogeeks 支持协调。

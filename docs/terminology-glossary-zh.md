@@ -1,20 +1,20 @@
-# FinSAFE 概念术语表
+# 智安盾概念术语表
 
 **English:** [terminology-glossary.md](./terminology-glossary.md)
 
-本文汇总 FinSAFE 公开文档、实现与对标材料（如与 [Claude sandbox-runtime](https://github.com/Geeksfino/sandbox-runtime)、Codex 内置沙箱的比较）中常见的**安全、沙箱、网络与企业治理**术语。阅读 [企业 IT 全景](./enterprise-it-overview-zh.md)、[包装策略速查](./POLICY-QUICKREF-zh.md) 或 [HTTPS 检查运维手册](./https-inspection-runbook-zh.md) 时可作索引。
+本文汇总智安盾公开文档、实现与对标材料（如与 [Claude sandbox-runtime](https://github.com/Geeksfino/sandbox-runtime)、Codex 内置沙箱的比较）中常见的**安全、沙箱、网络与企业治理**术语。阅读 [企业 IT 全景](./enterprise-it-overview-zh.md)、[包装策略速查](./POLICY-QUICKREF-zh.md) 或 [HTTPS 检查运维手册](./https-inspection-runbook-zh.md) 时可作索引。
 
-**说明：** 表中「FinSAFE 落点」指向典型组件、策略字段或文档；未列出的对标概念若 FinSAFE 尚未实现，会在「状态」列标明。
+**说明：** 表中「智安盾落点」指向典型组件、策略字段或文档；未列出的对标概念若智安盾尚未实现，会在「状态」列标明。
 
 ---
 
 ## 1. 产品架构与部署
 
-| 术语（中 / En） | 含义 | FinSAFE 落点 |
+| 术语（中 / En） | 含义 | 智安盾落点 |
 |-----------------|------|----------------|
 | **Local Program Wrapper** / 本地程序包装器 | 在操作系统层用声明式策略包装任意本地二进制（`run` 短任务、`self-confine` 交互式），输出审计信封。 | `finsafe` CLI；`kind: local-wrapper` 策略。见 [USER-GUIDE-zh.md](./USER-GUIDE-zh.md)。 |
 | **个人模式（Personal）** | 用户自备 wrapper YAML（`--policy`），策略可被本地修改。 | 无 `managed-required.json` 且未注册 agent 时的默认路径。 |
-| **舰队（Fleet）** | 由组织统一纳管的一批员工终端（Mac/Linux/Windows），安装 fleet 构建的 FinSAFE 组件，并从 Policy Authority 拉取已签名策略。口语里常说「桌面舰队」「设备舰队」；**不是**云上容器集群。 | `finsafe-fleet` 发行包、`finsafe-agent`、MDM 下发、enroll。见 [FAQ-zh.md](./FAQ-zh.md)「阅读前：什么是舰队」、[managed-mode-zh.md](./managed-mode-zh.md)。 |
+| **舰队（Fleet）** | 由组织统一纳管的一批员工终端（Mac/Linux/Windows），安装 fleet 构建的智安盾组件，并从 Policy Authority 拉取已签名策略。口语里常说「桌面舰队」「设备舰队」；**不是**云上容器集群。 | `finsafe-fleet` 发行包、`finsafe-agent`、MDM 下发、enroll。见 [FAQ-zh.md](./FAQ-zh.md)「阅读前：什么是舰队」、[managed-mode-zh.md](./managed-mode-zh.md)。 |
 | **托管模式（Managed）** | 组织通过 Policy Authority 下发已签名 bundle，本机 agent 强制策略，禁止本地 `--policy`。舰队场景的默认运行方式。 | `finsafe-agent`、`finsafe-authority-http`、MDM 哨兵。见 [managed-mode-zh.md](./managed-mode-zh.md)。 |
 | **Policy Authority（策略权威）** | 中央 HTTPS 服务：JWKS、bundle 分发、设备注册、心跳、管理 API、审计接收。 | `finsafe-authority-http`；需 `/etc/finsafe/license.jws`。 |
 | **边缘 / 桌面（Edge）** | 策略与执行发生在员工本机（Mac/Linux/Windows 本地沙箱）。 | `finsafe run`、`finsafe-agent`、Seatbelt / bwrap 栈。 |
@@ -24,13 +24,13 @@
 | **Policy Router（策略路由）** | 将高级策略编译为可执行计划，计算确定性 `policy_hash`，拒绝 ad-hoc 沙箱参数。 | `finsafe-policy` / `finsafe-server` 控制面。 |
 | **Execution Scheduler（执行调度器）** | 准入、排队、取消、租户/用户并发与速率限制。 | `finsafe-scheduler`（中心构建）。 |
 | **Host profile（主机姿态）** | 内置或命名的主机模板（如 `mac-seatbelt`、`linux-desktop-isolated`、`windows-managed`），合并为 wrapper 策略。 | `finsafe --host-profile`；`resolved_host_profile` 写入审计。 |
-| **MicroVM / 专用节点** | 内核级或硬件虚拟化隔离，用于不可信多租户或强对抗场景。 | FinSAFE **共享内核沙箱**的外层选项；产品一页纸中与 Docker/VM 对比。 |
+| **MicroVM / 专用节点** | 内核级或硬件虚拟化隔离，用于不可信多租户或强对抗场景。 | 智安盾 **共享内核沙箱**的外层选项；产品一页纸中与 Docker/VM 对比。 |
 
 ---
 
 ## 2. 策略、Bundle 与舰队治理
 
-| 术语（中 / En） | 含义 | FinSAFE 落点 |
+| 术语（中 / En） | 含义 | 智安盾落点 |
 |-----------------|------|----------------|
 | **包装策略（Wrapper policy）** | `schema_version` + `kind: local-wrapper` 的 YAML/JSON，描述网络、文件系统、资源、审计意图。 | `--policy` 或 bundle 内嵌；见 [POLICY-QUICKREF-zh.md](./POLICY-QUICKREF-zh.md)。 |
 | **Sandbox policy（沙箱策略）** | Bundle 内针对某一程序/agent 的一条策略（如 Hermes 交互式策略）。 | [sandbox-management-model-zh.md](./sandbox-management-model-zh.md)。 |
@@ -51,7 +51,7 @@
 
 ## 3. 凭证、签名与许可证
 
-| 术语（中 / En） | 含义 | FinSAFE 落点 |
+| 术语（中 / En） | 含义 | 智安盾落点 |
 |-----------------|------|----------------|
 | **JWS（JSON Web Signature）** | 对 JSON 载荷的签名封装；用于 bundle、哨兵、商业许可证。 | `license.jws`、已发布 bundle、managed-required。 |
 | **license.jws（商业许可证）** | Finogeeks 签发的 authority 能力门控；缺失/无效时 HTTP **402**。 | `/etc/finsafe/license.jws`；功能位如 `mitm_tls_terminate`。 |
@@ -66,7 +66,7 @@
 
 ## 4. Linux 隔离机制
 
-| 术语（中 / En） | 含义 | FinSAFE 落点 |
+| 术语（中 / En） | 含义 | 智安盾落点 |
 |-----------------|------|----------------|
 | **bubblewrap（bwrap）** | 用户态容器式启动器：mount namespace、PID/user 等命名空间，构建沙箱内文件系统视图。 | `finsafe-bwrap`；Linux `run` / `self-confine` 主路径。 |
 | **namespace（命名空间）** | 内核隔离维度（mount、PID、network、user 等）；bwrap 组合使用。 | bwrap 启动参数；与「共享内核沙箱」表述相关。 |
@@ -76,8 +76,8 @@
 | **finsafe-helper** | 特权辅助进程：cgroup、overlay 等 bwrap 路径需要的能力。 | Linux 发行包与 `finsafe` 同目录。 |
 | **finsafe-supervisor** | 在 exec 前 attach cgroup，优于 shell 包装。 | enterprise-strict 常要求 `--supervisor`。 |
 | **finsafe-landlock-shim** | 在沙箱内子进程 exec 前应用 Landlock 规则。 | 与 bwrap 组合，非互斥二选一。 |
-| **deny-read（拒绝读取）** | 在可写根下禁止读取敏感路径（`.env`、`~/.ssh` 等）。 | `filesystem.deny_read_paths` + 内置默认；bwrap `/dev/null` 覆盖或 Landlock。 |
-| **protected read-only** | 可写根下的 `.git`、`.finsafe` 等强制只读「雕刻」。 | `protected_read_only_paths`；内置默认。 |
+| **deny-read（拒绝读取）** | 在可写根下禁止读取敏感路径（`.env`、`~/.ssh` 等）。 | Linux/macOS 可合并编译器默认项；Windows 只执行 effective YAML 中的 `filesystem.deny_read_paths`。 |
+| **protected read-only** | 可写根下的 `.git`、`.finsafe` 等强制只读「雕刻」。 | Linux/macOS 可合并 `protected_read_only_paths` 默认项；Windows 只执行 effective YAML。 |
 | **proxy cell** | 将子进程网络出口约束为仅访问本机回环代理端口的执行单元语义。 | Linux bwrap + `HTTP_PROXY=127.0.0.1:60080`；与 allowlist 配合。 |
 | **syscall profile `no_network`** | seccomp 层禁止网络相关 syscall 的配置族。 | 与 `network: none` 纵深配合。 |
 
@@ -85,7 +85,7 @@
 
 ## 5. macOS 隔离机制
 
-| 术语（中 / En） | 含义 | FinSAFE 落点 |
+| 术语（中 / En） | 含义 | 智安盾落点 |
 |-----------------|------|----------------|
 | **Seatbelt** | macOS 沙箱策略语言（SBPL），限制文件、网络、IPC 等。 | `macos_seatbelt` 策略段；`sandbox-exec` 后端。 |
 | **sandbox-exec** | macOS 加载 Seatbelt 配置并启动子进程的系统工具。 | `finsafe` 在 Mac 上调用；stage2 回归用例。 |
@@ -96,13 +96,13 @@
 
 ## 6. Windows 隔离机制
 
-| 术语（中 / En） | 含义 | FinSAFE 落点 |
+| 术语（中 / En） | 含义 | 智安盾落点 |
 |-----------------|------|----------------|
 | **AppContainer** | Windows 低特权应用容器：能力 SID、隔离级别；用于 none/allowlist / deny-read / 托管。 | `finsafe-winsafe`；`windows-managed` 等 profile。 |
 | **Restricted Token（受限令牌）** | `CreateRestrictedToken` + WRITE_RESTRICTED：整机可读、写路径白名单；桌面 `network: host` 的 **默认**后端（对齐 Codex 弱化姿态）。 | `windows.backend: restricted_token` 或 Auto+host；证明 `degraded_execution`；enterprise strict 托管仍要求 AppContainer。 |
 | **ProjFS（投影文件系统）** | 可选：AppContainer 下大体积 venv/node_modules 的只读投影，避免递归 ACL。 | `setup-windows` / `doctor`（警告级）；典型 Hermes RestrictedToken 不需要。 |
 | **Job Object** | 进程组资源与生命周期限制（CPU、内存、UI 隔离等）。 | Windows 沙箱栈组件之一。 |
-| **DACL deny ACE** |  discretionary ACL 拒绝项，用于路径级 deny-read（如 `%USERPROFILE%\.ssh`）。 | Windows 内置 deny-read 默认项的强制执行方式。 |
+| **DACL deny ACE** | discretionary ACL 拒绝项，用于路径级 deny-read（如 `%USERPROFILE%\\.ssh`）。 | 强制执行 Windows effective YAML 中显式声明的 deny-read 规则。 |
 | **Capability SID** | AppContainer 授予的细粒度能力标识。 | Windows 能力缺失时的常见失败原因（见 isolation audit 文档）。 |
 | **Desktop isolation（桌面隔离）** | 将沙箱进程限制在非交互桌面，降低 UI 钓鱼与剪贴板风险。 | Windows 托管/隔离配置；对标 Codex 经验。 |
 | **elevated_exec** | 需提升权限执行时的受控路径（与默认 AppContainer 区分）。 | Windows 设计文档；非默认全员开启。 |
@@ -115,7 +115,7 @@
 
 ## 7. 网络、代理与 HTTPS 检查
 
-| 术语（中 / En） | 含义 | FinSAFE 落点 |
+| 术语（中 / En） | 含义 | 智安盾落点 |
 |-----------------|------|----------------|
 | **network: none / host** | Stage 1 网络姿态：无网络或继承主机网络（可配 Seatbelt 端口拒绝）。 | 包装策略 `network` 字段。 |
 | **allowlist（域名白名单）** | 仅允许访问列出的域名；其余经代理拒绝。 | `network.allowlist.domains`；有效模式 `allowlist`。 |
@@ -125,10 +125,10 @@
 | **CONNECT 隧道** | HTTP `CONNECT` 建立端到端 TLS 隧道；代理不解析明文 HTTP。 | 未终止 TLS 时 `proxy_egress` schema **2**。 |
 | **TLS terminate / HTTPS 检查** | 代理作为 MITM 终结 TLS，解密后做 L7 检查与丰富审计。 | `tls_terminate: true`；schema **3**；`tls_terminated` 字段。 |
 | **MITM（Man-in-the-Middle）** | 中间人解密 HTTPS；企业场景需告知用户与合规审批。 | 商业能力 `mitm_tls_terminate`；检查 CA。 |
-| **Corporate proxy / 父级企业代理** | 企业网关 HTTP(S) 代理；出口流量须先经公司代理再上网。 | **规划中**（FinSAFE loopback 尚未链到 parent proxy）；对标 sandbox-runtime。 |
+| **Corporate proxy / 父级企业代理** | 企业网关 HTTP(S) 代理；出口流量须先经公司代理再上网。 | **规划中**（智安盾loopback 尚未链到 parent proxy）；对标 sandbox-runtime。 |
 | **Parent proxy chaining** | 本机 loopback 代理再把请求转发到上游企业代理。 | 设计非目标直至客户触发；见 `macos-windows-sandbox-proxy-parity.md`。 |
 | **SOCKS proxy** | 基于 SOCKS4/5 的通用代理协议；常配合 `ALL_PROXY`。 | 策略/spec **占位**；无内置 SOCKS 服务（非当前交付）。 |
-| **L7 filter hook / filterRequest** | 对单个 HTTP 请求可编程允许/拒绝/改写（如 JS 回调）。 | **未实现**；FinSAFE 为固定 Rust 规则 + 审计；对标 sandbox-runtime。 |
+| **L7 filter hook / filterRequest** | 对单个 HTTP 请求可编程允许/拒绝/改写（如 JS 回调）。 | **未实现**；智安盾为固定 Rust 规则 + 审计；对标 sandbox-runtime。 |
 | **L7（应用层）** | OSI 第 7 层；此处指 HTTP 方法、路径、Host、body 等可见语义。 | MITM 后可记录 method/path；未来「DLP rule pack」讨论。 |
 | **proxy_egress（审计事件）** | 代理每次出站决策的结构化审计记录。 | schema v2（隧道）/ v3（TLS 终止）；`rate_limit_*` 等原因码。 |
 | **NO_PROXY** | 绕过代理的主机列表环境变量。 | `loopback_proxy_env_pairs()` 与子进程环境注入。 |
@@ -138,7 +138,7 @@
 
 ## 8. 审计、可观测与运行信封
 
-| 术语（中 / En） | 含义 | FinSAFE 落点 |
+| 术语（中 / En） | 含义 | 智安盾落点 |
 |-----------------|------|----------------|
 | **Execution attestation（执行证明）** | 单次 `finsafe run` 的结构化隔离证明（seccomp/seatbelt/windows 档位等）。 | JSON 信封 `attestation`；`ExecutionAttestation`。 |
 | **SelfConfineReport** | 交互式 `self-confine` broker 的并行证明形状。 | `SelfConfineReportV1`。 |
@@ -151,30 +151,30 @@
 
 ## 9. 部署与运维（IT / MDM）
 
-| 术语（中 / En） | 含义 | FinSAFE 落点 |
+| 术语（中 / En） | 含义 | 智安盾落点 |
 |-----------------|------|----------------|
 | **MDM（Mobile Device Management）** | 终端管理平台（Jamf、Intune 等），下发二进制、plist/systemd、哨兵。 | [mdm/README-zh.md](./mdm/README-zh.md)。 |
 | **finsafe-fleet 发行包** | 含 `finsafe` + `finsafe-agent`（Linux 含 helper 三件套）的托管桌面包。 | GitHub Releases；非 `curl\|sh` 个人包。 |
 | **finsafe-bundlectl** | 运维机：bundle build/sign/publish、sentinel sign。 | [authority-deployment-zh.md](./authority-deployment-zh.md)。 |
 | **Admin UI** | Authority 自带 Web 管理台（Bundle、Group、Assignment、MITM CA）。 | `http://<authority>:8095/admin/`。 |
-| **Hermes / OpenClaw** | 文档中的典型 AI Agent 运行时示例（非 FinSAFE 组件名）。 | 示例 wrapper 策略；fleet 治理场景。 |
+| **Hermes / OpenClaw** | 文档中的典型 AI Agent 运行时示例（非智安盾组件名）。 | 示例 wrapper 策略；fleet 治理场景。 |
 
 ---
 
 ## 10. 对标语境（sandbox-runtime / Codex）
 
-以下术语常出现在与 **Claude sandbox-runtime** 或 **Codex 内置沙箱** 的对比中；便于理解差距文档，不一定表示 FinSAFE 已具备同等能力。
+以下术语常出现在与 **Claude sandbox-runtime** 或 **Codex 内置沙箱** 的对比中；便于理解差距文档，不一定表示智安盾已具备同等能力。
 
-| 术语（中 / En） | 简要含义 | FinSAFE 状态（2026-06） |
+| 术语（中 / En） | 简要含义 | 智安盾状态（2026-06） |
 |-----------------|----------|-------------------------|
-| **Runtime library** | 可嵌入宿主应用的沙箱库（Node/TS），非完整舰队产品。 | FinSAFE 同时提供 CLI + Authority + agent（更偏产品）。 |
+| **Runtime library** | 可嵌入宿主应用的沙箱库（Node/TS），非完整舰队产品。 | 智安盾同时提供 CLI + Authority + agent（更偏产品）。 |
 | **WFP deny-only + loopback** | 机器级默认拒网 + 仅放行本机代理端口。 | **已实现**（`finsafe-winsafe`）。 |
 | **MITM TLS + L7 审计** | 解密 HTTPS 并记录 method/path 等。 | **已实现**（许可证门控）；macOS/Windows 沙箱内 stage2 待加强。 |
 | **filterRequest / L7 hook** | 每请求可编程策略。 | **未实现**；倾向固定 Rust 规则或未来 DSL。 |
 | **Parent corporate proxy** | Loopback 代理链到企业网关。 | **未实现**；P1 路线图。 |
 | **SOCKS server** | 本地 SOCKS 监听 + Seatbelt/WFP 放行。 | **占位**；非目标直至需求触发。 |
-| **Codex 内置沙箱** | 与 Codex 会话/工具/审批深度集成的 Rust 沙箱。 | FinSAFE **通用**包装任意二进制 + 中心 API；不绑定单一 IDE。 |
-| **Shared-kernel sandbox** | 与宿主机共享内核的隔离（bwrap/Seatbelt/AppContainer），非 VM。 | FinSAFE 定位；强对抗建议外层 MicroVM。 |
+| **Codex 内置沙箱** | 与 Codex 会话/工具/审批深度集成的 Rust 沙箱。 | 智安盾 **通用**包装任意二进制 + 中心 API；不绑定单一 IDE。 |
+| **Shared-kernel sandbox** | 与宿主机共享内核的隔离（bwrap/Seatbelt/AppContainer），非 VM。 | 智安盾定位；强对抗建议外层 MicroVM。 |
 
 ---
 

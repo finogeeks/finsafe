@@ -1,4 +1,4 @@
-# FinSAFE scripts (public repository)
+# FinShield scripts (public repository)
 
 Scripts in this directory ship with [finogeeks/finsafe](https://github.com/finogeeks/finsafe) for **enterprise administrators** operating Policy Authority and fleet endpoints.
 

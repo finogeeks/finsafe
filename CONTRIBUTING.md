@@ -2,9 +2,9 @@
 
 **中文：** [CONTRIBUTING-zh.md](CONTRIBUTING-zh.md)
 
-Thank you for helping improve FinSAFE. This repository is a **public release mirror**:
+Thank you for helping improve FinShield. This repository is a **public release mirror**:
 prebuilt CLI binaries, install scripts, examples, and end-user documentation. It does
-**not** contain the FinSAFE engine source code.
+**not** contain the FinShield engine source code.
 
 ## Where changes land
 
@@ -24,7 +24,7 @@ will be **overwritten** on the next sync.
 For bugs and doc fixes, **GitHub Issues** are the supported intake path:
 
 1. Use the bug report template when possible (`Steps to reproduce`, `Expected`, `Actual`).
-2. Include **FinSAFE version** (`finsafe --version`), **OS**, and **policy YAML** if relevant.
+2. Include **FinShield version** (`finsafe --version`), **OS**, and **policy YAML** if relevant.
 3. Trusted reporters with the `bug` label may receive automated triage; others are batched daily.
 
 Runtime fixes are implemented in the private upstream repo, verified, released, and linked back

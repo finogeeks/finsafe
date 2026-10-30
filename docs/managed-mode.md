@@ -1,10 +1,10 @@
-# FinSAFE managed mode
+# FinShield managed mode
 
 **中文：** [managed-mode-zh.md](./managed-mode-zh.md)
 
-Enterprise desktops run FinSAFE under **managed mode**: policy is distributed as signed JWS bundles from a central **Policy Authority**, cached and enforced by **`finsafe-agent`**, and consumed by the existing **`finsafe`** CLI over Unix-domain sockets on Linux/macOS or a named pipe on Windows.
+Enterprise desktops run FinShield under **managed mode**: policy is distributed as signed JWS bundles from a central **Policy Authority**, cached and enforced by **`finsafe-agent`**, and consumed by the existing **`finsafe`** CLI over Unix-domain sockets on Linux/macOS or a named pipe on Windows.
 
-For the administrator mental model—bundles as signed policy sets, deterministic groups, first-class assignments, rollout on assignments, and conflict handling—see the [FinSAFE sandbox management model](./sandbox-management-model.md).
+For the administrator mental model—bundles as signed policy sets, deterministic groups, first-class assignments, rollout on assignments, and conflict handling—see the [FinShield sandbox management model](./sandbox-management-model.md).
 
 Personal / developer use is unchanged when no enrollment marker and no `managed-required` sentinel are present.
 
@@ -55,12 +55,12 @@ For production fleet paths (`/etc/finsafe`, MDM sentinel, systemd/LaunchDaemon),
 
 ## Policy defaults (fleet administrators)
 
-Published bundles contain **sandbox policies** (wrapper YAML). FinSAFE also applies **compiler defaults** that are not duplicated in every bundle file:
+Published bundles contain **sandbox policies** (wrapper YAML). FinShield also applies **compiler defaults** that are not duplicated in every bundle file:
 
 - **Linux/macOS:** Built-in **deny-read** paths (for example `.env` under writable workspace roots and `.ssh` under `$HOME`) and **protected** `.git` / `.finsafe` segments under writable roots, unless a policy sets `skip_default_deny_read: true` or `skip_default_protected_paths: true`.
-- **Windows (isolated/managed):** The same built-in **deny-read** set applies (`.env*` under writable roots; `.ssh`, `.aws`, `.gnupg`, `.config/gcloud` under `%USERPROFILE%`), enforced via DACL deny ACEs, unless `skip_default_deny_read: true`.
+- **Windows (isolated/managed):** Filesystem authority comes from the prepared effective YAML. The compiler does not append `.env`, credential-directory, `.git`, or `.finsafe` rules; explicit deny rules are still enforced via DACL deny ACEs.
 
-After upgrading `finsafe` / agent binaries without republishing bundle content, agents may still change enforcement on Linux/macOS and Windows desktops. Review [POLICY-QUICKREF.md](./POLICY-QUICKREF.md) — sections **Built-in filesystem defaults** and **`filesystem.deny_read_paths`** — before wide rollout. Use `skip_default_deny_read: true` only when a program legitimately must read paths covered by the default set.
+After upgrading `finsafe` / agent binaries without republishing bundle content, agents may still change enforcement on Linux/macOS and Windows desktops. Review [POLICY-QUICKREF.md](./POLICY-QUICKREF.md) — sections **Built-in filesystem defaults** and **`filesystem.deny_read_paths`** — before wide rollout. On Linux/macOS, use `skip_default_deny_read: true` only when a program legitimately must read paths covered by the default set. On Windows, change the effective YAML instead.
 
 **Network allowlist:** Policies use `network: !allowlist` with `domains:`; endpoints need `finsafe-net-proxy` at launch (or `start_internal_proxy: true` for a bundled loopback proxy on `127.0.0.1:60080`). **Personal/local how-to:** [network-allowlist-proxy-runbook.md](./network-allowlist-proxy-runbook.md). Fields and `FINSAFE_NET_PROXY_AUDIT_LOG`: [POLICY-QUICKREF.md](./POLICY-QUICKREF.md).
 

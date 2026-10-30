@@ -1,12 +1,12 @@
 ---
 name: finsafe-enterprise-setup
 description: >-
-  企业 IT 仅通过 GitHub 发行包部署 FinSAFE 托管模式：Policy Authority、Finogeeks 签发的
+  企业 IT 仅通过 GitHub 发行包部署智安盾托管模式：Policy Authority、Finogeeks 签发的
   license.jws、finsafe-bundlectl 策略包、MDM 舰队下发与试点验收。适用于托管舰队搭建、
   authority 主机、商业许可证安装，且仅使用本公开仓库中的发行版与文档。
 ---
 
-# FinSAFE 企业部署（托管舰队）
+# 智安盾企业部署（托管舰队）
 
 供 AI Agent 协助**客户 IT / 平台工程**部署**托管模式**，仅依赖：
 
@@ -58,7 +58,7 @@ MDM：舰队二进制 + managed-required.json + 注册
 
 ## 阶段 1 — 下载发行包
 
-打开 [FinSAFE Releases](https://github.com/finogeeks/finsafe/releases)，校验 **`SHA256SUMS`** 后解压。
+打开 [智安盾发行页面](https://github.com/finogeeks/finsafe/releases)，校验 **`SHA256SUMS`** 后解压。
 
 | 发行包 | 安装位置 |
 |--------|----------|

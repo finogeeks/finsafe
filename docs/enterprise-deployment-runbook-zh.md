@@ -1,6 +1,6 @@
 # 企业部署手册（托管模式）
 
-本手册面向在全舰队推广 FinSAFE 的 IT / 安全运维人员。建议先阅读 **[企业 IT 全景](./enterprise-it-overview-zh.md)**（个人 / 托管模式、Hermes 示例、可治理性价值），再在 [托管模式](./managed-mode-zh.md) 组件说明之上执行下列分阶段流程。
+本手册面向在全舰队推广智安盾的 IT / 安全运维人员。建议先阅读 **[企业 IT 全景](./enterprise-it-overview-zh.md)**（个人 / 托管模式、Hermes 示例、可治理性价值），再在 [托管模式](./managed-mode-zh.md) 组件说明之上执行下列分阶段流程。
 
 **English:** [enterprise-deployment-runbook.md](./enterprise-deployment-runbook.md)
 

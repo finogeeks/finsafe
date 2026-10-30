@@ -3,7 +3,7 @@ created: 2026-06-20
 updated: 2026-08-15
 name: finsafe-agent-sandbox-verify
 description: >-
-  Methodology for verifying FinSAFE sandboxes arbitrary CLI agents (Hermes,
+  Methodology for verifying FinShield sandboxes arbitrary CLI agents (Hermes,
   OpenCode, agy, Codex) correctly — protecting local filesystem/network
   resources while NOT breaking legitimate agent work. Covers expected-behavior
   success criteria, the A/B/C/D test suites, real-query (not `--version`)
@@ -15,7 +15,7 @@ description: >-
 
 # finsafe-agent-sandbox-verify
 
-How to prove FinSAFE contains an arbitrary CLI agent **correctly**: blocks
+How to prove FinShield contains an arbitrary CLI agent **correctly**: blocks
 unauthorized local resource access **and** lets the agent do its real job.
 This skill encodes methodology reached through trial-and-error — follow it
 to skip the mistakes.

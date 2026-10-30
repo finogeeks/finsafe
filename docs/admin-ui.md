@@ -2,7 +2,7 @@
 
 **中文：** [admin-ui-zh.md](./admin-ui-zh.md)
 
-The **FinSAFE Policy Authority admin console** is a React operator UI served at
+The **FinShield Policy Authority admin console** is a React operator UI served at
 `/admin/` on the authority host (embedded in `finsafe-authority-http` when built with
 `embed-admin-ui`, or from `FINSAFE_ADMIN_UI_DIR`).
 
@@ -187,7 +187,7 @@ curl -sf -H "X-Admin-Token: $TOKEN" "$AUTHORITY/v1/admin/devices?limit=50" | jq 
 ### What it means
 
 A **policy denial** is a managed-mode audit event (`kind: policy_denied`) meaning
-FinSAFE **refused** a managed execution attempt under the active authority bundle—not
+FinShield **refused** a managed execution attempt under the active authority bundle—not
 a generic OS error or a kill switch.
 
 Typical causes (reported in audit `reason` when emitted):

@@ -2,7 +2,7 @@
 created: 2026-06-22
 name: finsafe-agent-sandbox-run
 description: >-
-  Run Hermes, OpenCode, agy, and future CLI agents under FinSAFE; troubleshoot
+  Run Hermes, OpenCode, agy, and future CLI agents under FinShield; troubleshoot
   with learn, explain, audit, and finsafe-trace. Self-contained for public release
   users. Use when sandboxing agents, fixing operation not permitted, or iterating
   policy until agents work smoothly.
@@ -10,7 +10,7 @@ description: >-
 
 # finsafe-agent-sandbox-run
 
-Run **Hermes**, **OpenCode**, **agy**, or a **new agent** under FinSAFE. On failure,
+Run **Hermes**, **OpenCode**, **agy**, or a **new agent** under FinShield. On failure,
 use **`learn`** and **`explain`** (plus **`--audit`** / **`finsafe-trace`**) — do not
 guess YAML paths.
 

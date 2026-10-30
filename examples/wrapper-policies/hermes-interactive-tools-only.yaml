@@ -27,7 +27,6 @@ resources:
 windows:
   backend: restricted_token
 filesystem:
-  skip_default_deny_read: true
   read_only_paths: []
   read_write_paths:
     - "./workspace"

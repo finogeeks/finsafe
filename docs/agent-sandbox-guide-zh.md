@@ -1,10 +1,12 @@
-# 在 FinSAFE 沙箱中运行 CLI Agent
+# 在智安盾沙箱中运行 CLI Agent
 
 **English:** [agent-sandbox-guide.md](./agent-sandbox-guide.md)
 
-帮助用户在 FinSAFE 中运行 **Hermes**、**OpenCode**、**agy** 及未来 Agent。失败时用 **`learn`**、**`explain`**、**`--audit`** 及（macOS）**`finsafe-trace`** 迭代策略，不要盲目改 YAML。
+使用智安盾为 **Hermes**、**OpenCode**、**agy** 及其他智能体提供沙箱隔离。运行失败时，用 **`learn`**、**`explain`**、**`--audit`** 及（macOS）**`finsafe-trace`** 排查问题并调整策略，不要盲目修改 YAML。
 
 **通用 learn/explain：** [USER-GUIDE-zh.md § 创建与迭代策略](./USER-GUIDE-zh.md) · [`--audit` 说明](./isolation-audit-mode.md)
+
+**隐私防护：**[准备、测试与运行](./privacy-guard-zh.md) · [English](./privacy-guard.md)。隐私快捷命令为 `finsafe hermes`，与下方手动沙箱策略示例不同。
 
 **AI 技能：** [finsafe-agent-sandbox-run](../skills/finsafe-agent-sandbox-run/SKILL-zh.md) · [finsafe-agent-sandbox-verify](../skills/finsafe-agent-sandbox-verify/SKILL.md)
 
@@ -146,9 +148,9 @@ mkdir workspace -ErrorAction SilentlyContinue
 finsafe --policy examples/wrapper-policies/hermes-windows-oneshot.yaml run hermes --version
 ```
 
-交互式 Hermes 会话用 `self-confine` + 交互策略（在真实终端中运行；FinSAFE 通过
-Live ConPTY + raw/VT 控制台直通与窗口大小转发承载沙箱内 TUI —— Ctrl+C 发给
-Hermes，Ctrl+Break 终止会话）：
+交互式 Hermes 会话用 `self-confine` + 交互策略，并在真实终端中运行。broker
+共用你的控制台。Ctrl+C 发给 Hermes。Ctrl+Break 终止会话。只有需要智安盾
+自己充当终端时才设置 `FINSAFE_WIN_PTY_MODE=live`。
 
 ```powershell
 finsafe --policy examples/wrapper-policies/hermes-windows-interactive.yaml self-confine -- hermes

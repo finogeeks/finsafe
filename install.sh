@@ -1,7 +1,9 @@
 #!/usr/bin/env sh
 # Install finsafe from GitHub releases published in finogeeks/finsafe.
-# Installs `finsafe` into FINSAFE_INSTALL_DIR; when Linux release archives
-# bundle runtime companions, installs them alongside for auto-discovery.
+# Installs `finsafe` into FINSAFE_INSTALL_DIR. Tier-2 detector assets, when
+# required by the artifact profile, are verified and installed atomically
+# under ~/.finsafe/plugins/finsafe-pii-detector/. Linux archives may also
+# include runtime companions.
 # Intended usage:
 #   curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh | sh
 # With explicit version and/or install location:
@@ -34,6 +36,121 @@ need_cmd() {
   command -v "$1" >/dev/null 2>&1 || die "missing required command: $1"
 }
 
+install_from_payload() {
+  inner_dir="$1"
+  dest="$2"
+  [ -d "$inner_dir" ] || die "payload directory missing: $inner_dir"
+  [ -f "$inner_dir/finsafe" ] || die "expected binary missing: $inner_dir/finsafe"
+  tier_profile=tier1-only
+  if [ -f "$inner_dir/artifact-capability.json" ]; then
+    need_cmd python3
+    tier_profile="$(python3 - "$inner_dir/artifact-capability.json" <<'PY'
+import json, sys
+with open(sys.argv[1], encoding="utf-8") as source:
+    data = json.load(source)
+if data.get("schema_version") != 1 or data.get("kind") != "cli":
+    raise SystemExit("invalid CLI artifact capability metadata")
+profile = data.get("profile")
+if profile not in ("tier1-only", "tier2-required"):
+    raise SystemExit("unknown CLI artifact capability profile")
+if profile == "tier2-required":
+    if data.get("detector_bundle_id") != "finsafe.pii-detector":
+        raise SystemExit("Tier-2 artifact has an unexpected detector bundle identity")
+elif data.get("detector_bundle_id") is not None:
+    raise SystemExit("Tier-1-only artifact must not declare a detector bundle")
+print(profile)
+PY
+    )" || die "could not read artifact capability metadata"
+  fi
+  plugin_src="$inner_dir/plugins/finsafe-pii-detector/plugin"
+  models_src="$inner_dir/plugins/finsafe-pii-detector/pii-models"
+  if [ "$tier_profile" = "tier2-required" ]; then
+    if [ ! -f "$plugin_src" ] || [ ! -x "$plugin_src" ] || [ -L "$plugin_src" ]; then
+      die "Tier-2 artifact detector executable is missing or unsafe"
+    fi
+    if [ ! -d "$models_src" ] || [ -L "$models_src" ]; then
+      die "Tier-2 artifact model bundle is missing or unsafe"
+    fi
+    "$plugin_src" --verify-bundle "$models_src" \
+      || die "Tier-2 artifact detector bundle verification failed"
+  fi
+  case "$dest" in
+    "~"|"~"/*|"~root"|"~root"/*) die "please expand ~ in FINSAFE_INSTALL_DIR (use an absolute path like \$HOME/... )" ;;
+  esac
+  mkdir -p "$dest" || die "could not create install dir: $dest"
+  cp -f "$inner_dir/finsafe" "$dest/finsafe"
+  chmod 0755 "$dest/finsafe"
+  if [ -f "$inner_dir/artifact-capability.json" ]; then
+    cp -f "$inner_dir/artifact-capability.json" "$dest/artifact-capability.json"
+    chmod 0644 "$dest/artifact-capability.json"
+  fi
+  # Linux runtime companions are optional for a personal install.
+  for tool in finsafe-landlock-shim finsafe-helper finsafe-supervisor; do
+    tool_src="$inner_dir/$tool"
+    if [ -f "$tool_src" ]; then
+      cp -f "$tool_src" "$dest/$tool"
+      chmod 0755 "$dest/$tool"
+      info "installed $tool: $dest/$tool"
+    fi
+  done
+  if [ "$tier_profile" = "tier2-required" ]; then
+    plugin_root="$HOME/.finsafe/plugins"
+    [ ! -L "$HOME/.finsafe" ] || die "refusing symlinked ~/.finsafe directory"
+    [ ! -L "$plugin_root" ] || die "refusing symlinked ~/.finsafe/plugins directory"
+    mkdir -p "$plugin_root" || die "could not create plugin install root"
+    plugin_stage="$plugin_root/.finsafe-pii-detector.stage.$$"
+    plugin_dest="$plugin_root/finsafe-pii-detector"
+    plugin_backup="$plugin_root/.finsafe-pii-detector.backup.$$"
+    cleanup_plugin_stage() {
+      [ -z "${plugin_stage:-}" ] || rm -rf "$plugin_stage"
+    }
+    trap cleanup_plugin_stage EXIT
+    if [ -e "$plugin_stage" ] || [ -L "$plugin_stage" ]; then
+      die "detector staging path already exists"
+    fi
+    if [ -e "$plugin_backup" ] || [ -L "$plugin_backup" ]; then
+      die "detector backup path already exists"
+    fi
+    mkdir -m 0700 "$plugin_stage" || die "could not create detector staging directory"
+    cp "$plugin_src" "$plugin_stage/plugin" || die "could not stage detector executable"
+    chmod 0755 "$plugin_stage/plugin"
+    for relative in \
+      ner/config.json ner/model.onnx ner/model.onnx.jws ner/tokenizer.json \
+      ocr/det.onnx ocr/det.onnx.jws ocr/dict.txt ocr/rec.onnx ocr/rec.onnx.jws \
+      bundle.jws
+    do
+      mkdir -p "$plugin_stage/pii-models/$(dirname "$relative")"
+      cp "$models_src/$relative" "$plugin_stage/pii-models/$relative" \
+        || die "could not stage detector bundle file: $relative"
+      chmod 0644 "$plugin_stage/pii-models/$relative"
+    done
+    for notice in THIRD-PARTY-NOTICES.txt LICENSE-APACHE-2.0.txt; do
+      notice_src="$inner_dir/plugins/finsafe-pii-detector/$notice"
+      if [ ! -f "$notice_src" ] || [ -L "$notice_src" ]; then
+        die "Tier-2 artifact third-party notice is missing or unsafe: $notice"
+      fi
+      cp "$notice_src" "$plugin_stage/$notice" \
+        || die "could not stage third-party notice: $notice"
+      chmod 0644 "$plugin_stage/$notice"
+    done
+    "$plugin_stage/plugin" --verify-bundle "$plugin_stage/pii-models" \
+      || die "staged detector bundle verification failed"
+    if [ -e "$plugin_dest" ] || [ -L "$plugin_dest" ]; then
+      mv "$plugin_dest" "$plugin_backup" || die "could not preserve prior detector installation"
+    fi
+    if mv "$plugin_stage" "$plugin_dest"; then
+      plugin_stage=""
+      rm -rf "$plugin_backup"
+    else
+      if [ -e "$plugin_backup" ] || [ -L "$plugin_backup" ]; then
+        mv "$plugin_backup" "$plugin_dest"
+      fi
+      die "could not promote verified detector installation"
+    fi
+    info "installed verified detector plugin: $plugin_dest"
+  fi
+}
+
 strip_v() {
   # shellcheck disable=SC2001
   echo "$1" | sed 's/^v//'
@@ -49,6 +166,9 @@ Environment:
   FINSAFE_INSTALL_DIR             Install directory (default: $HOME/.local/bin)
   FINSAFE_REPO                    GitHub "owner/name" (default: finogeeks/finsafe)
   FINSAFE_INSECURE_SKIP_CHECKSUM  Set to 1 to skip SHA256 verification (not recommended)
+  FINSAFE_INSTALL_PAYLOAD_DIR     Install an already extracted archive directory
+                                  (skips download). Used by layout tests and
+                                  offline installs.
 
 Examples:
   curl -fsSL https://raw.githubusercontent.com/finogeeks/finsafe/main/install.sh | sh
@@ -76,6 +196,12 @@ while [ "$#" -gt 0 ]; do
       ;;
   esac
 done
+
+if [ -n "${FINSAFE_INSTALL_PAYLOAD_DIR:-}" ]; then
+  install_from_payload "$FINSAFE_INSTALL_PAYLOAD_DIR" "$INSTALL_DIR"
+  info "installed from local payload: $INSTALL_DIR"
+  exit 0
+fi
 
 need_cmd curl
 need_cmd uname
@@ -211,21 +337,7 @@ info "installing to ${INSTALL_DIR}"
 case "$INSTALL_DIR" in
   "~"|"~"/*|"~root"|"~root"/*) die "please expand ~ in FINSAFE_INSTALL_DIR (use an absolute path like \$HOME/... )" ;;
 esac
-mkdir -p "$INSTALL_DIR" || die "could not create install dir: $INSTALL_DIR"
-
-cp -f "$inner_dir/finsafe" "$INSTALL_DIR/finsafe"
-chmod 0755 "$INSTALL_DIR/finsafe"
-
-# Linux release archives also ship runtime companions next to `finsafe` so
-# cgroup/Landlock-bound runs work without path flags (same-dir auto-discovery).
-for tool in finsafe-landlock-shim finsafe-helper finsafe-supervisor; do
-  tool_src="$inner_dir/$tool"
-  if [ -f "$tool_src" ]; then
-    cp -f "$tool_src" "$INSTALL_DIR/$tool"
-    chmod 0755 "$INSTALL_DIR/$tool"
-    info "installed $tool: $INSTALL_DIR/$tool"
-  fi
-done
+install_from_payload "$inner_dir" "$INSTALL_DIR"
 
 cp_path="$INSTALL_DIR/finsafe"
 if command -v finsafe >/dev/null 2>&1; then

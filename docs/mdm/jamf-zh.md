@@ -1,4 +1,4 @@
-# Jamf Pro — FinSAFE 托管模式
+# Jamf Pro — 智安盾托管模式
 
 在 macOS 上部署 `finsafe`、`finsafe-agent`、managed-required 哨兵及一次性注册。
 
@@ -150,9 +150,9 @@ launchctl kickstart -k system/com.finogeeks.finsafe-agent
 
 | 组 | 条件 |
 |----|------|
-| FinSAFE — 未注册 | Extension Attribute：`enrolled.json` 不存在 |
-| FinSAFE — 托管已激活 | 存在 `/etc/finsafe/enrolled.json` 且守护进程在运行 |
-| FinSAFE — 试点 | bundle 金丝雀的静态子集 |
+| 智安盾 — 未注册 | Extension Attribute：`enrolled.json` 不存在 |
+| 智安盾 — 托管已激活 | 存在 `/etc/finsafe/enrolled.json` 且守护进程在运行 |
+| 智安盾 — 试点 | bundle 金丝雀的静态子集 |
 
 **Extension Attribute 示例**（脚本）：
 

@@ -1,168 +1,314 @@
-# FinShield Windows 图文使用手册
+# 智安盾Windows 桌面指南
 
-[English](WINDOWS-GUIDE.md) · [返回首页](../README-zh.md) · [跨平台上手](getting-started-zh.md)
+**English:** [WINDOWS-GUIDE.md](WINDOWS-GUIDE.md)
 
-**给 Agent 加上沙箱，只需安装、首次准备，再从桌面控件启动。** 准备完成后，选择 WorkBuddy 或 DSH，照常交给它任务。日常使用控件启动和重新打开；需要调整权限、查看记录或排查问题时，再打开网页控制台。
+本文是 Windows 10/11 **桌面运维入门**页面。策略字段细节见 [POLICY-QUICKREF-zh.md](POLICY-QUICKREF-zh.md)；跨平台 CLI 基础见 [USER-GUIDE-zh.md](USER-GUIDE-zh.md)。
 
-![桌面悬浮控件：圆形按钮展开智能体，右侧进入控制台](../assets/windows/widget-agent-picker.png)
+与 Linux（bubblewrap）、macOS（Seatbelt）不同，Windows 有 **两种启动后端**。选错后端是安装困惑的主要来源（helper 权限提示、ProjFS 重启警告、长达数分钟的 ACL 标注）。
 
-控件图来自产品原生渲染导出，用于辨认按钮位置，不是运行状态的实机截图。辅助说明中的四张网页截图来自本机实际运行的 FinShield `0.9.97` 控制台。
+---
 
-## 1. 安装后，先找到桌面控件
+## 1. 一次性安装
 
-双击 `finsafe-<版本>-x64-setup.exe`，按向导安装并打开 FinShield。WorkBuddy 或 DSH 需单独安装、配置账号。
+推荐：
 
-准备有效且没有进行中的准备任务时，打开产品主要显示控件。首次尚未授权、准备中或状态异常时，会同时打开辅助控制台。仅打开产品不会自动开始新的授权。
-
-[公开下载](https://github.com/finogeeks/finsafe/releases)仍是旧版，新版 EXE 以上架或正式交付为准，详见[版本说明](FAQ-zh.md#为什么下载页只有旧版本)。
-
-## 2. 在控件上完成准备与日常启动
-
-1. **准备：** 显示“待准备”时，点击左侧圆形按钮，再选“开始准备”。需要确认权限时，在辅助控制台完成授权；Windows 可能请求管理员确认。
-2. **选择：** 等到“智能体待命”，点击圆形按钮，展开智能体图标。鼠标移到图标上可确认 WorkBuddy 或 DSH 名称。
-3. **启动：** 点击可启动的图标。显示“启动中…”时等待，不要重复点击；确认运行后开始任务。
-4. **重新打开：** 再点带绿色状态点的图标，打开已有实例。
-5. **整理桌面：** 点击圆形按钮或空白处收起选择区；拖动金属主体移动控件。
-
-有效准备可以复用，日常不需要一直打开网页或重复授权。**从控件选择智能体，是推荐的日常启动方式。** 原厂快捷方式另起的进程不能默认视为已受保护。
-
-```mermaid
-flowchart LR
-    A[打开桌面控件] --> B[准备完成，智能体待命]
-    B --> C[展开图标，启动智能体]
-    C --> D[再次点击，打开已有实例]
-    A -.需要设置或排查时.-> E[辅助控制台]
-    E --> A
+```powershell
+irm https://raw.githubusercontent.com/finogeeks/finsafe/main/install.ps1 | iex
 ```
 
-## 3. 看控件状态与提醒
+安装器会：
 
-| 提示 | 含义与操作 |
-| --- | --- |
-| 待准备 | 点圆形按钮，再选“开始准备” |
-| 准备中 | 等待；需要细节时进入控制台 |
-| 智能体待命 | 展开图标，选择智能体 |
-| 启动中…／图标转圈 | 尚未确认运行，重复点击不会再次启动 |
-| 图标带绿色状态点 | 已确认运行；点击打开已有实例 |
-| 红色感叹号 | 点击进入对应问题页；打开页面不等于修复了问题 |
-| 黄色数字 | 本次控件运行期间收到的 PII 命中数；点击查看告警，清除的是控件计数，不是历史记录 |
+1. 将 `finsafe.exe` 与 `finsafe-winhelper.exe` 放到 `PATH`
+2. **运行一次** **`finsafe setup-windows`**（可能出现一次权限 / UAC 提示，属正常）
 
-右键菜单提供“控制台”和“退出控件”。**退出控件只关闭控件，已运行的智能体和安全监测继续运行。**
+手动安装：从 [Releases](https://github.com/finogeeks/finsafe/releases) 解压 Windows 包，两份二进制放在同一目录，然后：
 
-## 4. 需要时再打开辅助控制台
+```powershell
+finsafe setup-windows
+```
 
-在控件展开区或右键菜单中选择“控制台”。目录不正确、准备失败、需要修改权限或查记录时，参考下方页面；正常启动和重新打开智能体，优先使用控件。
+`setup-windows` 会准备：
 
-<details>
-<summary>权限确认与调整：安全设置</summary>
+| 组件 | 何时需要 | 说明 |
+|------|----------|------|
+| **finsafe-winhelper** 服务 | `network: none` / allowlist（WFP 围栏）、托管舰队 | 缺失时 `doctor` 会告警 |
+| **ProjFS**（`Client-ProjFS`） | 可选：AppContainer + 大体积 `venv` / `node_modules` 投影 | `setup-windows` 在能拉起 `prjflt` 时无需重启。仅当 `probe` 报 `restart_required` 时才重启。典型 Hermes / `network: host` **不需要**。手动安装：`Enable-WindowsOptionalFeature -Online -FeatureName Client-ProjFS -NoRestart`（管理员） |
 
-打开控件中的“控制台”，进入“安全设置”，检查：
+---
 
-| 设置 | 应确认的内容 |
-| --- | --- |
-| 文件访问 | 任务目录允许读写；参考资料可设为只读；私密目录按需求禁止访问 |
-| 网络访问 | 模型及业务服务属于所需的访问范围 |
-| 敏感信息 | 选择“记录”“询问”或“阻止”，并确认当前检测类别 |
-| 本地留存 | 是否在本机保存已接入的请求、回复与处理结果 |
+## 2. 选择后端（决策树）
 
-确认后选择“授权并继续”，等待准备完成。需要管理员权限时，按 Windows 的提示确认。取消或失败后应查看实际错误；不能把安装完成当作准备完成。
+```text
+是否需要 network: none / allowlist、机密 deny-read、
+托管舰队，或显式 windows.backend: appcontainer？
+        │
+        ├─ 是 ──► AppContainer（更强）
+        │
+        └─ 否（典型 Hermes / network: host 桌面）
+                 └──► RestrictedToken（Auto 默认）
+```
 
-文件和网络范围变更后，需要重新授权。准备过程中不要反复点击启动。资源上限可以由配置控制；执行时限只适用于相应工具任务，不能理解为桌面智能体的整体运行时长上限。
+| | **RestrictedToken** | **AppContainer** |
+|--|---------------------|------------------|
+| **何时（Auto）** | `network: host` 且 YAML `deny_read_paths` 为空 | `network: none` / allowlist、任意 YAML `deny_read_paths`、托管舰队 |
+| **钉死** | `windows.backend: restricted_token` | `windows.backend: appcontainer` |
+| **读** | 整机可读（大多沿用用户身份） | 仅 Package SID + DACL 授权 |
+| **写** | 默认拒绝；仅 `read_write_paths`（+ cwd）白名单 | 在声明的根上做 DACL 授权 |
+| **Deny-read / 机密** | 不支持显式 deny-read | 支持 effective YAML 中的显式 deny-read（DACL deny-read） |
+| **网络围栏（WFP）** | 不是 host 网络的主路径 | 用于 none / allowlist。操作者（已启用的 `finsafe-net`）保持在线；FAIL 是子进程/探测上的 deny-only `WSAEACCES` |
+| **大体积 `venv` / `node_modules`** | 无递归 ACL；**无需 ProjFS** | 优先 ProjFS 投影；策略里列整棵树可能触发 ACL 风暴 |
+| **证明字段** | `windows_restricted_token`，`degraded_execution=true` | `windows_appcontainer` |
+| **Hermes 示例** | [`hermes-windows-oneshot.yaml`](../examples/wrapper-policies/hermes-windows-oneshot.yaml) | [`hermes-windows-oneshot-appcontainer.yaml`](../examples/wrapper-policies/hermes-windows-oneshot-appcontainer.yaml) |
 
-![安全设置：本机已经完成授权](../assets/windows/02-security-settings.jpg)
+**经验法则：** 需要普通主机联网与本机 Python/Node 安装的 agent CLI，先用 RestrictedToken；需要锁网或机密 deny-read 再切 AppContainer。
 
-图 1：授权完成后，右上角显示“已授权”。首次使用按本节完成授权；截图中的路径、网络和资源值是这台机器的现有配置，不是推荐配置。
+另有显式弱兼容钉死（`windows.backend: write_restricted`），用于需要 RestrictedToken 族写白名单、但不走 AppContainer 的主机。除非明确需要，否则优先 Auto / RestrictedToken。见 [POLICY-QUICKREF-zh.md § Windows 后端](POLICY-QUICKREF-zh.md)。
 
-</details>
+---
 
-<details>
-<summary>智能体找不到或无法启动：安装目录</summary>
+## 3. 校验主机
 
-### WorkBuddy
+```powershell
+finsafe probe
+finsafe doctor
+# 自动化：
+finsafe probe --json
+finsafe doctor --json
+```
 
-1. 在“智能体管理”选择 WorkBuddy。
-2. 检查安装目录，目录中应有 `WorkBuddy.exe`。自动发现不正确时，使用“重新查找”或“选择目录”。
-3. 选择“安全启动”，等待确认运行后再使用。
-4. 应用已经运行时，使用 FinShield 的打开入口返回该实例。
+常见信号怎么读：
 
-![WorkBuddy：确认目录并找到安全启动按钮](../assets/windows/03-workbuddy.jpg)
+| 信号 | 对典型 Hermes 的严重性 | 怎么做 |
+|------|------------------------|--------|
+| Helper 未运行 | 若只用 `network: host` 多为警告 | 使用 none/allowlist 策略前先跑 `finsafe setup-windows` |
+| ProjFS 未就绪 / `restart_required` | **警告**（不是硬错误） | RestrictedToken 可忽略。AppContainer + 大体积投影时再跑 `setup-windows`，确认 `projection_smoke_works`；仅当 `restart_required` 仍为 true 时重启 |
+| `appcontainer_works=false` | 会阻断 AppContainer Auto 路径 | host 类 agent 改用 RestrictedToken，或修复禁用 AppContainer 的系统/组策略 |
 
-图 2：先检查安装目录，再选择蓝色“安全启动”。本图为启动前状态；“已安装”不等于“正在受保护运行”。
+---
 
-### DSH CLI
+## 4. 第一次跑通
 
-1. 在“智能体管理”选择 DSH CLI。
-2. 分别确认 Node.js 与 DSH 的安装目录。仅填写其中一个，不足以启动。
-3. 选择“安全启动”，等待工作台就绪；首次启动期间不要重复提交。
-4. 已就绪的工作台可以通过 FinShield 重新打开。修改安装目录用于后续启动，不会迁移当前运行实例。
+多数示例期望可写根目录 `./workspace`：
 
-![DSH：分别确认 Node.js 与 DSH 目录](../assets/windows/04-dsh.jpg)
+```powershell
+New-Item -ItemType Directory -Force -Path workspace | Out-Null
+```
 
-图 3：DSH 需要两个有效目录。点击“安全启动”后等待工作台就绪，再开始使用。
+冒烟：
 
-</details>
+```powershell
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/windows-version-smoke.yaml -OutFile windows-version-smoke.yaml
+finsafe --policy .\windows-version-smoke.yaml run -- cmd /c ver
+```
 
-<details>
-<summary>查看对话、敏感信息与告警记录</summary>
+Hermes（推荐默认 — RestrictedToken）：
 
-可从控件黄色提醒进入告警，或在辅助控制台中选择“查看记录”。
+```powershell
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/hermes-windows-oneshot.yaml -OutFile hermes-windows-oneshot.yaml
+finsafe --policy .\hermes-windows-oneshot.yaml run -- hermes --version
+```
 
-在智能体详情的“对话与告警”中选择“查看记录”，核对已采集的模型请求、回复和处理结果。开启本地留存后，记录在本机加密保存。它不意味着模型服务离线运行：获准的模型请求仍会发往配置的服务。
+更强隔离 Hermes（AppContainer）：
 
-1. 从智能体详情进入“查看记录”。
-2. 选择智能体来源，在搜索框输入任务或消息关键词，再点“搜索”。
-3. 选择左侧任务，查看右侧消息；需要排查告警时，勾选“仅看告警任务”。
+```powershell
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/hermes-windows-oneshot-appcontainer.yaml -OutFile hermes-windows-oneshot-appcontainer.yaml
+finsafe --policy .\hermes-windows-oneshot-appcontainer.yaml run -- hermes --version
+```
 
-![对话与告警：按来源与关键词筛选](../assets/windows/05-records.jpg)
+交互式 Hermes 会话（RestrictedToken + `self-confine`，请在真实终端中运行 —
+Windows Terminal 或交互式 PowerShell 窗口）：
 
-图 4：为避免公开真实对话，截图使用没有匹配结果的演示关键词，所以左侧显示“暂无记录”。顶部为该来源的记录统计；图片没有伪造任务或消息。
+```powershell
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/finogeeks/finsafe/main/examples/wrapper-policies/hermes-windows-interactive.yaml -OutFile hermes-windows-interactive.yaml
+finsafe --policy .\hermes-windows-interactive.yaml self-confine -- hermes
+```
 
-Windows 对已接入、可检查的模型请求提供以下处理：
+智安盾常驻为 supervisor。broker 直接共用你的控制台（逐键输入、彩色、TUI
+实时重绘和窗口大小变化都直接到 broker）。**Ctrl+C 发给 Hermes；Ctrl+Break
+终止整个会话。**只有嵌入式宿主需要智安盾自己充当终端时，才设置
+`FINSAFE_WIN_PTY_MODE=live`。不要把 oneshot 策略复用给 `self-confine` — 它是
+`program_mode: short-lived` 且带 120 秒超时，会中断交互会话。
 
-| 模式 | 检测命中后的行为 |
-| --- | --- |
-| 记录 | 记录告警，原请求继续发送；这是默认处理 |
-| 询问 | 暂停当前请求，等待你在确认窗口中决定是否仅发送这一次 |
-| 阻止 | 拒绝当前请求，不将该请求转发给模型服务 |
+- 短命工具 → `finsafe run` + `program_mode: short-lived`
+- 真实终端里的交互式 broker → `finsafe self-confine`（broker 共用你的控制台）
+- 可选：broker 不沙箱、工具仍沙箱 → `broker_confine: tools-only`（见 `hermes-interactive-tools-only.yaml`）
+- Agent 专项说明 → [agent-sandbox-guide-zh.md § Windows agents](agent-sandbox-guide-zh.md)
 
-询问窗口关闭、取消或超时，不会批准已命中的这次请求。一次同意只覆盖一次请求，后续请求仍需独立判断。被拒后，智能体可能显示请求错误，具体表现取决于客户端。
+> **关于 git-bash / MSYS2（Cygwin）Agent 的说明：** 作为 RestrictedToken **直接**
+> 载荷的 Git for Windows `bash.exe`，通过给已有 SID 命名共享内存
+> （`CreateFileMapping S-1-5-21-….n`）授予 capability SID，并把操作者 SID 加入
+> restricting SID 来支持（公开 [#29](https://github.com/finogeeks/finsafe/issues/29)）。
+> Hermes 工具、`cmd /c bash` 等 **子进程** git-bash 需要显式
+> `windows.msys2_child_ipc: true`（公开
+> [#34](https://github.com/finogeeks/finsafe/issues/34)）。该开关把操作者 SID
+> 放进整个令牌的 restricting SID，因此该会话对用户已拥有 NTFS 对象**不再**做写白名单。
+> 随附的 `hermes-windows-oneshot.yaml` / `hermes-windows-interactive.yaml` 已打开。
+> 默认 RestrictedToken（省略该字段）保留写白名单；子进程 bash 会在 Cygwin 初始化时
+> 以 Win32 5 失败。AppContainer 是另一套令牌，仍不是 git-bash 路径。这不是
+> `SeCreateGlobalPrivilege`。**不要**在 WorkBuddy GUI app seam 上打开
+> `windows.msys2_child_ipc`：该 seam 对 Git Bash 是 hook DENY；C7 语言路径是
+> PowerShell → python/node。`finsafe app attach` 会把 CodeBuddy
+> `permissions.deny: ["Bash"]`、`CODEBUDDY_CODE_SHELL=powershell`、
+> `CODEBUDDY_DISABLE_SHELL_SNAPSHOT=1` 写入**两个** USER 主目录；prepared
+> AppContainer attach 还会写入 `CODEBUDDY_SAFE_DELETE_ENABLED=1` 与
+> `sandbox.safeDeleteRuntimeEnabled: true`：
+> `.workbuddy/settings.json`（Desktop）以及 `.codebuddy/settings.json` +
+> `settings.local.json`（裸 CLI）（见 §6）。
 
-检查不是全量扫描：不支持的协议、无法解读的内容或不可见流量不具备同样覆盖。Windows 对无法完成检查的请求，可能按其他网络与内容规则继续转发并记录原因；即使选择“阻止”，也不代表所有敏感数据都一定被识别和拦截。
+---
 
-</details>
+### AppContainer HTTPS 检查的共享配置
 
-## 5. 第一次使用后验证文件范围
+当前 AppContainer HTTPS 检查候选版本的验证使用一套固定配置，运行期间不动态变化。
+代理路由与 TLS 检查沿用现有 `network.mode: proxy`
+和 `tls_terminate` 设置，不新增配置入口。
 
-先用专用测试目录和测试文件，按本机实际授权范围操作。
+证书注入与持久 Inspector 复用均基于这套共享配置。在同一域内按运行分配不同策略权限、
+动态切换策略，以及这些运行之间的额外权限隔离，暂缓实现。
+现有 AppContainer 约束和已配置的网络规则继续生效。
 
-| 范围 | 测试方式 | 预期 |
-| --- | --- | --- |
-| 可读写工作区 | 新建 `finshield-demo.txt`，读取后修改内容 | 操作成功，文件变化可见 |
-| 已设为只读的目录 | 读取一个测试文件，再尝试修改该文件 | 可读取，修改被拒，原内容保留 |
-| 已设为禁止访问的目录 | 尝试读取一个预先存在的测试文件 | 读取被拒 |
+Inspector 不按应用 PID 判断代理请求，也不要求对子进程逐一登记。每次运行获得
+一个仅监听本机的代理入口，用于记录该次运行的审计信息；正常子进程继承代理和
+证书环境变量即可使用。入口不提供本机进程之间的权限隔离或来源身份认证。
+Core 与 Explicit 的留存记录使用相同的用户、域存储位置，可在桌面“记录”中查看。
 
-只读与禁止访问必须是实际生效的配置，不要默认认定“桌面必定只读”或某个浏览器目录必定禁止访问。Windows 仅按有效策略中声明的路径和权限执行。
+Windows 当前使用：**在同一个 Windows 登录会话内，每个用户 SID +
+`security_domain_id` 对应一个普通用户权限的常驻 Inspector**。同域的 Core、普通
+运行和工具子进程使用统一检查配置，共用该 Inspector。WorkBuddy 与 DSH 在同域
+时可以同时运行，启动任何一个都不需要退出另一个。不同域使用独立的 Inspector、
+CA 材料和生命周期资源；停止一个域的 Inspector 不影响其他域。
+Node Guard 保留网络适配器；Core 退出
+只释放自己的连接和审计上下文，不停止 Inspector。未来透明转发也接入同一个进程。
+已准入的 AppContainer self-confine 也接入此宿主。标准 HTTP 代理请求和 HTTPS
+CONNECT 使用同一检查引擎，支持启用或关闭 TLS 检查。透明转发尚未实现。
+具体验证结果与兼容性缺口见[迁移验证](../../design/windows-appcontainer-https-inspection.md#103-migration-verification)。
 
-判断以工具实际返回、文件内容和目录状态为准。模型口头拒绝、文件不存在或路径写错，都不能证明防护生效。
+## 5. 专用主目录、大目录与 ProjFS
 
-## 6. 理解 Windows 防护边界
+### 专用智安盾主目录（RestrictedToken）
 
-FinShield 使用 Windows 原生能力执行约束：AppContainer 限制受控进程身份，文件权限管理授权范围，Job Object 管理相应进程与资源，受控代理和 WFP 支持网络限制。
+即使你停留在 RestrictedToken / `network: host`，也**不要跳过**本小节。
+RestrictedToken 启动时授权会**拒绝**卷根、`%USERPROFILE%`、`%APPDATA%` /
+`%LOCALAPPDATA%` 根，以及 Electron `userData` 产品目录（例如 `%APPDATA%\…`）。
+请使用 `%LOCALAPPDATA%\FinSAFE\...` 下的专用沙箱主目录，不要把 `userData`
+列入 `read_write_paths` 或当作 `work_dir`。WorkBuddy catalog（#375）额外以
+**NoWalk** ACE 授予 `%LOCALAPPDATA%\CodeBuddyExtension`（不是 TreeSet，也不是
+Electron `userData`）；其他 AppData 产品目录仍拒绝。
 
-具体作用取决于实际配置与接入路径。桌面 GUI 的兼容性要求、工具进程的桌面设置、模型流量检查范围各有差异。
+Prepared AppContainer（`finsafe prepare` + 已安装的 effective YAML）是另一套
+生命周期：effective YAML 中显式声明的卷根和用户配置根可以授权，`unprepare`
+根据 receipt 恢复原 ACL。宽范围必须显式写入 effective YAML；app cwd/chdir
+不会动态增加权限。
 
-README 中的窗口与剪贴板案例采用各案例记录的隔离配置，部分使用私有桌面。当前 WorkBuddy GUI 需要交互桌面兼容，不能据此推断它默认也具备所有私有桌面案例的同等隔离效果。
+**RestrictedToken 与已有文件：** WRITE_RESTRICTED 只在主目录对象上设置可继承 ACE
+（`DirectoryInheritableNoWalk`），**不会**改写已有子孙。Agent 可以创建**新**文件
+（它们会继承 capability SID），但**不能修改预先存在的文件或子目录**，除非那些对象
+已经带有该 SID。请把策略指向一个专用的**空** `%LOCALAPPDATA%\FinSAFE\...` 主目录
+——不要把庞大的 `userData` 树拷进去并指望写入能成功。
 
-## 7. 遇到问题
+### 仅 AppContainer：大目录与 ProjFS
 
-| 现象 | 先检查 |
-| --- | --- |
-| 一直显示“待准备”或“准备未完成” | 进入控制台，查看授权状态、权限配置与实际错误 |
-| 找不到 WorkBuddy | 安装目录是否包含 `WorkBuddy.exe`，重新查找或手动选择 |
-| DSH 无法启动 | Node.js 与 DSH 两个目录是否有效，是否已完成安全准备 |
-| 正常任务提示拒绝访问 | 文件是否位于已授权工作区，参考目录是否为只读 |
-| 开了“记录”但数据仍发出 | 记录模式允许发送；如需干预，按需求选择询问或阻止 |
-| 看不到对话记录 | 请求是否经过已接入路径、本地留存是否开启，以及记录服务是否正常 |
-| 界面提示服务不可用 | 查看实际服务错误或重试读取状态，不要把旧显示当作当前运行结果 |
+若你停留在 RestrictedToken / `network: host`，可跳过**本小节**（上面的专用主目录规则仍然适用）。
 
-更新使用新版 EXE。卸载使用 Windows“设置 → 应用 → 已安装的应用”。如需提交问题，按[常见问题中的反馈说明](FAQ-zh.md#如何反馈问题)提供版本与复现步骤。
+AppContainer 文件系统权限只来自已安装的 effective YAML，而不是启动时传入的 wrapper policy。加入所需的持久边界后运行 `finsafe prepare`；`run` 与 `self-confine` 只消费已准备的权限，绝不会新增或修复 ACL。effective YAML 中显式配置的卷根和用户配置根可被接受，`unprepare` 会恢复 receipt 记录的改动。对非常大的物理目录树，preparation 在 EDR/DLP 下仍可能耗费数分钟，因此优先：
+
+1. **收窄路径** — 只列真正需要的目录
+2. **RestrictedToken** — 仅需写白名单的 host 网络 agent（仍须使用空的专用智安盾主目录）
+3. **ProjFS 投影** — AppContainer 下的大体积运行时树（`setup-windows`；仅当 `finsafe probe --json` 报 `restart_required` 时重启）。手动安装 ProjFS：
+
+   ```powershell
+   # 需要管理员权限
+   Enable-WindowsOptionalFeature -Online -FeatureName Client-ProjFS -NoRestart
+   ```
+
+   用 `finsafe probe --json | ConvertFrom-Json | Select-Object -ExpandProperty projfs` 验证。
+
+Preparation 生命周期与中断恢复：[POLICY-QUICKREF-zh.md § Windows AppContainer 大目录](POLICY-QUICKREF-zh.md)。
+
+---
+
+## 6. App seams（实验性）
+
+**App seam** 是已安装 GUI agent 里、无需改厂商签名二进制就能改变行为的位置。
+Phase 1 用的是应用自带的 **bundled bootstrap script**：`finsafe app attach`
+把它换成智安盾shim，在旁边写入 guard，并保留原文件的逐字节备份（seam
+旁的相对名：`<seam>.finsafe-orig` 与 `<seam>.finsafe-guard.js`）。这是
+**实验性** 功能，不是已支持的产品模式。Linux / macOS 上 `finsafe app`
+以 78 退出。
+
+```powershell
+finsafe app list
+finsafe app doctor <integration-id>
+finsafe app attach <integration-id>
+finsafe app status
+finsafe app detach --all
+```
+
+**在删除或替换 `finsafe.exe` 之前，先运行 `finsafe app detach --all`。**
+若 seam 仍附着而二进制已不在，seam 即 **orphaned**（D14）：个人模式下
+shim 会无防护地跑原脚本，并追加本地日志。**不保证**此时会有用户通知
+（不承诺 toast）。这是损坏状态，不是受支持的模式。
+
+### Phase 1 保证什么、不保证什么
+
+| 层 | Phase 1 | 层级（D16） |
+|----|---------|------------|
+| 核心进程 | 经 Node `fs` 的写范围与已配置 deny-read；Job 拆除与资源限制 | **用户态** guard + Job。核心进程上**没有**内核文件系统边界。 |
+| 派生工具（子进程） | 选定的 effective YAML 提供具体根目录及 `codebuddy-*`、`workbuddy-*` 等窄范围运行时 glob；唯一的运行时追加项是 AppContainer profile 自带的 `Temp`。FakeAgent 不会增加会话 cwd 或 chdir 目标。 | **内核** AppContainer + 已 prepare 的路径 ACL |
+| Deny-read / 机密路径 | Effective YAML 中的 deny 规则应用到共享 AppContainer SID；核心进程的 Node `fs` 也协作式执行这些规则。 | 子进程为**内核**边界；核心进程为**用户态**边界 |
+| 出站 allowlist | **无**（仅审计） | —（Phase 2） |
+
+不要把「已 attach」读成「整棵 GUI agent 树都被内核沙箱化」。核心仍以用户
+完整令牌运行；内核写边界在子进程。FakeAgent fixture 证明不等于 WorkBuddy G2。
+
+WorkBuddy 的模型 **Bash** 工具是 Git Bash（MSYS2），不是 `cmd`。seam 在
+`CreateProcessW` 上 **DENY** `bash` / `git-bash` / `mintty`。这是有意的：打开
+`windows.msys2_child_ipc` 会关掉该会话的 NTFS 写白名单，本 catalog **禁止**该
+字段。`finsafe app attach` 会把同一套 overlay 写入**两个** USER 主目录
+（Desktop SettingsManager 用 `%USERPROFILE%\.workbuddy\settings.json`，裸 CLI
+用 `%USERPROFILE%\.codebuddy\settings.json` 和 `settings.local.json`），并对
+attach cwd / `%USERPROFILE%\WorkBuddy` 下已有的项目 `.codebuddy/` 覆盖层做同样
+合并：`permissions.deny: ["Bash"]`、`CODEBUDDY_CODE_SHELL=powershell`、
+`CODEBUDDY_DISABLE_SHELL_SNAPSHOT=1`；仅 prepared AppContainer attach 还会写入
+`CODEBUDDY_SAFE_DELETE_ENABLED=1`、`sandbox.safeDeleteRuntimeEnabled: true`
+（保留 `sandbox.extraAllowWrite` /
+claw / plugins）。attach 之后新建的项目覆盖层仍可能 later-win。detach 还原
+首次 attach 触及的每一层。attach 会报告 `restart_needed`，以便 `--prewarm` /
+`--serve` 重读设置。不要设 `CODEBUDDY_CODE_SHELL=cmd`。这是产品配置绕过，不是
+RestrictedToken 里跑 Git Bash。
+
+---
+
+## 7. 排障
+
+| 现象 | 可能原因 | 处理 |
+|------|----------|------|
+| 首次使用出现 UAC / 权限提示 | `setup-windows` 注册 helper / WFP | 接受一次；中断后可再跑 `finsafe setup-windows` |
+| `doctor` 提示 helper | Helper 服务未运行 | `finsafe setup-windows`；none/allowlist 需要它 |
+| `doctor` 提示 ProjFS / 重启 | Client-ProjFS 缺失、烟测失败，或确有待重启 | RestrictedToken Hermes 可忽略；再跑 `setup-windows` 并以 `probe` 为准（`Restart Required : Possible` 不是待重启）。仅当 `restart_required` 为 true 时重启 |
+| `doctor` 指出超限可继承根 | wrapper policy 的目录树超过 `FINSAFE_WINSAFE_INHERIT_ROOT_WARN_LIMIT` | 收窄 wrapper 路径。若确实需要 AppContainer 持久访问更大范围，把该边界加入已安装的 effective YAML，再运行 `finsafe prepare`；prepare **不会**读取 wrapper policy，显式 prepared 边界可以覆盖宽根 — 见 §5 |
+| `refusing to apply inheritable` 且含 `product folder` / `userData` | RestrictedToken 的 `read_write_paths` / `work_dir` 是 AppData 产品目录 | 改用 `%LOCALAPPDATA%\FinSAFE\...` 下的专用空主目录 — 见 §5 |
+| RestrictedToken agent 无法写入主目录里已有文件 | `DirectoryInheritableNoWalk` 不会改写预先存在的子孙 | 创建**新的空** `%LOCALAPPDATA%\FinSAFE\...` 主目录；新文件会继承 capability ACE。不要把已填充的 `userData` 树拷进去 |
+| AppContainer 启动提示 launch-image bucket 未覆盖 | `{userData}\sandbox-images\<digest>` 缺少已准备 Package SID 的读/执行权限 | 在已安装 effective YAML 中加入覆盖 staging 位置的 `read_only` 或 `read_write` 边界，再运行 `finsafe prepare`。launch 只检查实际 DACL，绝不会现场修复 |
+| AppContainer 下 Hermes 读不到 `.env` / 凭据 | effective YAML 中的显式 deny-read 规则 | 审阅并修改该 YAML 规则；若确实需要宿主机范围读取，可改用 RestrictedToken 示例 |
+| `self-confine` 退出 `0xC0000142` / `STATUS_DLL_INIT_FAILED`（RestrictedToken） | 0.9.15 之前的启动路径 | 升级到 **0.9.15+**（默认 Live ConPTY）；或设 `FINSAFE_WIN_PTY_MODE=pipe` |
+| WorkBuddy 仍提供 Bash / `bash.exe` 以 Win32 5 / `0xC0000142` 退出 | Git Bash 是 seam DENY；MSYS2 IPC 无法在保留写白名单的前提下被 confine；attach 之后新建的项目 `.codebuddy/` 覆盖层仍可能 later-win；GUI 读的是 `.workbuddy/settings.json` | attach 会写入**两个** USER 主目录（`.workbuddy/settings.json` 以及 `.codebuddy/settings.json` + `settings.local.json`：deny Bash + PowerShell env + `CODEBUDDY_DISABLE_SHELL_SNAPSHOT=1` + 打开 safe-delete）以及已有项目覆盖层。重启 WorkBuddy 让 CodeBuddy 重读设置。**不要**设 `windows.msys2_child_ipc`。 |
+| 嵌套 `cmd /c …` 无输出 | 标准 I/O 路径 / 旧版本回归 | 升级到 **0.9.7+**；非交互控制台主机走 PipeCapture |
+| 操作者在 `network: none` 下仍能连外网 | 预期：已启用的 `finsafe-net` 组成员身份让桌面保持在线 | 不是围栏失败。AppContainer 子进程和启动前探测用 deny-only 戳记；FAIL 是该令牌上连接成功而不是 `WSAEACCES` |
+| Deny-only 探测 / 沙箱子进程连接成功 | Helper / WFP 未就绪，或 deny-only 戳记失败 | `setup-windows`，再用 `probe --json` / 验收围栏检查（`windows_egress_fence_verified`） |
+| 托管/企业姿态在 RestrictedToken 上失败 | 舰队要求 AppContainer | 使用 AppContainer + helper；已签名包不得把 RT 当作 AC 对等 |
+| 卸载智安盾后 GUI agent 仍无防护地运行 | Orphaned seam：未 `detach` 就删除或替换了 `finsafe.exe`（D14） | 重装智安盾后运行 `finsafe app detach --all`，或从 `<seam>.finsafe-orig` 恢复厂商 bootstrap。**不保证 toast** |
+
+Windows 上同样可用策略迭代（`learn` / `explain` / `--audit`）；`learn` 保持 AppContainer 强制并摄入 ETW 推导的拒绝。流程见 [USER-GUIDE-zh.md § 创建与迭代策略](USER-GUIDE-zh.md)。
+
+---
+
+## 8. 相关文档
+
+| 文档 | 作用 |
+|------|------|
+| [USER-GUIDE-zh.md](USER-GUIDE-zh.md) | 跨平台 CLI（`run` / `self-confine` / learn） |
+| [POLICY-QUICKREF-zh.md](POLICY-QUICKREF-zh.md) | 后端对照表 + AppContainer 大目录参考 |
+| [agent-sandbox-guide-zh.md](agent-sandbox-guide-zh.md) | Hermes / agent 配方 |
+| [README-zh.md](../README-zh.md) | 安装一行命令与发行包 |
+| [CHANGELOG.md](../CHANGELOG.md) | 按版本的 Windows 修复说明 |

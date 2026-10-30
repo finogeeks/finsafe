@@ -2,14 +2,14 @@
 created: 2026-06-22
 name: finsafe-agent-sandbox-run
 description: >-
-  在 FinSAFE 中运行 Hermes、OpenCode、agy；用 learn、explain、audit、finsafe-trace
+  使用智安盾为 Hermes、OpenCode、agy 提供沙箱隔离；用 learn、explain、audit、finsafe-trace
   排障。面向公开发布用户，自包含。适用于沙箱化 Agent、修复 operation not permitted、
   迭代策略直至顺畅运行。
 ---
 
 # finsafe-agent-sandbox-run
 
-在 FinSAFE 下运行 **Hermes**、**OpenCode**、**agy** 或新 Agent。失败时用 **`learn`**、
+使用智安盾为 **Hermes**、**OpenCode**、**agy** 或其他智能体提供沙箱隔离。运行失败时用 **`learn`**、
 **`explain`**（及 **`--audit`** / **`finsafe-trace`**），不要猜 YAML。
 
 需要：`finsafe` 在 PATH — https://github.com/finogeeks/finsafe/releases

@@ -1,8 +1,8 @@
-# FinSAFE 沙箱管理模型
+# 智安盾沙箱管理模型
 
 **English:** [sandbox-management-model.md](./sandbox-management-model.md)
 
-FinSAFE 托管模式建议用五个概念来理解：
+智安盾托管模式建议用五个概念来理解：
 
 1. **Sandbox policy（沙箱策略）** — 单个允许的 agent 或程序可访问哪些资源。
 2. **Bundle（策略包）** — 面向设备队列的、已签名且带版本号的策略集合。
@@ -18,7 +18,7 @@ FinSAFE 托管模式建议用五个概念来理解：
 
 ## Bundle（策略包）
 
-Bundle 不是「一份 Hermes 策略」。Bundle 是匹配设备收到的**已签名策略集合**。Bundle 内部，FinSAFE 为所请求的程序精确选择一条沙箱策略。若无策略匹配，运行被拒绝；若多条策略匹配，Bundle 视为歧义并**失败关闭（fail closed）**。
+Bundle 不是「一份 Hermes 策略」。Bundle 是匹配设备收到的**已签名策略集合**。Bundle 内部，智安盾为所请求的程序精确选择一条沙箱策略。若无策略匹配，运行被拒绝；若多条策略匹配，Bundle 视为歧义并**失败关闭（fail closed）**。
 
 示例 Bundle 内容：
 
@@ -90,7 +90,7 @@ Assignment rollout 属性包括：
 3. 必需且 authority 已验证的 `device:*` 谓词数量
 4. 其他肯定谓词数量
 
-仅含否定谓词不增加具体性。若两条 Assignment 平局或无法比较，FinSAFE 阻止激活或以 `assignment_conflict` **失败关闭**。
+仅含否定谓词不增加具体性。若两条 Assignment 平局或无法比较，智安盾阻止激活或以 `assignment_conflict` **失败关闭**。
 
 若无 active Assignment 匹配设备（含 rollout 排除），authority 在 `/v1/bundles/current` 返回 `no_assignment`。
 

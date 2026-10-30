@@ -2,7 +2,7 @@
 
 **English:** [admin-ui.md](./admin-ui.md)
 
-**FinSAFE Policy Authority 管理控制台**为 React 运维界面，由 `finsafe-authority-http` 在 `/admin/` 提供（`embed-admin-ui` 构建或 `FINSAFE_ADMIN_UI_DIR`）。
+**智安盾策略管理控制台**为 React 运维界面，由 `finsafe-authority-http` 在 `/admin/` 提供（`embed-admin-ui` 构建或 `FINSAFE_ADMIN_UI_DIR`）。
 
 **URL（生产）：** `https://gov.example.com/policy-authority/admin/`  
 **URL（本地）：** `http://127.0.0.1:8090/admin/`
@@ -152,7 +152,7 @@ curl -sf -H "X-Admin-Token: $TOKEN" "$AUTHORITY/v1/admin/devices?limit=50" | jq 
 
 ### 含义
 
-**策略拒绝（policy denial）** 指托管模式审计事件 `kind: policy_denied`：FinSAFE 依据当前 authority bundle **拒绝** 一次托管执行尝试。这不是普通 OS 错误，也不是 kill switch 本身。
+**策略拒绝（policy denial）** 指托管模式审计事件 `kind: policy_denied`：智安盾依据当前 authority bundle **拒绝** 一次托管执行尝试。这不是普通 OS 错误，也不是 kill switch 本身。
 
 常见原因（写入审计 `reason` 时）：
 

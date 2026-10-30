@@ -58,7 +58,7 @@ finsafe-bundlectl                  finsafe-authority-http               finsafe-
 
 ## Install the binary (operator workstation)
 
-1. Open [FinSAFE releases](https://github.com/finogeeks/finsafe/releases) and download the matching archive:
+1. Open [FinShield releases](https://github.com/finogeeks/finsafe/releases) and download the matching archive:
    - Linux x86_64: `finsafe-bundlectl-v<version>-x86_64-unknown-linux-gnu.tar.zst`
    - macOS Apple Silicon: `finsafe-bundlectl-v<version>-aarch64-apple-darwin.tar.zst`
    - macOS Intel: `finsafe-bundlectl-v<version>-x86_64-apple-darwin.tar.zst`
