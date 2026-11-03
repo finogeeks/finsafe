@@ -1,12 +1,14 @@
 # Wrapper policy examples
 
+> Older operation references link to the pre-cleanup version; check them against your installed release.
+
 `kind: local-wrapper` YAML for **`finsafe run`** (short-lived) and **`finsafe self-confine`** (interactive). Hermes-facing samples use **`${HOME}` / `${XDG_CONFIG_HOME}`** placeholders so checked-in policies stay portable; see the quick-ref for substitution rules vs `policy_digest`. Commands in file comments assume this repository root, for example:
 
 ```bash
 finsafe --policy examples/wrapper-policies/hermes-version-smoke.yaml run your-command
 ```
 
-See [docs/POLICY-QUICKREF.md](../../docs/POLICY-QUICKREF.md) or [docs/POLICY-QUICKREF-zh.md](../../docs/POLICY-QUICKREF-zh.md).
+See [docs/POLICY-QUICKREF.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/POLICY-QUICKREF.md) or [docs/POLICY-QUICKREF-zh.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/POLICY-QUICKREF-zh.md).
 
 | File | Platform | Use |
 |------|----------|-----|
@@ -23,8 +25,8 @@ See [docs/POLICY-QUICKREF.md](../../docs/POLICY-QUICKREF.md) or [docs/POLICY-QUI
 | `hermes-windows-interactive.yaml` | Windows | Interactive Hermes session under **RestrictedToken** via `self-confine` (Live ConPTY terminal host; no session timeout) |
 | `windows-version-smoke.yaml` | Windows | Minimal `finsafe run cmd /c echo hello` |
 | `windows-sandbox-smoke.yaml` | Windows | Stricter AppContainer smoke with `network: host` |
-| `network-allowlist-proxy.yaml` | Linux / macOS / Windows | Domain allowlist + `start_internal_proxy` (no MITM) — [runbook](../../docs/network-allowlist-proxy-runbook.md) |
-| `enterprise-https-inspection.yaml` | Linux / macOS / Windows | Allowlist + `tls_terminate` (licensed MITM) — [HTTPS inspection runbook](../../docs/https-inspection-runbook.md) |
+| `network-allowlist-proxy.yaml` | Linux / macOS / Windows | Domain allowlist + `start_internal_proxy` (no MITM) — [runbook](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/network-allowlist-proxy-runbook.md) |
+| `enterprise-https-inspection.yaml` | Linux / macOS / Windows | Allowlist + `tls_terminate` (licensed MITM) — [HTTPS inspection runbook](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/https-inspection-runbook.md) |
 | `agent-sandbox/` | Linux / macOS / Windows | Agent CLI samples (Hermes, Codex, OpenCode, agy) and isolation probes — see [agent-sandbox/README.md](agent-sandbox/README.md) |
 
-**Maintainers:** edit YAML in this directory; keep comments and paths consistent with [managed-lab.md](../../docs/testing/managed-lab.md) and [POLICY-QUICKREF.md](../../docs/POLICY-QUICKREF.md).
+**Maintainers:** edit YAML in this directory; keep comments and paths consistent with [managed-lab.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/testing/managed-lab.md) and [POLICY-QUICKREF.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/POLICY-QUICKREF.md).

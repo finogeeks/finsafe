@@ -1,20 +1,22 @@
 # MDM deployment (managed mode)
 
+> Older operation references link to the pre-cleanup version; check them against your installed release.
+
 Ship FinSAFE to fleet machines and enforce managed mode via MDM or config management.
 
 ## Documentation
 
-**中文文档索引：** [docs/README-zh.md](../docs/README-zh.md) · **Deployment options:** [endpoint-deployment-options.md](../docs/endpoint-deployment-options.md)
+**中文文档索引：** [docs/README-zh.md](../../docs/README-zh.md) · **Deployment options:** [endpoint-deployment-options.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/endpoint-deployment-options.md)
 
 | Document | Description |
 |----------|-------------|
-| [Endpoint deployment options](../docs/endpoint-deployment-options.md) · [中文](../docs/endpoint-deployment-options-zh.md) | **Choose your path** — Jamf, Intune, Ansible, image, SSH, or central-only |
-| [Vendor-neutral checklist](../docs/mdm/vendor-neutral-checklist.md) · [中文](../docs/mdm/vendor-neutral-checklist-zh.md) | **No Jamf/Intune** — map any MDM or config tool to FinSAFE steps |
-| [Enterprise deployment runbook](../docs/enterprise-deployment-runbook.md) · [中文](../docs/enterprise-deployment-runbook-zh.md) | End-to-end IT runbook (phases A–E, rollback, checklist) |
-| [Managed mode reference](../docs/managed-mode.md) · [中文](../docs/managed-mode-zh.md) | Architecture, paths, CLI errors |
-| [Jamf playbook](../docs/mdm/jamf.md) · [中文](../docs/mdm/jamf-zh.md) | macOS + Jamf Pro |
-| [Intune playbook](../docs/mdm/intune.md) · [中文](../docs/mdm/intune-zh.md) | macOS + Linux + Windows + Intune |
-| [Ansible playbook](../docs/mdm/ansible.md) · [中文](../docs/mdm/ansible-zh.md) | Linux without MDM |
+| [Endpoint deployment options](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/endpoint-deployment-options.md) · [中文](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/endpoint-deployment-options-zh.md) | **Choose your path** — Jamf, Intune, Ansible, image, SSH, or central-only |
+| [Vendor-neutral checklist](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/mdm/vendor-neutral-checklist.md) · [中文](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/mdm/vendor-neutral-checklist-zh.md) | **No Jamf/Intune** — map any MDM or config tool to FinSAFE steps |
+| [Enterprise deployment runbook](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/enterprise-deployment-runbook.md) · [中文](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/enterprise-deployment-runbook-zh.md) | End-to-end IT runbook (phases A–E, rollback, checklist) |
+| [Managed mode reference](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/managed-mode.md) · [中文](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/managed-mode-zh.md) | Architecture, paths, CLI errors |
+| [Jamf playbook](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/mdm/jamf.md) · [中文](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/mdm/jamf-zh.md) | macOS + Jamf Pro |
+| [Intune playbook](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/mdm/intune.md) · [中文](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/mdm/intune-zh.md) | macOS + Linux + Windows + Intune |
+| [Ansible playbook](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/mdm/ansible.md) · [中文](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/mdm/ansible-zh.md) | Linux without MDM |
 
 ## Artifacts on each machine
 

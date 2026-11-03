@@ -9,6 +9,8 @@ description: >-
 
 # finsafe trace-denials skill
 
+> Older operation references link to the pre-cleanup version; check them against your installed release.
+
 **Companion:** [finsafe-agent-sandbox-run](../finsafe-agent-sandbox-run/SKILL.md) — agent run + **`learn` / `explain`** ladder.
 
 ## When to use
@@ -26,7 +28,7 @@ finsafe learn --base ~/finsafe-policies/opencode-oneshot.yaml \
 
 Use **`finsafe-trace`** when `learn` reports **`denial_count: 0`** but stderr still
 denies paths (common on macOS for agent log files). Also use **`finsafe explain`**
-on saved `run --json` envelopes — see [agent-sandbox-guide](https://github.com/finogeeks/finsafe/blob/main/docs/agent-sandbox-guide.md).
+on saved `run --json` envelopes — see [agent-sandbox-guide](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/agent-sandbox-guide.md).
 
 > **Note on `--audit`**
 > `finsafe --audit` streams kernel deny hints on stderr under unchanged enforcement.

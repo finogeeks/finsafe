@@ -8,6 +8,8 @@ description: >-
 
 # FinSAFE 企业部署（托管舰队）
 
+> 文中旧版操作参考链接已固定到清理前的历史版本，采用前请核对实际安装版本。
+
 供 AI Agent 协助**客户 IT / 平台工程**部署**托管模式**，仅依赖：
 
 - [finogeeks/finsafe](https://github.com/finogeeks/finsafe) 文档与发行二进制
@@ -21,7 +23,7 @@ description: >-
 | 范围内 | 范围外 |
 |--------|--------|
 | 发行包下载、authority 安装、许可证文件 | 签发 `license.jws`（`finsafe-licensectl` — 仅 Finogeeks） |
-| 试点验收（`curl`、Admin UI） | [`scripts/check-authority-health.sh`](scripts/check-authority-health.sh)；单机栈见 [managed-lab-zh.md](docs/testing/managed-lab-zh.md) |
+| 试点验收（`curl`、Admin UI） | [`scripts/check-authority-health.sh`](../../scripts/check-authority-health.sh)；单机栈见 [managed-lab-zh.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/testing/managed-lab-zh.md) |
 | MDM 舰队阶段（概要） | 仅 `install.sh` 的个人模式工作流 |
 | 移交 bundlectl 技能做 publish/sentinel | 从源码 `cargo build` |
 
@@ -54,7 +56,7 @@ MDM：舰队二进制 + managed-required.json + 注册
 
 **不要**在 [GitHub Releases](https://github.com/finogeeks/finsafe/releases) 上寻找 `license.jws` 或 `finsafe-licensectl`。
 
-许可证安装详见：[authority-deployment-zh §2.1](https://github.com/finogeeks/finsafe/blob/main/docs/authority-deployment-zh.md#21-商业许可证托管模式)。
+许可证安装详见：[authority-deployment-zh §2.1](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/authority-deployment-zh.md#21-商业许可证托管模式)。
 
 ## 阶段 1 — 下载发行包
 
@@ -68,11 +70,11 @@ MDM：舰队二进制 + managed-required.json + 注册
 
 **托管舰队不用：** `install.sh` 安装的 `finsafe-v*`（仅个人模式 CLI）。
 
-二进制矩阵：[binary-reference-zh.md](https://github.com/finogeeks/finsafe/blob/main/docs/binary-reference-zh.md)。
+二进制矩阵：[binary-reference-zh.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/binary-reference-zh.md)。
 
 ## 阶段 2 — Policy Authority + 商业许可证
 
-详见：[authority-deployment-zh.md](https://github.com/finogeeks/finsafe/blob/main/docs/authority-deployment-zh.md)。
+详见：[authority-deployment-zh.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/authority-deployment-zh.md)。
 
 **摘要：**
 
@@ -104,7 +106,7 @@ curl -sf "$AUTHORITY/v1/admin/devices" | jq .
 
 无有效许可证时，注册/管理接口返回 **`402`**、`LICENSE_MISSING`。管理界面：`$AUTHORITY/admin/`。
 
-另见 [binary-reference-zh — 生产验收清单](https://github.com/finogeeks/finsafe/blob/main/docs/binary-reference-zh.md#验证托管模式是否生效生产清单)。
+另见 [binary-reference-zh — 生产验收清单](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/binary-reference-zh.md#验证托管模式已生效生产检查清单)。
 
 ## 阶段 3 — 发布策略 + MDM 哨兵（运维工作站）
 
@@ -131,7 +133,7 @@ finsafe-bundlectl sentinel sign --out /secure/mdm/managed-required.jws
 
 ## 阶段 4 — 舰队桌面（MDM）
 
-详见：[enterprise-deployment-runbook-zh.md](https://github.com/finogeeks/finsafe/blob/main/docs/enterprise-deployment-runbook-zh.md)。
+详见：[enterprise-deployment-runbook-zh.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/enterprise-deployment-runbook-zh.md)。
 
 **每台桌面（概念）：**
 
@@ -141,13 +143,13 @@ finsafe-bundlectl sentinel sign --out /secure/mdm/managed-required.jws
 4. 使用 Admin UI 或 API 的一次性 token **注册一次** — 脚本见 [packaging/mdm/examples/](https://github.com/finogeeks/finsafe/tree/main/packaging/mdm/examples/)。
 5. 用户执行：`finsafe run --json -- /usr/bin/true`（或您的智能体运行时）。
 
-**macOS 手工步骤：** [managed-mode-macos-runbook.md](https://github.com/finogeeks/finsafe/blob/main/docs/testing/managed-mode-macos-runbook.md)。
+**macOS 手工步骤：** [managed-mode-macos-runbook.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/testing/managed-mode-macos-runbook.md)。
 
-**MDM 厂商：** [mdm/README-zh.md](https://github.com/finogeeks/finsafe/blob/main/docs/mdm/README-zh.md)。
+**MDM 厂商：** [mdm/README-zh.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/mdm/README-zh.md)。
 
 ## 阶段 5 — 试点验收（无需私有脚本）
 
-将矩阵作为**检查清单**使用，不要当作可执行脚本：[managed-mode-matrix-zh.md](https://github.com/finogeeks/finsafe/blob/main/docs/testing/managed-mode-matrix-zh.md)。
+将矩阵作为**检查清单**使用，不要当作可执行脚本：[managed-mode-matrix-zh.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/testing/managed-mode-matrix-zh.md)。
 
 | 检查项 | 客户侧做法 |
 |--------|----------|
@@ -156,18 +158,18 @@ finsafe-bundlectl sentinel sign --out /secure/mdm/managed-required.jws
 | 设备已注册 | 存在 `/etc/finsafe/enrolled.json` |
 | 托管运行 | `finsafe run --json -- /usr/bin/true` → `policy_source=managed` 或 exit 0 |
 | 篡改：本地 `--policy` | 有 sentinel 时应为 `MANAGED_POLICY_LOCAL_OVERRIDE` |
-| 管理操作 | [admin-ui-zh.md](https://github.com/finogeeks/finsafe/blob/main/docs/admin-ui-zh.md) |
+| 管理操作 | [admin-ui-zh.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/admin-ui-zh.md) |
 
-**单机实验：** PATH 上具备 fleet + admin-server + bundlectl 且持有有效 `license.jws` 时，可运行 [`scripts/managed-lab.sh`](https://github.com/finogeeks/finsafe/blob/main/scripts/managed-lab.sh) — 见 [managed-lab-zh.md](https://github.com/finogeeks/finsafe/blob/main/docs/testing/managed-lab-zh.md)。
+**单机实验：** PATH 上具备 fleet + admin-server + bundlectl 且持有有效 `license.jws` 时，可运行 [`scripts/managed-lab.sh`](https://github.com/finogeeks/finsafe/blob/main/scripts/managed-lab.sh) — 见 [managed-lab-zh.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/testing/managed-lab-zh.md)。
 
 ## 关键文档
 
 | 主题 | 链接 |
 |------|------|
 | 文档索引 | https://github.com/finogeeks/finsafe/blob/main/docs/README-zh.md |
-| IT 全景 | https://github.com/finogeeks/finsafe/blob/main/docs/enterprise-it-overview-zh.md |
-| 完整 runbook | https://github.com/finogeeks/finsafe/blob/main/docs/enterprise-deployment-runbook-zh.md |
-| Authority + 许可证 | https://github.com/finogeeks/finsafe/blob/main/docs/authority-deployment-zh.md |
+| IT 全景 | https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/enterprise-it-overview-zh.md |
+| 完整 runbook | https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/enterprise-deployment-runbook-zh.md |
+| Authority + 许可证 | https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/authority-deployment-zh.md |
 | bundlectl 技能 | https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL-zh.md |
 | 发行包 | https://github.com/finogeeks/finsafe/releases |
 

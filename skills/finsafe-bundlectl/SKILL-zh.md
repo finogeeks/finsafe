@@ -8,6 +8,8 @@ description: >-
 
 # finsafe-bundlectl 运维技能
 
+> 文中旧版操作参考链接已固定到清理前的历史版本，采用前请核对实际安装版本。
+
 供 AI Agent 协助**平台 / 安全运维**在**锁定工作站**上操作 — 非舰队终端用户。本技能**自包含**；运维人员可能只有 `finsafe-bundlectl` 与本文件（无需本地克隆任何仓库）。
 
 ## 范围
@@ -222,6 +224,6 @@ bundlectl **不**安装 authority。`bundle publish` 成功前需确认：
 仅在需要比本技能更多背景时使用：
 
 - 发行包：https://github.com/finogeeks/finsafe/releases
-- Authority 安装与许可证：https://github.com/finogeeks/finsafe/blob/main/docs/authority-deployment-zh.md
-- 舰队分阶段部署：https://github.com/finogeeks/finsafe/blob/main/docs/enterprise-deployment-runbook-zh.md
+- Authority 安装与许可证：https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/authority-deployment-zh.md
+- 舰队分阶段部署：https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/enterprise-deployment-runbook-zh.md
 - 示例 wrapper 策略（可下载 raw）：https://github.com/finogeeks/finsafe/tree/main/examples/wrapper-policies

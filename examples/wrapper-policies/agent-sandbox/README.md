@@ -1,12 +1,14 @@
 # Agent sandbox example policies
 
+> Older operation references link to the pre-cleanup version; check them against your installed release.
+
 Wrapper YAML for **local** smoke tests when wrapping third-party agent CLIs (Hermes, Codex, OpenCode, agy) or exercising network/filesystem isolation.
 
 These ship in the public [finogeeks/finsafe](https://github.com/finogeeks/finsafe) repository under `examples/wrapper-policies/agent-sandbox/`. **`install.sh` installs binaries only** — clone this repo or `curl -O` individual YAML files.
 
 ## User guide (start here)
 
-**[docs/agent-sandbox-guide.md](../../../docs/agent-sandbox-guide.md)** — run agents, troubleshoot with **`finsafe learn`**, **`finsafe explain`**, `--audit`, and `finsafe-trace`.
+**[docs/agent-sandbox-guide.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/agent-sandbox-guide.md)** — run agents, troubleshoot with **`finsafe learn`**, **`finsafe explain`**, `--audit`, and `finsafe-trace`.
 
 **Skills:** [finsafe-agent-sandbox-run](../../../skills/finsafe-agent-sandbox-run/SKILL.md) · [finsafe-agent-sandbox-verify](../../../skills/finsafe-agent-sandbox-verify/SKILL.md)
 
@@ -49,7 +51,7 @@ finsafe --policy … run --json -- … 2>audit.stderr | tail -1 > envelope.json
 finsafe explain envelope.json
 ```
 
-Full workflow: [agent-sandbox-guide.md](../../../docs/agent-sandbox-guide.md) § Policy iteration with learn and explain.
+Full workflow: [agent-sandbox-guide.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/agent-sandbox-guide.md) § Policy iteration with learn and explain.
 
 ## Policy index
 
@@ -68,5 +70,5 @@ Full workflow: [agent-sandbox-guide.md](../../../docs/agent-sandbox-guide.md) §
 
 ## Related
 
-- [USER-GUIDE.md](../../../docs/USER-GUIDE.md) — generic `learn` / `explain`
-- [POLICY-QUICKREF.md](../../../docs/POLICY-QUICKREF.md)
+- [USER-GUIDE.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/USER-GUIDE.md) — generic `learn` / `explain`
+- [POLICY-QUICKREF.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/POLICY-QUICKREF.md)

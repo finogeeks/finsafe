@@ -10,6 +10,8 @@ description: >-
 
 # FinSAFE enterprise setup (managed fleet)
 
+> Older operation references link to the pre-cleanup version; check them against your installed release.
+
 Guide for AI agents helping **customer IT / platform engineering** deploy **managed mode** using only:
 
 - [finogeeks/finsafe](https://github.com/finogeeks/finsafe) documentation and release binaries
@@ -23,7 +25,7 @@ This skill is **self-contained** (full `https://` links only). Everything refere
 | In scope | Out of scope |
 |----------|----------------|
 | Release downloads, authority install, license file | Issuing `license.jws` (`finsafe-licensectl` — Finogeeks only) |
-| Pilot verification (`curl`, Admin UI) | [`scripts/check-authority-health.sh`](scripts/check-authority-health.sh); [managed-lab.md](docs/testing/managed-lab.md) for single-machine stack |
+| Pilot verification (`curl`, Admin UI) | [`scripts/check-authority-health.sh`](../../scripts/check-authority-health.sh); [managed-lab.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/testing/managed-lab.md) for single-machine stack |
 | MDM fleet phases (high level) | Personal-mode `install.sh` only workflow |
 | Hand-off to bundlectl skill for publish/sentinel | Rust `cargo build` from source |
 
@@ -56,7 +58,7 @@ Pilot: finsafe run --json -- /usr/bin/true  →  policy_source=managed
 
 **Do not** expect `license.jws` or `finsafe-licensectl` on [GitHub Releases](https://github.com/finogeeks/finsafe/releases).
 
-Full license install details: [authority-deployment §2.1](https://github.com/finogeeks/finsafe/blob/main/docs/authority-deployment.md#21-commercial-license-managed-mode).
+Full license install details: [authority-deployment §2.1](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/authority-deployment.md#21-commercial-license-managed-mode).
 
 ## Phase 1 — Download release binaries
 
@@ -70,7 +72,7 @@ Open [FinSAFE Releases](https://github.com/finogeeks/finsafe/releases), verify *
 
 **Not used for managed fleet:** `finsafe-v*` from `install.sh` (personal-mode CLI only).
 
-Binary matrix: [binary-reference.md](https://github.com/finogeeks/finsafe/blob/main/docs/binary-reference.md).
+Binary matrix: [binary-reference.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/binary-reference.md).
 
 Example (Linux authority + macOS operator):
 
@@ -87,7 +89,7 @@ sudo cp finsafe-bundlectl-v${VERSION}-aarch64-apple-darwin/finsafe-bundlectl /us
 
 ## Phase 2 — Policy Authority + commercial license
 
-Follow: [authority-deployment.md](https://github.com/finogeeks/finsafe/blob/main/docs/authority-deployment.md).
+Follow: [authority-deployment.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/authority-deployment.md).
 
 **Summary:**
 
@@ -119,7 +121,7 @@ curl -sf "$AUTHORITY/v1/admin/devices" | jq .
 
 Without a valid license, enroll/admin return **`402`** with `LICENSE_MISSING`. Admin UI: `$AUTHORITY/admin/`.
 
-Also see [binary-reference — production checklist](https://github.com/finogeeks/finsafe/blob/main/docs/binary-reference.md#verify-managed-mode-is-working-production-checklist).
+Also see [binary-reference — production checklist](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/binary-reference.md#verify-managed-mode-is-working-production-checklist).
 
 ## Phase 3 — Publish policy + MDM sentinel (operator workstation)
 
@@ -147,7 +149,7 @@ If **`bundle publish` returns 402**, fix **`license.jws`** on the authority host
 
 ## Phase 4 — Fleet desktops (MDM)
 
-Follow: [enterprise-deployment-runbook.md](https://github.com/finogeeks/finsafe/blob/main/docs/enterprise-deployment-runbook.md).
+Follow: [enterprise-deployment-runbook.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/enterprise-deployment-runbook.md).
 
 **Per desktop (conceptual):**
 
@@ -157,13 +159,13 @@ Follow: [enterprise-deployment-runbook.md](https://github.com/finogeeks/finsafe/
 4. **Enroll once** with one-time token from authority Admin UI or API — scripts in [packaging/mdm/examples/](https://github.com/finogeeks/finsafe/tree/main/packaging/mdm/examples/).
 5. User runs: `finsafe run --json -- /usr/bin/true` (or your agent runtime).
 
-**macOS manual steps:** [managed-mode-macos-runbook.md](https://github.com/finogeeks/finsafe/blob/main/docs/testing/managed-mode-macos-runbook.md).
+**macOS manual steps:** [managed-mode-macos-runbook.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/testing/managed-mode-macos-runbook.md).
 
-**MDM vendors:** [mdm/README.md](https://github.com/finogeeks/finsafe/blob/main/docs/mdm/README.md) (Jamf, Intune, Ansible).
+**MDM vendors:** [mdm/README.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/mdm/README.md) (Jamf, Intune, Ansible).
 
 ## Phase 5 — Pilot acceptance (no private scripts)
 
-Use the matrix as a **checklist**, not as shell commands: [managed-mode-matrix.md](https://github.com/finogeeks/finsafe/blob/main/docs/testing/managed-mode-matrix.md).
+Use the matrix as a **checklist**, not as shell commands: [managed-mode-matrix.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/testing/managed-mode-matrix.md).
 
 | Check | How (customer) |
 |-------|----------------|
@@ -172,18 +174,18 @@ Use the matrix as a **checklist**, not as shell commands: [managed-mode-matrix.m
 | Device enrolled | `/etc/finsafe/enrolled.json` exists |
 | Managed run | `finsafe run --json -- /usr/bin/true` → `policy_source=managed` or exit 0 |
 | Tamper: local `--policy` | Expect `MANAGED_POLICY_LOCAL_OVERRIDE` when sentinel present |
-| Admin operations | [admin-ui.md](https://github.com/finogeeks/finsafe/blob/main/docs/admin-ui.md) |
+| Admin operations | [admin-ui.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/admin-ui.md) |
 
-**Single-machine lab:** with fleet + admin-server + bundlectl on `PATH` and a valid `license.jws`, run [`scripts/managed-lab.sh`](https://github.com/finogeeks/finsafe/blob/main/scripts/managed-lab.sh) — see [managed-lab.md](https://github.com/finogeeks/finsafe/blob/main/docs/testing/managed-lab.md).
+**Single-machine lab:** with fleet + admin-server + bundlectl on `PATH` and a valid `license.jws`, run [`scripts/managed-lab.sh`](https://github.com/finogeeks/finsafe/blob/main/scripts/managed-lab.sh) — see [managed-lab.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/testing/managed-lab.md).
 
 ## Key docs (bookmark list)
 
 | Topic | URL |
 |-------|-----|
-| Docs index | https://github.com/finogeeks/finsafe/blob/main/docs/README.md |
-| IT panorama | https://github.com/finogeeks/finsafe/blob/main/docs/enterprise-it-overview.md |
-| Full runbook | https://github.com/finogeeks/finsafe/blob/main/docs/enterprise-deployment-runbook.md |
-| Authority + license | https://github.com/finogeeks/finsafe/blob/main/docs/authority-deployment.md |
+| Docs index | https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/README.md |
+| IT panorama | https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/enterprise-it-overview.md |
+| Full runbook | https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/enterprise-deployment-runbook.md |
+| Authority + license | https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/authority-deployment.md |
 | Bundlectl skill | https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-bundlectl/SKILL.md |
 | Releases | https://github.com/finogeeks/finsafe/releases |
 
@@ -200,4 +202,4 @@ Use the matrix as a **checklist**, not as shell commands: [managed-mode-matrix.m
 
 ## English-only admins
 
-The full IT panorama is in Chinese: [enterprise-it-overview-zh.md](https://github.com/finogeeks/finsafe/blob/main/docs/enterprise-it-overview-zh.md). For deployment, English runbook + this skill are sufficient.
+The full IT panorama is in Chinese: [enterprise-it-overview-zh.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/enterprise-it-overview-zh.md). For deployment, English runbook + this skill are sufficient.

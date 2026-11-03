@@ -1,5 +1,7 @@
 # Fleet deployment packaging
 
+> Older operation references link to the pre-cleanup version; check them against your installed release.
+
 Copy-paste artifacts for enterprise administrators deploying **managed mode**. Read the guides in [`../docs/`](../docs/) first ([中文索引](../docs/README-zh.md)).
 
 | Path | Use |
@@ -9,7 +11,7 @@ Copy-paste artifacts for enterprise administrators deploying **managed mode**. R
 | [`mdm/`](mdm/) | MDM example scripts (Jamf, Intune, generic, Ansible) |
 | [`../scripts/`](../scripts/) | IT utilities (`check-authority-health.sh`) |
 
-**Workflow:** [enterprise-deployment-runbook.md](../docs/enterprise-deployment-runbook.md) · [中文](../docs/enterprise-deployment-runbook-zh.md) · **Checklist:** [mdm/vendor-neutral-checklist.md](../docs/mdm/vendor-neutral-checklist.md) · [中文](../docs/mdm/vendor-neutral-checklist-zh.md)
+**Workflow:** [enterprise-deployment-runbook.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/enterprise-deployment-runbook.md) · [中文](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/enterprise-deployment-runbook-zh.md) · **Checklist:** [mdm/vendor-neutral-checklist.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/mdm/vendor-neutral-checklist.md) · [中文](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/mdm/vendor-neutral-checklist-zh.md)
 
 ## Binaries
 

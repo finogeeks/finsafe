@@ -15,6 +15,8 @@ description: >-
 
 # finsafe-agent-sandbox-verify
 
+> Older operation references link to the pre-cleanup version; check them against your installed release.
+
 How to prove FinSAFE contains an arbitrary CLI agent **correctly**: blocks
 unauthorized local resource access **and** lets the agent do its real job.
 This skill encodes methodology reached through trial-and-error — follow it
@@ -234,5 +236,5 @@ https://github.com/finogeeks/finsafe/blob/main/scripts/dev/finsafe-trace.sh
 - Port-deny + `timeout_ms` (macOS):
   https://github.com/finogeeks/finsafe/blob/main/examples/wrapper-policies/hermes-interactive-deny-http.yaml
 - POLICY-QUICKREF:
-  https://github.com/finogeeks/finsafe/blob/main/docs/POLICY-QUICKREF.md
+  https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/POLICY-QUICKREF.md
 - Releases: https://github.com/finogeeks/finsafe/releases

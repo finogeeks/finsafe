@@ -39,5 +39,5 @@
 ## 进一步了解
 
 - [Windows图解介绍](finsafe-windows-overview.html)：安全保障、数据价值、技术架构与产品对比。
-- [敏感信息处理说明](windows-core-pii.md)：告警、阻断与审批。
-- [企业部署方式](endpoint-deployment-options-zh.md)：单机与集中管理的部署选择。
+- [敏感信息处理说明](finsafe-windows-overview.html#data)：告警、阻断与审批。
+- [企业接入与验证](finsafe-whitepaper-zh.md#六企业接入与验证)：单机与集中管理的部署选择。

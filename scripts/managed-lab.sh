@@ -19,7 +19,7 @@
 #   ./scripts/managed-lab.sh publish --from examples/wrapper-policies/hermes-version-smoke.yaml
 #   ./scripts/managed-lab.sh stop
 #
-# Docs: docs/testing/managed-lab.md
+# Docs: https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/testing/managed-lab.md
 set -euo pipefail
 
 PUBLIC_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -144,7 +144,7 @@ After start:
   Admin UI:  http://${BIND}/admin
   CLI env:   source \$($0 env)
 
-See: ${PUBLIC_ROOT}/docs/testing/managed-lab.md
+See: https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/testing/managed-lab.md
 EOF
 }
 
@@ -370,7 +370,7 @@ cmd_start() {
   echo "  CLI env:     source $ENV_FILE"
   echo "  Smoke run:   $0 run -- /usr/bin/true"
   echo "  Admin data:  audit/runs appear after a successful run (agent uploads ~every 1s)"
-  echo "  Hermes:      publish hermes-version-smoke.yaml, then see docs/testing/managed-lab.md"
+  echo "  Hermes:      publish hermes-version-smoke.yaml, then see https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/testing/managed-lab.md"
   echo "  Publish:     $0 publish --from examples/wrapper-policies/<name>.yaml"
   echo "  Stop:        $0 stop"
   echo ""
