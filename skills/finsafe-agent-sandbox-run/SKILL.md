@@ -10,15 +10,17 @@ description: >-
 
 # finsafe-agent-sandbox-run
 
+> Older operation references link to the pre-cleanup version; check them against your installed release.
+
 Run **Hermes**, **OpenCode**, **agy**, or a **new agent** under FinSAFE. On failure,
 use **`learn`** and **`explain`** (plus **`--audit`** / **`finsafe-trace`**) — do not
 guess YAML paths.
 
 Requires: `finsafe` on PATH — https://github.com/finogeeks/finsafe/releases
 
-Full guide: https://github.com/finogeeks/finsafe/blob/main/docs/agent-sandbox-guide.md
+Full guide: https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/agent-sandbox-guide.md
 
-Generic learn/explain: https://github.com/finogeeks/finsafe/blob/main/docs/USER-GUIDE.md
+Generic learn/explain: https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/USER-GUIDE.md
 
 ## Setup
 

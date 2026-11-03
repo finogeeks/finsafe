@@ -25,7 +25,7 @@ resolve_auth_bin() {
     return 0
   fi
   echo "ERROR: finsafe-authority-http not found." >&2
-  echo "Install from finsafe-admin-server-v*.tar.zst (see docs/authority-deployment.md)." >&2
+  echo "Install from finsafe-admin-server-v*.tar.zst (see https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/authority-deployment.md)." >&2
   exit 1
 }
 

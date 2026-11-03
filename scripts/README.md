@@ -1,10 +1,12 @@
 # FinSAFE scripts (public repository)
 
+> Older operation references link to the pre-cleanup version; check them against your installed release.
+
 Scripts in this directory ship with [finogeeks/finsafe](https://github.com/finogeeks/finsafe) for **enterprise administrators** operating Policy Authority and fleet endpoints.
 
 | Script | Purpose |
 |--------|---------|
-| [`managed-lab.sh`](managed-lab.sh) | **Full local lab**: authority + agent + enroll + `run`/`interactive` — [managed-lab.md](../docs/testing/managed-lab.md) |
+| [`managed-lab.sh`](managed-lab.sh) | **Full local lab**: authority + agent + enroll + `run`/`interactive` — [managed-lab.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/testing/managed-lab.md) |
 | [`start-authority.sh`](start-authority.sh) | Foreground start with defaults (`--workdir`, license path, prints **/admin/** URL) |
 | [`check-authority-health.sh`](check-authority-health.sh) | Verify `/health`, `/v1/license/status`, and **`/admin/`** (optional admin stats with `FINSAFE_ADMIN_TOKEN`) |
 | [`../install.sh`](../install.sh) | Personal `finsafe` — Linux/macOS |
@@ -23,4 +25,4 @@ Fleet rollout uses release binaries from GitHub, not source builds:
 | `finsafe-admin-server-v*` | `finsafe-authority-http` (Policy Authority) |
 | `finsafe-bundlectl-v*` | Build, sign, publish policy bundles |
 
-See [binary-reference.md](../docs/binary-reference.md) and [authority-deployment.md](../docs/authority-deployment.md).
+See [binary-reference.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/binary-reference.md) and [authority-deployment.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/authority-deployment.md).

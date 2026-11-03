@@ -10,6 +10,8 @@ description: >-
 
 # finsafe-bundlectl operator skill
 
+> Older operation references link to the pre-cleanup version; check them against your installed release.
+
 Guide for AI agents helping **platform / security operators** on a **locked workstation** — not end users on fleet laptops. This skill is **self-contained**; the operator may have only `finsafe-bundlectl` and this file (no local clone of any repo).
 
 ## Scope
@@ -234,6 +236,6 @@ Bundlectl does not install the authority. Before `bundle publish` succeeds:
 Use only if the operator needs more than this skill:
 
 - Releases and archive names: https://github.com/finogeeks/finsafe/releases
-- Authority install, license, systemd: https://github.com/finogeeks/finsafe/blob/main/docs/authority-deployment.md
-- Fleet rollout phases: https://github.com/finogeeks/finsafe/blob/main/docs/enterprise-deployment-runbook.md
+- Authority install, license, systemd: https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/authority-deployment.md
+- Fleet rollout phases: https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/enterprise-deployment-runbook.md
 - Example wrapper policies (download raw): https://github.com/finogeeks/finsafe/tree/main/examples/wrapper-policies

@@ -9,14 +9,16 @@ description: >-
 
 # finsafe-agent-sandbox-run
 
+> 文中旧版操作参考链接已固定到清理前的历史版本，采用前请核对实际安装版本。
+
 在 FinSAFE 下运行 **Hermes**、**OpenCode**、**agy** 或新 Agent。失败时用 **`learn`**、
 **`explain`**（及 **`--audit`** / **`finsafe-trace`**），不要猜 YAML。
 
 需要：`finsafe` 在 PATH — https://github.com/finogeeks/finsafe/releases
 
-完整指南：https://github.com/finogeeks/finsafe/blob/main/docs/agent-sandbox-guide-zh.md
+完整指南：https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/agent-sandbox-guide-zh.md
 
-通用 learn/explain：https://github.com/finogeeks/finsafe/blob/main/docs/USER-GUIDE-zh.md
+通用 learn/explain：https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/USER-GUIDE-zh.md
 
 ## 准备
 

@@ -41,9 +41,10 @@ Reproduced from the original Windows technical proposal. Detailed evaluation wil
 
 ## Explore
 
-- [Windows illustrated manual](docs/WINDOWS-GUIDE.md): prepare, start, and reopen from the Widget; use supporting settings/records when needed.
-- [Architecture and comparisons](docs/technical-overview.md): diagrams, protection mechanisms, data flow, and alternatives.
+- [Install and get started](docs/getting-started-zh.md) (Chinese): downloads, installation, first launch, and permission checks.
+- [Windows illustrated overview](docs/finsafe-windows-overview.html) (Chinese): capabilities, architecture, and integration.
+- [Documentation and whitepaper](docs/README-zh.md) (Chinese): Windows, Linux/macOS, and the complete product approach.
 - [Safety Arena case library](https://finsafe-safety-arena.finogeeks.club/#overview): more recordings, submitted requests, and observations.
-- [FAQ and feedback](docs/FAQ.md) · [Release history](CHANGELOG.md).
+- [Report a problem](https://github.com/finogeeks/finsafe/issues/new/choose) · [Release history](CHANGELOG.md).
 
 Protection depends on the launch entry, effective permissions, and version. Content checks cover integrated, inspectable requests. Published by Finogeeks; use is subject to the supplied license terms.

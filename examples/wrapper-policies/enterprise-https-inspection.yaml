@@ -2,14 +2,14 @@
 #
 # Prefer allowlist-only smoke first (no license, no MITM):
 #   examples/wrapper-policies/network-allowlist-proxy.yaml
-#   docs/network-allowlist-proxy-runbook.md
+#   https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/network-allowlist-proxy-runbook.md
 #
 # Requires on the Policy Authority:
 #   - license.jws feature: mitm_tls_terminate
 #   - POST /v1/admin/mitm/ca (inspection CA) before publish
 #
 # Pair with finsafe-bundlectl bundle build/sign/publish — see:
-#   docs/https-inspection-runbook.md
+#   https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/https-inspection-runbook.md
 #
 # Pilot (unmanaged, local policy file — also needs FINSAFE_LICENSE_MITM=1 for
 # personal/dev without a commercial license on the proxy host):

@@ -10,7 +10,7 @@
 # Paths under `filesystem` use ${USERPROFILE}; FinSAFE expands these when the policy loads
 # (the `finsafe` process environment — not the child argv). `~/` and ${HOME} are expanded at load time.
 # Only paths that exist on the host when the policy loads are applied; create `./workspace` first
-# if you rely on that RW scope. See docs/public-finsafe/docs/POLICY-QUICKREF.md.
+# if you rely on that RW scope. See https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/POLICY-QUICKREF.md.
 #
 # Do not list C:\Windows\System32 (or other Windows-owned trees) under read_only_paths:
 # inheritable grants relabel every descendant and fail on hosted runners. FinSAFE winsafe

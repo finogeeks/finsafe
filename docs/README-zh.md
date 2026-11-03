@@ -1,16 +1,21 @@
-# FinShield 用户文档
+# FinShield 文档
 
-[English](README.md) · [产品首页与下载](../README-zh.md)
+[产品首页](../README-zh.md) · [最新下载](https://github.com/finogeeks/finsafe/releases/latest)
 
-| 从哪里开始 | 内容 |
-| --- | --- |
-| [快速上手](getting-started-zh.md) | Windows、macOS、Linux 的下载与第一次使用 |
-| [Windows 图文使用手册](WINDOWS-GUIDE-zh.md) | 控件准备、选择智能体、启动与重新打开；辅助控制台图文说明 |
-| [技术方案与产品对比](technical-overview-zh.md) | Windows 架构图、防护机制、请求数据流与方案差异 |
-| [常见问题](FAQ-zh.md) | 平台差异、防护范围、下载版本与问题反馈 |
-| [版本记录](../CHANGELOG.md) | 已公开发行版本的变化 |
-| [真实案例](https://finsafe-safety-arena.finogeeks.club/#overview) | 对照录像、独立观测和各案例的适用范围 |
+## 产品介绍
 
-产品展示名称为 FinShield（智安盾），现有命令与部分发行文件仍使用 `finsafe`。下载版本以 [Releases](https://github.com/finogeeks/finsafe/releases) 实际附件为准。
+- [Windows 产品介绍](finsafe-windows-overview-zh.md)：产品定位、主要能力与价值。
+- [Linux/macOS 产品介绍](finsafe-linux-macos-overview-zh.md)：Linux、macOS 的产品能力与接入概览。
 
-仓库中尚存的旧部署、运维与测试文档不属于这套入门阅读路径。历史版本说明不能替代当前交付版本的操作说明。
+## 图解介绍
+
+- [Windows 图解介绍（HTML）](finsafe-windows-overview.html)。
+- [Linux/macOS 图解介绍（HTML）](finsafe-linux-macos-overview-zh.html)。
+
+## 白皮书
+
+[智安盾白皮书](finsafe-whitepaper-zh.md)：完整产品方案、技术依据、实验案例与测试条件。
+
+## 安装与上手
+
+[安装指南](getting-started-zh.md)：Windows、macOS、Linux 的下载入口、安装步骤、首次启动与升级。

@@ -3,8 +3,8 @@
 # No commercial license. No TLS termination (MITM). The child may only reach
 # listed hostnames through the bundled proxy on 127.0.0.1:60080.
 #
-# Runbook: docs/network-allowlist-proxy-runbook.md
-#          docs/network-allowlist-proxy-runbook-zh.md
+# Runbook: https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/network-allowlist-proxy-runbook.md
+#          https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/network-allowlist-proxy-runbook-zh.md
 #
 # From a directory that contains ./workspace (or create it):
 #
@@ -16,7 +16,7 @@
 # Use hostnames in URLs — not raw IP literals (proxy returns ip_literal_denied).
 #
 # For HTTPS inspection (tls_terminate), see enterprise-https-inspection.yaml
-# and docs/https-inspection-runbook.md (commercial license feature).
+# and https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/https-inspection-runbook.md (commercial license feature).
 schema_version: 1
 kind: local-wrapper
 program_mode: short-lived

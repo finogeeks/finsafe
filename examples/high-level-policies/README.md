@@ -1,5 +1,7 @@
 # High-level policy examples
 
+> Older operation references link to the pre-cleanup version; check them against your installed release.
+
 Operator-facing **intent** YAML for the FinSAFE high-level policy router. These documents describe *what* you want (filesystem, resources, network posture, syscalls); the engine resolves them to concrete Linux or macOS sandbox configuration.
 
 ## Files
@@ -17,4 +19,4 @@ These are intent documents. They must not declare raw sandbox mechanism fields (
 
 ## Maintainers
 
-When the published FinSAFE engine changes high-level schema, update these YAML files in this directory and cross-check [POLICY-QUICKREF.md](../../docs/POLICY-QUICKREF.md) (including `deny_read_paths`, `deny_write_globs`, and built-in defaults) so operators stay aligned.
+When the published FinSAFE engine changes high-level schema, update these YAML files in this directory and cross-check [POLICY-QUICKREF.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/POLICY-QUICKREF.md) (including `deny_read_paths`, `deny_write_globs`, and built-in defaults) so operators stay aligned.

@@ -41,9 +41,10 @@ FinShield 为 Agent 加上沙箱，让它在你授权的范围内工作。支持
 
 ## 继续了解
 
-- [Windows 图文使用手册](docs/WINDOWS-GUIDE-zh.md)：从控件完成准备、启动和重新打开；需要时查看辅助设置与记录。
-- [技术方案与产品对比](docs/technical-overview-zh.md)：架构图、防护机制、数据流与方案差异。
+- [安装与上手](docs/getting-started-zh.md)：各平台下载、安装、首次启动与授权范围验证。
+- [Windows 图解介绍](docs/finsafe-windows-overview.html)：产品能力、架构与接入方式。
+- [文档目录与白皮书](docs/README-zh.md)：Windows、Linux/macOS 产品介绍与完整方案。
 - [百炼场完整案例库](https://finsafe-safety-arena.finogeeks.club/#overview)：更多录像、原始请求和独立观测。
-- [常见问题与反馈](docs/FAQ-zh.md) · [版本记录](CHANGELOG.md)。
+- [问题反馈](https://github.com/finogeeks/finsafe/issues/new/choose) · [版本记录](CHANGELOG.md)。
 
 防护依赖实际启动入口、权限和版本；敏感信息检查仅覆盖已接入、可检查的请求。由 Finogeeks 发布，使用范围以发行或交付许可为准。

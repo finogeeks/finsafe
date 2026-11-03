@@ -49,7 +49,7 @@ filesystem:
   read_write_paths:
     - "./workspace"
     - "${HOME}/.hermes"
-  # Optional (policy compiler) — see docs/public-finsafe/docs/POLICY-QUICKREF.md
+  # Optional (policy compiler) — see https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/POLICY-QUICKREF.md
   # protected_read_only_paths: []
   # skip_default_protected_paths: false
   # deny_read_paths: ["./workspace/.env"]

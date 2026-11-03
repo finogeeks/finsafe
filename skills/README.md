@@ -1,5 +1,7 @@
 # FinSAFE operator skills (for AI agents)
 
+> Older operation references link to the pre-cleanup version; check them against your installed release.
+
 **中文：** [README-zh.md](./README-zh.md)
 
 Each skill under this directory is **self-contained**: an operator can use it with release
@@ -14,7 +16,7 @@ file — no local checkout of the documentation tree is required.
 
 ## Agent sandbox (Hermes, OpenCode, agy, …)
 
-**Start here:** [docs/agent-sandbox-guide.md](../docs/agent-sandbox-guide.md) · [中文](../docs/agent-sandbox-guide-zh.md) — includes **`learn` / `explain`** workflows for agents.
+**Start here:** [docs/agent-sandbox-guide.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/agent-sandbox-guide.md) · [中文](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/agent-sandbox-guide-zh.md) — includes **`learn` / `explain`** workflows for agents.
 
 | Skill | File | Use when |
 |-------|------|----------|

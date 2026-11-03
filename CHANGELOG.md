@@ -41,7 +41,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   scope). No deny-read, no egress, no kernel filesystem boundary on the
   core. Run `finsafe app detach --all` before deleting or replacing
   `finsafe.exe`; an orphaned seam is a silent fail-open (**no toast is
-  guaranteed**). See [WINDOWS-GUIDE.md § App seams](docs/WINDOWS-GUIDE.md).
+  guaranteed**). See [WINDOWS-GUIDE.md § App seams](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/WINDOWS-GUIDE.md).
   Not G2; FakeAgent fixture ≠ WorkBuddy.
 
 <!-- Curate entries here, then cut a dated section before dispatching release-public-cli.yml. -->
@@ -82,7 +82,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- **`finsafe --visual` / `finsafe visual-sandbox`** — Local live-compare UI in the personal CLI: file vault, web access, HTTPS inspection, runaway jobs, and an Agent tab (Hermes / FinClaw one-shot under FinSAFE). Output streams live; no Bun or source checkout required. Guide: [visual-sandbox.md](docs/visual-sandbox.md). (PR [Geeksfino/finsafe#293](https://github.com/Geeksfino/finsafe/pull/293))
+- **`finsafe --visual` / `finsafe visual-sandbox`** — Local live-compare UI in the personal CLI: file vault, web access, HTTPS inspection, runaway jobs, and an Agent tab (Hermes / FinClaw one-shot under FinSAFE). Output streams live; no Bun or source checkout required. Guide: [visual-sandbox.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/visual-sandbox.md). (PR [Geeksfino/finsafe#293](https://github.com/Geeksfino/finsafe/pull/293))
 
 ## [0.9.41] - 2026-09-01
 
@@ -367,7 +367,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- **docs: dedicated Windows desktop guide** — [WINDOWS-GUIDE.md](docs/WINDOWS-GUIDE.md) / [WINDOWS-GUIDE-zh.md](docs/WINDOWS-GUIDE-zh.md) covers install → RestrictedToken vs AppContainer decision tree → `probe`/`doctor` → Hermes examples → AppContainer/ProjFS → troubleshooting. Linked from README, USER-GUIDE, POLICY-QUICKREF, and agent-sandbox-guide.
+- **docs: dedicated Windows desktop guide** — [WINDOWS-GUIDE.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/WINDOWS-GUIDE.md) / [WINDOWS-GUIDE-zh.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/WINDOWS-GUIDE-zh.md) covers install → RestrictedToken vs AppContainer decision tree → `probe`/`doctor` → Hermes examples → AppContainer/ProjFS → troubleshooting. Linked from README, USER-GUIDE, POLICY-QUICKREF, and agent-sandbox-guide.
 
 ### Fixed
 
@@ -377,14 +377,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- **Windows ProjFS projection for large AppContainer runtimes:** Optional Projected File System support projects large trees (for example Node/Python agent runtimes) without recursive DACL walks. `finsafe setup-windows` / the Windows installer can enable the feature; `finsafe probe --json` reports ProjFS readiness. See [USER-GUIDE.md](docs/USER-GUIDE.md).
+- **Windows ProjFS projection for large AppContainer runtimes:** Optional Projected File System support projects large trees (for example Node/Python agent runtimes) without recursive DACL walks. `finsafe setup-windows` / the Windows installer can enable the feature; `finsafe probe --json` reports ProjFS readiness. See [USER-GUIDE.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/USER-GUIDE.md).
 - **Windows `write_restricted` backend:** Explicit weaker compatibility mode (RestrictedToken-family write allowlist without AppContainer) for hosts that need host-wide read. Prefer Auto defaults unless you pin a backend.
 - **examples: Hermes Windows AppContainer policy** (`hermes-windows-oneshot-appcontainer.yaml`) alongside the RestrictedToken `hermes-windows-oneshot.yaml`.
 - **examples: Linux-specific Hermes interactive wrapper policy** (`hermes-linux-interactive.yaml`) — `stdio: pty`, `skip_default_deny_read` for `${HOME}/.hermes/.env`, and `/etc/resolv.conf` for DNS inside bubblewrap. Contributed via public PR [finogeeks/finsafe#14](https://github.com/finogeeks/finsafe/pull/14) by [@xulis](https://github.com/xulis).
 
 ### Changed
 
-- **Windows desktop default backend:** Auto + `network: host` (empty YAML `deny_read_paths`) now selects **RestrictedToken** (Codex-aligned host-wide read, write allowlist). AppContainer remains for `network: none` / allowlist, confidential deny-read, explicit `windows.backend: appcontainer`, and managed fleet. ProjFS is optional (AppContainer large-runtime projection); `doctor` reports ProjFS issues as warnings. See [USER-GUIDE.md § Windows backends](docs/USER-GUIDE.md) and [POLICY-QUICKREF.md](docs/POLICY-QUICKREF.md).
+- **Windows desktop default backend:** Auto + `network: host` (empty YAML `deny_read_paths`) now selects **RestrictedToken** (Codex-aligned host-wide read, write allowlist). AppContainer remains for `network: none` / allowlist, confidential deny-read, explicit `windows.backend: appcontainer`, and managed fleet. ProjFS is optional (AppContainer large-runtime projection); `doctor` reports ProjFS issues as warnings. See [USER-GUIDE.md § Windows backends](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/USER-GUIDE.md) and [POLICY-QUICKREF.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/POLICY-QUICKREF.md).
 
 ## [0.9.12] - 2026-07-08
 
@@ -647,7 +647,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Security
 
-- **Sensitive Unix socket defaults:** Built-in deny for common container control sockets (Docker, containerd, podman, Docker Desktop / OrbStack shims) on Linux (`deny_read` / bwrap overlay) and macOS (Seatbelt `unix-socket` rules). Opt in with `filesystem.allow_unix_socket_paths` when an agent must use a local container API. `read_only_paths` does not block socket `connect()`—see [POLICY-QUICKREF](./docs/POLICY-QUICKREF.md).
+- **Sensitive Unix socket defaults:** Built-in deny for common container control sockets (Docker, containerd, podman, Docker Desktop / OrbStack shims) on Linux (`deny_read` / bwrap overlay) and macOS (Seatbelt `unix-socket` rules). Opt in with `filesystem.allow_unix_socket_paths` when an agent must use a local container API. `read_only_paths` does not block socket `connect()`—see [POLICY-QUICKREF](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/POLICY-QUICKREF.md).
 
 ## [0.8.2] - 2026-06-03
 

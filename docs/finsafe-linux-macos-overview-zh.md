@@ -39,5 +39,5 @@
 ## 进一步了解
 
 - [Linux/macOS图解介绍](finsafe-linux-macos-overview-zh.html)：安全保障、数据价值、技术架构、应用接入与企业部署。
-- [隐私防护说明](privacy-guard-zh.md)：准备、测试与运行。
-- [企业部署方式](endpoint-deployment-options-zh.md)：单机与集中管理的部署选择。
+- [隐私防护说明](finsafe-linux-macos-overview-zh.html#data)：平台差异与检测范围。
+- [企业接入与验证](finsafe-whitepaper-zh.md#六企业接入与验证)：单机与集中管理的部署选择。

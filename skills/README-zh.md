@@ -1,5 +1,7 @@
 # FinSAFE 运维技能（供 AI Agent）
 
+> 文中旧版操作参考链接已固定到清理前的历史版本，采用前请核对实际安装版本。
+
 **English:** [README.md](./README.md)
 
 本目录下每个技能均为**自包含**：运维人员只需 [GitHub Releases](https://github.com/finogeeks/finsafe/releases) 中的对应二进制与本技能文件，**无需**本地克隆文档仓库。
@@ -12,7 +14,7 @@
 
 ## Agent 沙箱（Hermes、OpenCode、agy 等）
 
-**从这里开始：** [docs/agent-sandbox-guide-zh.md](../docs/agent-sandbox-guide-zh.md) · [English](../docs/agent-sandbox-guide.md) — 含 Agent 专用 **`learn` / `explain`** 流程。
+**从这里开始：** [docs/agent-sandbox-guide-zh.md](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/agent-sandbox-guide-zh.md) · [English](https://github.com/finogeeks/finsafe/blob/bada9f48043eb09878c529d824190e5d7aa84d1f/docs/agent-sandbox-guide.md) — 含 Agent 专用 **`learn` / `explain`** 流程。
 
 | 技能 | 文件 | 适用场景 |
 |------|------|----------|
