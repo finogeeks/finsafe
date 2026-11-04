@@ -1,5 +1,7 @@
 # 智安盾Linux/macOS产品提要
 
+[English](finsafe-linux-macos-overview-en.md) · [文档目录](README-zh.md)
+
 智安盾（FinShield）帮助企业在Linux与Mac电脑上更放心地使用智能体（Agent）：保护电脑和业务资料，同时收集业务过程中产生的运行数据，帮助企业积累数据资产。
 
 - **安全保障**：让智能体按授权做事，降低误操作和资料泄露的风险。

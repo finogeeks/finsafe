@@ -1,6 +1,8 @@
 # FinShield 文档
 
-[产品首页](../README-zh.md) · [最新下载](https://github.com/finogeeks/finsafe/releases/latest)
+[English](README.md) · [文档目录](README-zh.md)
+
+[产品首页](https://github.com/finogeeks/finsafe) · [最新下载](https://github.com/finogeeks/finsafe/releases/latest)
 
 ## 产品介绍
 

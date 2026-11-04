@@ -1,5 +1,7 @@
 # 智安盾白皮书：AI智能体的安全保障与数据价值
 
+[English](finsafe-whitepaper-en.md) · [文档目录](README-zh.md)
+
 **在授权边界内工作，在业务过程中积累数据资产**
 
 | 文档信息 | 内容 |

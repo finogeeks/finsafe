@@ -1,6 +1,8 @@
 # FinShield 快速上手
 
-[文档目录](README-zh.md) · [产品首页](../README-zh.md)
+[English](getting-started-en.md) · [文档目录](README-zh.md)
+
+[文档目录](README-zh.md) · [产品首页](https://github.com/finogeeks/finsafe)
 
 选择操作系统，下载对应发行文件。Windows 推荐安装助手，也可下载离线 EXE；macOS 与 Linux 使用命令行压缩包。本文下载信息于 2026-11-03 按 [v0.10.1](https://github.com/finogeeks/finsafe/releases/tag/v0.10.1) 核对，后续版本以 [最新 Release](https://github.com/finogeeks/finsafe/releases/latest) 的附件与说明为准。
 
