@@ -4,7 +4,7 @@
 
 FinShield gives Agents a sandbox on Windows, macOS, and Linux, so they work within the permissions you grant.
 
-[简体中文](README-zh.md)
+[简体中文](README-zh.md) · [FinShield on finaios.ai](https://finaios.ai/en/products/finshield/)
 
 **Install:** on Windows, [download the install assistant](https://github.com/finogeeks/finsafe/releases/latest/download/install-finshield.cmd) and double-click it. For macOS, Linux, offline packages, and full instructions, see the [latest release](https://github.com/finogeeks/finsafe/releases/latest).
 

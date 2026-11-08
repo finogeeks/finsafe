@@ -4,7 +4,7 @@
 
 FinShield 为 Agent 加上沙箱，让它在你授权的范围内工作。支持 Windows、macOS 和 Linux。
 
-[English](README.md)
+[English](README.md) · [FinShield 产品页（finaios.ai）](https://finaios.ai/zh-hans/products/finshield/)
 
 **安装：** Windows [下载安装助手](https://github.com/finogeeks/finsafe/releases/latest/download/install-finshield.cmd)后双击运行；macOS、Linux、离线安装包及详细步骤见[最新 Release](https://github.com/finogeeks/finsafe/releases/latest)。
 
