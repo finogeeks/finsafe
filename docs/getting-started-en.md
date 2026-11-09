@@ -1,6 +1,6 @@
 # Get started with FinShield
 
-[简体中文](getting-started-zh.md) · [Documentation](README.md) · [Product home](https://github.com/finogeeks/finsafe)
+[简体中文](getting-started-zh.md) · [Documentation](README.md) · [Product home](https://github.com/finogeeks/finsafe) · [Agent Safety Evaluation](https://agent-safety-arena.finogeeks.club/index.html) ([中文](https://agent-safety-arena.finogeeks.club/zh-CN.html))
 
 Choose the package for your operating system. Windows offers an install assistant and an offline EXE; macOS and Linux use CLI archives. Download information was checked on 2026-11-03 against [v0.10.1](https://github.com/finogeeks/finsafe/releases/tag/v0.10.1). For later versions, follow the assets and notes in the [latest Release](https://github.com/finogeeks/finsafe/releases/latest).
 
