@@ -1,6 +1,6 @@
 # FinShield 快速上手
 
-[English](getting-started-en.md) · [文档目录](README-zh.md)
+[English](getting-started-en.md) · [文档目录](README-zh.md) · [Agent 安全测评](https://agent-safety-arena.finogeeks.club/zh-CN.html) ([English](https://agent-safety-arena.finogeeks.club/index.html))
 
 [文档目录](README-zh.md) · [产品首页](https://github.com/finogeeks/finsafe)
 

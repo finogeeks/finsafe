@@ -1,6 +1,6 @@
 # FinShield Windows product introduction
 
-[简体中文](finsafe-windows-overview-zh.md) · [Documentation](README.md)
+[简体中文](finsafe-windows-overview-zh.md) · [Documentation](README.md) · [Agent Safety Evaluation](https://agent-safety-arena.finogeeks.club/index.html) ([中文](https://agent-safety-arena.finogeeks.club/zh-CN.html))
 
 FinShield helps enterprises use Agents on Windows computers with greater control: protect computers and business information, and collect operational data produced during work so the enterprise can build its own data assets.
 

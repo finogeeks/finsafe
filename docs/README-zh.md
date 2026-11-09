@@ -4,6 +4,8 @@
 
 [产品首页](https://github.com/finogeeks/finsafe) · [最新下载](https://github.com/finogeeks/finsafe/releases/latest)
 
+> **[Agent 安全测评 · Agent Safety Arena](https://agent-safety-arena.finogeeks.club/zh-CN.html)** — 对比 Agent 内置沙箱与 FinShield，查看已发布的对照录像、测试条件和结果。[English](https://agent-safety-arena.finogeeks.club/index.html)。
+
 ## 产品介绍
 
 - [Windows 产品介绍](finsafe-windows-overview-zh.md)：产品定位、主要能力与价值。

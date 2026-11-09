@@ -2,6 +2,8 @@
 
 [简体中文](README-zh.md) · [Product home](https://github.com/finogeeks/finsafe) · [Latest download](https://github.com/finogeeks/finsafe/releases/latest)
 
+> **[Agent Safety Evaluation · Agent Safety Arena](https://agent-safety-arena.finogeeks.club/index.html)** — Compare Agent built-in sandboxes with FinShield through published recordings, test conditions, and results. [中文](https://agent-safety-arena.finogeeks.club/zh-CN.html).
+
 ## Product introductions
 
 - [Windows product introduction](finsafe-windows-overview-en.md): purpose, capabilities, and business value.

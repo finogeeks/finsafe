@@ -6,6 +6,8 @@ FinShield gives Agents a sandbox on Windows, macOS, and Linux, so they work with
 
 [简体中文](README-zh.md) · [FinShield on finaios.ai](https://finaios.ai/en/products/finshield/)
 
+> **[Agent Safety Evaluation · Agent Safety Arena](https://agent-safety-arena.finogeeks.club/index.html)** — Compare Agent built-in sandboxes with FinShield through published recordings, test conditions, and results. [中文](https://agent-safety-arena.finogeeks.club/zh-CN.html).
+
 **Install:** on Windows, [download the install assistant](https://github.com/finogeeks/finsafe/releases/latest/download/install-finshield.cmd) and double-click it. For macOS, Linux, offline packages, and full instructions, see the [latest release](https://github.com/finogeeks/finsafe/releases/latest).
 
 ## What happens without a sandbox? Watch real recordings
@@ -41,10 +43,10 @@ Reproduced from the original Windows technical proposal. Detailed evaluation wil
 
 ## Explore
 
-- [Install and get started](docs/getting-started-zh.md) (Chinese): downloads, installation, first launch, and permission checks.
-- [Windows illustrated overview](docs/finsafe-windows-overview.html) (Chinese): capabilities, architecture, and integration.
-- [Documentation and whitepaper](docs/README-zh.md) (Chinese): Windows, Linux/macOS, and the complete product approach.
-- [Safety Arena case library](https://finsafe-safety-arena.finogeeks.club/#overview): more recordings, submitted requests, and observations.
+- [Install and get started](docs/getting-started-en.md): downloads, installation, first launch, and permission checks.
+- [Windows illustrated overview](docs/finsafe-windows-overview-en.html): capabilities, architecture, and integration.
+- [Documentation and whitepaper](docs/README.md): Windows, Linux/macOS, and the complete product approach.
+- [Agent Safety Evaluation](https://agent-safety-arena.finogeeks.club/index.html): recordings, test conditions, and results comparing Agent built-in sandboxes with FinShield.
 - [Report a problem](https://github.com/finogeeks/finsafe/issues/new/choose) · [Release history](CHANGELOG.md).
 
 Protection depends on the launch entry, effective permissions, and version. Content checks cover integrated, inspectable requests. Published by Finogeeks; use is subject to the supplied license terms.
