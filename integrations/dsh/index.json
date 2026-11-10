@@ -1,0 +1,37 @@
+{
+  "format": 1,
+  "title": {
+    "en": "FinShield plugins",
+    "zh": "FinShield 插件"
+  },
+  "plugins": [
+    {
+      "name": "@finogeeks/finshield",
+      "title": "FinShield",
+      "author": "Finogeeks",
+      "homepage": "https://github.com/finogeeks/finsafe/tree/main/integrations/dsh/windows",
+      "repository": {
+        "url": "https://github.com/finogeeks/finsafe",
+        "directory": "integrations/dsh/windows"
+      },
+      "icon": "./windows/assets/finshield.png",
+      "versions": [
+        {
+          "version": "0.10.14",
+          "publishTimestamp": 1794324436,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/finogeeks/finsafe.git",
+            "commit": "c5fbda15b31bd76f38724683b65b58a0cbf426f9",
+            "path": "integrations/dsh/windows"
+          },
+          "engines": {
+            "node": ">=24.9.0",
+            "dsh": ">=0.2.1-rc.5 <0.3.0"
+          },
+          "finsafeSourceCommit": "a276eea164d43d1a00da26dcba1b6a5c9dbc1670"
+        }
+      ]
+    }
+  ]
+}
