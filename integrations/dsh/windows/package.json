@@ -1,0 +1,81 @@
+{
+  "name": "@finogeeks/finshield",
+  "version": "0.10.14",
+  "description": "Harness intelligence · Shield your world",
+  "icon": "./assets/finshield.png",
+  "license": "SEE LICENSE IN LICENSE.rtf",
+  "type": "module",
+  "main": "./src/desktop.js",
+  "exports": {
+    ".": "./src/desktop.js",
+    "./client": "./client.js",
+    "./package.json": "./package.json",
+    "./locale/*.json": "./locale/*.json"
+  },
+  "files": [
+    "src/desktop.js",
+    "src/settings.js",
+    "src/status.js",
+    "src/contract.js",
+    "client.js",
+    "assets/finshield.png",
+    "policy/candidate.yaml",
+    "install",
+    "handoff/activation.js",
+    "handoff/token.js",
+    "handoff/launch-helper.js",
+    "handoff/start-helper.ps1",
+    "handoff/coordinate.ps1",
+    "handoff/README.md",
+    "locale",
+    "cordis.patch.yml",
+    "README.md",
+    "README-zh.md",
+    "src/connector.js",
+    "client/page.cjs",
+    "build-client.mjs",
+    "DESIGN.md",
+    "LICENSE.rtf",
+    "THIRD-PARTY-NOTICES.md",
+    "src/preparation.js",
+    "client/state.cjs"
+  ],
+  "engines": {
+    "node": ">=24.9.0",
+    "dsh": ">=0.2.1-rc.5 <0.3.0"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml",
+      "platforms": [
+        "win32"
+      ]
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-plugin-manager",
+        "@deepseek-ai/dsh-api-remotes",
+        "@deepseek-ai/dsh-client-ui-layout"
+      ]
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/schemastery": "~3.18.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/finogeeks/finsafe.git",
+    "directory": "integrations/dsh/windows"
+  },
+  "scripts": {
+    "build:policy": "python build-policy.py",
+    "build": "node build-client.mjs",
+    "test": "node --test test/*.test.js"
+  },
+  "devDependencies": {
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  }
+}

@@ -1,0 +1,4 @@
+- insert:
+    - id: finsafe-windows
+      name: '@finogeeks/finshield'
+      config: {}
