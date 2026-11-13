@@ -11,6 +11,8 @@
 
 ## Illustrated overviews
 
+- [FinShield overall introduction](finshield-overview-en.html): security controls, data collection, enterprise management and scoped evaluation results.
+
 - [Windows illustrated overview](finsafe-windows-overview-en.html).
 - [Linux/macOS illustrated overview](finsafe-linux-macos-overview-en.html).
 
