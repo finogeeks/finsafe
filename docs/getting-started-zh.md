@@ -9,7 +9,7 @@
 ## Windows
 
 1. 先安装你要使用的 WorkBuddy 或 DSH。FinShield 不代替这些智能体，也不代办账号登录。
-2. [下载 `install-finshield.cmd`](https://github.com/finogeeks/finsafe/releases/latest/download/install-finshield.cmd) 并双击运行。默认英文提示，输入 `L` 并按 Enter 可切换语言；按 Enter 开始下载并校验最新稳定版。出现管理员授权窗口时确认，再按向导完成安装。离线安装可直接运行同一版本的 `finshield-<版本>-x64-setup.exe`。
+2. [下载 `install-finshield.cmd`](https://github.com/finogeeks/finsafe/releases/latest/download/install-finshield.cmd) 并双击运行。安装助手使用英文提示，按 Enter 开始下载最新稳定版，并校验 SHA-256 和发布者数字签名。出现管理员授权窗口时确认，再按向导完成安装。离线安装可直接运行同一版本的 `finshield-<版本>-x64-setup.exe`。
 3. 安装结束后找到桌面悬浮控件。显示“待准备”时，点击圆形按钮，再选“开始准备”；首次需要确认权限时，在辅助控制台检查范围并授权。Windows 可能请求管理员确认。
 4. 等到“智能体待命”，展开控件图标，选择 WorkBuddy 或 DSH。目录无效时，再进入辅助控制台修正：WorkBuddy 需要安装目录；DSH 需要 Node.js 与 DSH 两个目录。
 5. 点击可启动的智能体图标，等待确认运行后开始任务。之后再次点击带绿色状态点的图标，即可打开已有实例；日常无需保持网页打开。

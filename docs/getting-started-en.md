@@ -7,7 +7,7 @@ Choose the package for your operating system. Windows offers an install assistan
 ## Windows
 
 1. Install WorkBuddy or DSH separately. FinShield does not replace the Agent or configure its account.
-2. [Download `install-finshield.cmd`](https://github.com/finogeeks/finsafe/releases/latest/download/install-finshield.cmd) and double-click it. Prompts default to English; type `L` and press Enter to switch languages. Press Enter to download and verify the latest stable installer, confirm the administrator prompt, and follow the wizard. For offline installation, run the matching `finshield-<version>-x64-setup.exe` directly.
+2. [Download `install-finshield.cmd`](https://github.com/finogeeks/finsafe/releases/latest/download/install-finshield.cmd) and double-click it. The assistant uses English prompts. Press Enter to download the latest stable installer and verify its SHA-256 and publisher signature, confirm the administrator prompt, and follow the wizard. For offline installation, run the matching `finshield-<version>-x64-setup.exe` directly.
 3. Find the desktop Widget. When it shows Not prepared, click the orb and choose Start preparation. Review and authorize permissions in the supporting Console when required. Windows may request administrator consent.
 4. At Agent standby, expand the icons and select WorkBuddy or DSH. Correct invalid directories in Console: WorkBuddy needs its installation directory; DSH needs both Node.js and DSH directories.
 5. Click a launchable Agent icon, wait for confirmed running status, and start work. Click its green-dot icon later to reopen the existing instance. A browser page need not remain open for daily use.

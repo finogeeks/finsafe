@@ -1,30 +1,28 @@
 import {runProcess} from '../install/runtime.js';
-import { existsSync, readFileSync, realpathSync } from 'node:fs';
-import { isAbsolute, join, delimiter } from 'node:path';
+import { existsSync, readFileSync, realpathSync, mkdirSync, writeFileSync } from 'node:fs';
+import { isAbsolute, join } from 'node:path';
 
-export const securityDomain = 'finshield.dsh';
-
-export function findPowerShell(programFiles = process.env.ProgramFiles) {
-  const candidates = [join(programFiles || 'C:\\Program Files','PowerShell','7','pwsh.exe'),
-    ...(process.env.PATH || '').split(delimiter).filter(Boolean).map(directory=>join(directory,'pwsh.exe'))];
-  const found = candidates.find(existsSync);
-  if (!found) throw new Error('Install PowerShell 7 or configure its absolute pwsh path');
-  return found;
+// Keep discovery under the actual home even when setup results use another root.
+export function saveInstanceSettings(settings,home) {
+  const directory=join(home,'finsafe-windows');mkdirSync(directory,{recursive:true});
+  writeFileSync(join(directory,'config.json'),JSON.stringify(settings));
 }
 
 /** Resolve explicit instance inputs. FinSAFE owns identity derivation and receipt formats. */
 export function resolveSettings(config, {dshHome,localAppData=process.env.LOCALAPPDATA,
-  programFiles=process.env.ProgramFiles,programData=process.env.ProgramData,findPwsh=findPowerShell}) {
+  programFiles=process.env.ProgramFiles,programData=process.env.ProgramData,requestedRelease}) {
   const settingsPath=join(dshHome,'finsafe-windows','config.json');
   const settings={...(existsSync(settingsPath) ? JSON.parse(readFileSync(settingsPath,'utf8')) : {}),...config};
-  const installation=settings.installation || join(programFiles,'FinSAFE','dsh-plugin');
-  const configuration=settings.configuration || join(programData,'FinSAFE','dsh-plugin','config');
-  const result={installation,configuration,executable:join(installation,'finsafe.exe'),
-    yamlPath:join(configuration,'effective.yaml'),
+  const nativeVersionRoot=settings.nativeVersionRoot||join(programFiles,'FinSAFE','dsh-plugin-versions');
+  const configurationVersionRoot=settings.configurationVersionRoot||join(programData,'FinSAFE','dsh-plugin-versions');
+  const installation=settings.installation || (requestedRelease?join(nativeVersionRoot,requestedRelease):join(programFiles,'FinSAFE','dsh-plugin'));
+  const configuration=settings.configuration || (requestedRelease?join(configurationVersionRoot,requestedRelease,'config'):join(programData,'FinSAFE','dsh-plugin','config'));
+  const downloadRoot=settings.downloadRoot||settings.downloads||join(localAppData,'FinSAFE','dsh-plugin','downloads');
+  const result={installation,configuration,downloadRoot,executable:join(installation,'finsafe.exe'),
+    yamlPath:join(configuration,'effective.yaml'),nativeVersionRoot,configurationVersionRoot,
     stateDirectory:settings.stateDirectory || join(dshHome,'finsafe-windows'),
     localAppData:settings.localAppData || localAppData,
-    downloads:settings.downloads || join(localAppData,'FinSAFE','dsh-plugin','downloads'),
-    pwsh:settings.pwsh || findPwsh(programFiles)};
+    downloads:settings.downloads || downloadRoot};
   for(const [key,value] of Object.entries(result)) if(!isAbsolute(value)) throw new Error(`${key} must be an absolute path`);
   return result;
 }

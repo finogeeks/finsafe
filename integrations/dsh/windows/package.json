@@ -1,7 +1,8 @@
 {
   "name": "@finogeeks/finshield",
-  "version": "0.10.14",
+  "version": "0.10.49",
   "description": "Harness intelligence · Shield your world",
+  "homepage": "https://safety.finaios.ai/",
   "icon": "./assets/finshield.png",
   "license": "SEE LICENSE IN LICENSE.rtf",
   "type": "module",
@@ -21,13 +22,9 @@
     "assets/finshield.png",
     "policy/candidate.yaml",
     "install",
-    "handoff/activation.js",
-    "handoff/token.js",
-    "handoff/launch-helper.js",
-    "handoff/start-helper.ps1",
-    "handoff/coordinate.ps1",
-    "handoff/README.md",
+    "src/token.js",
     "locale",
+    "detail",
     "cordis.patch.yml",
     "README.md",
     "README-zh.md",
@@ -38,7 +35,12 @@
     "LICENSE.rtf",
     "THIRD-PARTY-NOTICES.md",
     "src/preparation.js",
-    "client/state.cjs"
+    "client/state.cjs",
+    "src/activation.js",
+    "src/self-update.js",
+    "src/removal.js",
+    "updater",
+    "bin"
   ],
   "engines": {
     "node": ">=24.9.0",
@@ -70,12 +72,16 @@
     "directory": "integrations/dsh/windows"
   },
   "scripts": {
-    "build:policy": "python build-policy.py",
+    "build:policy": "finsafe config resolve --manifest ../../../windows/config/dsh-plugin/manifest.yaml --output policy/candidate.yaml",
     "build": "node build-client.mjs",
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "build:native": "python build-native.py",
+    "build:pnpm-parser": "node build-pnpm-parser.mjs"
   },
   "devDependencies": {
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "@pnpm/modules-yaml": "1002.0.1",
+    "esbuild": "0.25.12"
   }
 }

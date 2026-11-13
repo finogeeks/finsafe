@@ -8,4 +8,6 @@ export const restartDescriptor = {
   ...descriptor,id:`${packageName}#finsafeWindows/restart`,method:'restart',
   description:'Restart this Desktop through its existing protection handoff after explicit user confirmation',
 };
-export const remoteContract = {package:packageName,descriptors:[descriptor,restartDescriptor]};
+export const laterDescriptor={...descriptor,id:`${packageName}#finsafeWindows/later`,method:'later',
+  description:'Dismiss this selected restart reminder while retaining the current session'};
+export const remoteContract = {package:packageName,descriptors:[descriptor,restartDescriptor,laterDescriptor]};

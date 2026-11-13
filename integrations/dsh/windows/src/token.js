@@ -14,7 +14,8 @@ export function readKnownFolders(runtimeRoot) {
     programData:'{62AB5D82-FDC1-4DC3-A9DD-070D1D495D97}',localAppData:'{F1B32785-6FBA-4FCF-9D55-7B8E7F157091}'})) {
     const value=Buffer.alloc(16),out=Buffer.alloc(koffi.sizeof('void*'));
     if(guid(id,value)!==0) throw new Error('Invalid known-folder identifier');
-    const code=folder(value,0,null,out);
+    // Preserve the user's current known-folder relocation, without package redirection.
+    const code=folder(value,0x00010000,null,out); // KF_FLAG_NO_PACKAGE_REDIRECTION
     if(code!==0) throw new Error(`SHGetKnownFolderPath ${key}: HRESULT ${code}`);
     const pointer=koffi.decode(out,'void*');
     try { result[key]=koffi.decode(out,'str16'); } finally { free(pointer); }
@@ -71,10 +72,10 @@ export function readCurrentToken(runtimeRoot, expectedSid) {
     const needed = Buffer.alloc(4), value = Buffer.alloc(4);
     checked(info(token, 29, value, value.length, needed), 'TokenIsAppContainer');
     if (value.readUInt32LE() === 0) return { appContainer: false, expectedPackage: false };
+    if (!expectedSid) return { appContainer: true, expectedPackage: false };
     info(token, 31, null, 0, needed);
     const packageInfo = Buffer.alloc(needed.readUInt32LE());
     checked(info(token, 31, packageInfo, packageInfo.length, needed), 'TokenAppContainerSid');
-    if (!expectedSid) return { appContainer: true, expectedPackage: false };
     const expectedOut = Buffer.alloc(pointerBytes);
     checked(convertSid(expectedSid, expectedOut), 'ConvertStringSidToSidW');
     expected = koffi.decode(expectedOut, 'void*');
