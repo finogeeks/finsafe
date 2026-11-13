@@ -3,9 +3,9 @@ import {cp,mkdir,mkdtemp,readFile,rename} from 'node:fs/promises';
 import {join} from 'node:path';
 import {pathToFileURL} from 'node:url';
 
-const packageName='@finogeeks/finshield';
+const packageName='@finogeeks2026/finshield';
 const currentVersion=JSON.parse(readFileSync(new URL('../package.json',import.meta.url),'utf8')).version;
-const attemptKey=Symbol.for('@finogeeks/finshield.self-update');
+const attemptKey=Symbol.for('@finogeeks2026/finshield.self-update');
 
 async function loadUpdatedModule(profile,version) {
   const source=join(profile.dir,'node_modules',packageName);

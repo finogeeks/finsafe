@@ -2,7 +2,7 @@
 export function registerSettingsRestoration(ctx,restore,report) {
   ctx.on('plugin-manager/operation',async operation=>{
     if(operation.phase!=='settled'||!['applied','restart-required'].includes(operation.application))return;
-    const ownBundle=operation.target==='@finogeeks/finshield';
+    const ownBundle=operation.target==='@finogeeks2026/finshield';
     const disabled=operation.enabled===false&&(
       operation.reason==='bundle'&&ownBundle||operation.reason==='plugin'&&operation.target===ctx.fiber.entry?.id);
     if(!disabled&&!(operation.reason==='remove'&&ownBundle))return;

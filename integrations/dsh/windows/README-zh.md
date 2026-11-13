@@ -142,6 +142,11 @@ Desktop sandbox 和 pnpm storeDir 字段；后续修改冲突或 updater 不可�
 
 ## 构建、发布与验证
 
+插件通过发布流程配置的公开下载通道获取 FinShield 原生安装包，读取指定版本的
+元数据，并在安装前校验 SHA-256。下载地址可使用 COS 或 CDN 域名。该通道不可用时，
+插件自动从 GitHub 下载同版本安装包并校验 SHA-256；元数据或校验值错误会停止安装。
+插件包本身的分发来源单独管理。
+
 稳定版流程在安装包发布成功后，将完整客户端、策略、许可证、第三方声明和双语
 说明同步到[公开仓库](https://github.com/finogeeks/finsafe/tree/main/integrations/dsh/windows)，
 并生成[自定义 DSH 索引](https://raw.githubusercontent.com/finogeeks/finsafe/main/integrations/dsh/index.json)。

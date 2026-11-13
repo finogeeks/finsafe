@@ -182,6 +182,13 @@ configuration/update paths and shortcut names stay unchanged. See [design](DESIG
 
 ## Build, publication and verification
 
+The plugin downloads native FinShield installers through the configured public
+download mirror. It reads metadata for the requested version and verifies the
+installer's SHA-256 before setup. The release workflow supplies the mirror base;
+it can point to COS or a CDN domain. If that channel is unavailable, the plugin
+downloads the same version from GitHub and verifies its SHA-256. Invalid metadata
+or checksums stop installation. Plugin package distribution is separate.
+
 The stable-release workflow synchronizes this directory, including built client,
 policy, license, notices and bilingual instructions, to the public
 [FinSAFE repository](https://github.com/finogeeks/finsafe/tree/main/integrations/dsh/windows).

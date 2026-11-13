@@ -4,7 +4,7 @@ const h=React.createElement;
 const {projectStatus,createProtectionStore}=PROTECTION_MODEL;
 const NS='finshield.windows';
 const PRODUCT_URL='https://safety.finaios.ai/';
-const PACKAGE_NAME='@finogeeks/finshield';
+const PACKAGE_NAME='@finogeeks2026/finshield';
 const zh={
   title:'FinShield',loading:'正在读取防护状态',loadingFirst:'正在连接FinShield',loadingSecond:'',loadingBody:'请稍候，防护状态以本次读取结果为准',
   authorizing:'正在准备防护',installing:'正在安装防护组件',authorizingFirst:'首次设好安全边界，日常打开直接用',authorizingSecond:'',
@@ -37,24 +37,24 @@ const en={
   marketUpdate:'Update to',marketInstalled:'Installed',marketNewer:'A newer version is installed',marketConfirm:'Update FinShield',marketFrom:'Current version',marketSource:'Download source',marketStart:'Start update',marketUpdating:'Updating plugin',marketDone:'The plugin package is updated. Check the protection page for its status.',marketFailed:'Plugin update did not finish',marketClose:'Close',marketCancel:'Cancel',
 };
 const styles=`
-[data-plugin-detail="@finogeeks/finshield"],.finshield-page{--fs-line:#e5e7eb;--fs-paper:#fff;--fs-subtle:#f7f7f8;--fs-ink:#202020;--fs-muted:#646970;--fs-brand:#005fb8;--fs-green:#107c41;--fs-blue-bg:#edf5fc;--fs-warning:#925400;--fs-shadow:#20202014;font:14px/1.6 "Microsoft YaHei UI",sans-serif;color:var(--fs-ink)}
-body[data-ds-dark-theme] :is([data-plugin-detail="@finogeeks/finshield"],.finshield-page){--fs-line:#343b45;--fs-paper:#171a1f;--fs-subtle:#12151a;--fs-ink:#edf1f4;--fs-muted:#b2b9c3;--fs-brand:#8dc8ff;--fs-green:#91d8b8;--fs-blue-bg:#202f3c;--fs-warning:#e5bc80;--fs-shadow:#00000042}
+[data-plugin-detail="@finogeeks2026/finshield"],.finshield-page{--fs-line:#e5e7eb;--fs-paper:#fff;--fs-subtle:#f7f7f8;--fs-ink:#202020;--fs-muted:#646970;--fs-brand:#005fb8;--fs-green:#107c41;--fs-blue-bg:#edf5fc;--fs-warning:#925400;--fs-shadow:#20202014;font:14px/1.6 "Microsoft YaHei UI",sans-serif;color:var(--fs-ink)}
+body[data-ds-dark-theme] :is([data-plugin-detail="@finogeeks2026/finshield"],.finshield-page){--fs-line:#343b45;--fs-paper:#171a1f;--fs-subtle:#12151a;--fs-ink:#edf1f4;--fs-muted:#b2b9c3;--fs-brand:#8dc8ff;--fs-green:#91d8b8;--fs-blue-bg:#202f3c;--fs-warning:#e5bc80;--fs-shadow:#00000042}
 /* DSH owns these controls. Scope the compact prototype layout to this bundle. */
-[data-plugin-detail="@finogeeks/finshield"]{display:grid;grid-template-columns:43px minmax(0,1fr) auto;column-gap:10px}
-[data-plugin-detail="@finogeeks/finshield"] *{font-family:inherit;font-size:inherit}
-[data-plugin-detail="@finogeeks/finshield"]>*{grid-column:1/-1}
-[data-plugin-detail="@finogeeks/finshield"]>[data-window-drag],[data-plugin-detail="@finogeeks/finshield"]>[data-window-drag]>div{display:contents}
-[data-plugin-detail="@finogeeks/finshield"]>[data-window-drag]>button{grid-column:1/-1;justify-self:start;margin-bottom:12px;font:inherit}
-[data-plugin-detail="@finogeeks/finshield"]>[data-window-drag]>div>span{grid-column:1;grid-row:2;width:43px;height:43px;border:0;border-radius:0}
-[data-plugin-detail="@finogeeks/finshield"]>[data-window-drag]>div>div{grid-column:3;grid-row:2;gap:12px}
-[data-plugin-detail="@finogeeks/finshield"]>[data-window-drag]+div{grid-column:2;grid-row:2;margin:0;gap:5px}
-[data-plugin-detail="@finogeeks/finshield"]>[data-window-drag]+div h3{font:500 18px/1.3 "Microsoft YaHei UI",sans-serif}
-[data-plugin-detail="@finogeeks/finshield"]>[data-window-drag]+div p,[data-plugin-detail="@finogeeks/finshield"] [data-plugin-name]{font:inherit;color:var(--fs-muted)}
-[data-plugin-detail="@finogeeks/finshield"]>[data-window-drag]+div>p:not(:has(>[data-plugin-name])){display:none}
-[data-plugin-detail="@finogeeks/finshield"]>div:has(>[data-plugin-config]){margin-top:12px;gap:20px}
-[data-plugin-detail="@finogeeks/finshield"] [data-plugin-config]{gap:0}
+[data-plugin-detail="@finogeeks2026/finshield"]{display:grid;grid-template-columns:43px minmax(0,1fr) auto;column-gap:10px}
+[data-plugin-detail="@finogeeks2026/finshield"] *{font-family:inherit;font-size:inherit}
+[data-plugin-detail="@finogeeks2026/finshield"]>*{grid-column:1/-1}
+[data-plugin-detail="@finogeeks2026/finshield"]>[data-window-drag],[data-plugin-detail="@finogeeks2026/finshield"]>[data-window-drag]>div{display:contents}
+[data-plugin-detail="@finogeeks2026/finshield"]>[data-window-drag]>button{grid-column:1/-1;justify-self:start;margin-bottom:12px;font:inherit}
+[data-plugin-detail="@finogeeks2026/finshield"]>[data-window-drag]>div>span{grid-column:1;grid-row:2;width:43px;height:43px;border:0;border-radius:0}
+[data-plugin-detail="@finogeeks2026/finshield"]>[data-window-drag]>div>div{grid-column:3;grid-row:2;gap:12px}
+[data-plugin-detail="@finogeeks2026/finshield"]>[data-window-drag]+div{grid-column:2;grid-row:2;margin:0;gap:5px}
+[data-plugin-detail="@finogeeks2026/finshield"]>[data-window-drag]+div h3{font:500 18px/1.3 "Microsoft YaHei UI",sans-serif}
+[data-plugin-detail="@finogeeks2026/finshield"]>[data-window-drag]+div p,[data-plugin-detail="@finogeeks2026/finshield"] [data-plugin-name]{font:inherit;color:var(--fs-muted)}
+[data-plugin-detail="@finogeeks2026/finshield"]>[data-window-drag]+div>p:not(:has(>[data-plugin-name])){display:none}
+[data-plugin-detail="@finogeeks2026/finshield"]>div:has(>[data-plugin-config]){margin-top:12px;gap:20px}
+[data-plugin-detail="@finogeeks2026/finshield"] [data-plugin-config]{gap:0}
 /* Discover owns the introduction; the active installed page already presents it. */
-[data-plugin-detail="@finogeeks/finshield"]:has(.finshield-page) [data-detail-document]{display:none}
+[data-plugin-detail="@finogeeks2026/finshield"]:has(.finshield-page) [data-detail-document]{display:none}
 .finshield-page{margin:0;padding:0;container-type:inline-size}
 .finshield-page,.finshield-page *{box-sizing:border-box}
 .finshield-page *{font-family:inherit;font-size:inherit}
@@ -115,7 +115,7 @@ body[data-ds-dark-theme] .finshield-page button.fs-primary{color:#10243a}
 .finshield-notice p{margin-top:7px;color:var(--fs-muted)}
 @keyframes fs-orbit-turn{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.finshield-page .fs-moving,.finshield-page .fs-step-current,.finshield-page .fs-progress-spinner{animation:none}}
-@media(max-width:650px){[data-plugin-detail="@finogeeks/finshield"]>[data-window-drag]>button{grid-column:1/3;grid-row:1}[data-plugin-detail="@finogeeks/finshield"]>[data-window-drag]>div>div{grid-column:3;grid-row:1;margin-bottom:12px}[data-plugin-detail="@finogeeks/finshield"]>[data-window-drag]+div{grid-column:2/-1}}
+@media(max-width:650px){[data-plugin-detail="@finogeeks2026/finshield"]>[data-window-drag]>button{grid-column:1/3;grid-row:1}[data-plugin-detail="@finogeeks2026/finshield"]>[data-window-drag]>div>div{grid-column:3;grid-row:1;margin-bottom:12px}[data-plugin-detail="@finogeeks2026/finshield"]>[data-window-drag]+div{grid-column:2/-1}}
 @container(max-width:580px){.finshield-page .fs-hero{grid-template-columns:minmax(0,1fr);gap:16px}.finshield-page .fs-protected-status{justify-content:flex-start;padding:14px 18px;min-height:68px}.finshield-page .fs-art,.finshield-page .fs-art img{width:40px;height:40px}.finshield-page .fs-areas{column-gap:18px}}
 @container(max-width:500px){.finshield-page .fs-areas{grid-template-columns:minmax(0,1fr)}.finshield-page .fs-area{padding:10px 0}}
 @media(pointer:coarse){.finshield-page button,.finshield-page a,.finshield-page summary{min-height:44px}}
@@ -182,7 +182,7 @@ function registerDiscoverUpdates(ctx,t){
       const buttons=new Map();
       const restore=(button,record)=>{button.textContent=record.text;button.disabled=record.disabled;if(record.label===null)button.removeAttribute('aria-label');else button.setAttribute('aria-label',record.label);};
       const reconcile=()=>{
-        const root=document.querySelector('[data-market-detail="@finogeeks/finshield"]'),snapshot=store.getSnapshot();
+        const root=document.querySelector('[data-market-detail="@finogeeks2026/finshield"]'),snapshot=store.getSnapshot();
         for(const [button,record] of buttons)if(!root?.contains(button)||!snapshot.bundle?.installed){restore(button,record);buttons.delete(button);}
         if(!root||!snapshot.checked||!snapshot.bundle?.installed)return;
         const supported=new Set();
@@ -235,7 +235,7 @@ function registerDetailScroll(ctx){
   ctx.effect(()=>{
     let current=null,frame;
     const opened=()=>{
-      const next=document.querySelector('[data-market-detail="@finogeeks/finshield"]');
+      const next=document.querySelector('[data-market-detail="@finogeeks2026/finshield"]');
       if(next)for(const link of next.querySelectorAll('a[href]')){const href=safetyDestination(link.href);if(href!==link.href)link.href=href;}
       if(next===current)return;
       current=next;cancelAnimationFrame(frame);

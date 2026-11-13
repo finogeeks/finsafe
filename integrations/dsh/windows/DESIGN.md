@@ -399,7 +399,7 @@ the existing AppSeam entry. DSH does not guarantee disable
 rollback or pnpm rollback on an asynchronous cleanup failure.
 
 Owner decision, 2026-11-13: while enabled, FinShield adds a scoped preflight to
-the running manager's `removeBundle` method for `@finogeeks/finshield` only.
+the running manager's `removeBundle` method for `@finogeeks2026/finshield` only.
 Other targets call the original method directly. The DSH confirmation, Gateway
 authorization, removal checks and pnpm operation stay with DSH. The plugin
 removes its method adapter during disposal, without disposing hmr.
@@ -459,6 +459,12 @@ native operation boundaries. No complete startup-chain protection is claimed.
 
 ## Publication and verification
 
+The npm distribution name is `@finogeeks2026/finshield`; the public repository
+remains `finogeeks/finsafe`. The previous `@finogeeks/finshield` name is a
+different DSH bundle. It is not an in-place upgrade: an existing user must remove
+the old bundle through its normal cleanup before installing the new name.
+Native instance paths and FinSAFE identity do not change with the npm scope.
+
 FinShield installed and Discover detail pages reset their containing page's
 scroll position once when opened, including the native Plugins header above
 the detail. Do not align only the detail with scrollIntoView, which clips that
@@ -504,6 +510,16 @@ flowchart LR
 
 Stable publication builds the plugin DLL separately, then mirrors package-declared
 Node code, DLL, client, policy, license and notices into the public repository.
+The publication step writes the configured HTTPS download base into
+`install/download-source.json`. Native setup reads that mirror's versioned
+`release.json`, selects the requested Windows installer's `mirror_name`, and
+verifies its SHA-256 before staging. Network errors, HTTP failures and a
+30-second request timeout trigger one fallback to the same GitHub release and
+its SHA256SUMS. Invalid metadata, checksum failures and caller cancellation
+stop setup without fallback. Neither source substitutes the latest release.
+If both downloads fail, the error retains both source URLs. Current configuration uses a public COS origin;
+a CDN domain can use the same contract. Existing updater processes retain the
+download code they started with until their session ends.
 The custom DSH index pins a public commit/subdirectory and originating source
 commit. Existing stable entries are immutable. Personal archives do not carry
 or start the updater. No release or marketplace publication is implied by this PR.

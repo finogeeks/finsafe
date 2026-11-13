@@ -65,14 +65,14 @@ try {
     } else {
         # Read and clean our override before pnpm removes this script's package.
         Invoke-DesktopNode @($metadata,'remove-override',$runtimeRoot,$DshHome) | Out-Null
-        $arguments = @('plugin','--profile','desktop','remove','@finogeeks/finshield','--config.ignore-scripts=true')
+        $arguments = @('plugin','--profile','desktop','remove','@finogeeks2026/finshield','--config.ignore-scripts=true')
     }
     $env:DSH_HOME = $DshHome
     Invoke-DesktopNode (@($dshCli) + $arguments) | Out-Null
     if ($Remove) {
         if (Test-Path -LiteralPath $configPath) { Remove-Item -LiteralPath $configPath }
     } else {
-        $installedRoot = Join-Path $profileRoot 'node_modules/@finogeeks/finshield'
+        $installedRoot = Join-Path $profileRoot 'node_modules/@finogeeks2026/finshield'
         $runtimeParent = Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'FinSAFE/dsh-plugin/downloads'
         $config.installation = [IO.Path]::GetFullPath($InstallDirectory)
         $config.configuration = [IO.Path]::GetFullPath($ConfigDirectory)

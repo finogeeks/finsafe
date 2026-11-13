@@ -1,11 +1,15 @@
 {
-  "name": "@finogeeks/finshield",
-  "version": "0.10.49",
+  "name": "@finogeeks2026/finshield",
+  "version": "0.10.50",
   "description": "Harness intelligence · Shield your world",
   "homepage": "https://safety.finaios.ai/",
   "icon": "./assets/finshield.png",
   "license": "SEE LICENSE IN LICENSE.rtf",
   "type": "module",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "main": "./src/desktop.js",
   "exports": {
     ".": "./src/desktop.js",

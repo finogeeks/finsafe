@@ -1,4 +1,4 @@
-export const packageName = '@finogeeks/finshield';
+export const packageName = '@finogeeks2026/finshield';
 export const descriptor = {
   id: `${packageName}#finsafeWindows/status`, service:'finsafeWindows', namespace:'finsafeWindows', method:'status',
   invocation:{kind:'direct'}, parameters:[], result:{mode:'src-json'},

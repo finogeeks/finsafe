@@ -1,7 +1,7 @@
 import {readFile} from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
 
-const packageName='@finogeeks/finshield';
+const packageName='@finogeeks2026/finshield';
 
 export async function loadRemovalRuntime(vendor) {
   const boot=await import(pathToFileURL(vendor.resolve('@deepseek-ai/dsh-app-boot')).href);
