@@ -1,6 +1,6 @@
 {
   "name": "@finogeeks2026/finshield",
-  "version": "0.10.50",
+  "version": "0.10.51",
   "description": "Harness intelligence · Shield your world",
   "homepage": "https://safety.finaios.ai/",
   "icon": "./assets/finshield.png",
@@ -32,6 +32,8 @@
     "cordis.patch.yml",
     "README.md",
     "README-zh.md",
+    "OPERATIONS.md",
+    "OPERATIONS-zh.md",
     "src/connector.js",
     "client/page.cjs",
     "build-client.mjs",
