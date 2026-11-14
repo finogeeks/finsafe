@@ -60,6 +60,21 @@
       "icon": "./windows/assets/finshield.png",
       "versions": [
         {
+          "version": "0.10.51",
+          "publishTimestamp": 1794618747,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/finogeeks/finsafe.git",
+            "commit": "9bc986962c7c7b7dbaf236d4a736941f171844ca",
+            "path": "integrations/dsh/windows"
+          },
+          "engines": {
+            "node": ">=24.9.0",
+            "dsh": ">=0.2.1-rc.5 <0.3.0"
+          },
+          "finsafeSourceCommit": "e5b3a2e933315e9dcca1ba1ecd52b01defba3b38"
+        },
+        {
           "version": "0.10.50",
           "publishTimestamp": 1794569821,
           "source": {
