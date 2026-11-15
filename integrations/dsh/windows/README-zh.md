@@ -1,6 +1,6 @@
 # FinShield：保护你的隐私、系统和数据
 
-[English](README.md) · [FinShield官网](https://safety.finaios.ai/) · [npm包](https://www.npmjs.com/package/@finogeeks2026/finshield)
+[English](README.md) · [FinShield官网](https://safety.finaios.ai/) · [npm包](https://www.npmjs.com/package/@finogeeks2026/finshield-dsh)
 
 **删文件很危险，但Agent能做的远不止删文件。你的隐私、系统和数据，也需要保护。FinShield为Windows上的DSH加上沙箱防护。Agent能越过哪些安全边界？FinShield能守住哪些？让实测结果说话。**
 
@@ -43,11 +43,13 @@ FinShield为Windows上的DSH Desktop提供隐私、交互、系统和数据四�
 
 **运行要求：Windows x64，DSH `>=0.2.1-rc.5 <0.3.0`；插件包要求Node `>=24.9.0`。** 此插件面向DSH Desktop。
 
+**已安装旧包的用户：** npm包名已由`@finogeeks2026/finshield`改为`@finogeeks2026/finshield-dsh`，显示名称仍为FinShield。请先保存工作，在DSH内移除旧插件，再按下面的步骤安装新包。此次不提供自动迁移；旧包的更新按钮不会切换到新包。移除插件包会保留原生组件、配置与授权，不需要为此次改名卸载原生组件。请勿同时启用新旧插件。
+
 1. 打开DSH桌面版，在应用内进入**插件 → 添加插件**。
-2. 粘贴下面的npm包名并安装。需要固定版本复现时，可使用`@finogeeks2026/finshield@0.10.51`。
+2. 粘贴下面的npm包名并安装。需要固定版本复现时，可使用`@finogeeks2026/finshield-dsh@0.11.1`。
 
    ```text
-   @finogeeks2026/finshield
+   @finogeeks2026/finshield-dsh
    ```
 
 3. 启用FinShield，按提示完成原生组件安装和Windows授权。请提前保存正在进行的任务。

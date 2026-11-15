@@ -1,9 +1,16 @@
 # FinShield for DSH Desktop: design and operation
 
-Revision: 2026-11-13. This document describes the Node plugin and independent
+Revision: 2026-11-14. This document describes the Node plugin and independent
 Node updater in this package. Unit and owned-fixture checks do not establish
 installed-product acceptance. The owner performs installation, Windows consent,
 restart and upgrade checks.
+
+Configuration revision #1094, approved 2026-11-14: use the
+[canonical configuration algorithm](../../../docs/design/dsh-configuration-and-startup-order.md#312-plugin-configuration-changes-1064)
+for current-file updates, best-effort sibling backups, and field-only cleanup.
+Source and owned-fixture checks implement this revision; installed-product
+acceptance is pending. Configuration application no longer reads separate
+original-field records or uses historical ownership gates.
 
 Host self-update (source implemented, installed-product acceptance pending):
 `apply` adds one listener registration. A completed enabled self-update with HMR
@@ -122,7 +129,8 @@ existing behavior. A personal installation elsewhere cannot replace this record.
 | Verified setup and results | `<LocalAppData>/FinSAFE/dsh-plugin/downloads/<version>/` |
 | Independent DLL, Koffi and updater code | `<LocalAppData>/FinSAFE/dsh-updater/<version>/` |
 | Node executable, reused in place | Actual DSH Host-selected primary runtime |
-| AppSeam original-field records | `<LocalAppData>/FinSAFE/AppSeam/dsh-originals/` |
+| Optional configuration backups, implemented #1094 | `<DSH_HOME>/profiles/desktop/cordis.patch.yml.back` and `pnpm-workspace.yaml.back` |
+| Legacy AppSeam original-field records, no longer used | `<LocalAppData>/FinSAFE/AppSeam/dsh-originals/`; not a target startup input |
 
 These are templates, not machine-specific paths. DSH's home resolver and actual
 Host command line determine home, profile, selected runtime and available Node.
@@ -302,8 +310,8 @@ flowchart TD
 
 ## AppSeam settings
 
-AppSeam owns the shared DSH launch adaptation. It saves both original fields
-before it binds the profile's actual pnpm store and applies `sandbox-policy.config.mode` in the desktop
+AppSeam owns the shared DSH launch adaptation. It uses current files to bind
+the profile's actual pnpm store and apply `sandbox-policy.config.mode` in the desktop
 `cordis.patch.yml`. Node only calls the fixed API. Core does not edit vendor YAML.
 Plugin updater Wrap first stops old Main and sets `hmr.disabled: true` through
 the existing fixed YAML parser, then calls AppSeam launch. The hmr-only operation
@@ -320,19 +328,24 @@ The pinned official `@pnpm/modules-yaml` 1002.0.1 reader is bundled into AppSeam
 fixed parser. Existing metadata supplies storeDir. With no installed modules,
 the selected DSH packaged pnpm reports its store in the ordinary environment.
 No drive, username or store-version suffix is inferred. A matching explicit
-binding is unchanged; a conflict or missing metadata for installed modules stops
-launch. Other workspace settings, comments, modules metadata, lockfiles and
-global pnpm configuration are preserved. Paired restoration restores both
-sandbox mode and workspace storeDir, including an originally absent field.
+binding is unchanged. Report conflicts and missing metadata for installed
+modules without guessing another store path. Configuration errors follow the
+canonical best-effort operation contract; preserve actual protected-start errors.
+Other workspace settings, comments, modules metadata, lockfiles and global pnpm
+configuration are preserved. The store binding stays through disablement,
+disposal, bundle removal, ordinary launch and native uninstall. Cleanup does not
+read or restore the workspace backup. It changes only sandbox mode, using a
+usable backup for its saved value or absence, or removing its matching override
+if no usable backup exists. Different user values stay.
 Normal compatibility restoration leaves desktop hmr disabled. The explicit
 FinShield bundle removal flow below enables and retains hmr.
 
-Before the first sandbox write, AppSeam saves the original field/existence in a
-separate owner/SYSTEM/Administrators record. Save failure prevents the write.
-Repeated application preserves the original baseline. Restore changes only the
-owned field and removes a newly added empty entry. Later user edits, corrupt or
-missing required history fail visibly and preserve history. Shared-home, CLI and
-Chromium sandbox settings are not changed. The parser preserves YAML tags without
+Before an actual file change, try to save the source in its sibling `.back`
+file. Leave an existing backup unchanged. Backup failure is a warning and does
+not stop the write or startup. Startup does not read or validate these backups
+or legacy original-field records. Cleanup never copies the complete backup
+over a current file. Shared-home, CLI and Chromium sandbox settings are not
+changed. The parser preserves YAML tags without
 evaluating JavaScript. Its short launcher sends the compiled parser on stdin to
 avoid the Windows command-line length limit.
 
@@ -373,7 +386,11 @@ STARTUPINFO.dwFlags; Windows ends feedback automatically. Only the three standar
 handles are inherited. Two Node workers drain stdout and stderr with synchronous
 Win32 reads so pipe reads do not block the updater event loop and GetLastError
 is read on the calling thread. Stdout retains the bounded UTF-8 line contract;
-stderr retains its 64 KiB tail. The process handle remains available for timeout
+stderr is decoded incrementally and forwarded without waiting for EOF. Wrap
+retains its 64 KiB failure tail and asynchronously forwards diagnostics to the
+existing updater log, including after successful startup. Destination errors
+are consumed and backpressure drops chunks; startup never waits for log writes.
+Delivery is best effort. The process handle remains available for timeout
 termination until both readers finish, then all owned handles are closed.
 Creation or read failures remain errors; no alternate launcher or retry is added.
 Windows x64 layout is explicit, matching this package's native payload.
@@ -390,8 +407,8 @@ existing setup before offering Restart. Native file-user handling, selected-ID a
 personal business logic retain their existing contracts.
 
 With hmr disabled, a successful saved DSH plugin-manager disable/removal event
-requests paired AppSeam restoration without releasing the Host binding.
-Plugin disposal releases the Host binding and requests paired AppSeam restoration.
+requests AppSeam sandbox restoration without releasing the Host binding.
+Plugin disposal releases the Host binding and requests AppSeam sandbox restoration.
 Page closure does not dispose the backend. Native work is not cancelled by
 disposal. Restoration waits for accepted work that uses the binding, and actual
 failures are reported. A later protected launch applies compatibility through
@@ -399,7 +416,7 @@ the existing AppSeam entry. DSH does not guarantee disable
 rollback or pnpm rollback on an asynchronous cleanup failure.
 
 Owner decision, 2026-11-13: while enabled, FinShield adds a scoped preflight to
-the running manager's `removeBundle` method for `@finogeeks2026/finshield` only.
+the running manager's `removeBundle` method for `@finogeeks2026/finshield-dsh` only.
 Other targets call the original method directly. The DSH confirmation, Gateway
 authorization, removal checks and pnpm operation stay with DSH. The plugin
 removes its method adapter during disposal, without disposing hmr.
@@ -413,7 +430,7 @@ package removal and remains visible in the native UI.
 
 ```mermaid
 flowchart TD
-    A[Confirmed FinShield removal] --> B[Restore paired compatibility settings]
+    A[Confirmed FinShield removal] --> B[Restore sandbox mode; keep storeDir]
     B --> C[Save hmr enablement and activate its existing Loader entry]
     C --> D[Call original DSH removeBundle]
     D --> E[Keep hmr enabled after removal]
@@ -454,16 +471,22 @@ Owner decision, 2026-11-07: these risks are accepted for now; fixes are deferred
   used by ordinary AppSeam/pnpm. Automatic binding is implemented without trusted
   source validation. That authority exposure remains open.
 
-These decisions do not waive IPC authentication, original-record protection or
-native operation boundaries. No complete startup-chain protection is claimed.
+These decisions do not waive IPC authentication or native operation boundaries.
+The configuration revision #1094 is not proof that the accepted vulnerabilities
+are fixed. No complete startup-chain protection is claimed.
 
 ## Publication and verification
 
-The npm distribution name is `@finogeeks2026/finshield`; the public repository
-remains `finogeeks/finsafe`. The previous `@finogeeks/finshield` name is a
-different DSH bundle. It is not an in-place upgrade: an existing user must remove
-the old bundle through its normal cleanup before installing the new name.
-Native instance paths and FinSAFE identity do not change with the npm scope.
+The npm distribution name is `@finogeeks2026/finshield-dsh`; the public repository
+remains `finogeeks/finsafe`, and the displayed product name remains FinShield.
+Owner decision, 2026-11-15: rename the DSH package without automatic migration
+or continued publication under the old name. The previous
+`@finogeeks2026/finshield` and `@finogeeks/finshield` names are different DSH
+bundles. This is not an in-place upgrade: an existing user must remove the old
+bundle through its normal cleanup before installing the new name. Do not enable
+both bundles together. Native instance paths and FinSAFE identity do not change
+with the npm package name. The platform feature matrix remains correct because
+this rename changes no confinement, platform support or authorization behavior.
 
 FinShield installed and Discover detail pages reset their containing page's
 scroll position once when opened, including the native Plugins header above

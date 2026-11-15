@@ -1,4 +1,4 @@
 - insert:
     - id: finsafe-windows
-      name: '@finogeeks2026/finshield'
+      name: '@finogeeks2026/finshield-dsh'
       config: {}

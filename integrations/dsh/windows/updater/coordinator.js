@@ -266,7 +266,8 @@ export function createUpdater({ports,startup}) {
         if(operation==='uninstall') {
           if(binding.protected)throw Error('Native uninstall requires an ordinary session');
           if([...operations].some(work=>resource(work.binding)===resource(binding)))throw Error('Native operation conflict');
-          await ports.restore(binding);
+          try {await ports.restore(binding);}
+          catch(error){ports.report?.(error,binding,'uninstall_cleanup');}
           void tracked(binding,async()=>{try{const result=await ports.uninstall(binding);
             value.result={phase:result?.code?'failed':'completed',nativeUninstall:result};}
             catch(error){value.result=failure(error);}});

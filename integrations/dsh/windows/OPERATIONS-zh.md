@@ -111,9 +111,12 @@ Main，并保留原 updater 和 Job。本期不支持改变 FinSAFE ID。
 ## 停用与卸载
 
 使用 DSH 标准控制停用或删除插件。updater 可用时，清理仅恢复 AppSeam 拥有的
-Desktop sandbox 和 pnpm storeDir 字段；后续修改冲突或 updater 不可用会报错，原覆盖值可能保留，
+Desktop sandbox 字段；pnpm storeDir 绑定在停用和移除时保留。
+后续修改冲突或 updater 不可用会报错，原覆盖值可能保留，
 不保证自动恢复。离线脚本移除前，先在运行中的 DSH 停用插件以执行正常清理。
-插件包裹启动前会关闭配置热加载，停用或删除后保持关闭。插件和配置变更需要重启生效。
+插件包裹启动前会关闭配置热加载，保存停用状态时保持关闭。
+移除已启用的 FinShield 包时，先启用 HMR，再执行 DSH 的移除操作。
+没有 HMR 时保存的插件和配置变更需要重启生效。
 退出并重新打开后改变后续激活。停用不能把
 已运行的 Host 移出 AppContainer。附带脚本还可清理本插件元数据：
 
@@ -130,6 +133,151 @@ Desktop sandbox 和 pnpm storeDir 字段；后续修改冲突或 updater 不可�
 相同的用户与安全域 ID，就共享同一份授权；清除此 ID 的授权会同时生效。
 不同 ID 的授权保持独立。个人版默认配置路径、更新配置路径和快捷方式名称不变。
 详见[设计文档](DESIGN.md#updates-and-removal)。
+
+## 本地开发与验收
+
+按待验证的行为选择 DSH 已有的开发方式。调试插件不需要先搭本地市场。
+
+| 验证目标 | 使用方式 | 能证明什么 |
+|---|---|---|
+| 模块代码 | 在测试 profile 使用 `--patch` 和模块绝对路径，或链接本地包目录 | 模块加载和行为；不证明包分发正常 |
+| Desktop 集成 | DSH 源码仓库的 Desktop 开发入口 | 开发应用内 Main、Host 和 Renderer 的行为 |
+| 构建后的插件包 | 通过 Desktop 插件管理器安装预构建 `.tgz` | 包内容、激活、停用和移除 |
+| 市场更新 | 在索引中提供两个不可变版本，使用待验收的分发来源 | 版本发现、更新按钮和版本替换 |
+
+```mermaid
+flowchart LR
+    A[选择验证目标] --> B[源码调试]
+    A --> C[插件包生命周期验收]
+    A --> D[市场更新验收]
+```
+
+### 源码调试
+
+调试小型 DSH 模块时，官方教程使用 overlay 插入模块，模块路径使用绝对路径。
+在已完成开发环境准备的 DSH 源码仓库执行：
+
+```powershell
+pnpm dsh web --patch C:/work/my-plugin/dev.patch.yml
+```
+
+使用单独的测试 home/profile。调试 Desktop 时，官方入口为：
+
+```powershell
+pnpm run dev:desktop
+```
+
+该命令构建 Desktop 组件，并在 `apps/desktop/.desktop-build/development/` 下使用
+独立的 home、project 和 Electron 浏览器数据目录。改代码后先构建，再使用
+Reload Page 或 Restart App and Host；这两个菜单操作不会构建代码。
+不要为了调试而重新启用 HMR，绕过 FinShield 的启动要求。
+Web/CLI 的结果不能证明 Desktop 的 AppContainer 防护生效。
+Desktop 拥有保留的 `desktop` profile，包操作使用 Desktop 插件管理器。
+
+### 插件包验收
+
+先按下节命令构建客户端、策略、解析器和原生 DLL，再打包。
+单独执行 `npm pack` 不会生成这些文件。在构建后的包目录执行：
+
+```powershell
+npm pack --ignore-scripts --pack-destination C:/work/artifacts
+```
+
+在 Desktop 的 **插件 → 添加插件 → 安装第三方插件** 中输入 `.tgz` 的绝对路径。
+通过 Desktop 验收安装、激活、重启、停用和移除，记录实际安装版本和 Host 原生令牌。
+本地目录链接适合迭代，但不能证明压缩包包含全部运行文件。
+安装第二个本地压缩包，也不能证明市场更新按钮可用。
+
+插件包与原生安装器是两项输入。未公开发布的插件版本，也需要对应版本的原生
+安装器、有效下载元数据和校验值。测试下载源应记录在暂存产物中，不得静默
+替换成公开版本。本地市场仅允许下述目标 profile 的临时 scope 配置。
+
+### 市场更新验收
+
+FinShield 发布流程使用 DSH 索引中的 Git 提交和包子目录。验收该 Git 分发路径时：
+包含构建后的运行文件，每个版本固定完整提交，两个版本使用同一仓库和子目录，
+并通过 DSH 的索引解析器验证。本地索引 URL 只是目录，不代表插件包和原生安装器
+也来自本地。用户开始验收前，先核对实际地址和提交。
+
+仓库中的[本地市场工具](../../../scripts/dev/dsh-market.py)保留此前的本地 HTTP/npm
+方式，只覆盖这次要求的两条生命周期流程。独立 profile 已通过实际 DSH 服务的
+安装、重启后更新及卸载；真实 Desktop 操作待用户验收。这项验收不证明正式 Git 传输通过。
+边界和证据见[设计](../../../docs/design/dsh-local-market.md)。
+
+先只展示版本 A。安装、移除验收通过后，重新安装 A 并保留。再增加版本 B，
+不修改 A 的文件或来源。通过 DSH 更新按钮操作，重启后核对结果。
+插件包移除和原生运行时卸载按上节说明分别验收。
+没有发布授权时，不向公共服务发布这两个版本。
+
+本工具不改用户级或全局 npm 配置。经设计者批准，可以临时增加目标 DSH profile
+的 scope registry，使重启后的查询和移除仍使用本地来源；不改变默认 registry。
+测试结束且 registry 插件已移除后，精确恢复原文件。保留原始失败步骤和 pnpm 输出，
+不能仅凭来源失败就认定是 FinShield 的故障。
+
+### 本地市场命令
+
+以下命令从 FinSAFE 仓库根目录执行。Python 标准库即可；无需安装 registry 服务。
+构建产物沿用现有打包流程。`build.json` 记录 `version`、`sourceCommit`、`plugin`、
+`installer`、`pluginSha256`、`installerSha256` 和 `bindingSha256`；文件路径为绝对路径。
+暂存插件包中的 `install/download-source.json` 必须指向 `http://127.0.0.1:18771`。
+`prepare` 检查这些输入并导入不可变副本，不修改源包。两个版本使用相同下载根地址。
+
+```powershell
+python scripts/dev/dsh-market.py prepare C:/work/artifacts/A/build.json
+python scripts/dev/dsh-market.py prepare C:/work/artifacts/B/build.json
+python scripts/dev/dsh-market.py expose 0.10.55
+python scripts/dev/dsh-market.py configure-profile "$env:USERPROFILE/.dsh/profiles/desktop"
+python scripts/dev/dsh-market.py serve
+```
+
+示例 A 为 0.10.55、B 为 0.10.56；按实际产物版本执行。默认数据目录为
+`dist/dsh-market/acceptance/`，受 Git 忽略。需要隔离目录时，在子命令前使用 `--root`；
+同一轮所有命令必须使用同一目录。端口占用直接报错，不自动换端口。
+`serve` 保持运行；Ctrl+C 停止。另一个终端执行：
+
+```powershell
+python scripts/dev/dsh-market.py check
+```
+
+该检查下载并校验插件和原生安装器，只证明 HTTP 接口与产物一致。自检请求记录在
+`requests.jsonl` 中；开始用户验收前记录时间，区分之后的真实下载。
+在 DSH 的索引源界面添加 `http://127.0.0.1:18771/index.json`。
+若已安装的是 `file:` 包，先通过 DSH 移除，再从此市场安装 A，不能修改依赖来源冒充更新基线。
+用户自行操作安装、授权、重启、使用和卸载。检查日志及 Host 防护后，再从同源安装 A。
+准备验收更新时，执行：
+
+```powershell
+python scripts/dev/dsh-market.py expose 0.10.56
+```
+
+在 DSH 刷新市场，通过现有更新按钮更新，重启并核对实际版本和防护。
+若当前已有 B 的原生组件，本轮不能算覆盖了 B 的下载与安装，须如实记录。
+验收结束后，先通过 DSH 移除本地 registry 插件，再恢复：
+
+```powershell
+python scripts/dev/dsh-market.py restore-profile "$env:USERPROFILE/.dsh/profiles/desktop"
+```
+
+原始 `.npmrc` 字节或不存在状态保存于数据目录的 `profile-bindings/`，可能含本机凭据，
+不得提交或分享该目录。重复配置/恢复不改变结果。若期间有其他修改，恢复报错并保留备份，
+不覆盖新内容。不要提前删除数据目录；停止服务器也不会自动恢复配置。
+随后通过 DSH 删除本地索引源，停止服务器。不需要修改全局 npm 配置或系统证书。
+
+维护工具时运行 `verify.py --lane dsh-local-market --lane dsh-local-market-runtime`，
+先加 `--dry-run` 阅读计划。后者使用独立临时 profile 和实际已安装 DSH 服务，
+验证自然生成的依赖元数据及来源连续性，不操作当前 Desktop 或运行原生安装。
+
+每个独立的配置场景从普通 pnpm 生成的 `node_modules/.modules.yaml` 和预定配置
+基线开始，不手工修改该元数据来匹配受保护环境。一次安装、更新、移除场景内部
+保留自然生成的元数据，才能验证流程连续性。
+
+调研日期：2026-11-14；上游提交：`39163dd30f703a79079e2d2446545cff3c453738`。
+依据为官方[模块教程](https://github.com/deepseek-ai/deepseek-harness/blob/39163dd30f703a79079e2d2446545cff3c453738/docs/user/develop/basic/index.md)、
+[打包教程](https://github.com/deepseek-ai/deepseek-harness/blob/39163dd30f703a79079e2d2446545cff3c453738/docs/user/develop/basic/publish.md)、
+[Desktop 开发说明](https://github.com/deepseek-ai/deepseek-harness/blob/39163dd30f703a79079e2d2446545cff3c453738/apps/desktop/README.md#develop)及
+[插件管理器来源与更新规则](https://github.com/deepseek-ai/deepseek-harness/blob/39163dd30f703a79079e2d2446545cff3c453738/packages/boot/plugin-manager/README.md)。
+以上是开发方法，不是 FinShield Desktop 已通过验收的证据。使用时须核对待测 DSH
+版本是否支持对应入口。
 
 ## 构建、发布与验证
 

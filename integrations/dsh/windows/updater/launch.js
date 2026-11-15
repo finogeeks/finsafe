@@ -1,5 +1,17 @@
 import {spawn} from 'node:child_process';
+import {createWriteStream} from 'node:fs';
 import {nativeDesktopChild} from '../src/connector.js';
+
+// Use asynchronous fs writes: process.stderr can write synchronously to files.
+// Node owns buffering; a slow or failed log must not delay the launch.
+export function createDiagnosticWriter(destination=createWriteStream(null,{fd:2,autoClose:false,highWaterMark:65536})) {
+  destination.on('error',()=>{});
+  return bytes=>{
+    try {if(destination.writable&&!destination.writableNeedDrain)destination.write(bytes);}
+    catch {} // Diagnostics are best effort; never report a log error through itself.
+  };
+}
+const writeDiagnostic=createDiagnosticWriter();
 
 // Reuse the DLL's piped breakaway child transport. Its control handle is
 // independent of the reader, so timeout cleanup can stop a blocked launcher.
@@ -21,7 +33,7 @@ export function nativeLauncher({start,read,stop,release}) {
 // Wrap: stop this DSH, listen on the work pipe, launch through FinSAFE, retain
 // the new Main. Do not wait for Host bind, a Host scan, or replacement_status.
 export async function launchWrap(binding,{invoke,spawnChild=spawn,
-  wait=()=>new Promise(done=>setTimeout(done,100)),deadlineMs=75000,listen=async()=>{},observeReplacement=()=>{},onStopped=()=>{}}={}) {
+  wait=()=>new Promise(done=>setTimeout(done,100)),deadlineMs=75000,listen=async()=>{},observeReplacement=()=>{},onStopped=()=>{},diagnostics=writeDiagnostic}={}) {
   let operation='stop_main',child;
   try {
     await invoke('stop_main');
@@ -36,7 +48,10 @@ export async function launchWrap(binding,{invoke,spawnChild=spawn,
     let failure,output='',errors='',startup;
     child.on('error',error=>{error.operation='launch_protected';failure=error;});
     child.on('exit',code=>{failure=Error(`DSH launcher exited (${code}): ${errors}`);});
-    child.stderr.on('data',bytes=>{errors=(errors+bytes).slice(-65536);});
+    child.stderr.on('data',bytes=>{
+      errors=(errors+bytes).slice(-65536);
+      try {diagnostics(bytes);}catch {} // Logging cannot change startup success or failure.
+    });
     child.stdout.on('data',bytes=>{
       if(startup||failure) return;
       output+=bytes;

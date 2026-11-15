@@ -1,6 +1,6 @@
 # FinShield: protect your privacy, system and data
 
-[简体中文](README-zh.md) · [FinShield website](https://safety.finaios.ai/) · [npm package](https://www.npmjs.com/package/@finogeeks2026/finshield)
+[简体中文](README-zh.md) · [FinShield website](https://safety.finaios.ai/) · [npm package](https://www.npmjs.com/package/@finogeeks2026/finshield-dsh)
 
 **Deleting files is dangerous, but agents can do much more. Your privacy, system and data need protection too. FinShield adds sandbox protection to DSH on Windows. Which security boundaries can agents cross, and which can FinShield defend? Let the test results speak.**
 
@@ -43,11 +43,13 @@ Prevention success follows each case's target effect and decision criteria. Thes
 
 **Requirements: Windows x64, DSH `>=0.2.1-rc.5 <0.3.0`; the package requires Node `>=24.9.0`.** This plugin targets DSH Desktop.
 
+**Existing users:** The npm package name changed from `@finogeeks2026/finshield` to `@finogeeks2026/finshield-dsh`. The displayed name remains FinShield. Save your work, remove the old plugin through DSH, then install the new package below. There is no automatic migration; the old package's Update button does not switch to the new name. Plugin removal retains native components, configuration and authorization. Do not uninstall the native components for this rename, and do not enable both plugins together.
+
 1. Open DSH Desktop and go to **Plugins → Add plugin** in the application.
-2. Paste this npm package name and install it. For a version-pinned reproduction, use `@finogeeks2026/finshield@0.10.51`.
+2. Paste this npm package name and install it. For a version-pinned reproduction, use `@finogeeks2026/finshield-dsh@0.11.1`.
 
    ```text
-   @finogeeks2026/finshield
+   @finogeeks2026/finshield-dsh
    ```
 
 3. Enable FinShield and follow the native setup and Windows authorization prompts. Save active tasks first.
