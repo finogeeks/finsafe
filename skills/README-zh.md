@@ -4,9 +4,14 @@
 
 **English:** [README.md](./README.md)
 
-本目录下每个技能均为**自包含**：运维人员只需 [GitHub Releases](https://github.com/finogeeks/finsafe/releases) 中的对应二进制与本技能文件，**无需**本地克隆文档仓库。
+本目录下的运维技能为**自包含**：运维人员只需 [GitHub Releases](https://github.com/finogeeks/finsafe/releases) 中的对应二进制与本技能文件，**无需**本地克隆文档仓库。
 
 ## 在 Agent 中使用
+
+提报 bug 时，打开本仓库并阅读 [AGENTS.md](../AGENTS.md) 和
+[finsafe-report-bug](finsafe-report-bug/SKILL.md)。该技能收集证据并向
+`finogeeks/finsafe` 提交英文 issue，详见[贡献指南](../CONTRIBUTING-zh.md)。
+以下运维技能也可以脱离仓库单独使用。
 
 1. 将技能文件交给 Agent（例如 `finsafe-bundlectl/SKILL-zh.md`）。
 2. 确保 `finsafe-bundlectl` 在 `PATH` 上，并按技能设置环境变量。
@@ -31,7 +36,7 @@
 
 ## 可选延伸阅读（仅完整 URL）
 
-技能正文不依赖仓库内相对路径。需要更多背景时：
+运维技能正文不依赖仓库内相对路径。需要更多背景时：
 
 - https://github.com/finogeeks/finsafe/releases
 - https://github.com/finogeeks/finsafe/tree/main/docs

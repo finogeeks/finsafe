@@ -4,11 +4,16 @@
 
 **中文：** [README-zh.md](./README-zh.md)
 
-Each skill under this directory is **self-contained**: an operator can use it with release
+The operator skills under this directory are **self-contained**: an operator can use them with release
 binaries from [GitHub Releases](https://github.com/finogeeks/finsafe/releases) and the skill
 file — no local checkout of the documentation tree is required.
 
 ## How to use with an agent
+
+For bug reporting, open this repository and read [AGENTS.md](../AGENTS.md) and
+[finsafe-report-bug](finsafe-report-bug/SKILL.md). It collects evidence and files
+English issues in `finogeeks/finsafe`; see [CONTRIBUTING.md](../CONTRIBUTING.md).
+The operator skills below can also be used separately from a checkout.
 
 1. Give the agent the skill file (for example copy `finsafe-bundlectl/SKILL.md` into your agent’s skill path, or attach it to the session).
 2. Ensure `finsafe-bundlectl` is on `PATH` and environment variables from the skill are set.
@@ -33,7 +38,7 @@ file — no local checkout of the documentation tree is required.
 
 ## Optional deeper reading (online only)
 
-Skills intentionally avoid relative links to other repo files. If needed, full URLs:
+The operator skills avoid relative links to other repo files. If needed, full URLs:
 
 - https://github.com/finogeeks/finsafe/releases
 - https://github.com/finogeeks/finsafe/tree/main/docs

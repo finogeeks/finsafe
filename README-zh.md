@@ -53,7 +53,7 @@ Windows [下载安装助手](https://github.com/finogeeks/finsafe/releases/lates
 - [文档目录与白皮书](docs/README-zh.md)：Windows、Linux/macOS 产品介绍与完整方案。
 - [DSH Windows 插件](integrations/dsh/windows/README-zh.md)：插件安装、授权、更新与停用说明。
 - [Agent 安全测评](https://safety.finaios.ai/agents/dsh/zh-CN)：DSH 四类危险操作的对照录像、测试条件和结果。
-- [问题反馈](https://github.com/finogeeks/finsafe/issues/new/choose) · [版本记录](CHANGELOG.md)。
+- [问题反馈](https://github.com/finogeeks/finsafe/issues/new/choose) · [用 Agent 提报](CONTRIBUTING-zh.md#推荐入口issue) · [版本记录](CHANGELOG.md)。
 
 防护依赖实际启动入口、权限和版本；敏感信息检查仅覆盖已接入、可检查的请求。由 Finogeeks 发布，使用范围以发行或交付许可为准。
 
