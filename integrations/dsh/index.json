@@ -95,13 +95,28 @@
       "name": "@finogeeks2026/finshield-dsh",
       "title": "FinShield",
       "author": "Finogeeks",
-      "homepage": "https://safety.finaios.ai/",
+      "homepage": "https://finaios.ai/zh-hans/products/finshield/",
       "repository": {
         "url": "https://github.com/finogeeks/finsafe",
         "directory": "integrations/dsh/windows"
       },
       "icon": "./windows/assets/finshield.png",
       "versions": [
+        {
+          "version": "0.11.6",
+          "publishTimestamp": 1794806781,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/finogeeks/finsafe.git",
+            "commit": "fada2d7117860905d0cd7067ea484e440164d8a2",
+            "path": "integrations/dsh/windows"
+          },
+          "engines": {
+            "node": ">=24.9.0",
+            "dsh": ">=0.2.1-rc.5 <0.3.0"
+          },
+          "finsafeSourceCommit": "136578c87c14ed4e6d4f0dfe91c3834af9d9dd09"
+        },
         {
           "version": "0.11.1",
           "publishTimestamp": 1794719750,
