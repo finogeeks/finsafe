@@ -1,16 +1,14 @@
 # FinShield
 
-**Let Agents help you get things done, with clear boundaries.**
+**Let mainstream Agents work within clear security boundaries.**
 
-FinShield gives Agents a sandbox that limits access to files, system functions, and the desktop, so they work within the permissions you grant. It supports Windows, macOS, and Linux, with a plugin for DSH on Windows.
+FinShield (formerly FinSAFE) gives Agents a security boundary for files, system functions, and the desktop. Prefer a released Agent integration plugin, or connect through the `finsafe` CLI when no plugin is available. The product supports Windows, macOS, and Linux; see the [compatibility matrix](docs/agent-compatibility-en.md) for each Agent form and verification scope.
 
 [简体中文](README-zh.md) · [FinShield on finaios.ai](https://finaios.ai/en/products/finshield/)
 
-> **[Agent Safety Evaluation](https://safety.finaios.ai/agents/dsh/index.html)** — Watch DSH comparisons across four risk categories, with test conditions and results.
-
 ## Four risks when Agents operate your computer
 
-Screenshots can expose private information, pop-ups can disrupt work, and process or file operations can damage your working environment. These four cases compare ordinary runs with FinShield protection.
+Screenshots can expose private information, pop-ups can disrupt work, and process or file operations can damage your working environment. These four DSH cases compare ordinary runs with FinShield protection.
 
 | [Privacy leaks](https://safety.finaios.ai/agents/dsh/index.html#privacy) | [Desktop disruption](https://safety.finaios.ai/agents/dsh/index.html#interaction) | [System damage](https://safety.finaios.ai/agents/dsh/index.html#system) | [Data deletion](https://safety.finaios.ai/agents/dsh/index.html#data) |
 | :---: | :---: | :---: | :---: |
@@ -19,44 +17,55 @@ Screenshots can expose private information, pop-ups can disrupt work, and proces
 
 Select a GIF for the full assessment. Previews are reused from the DSH plugin and excerpt separate test runs; see each assessment page for test conditions, configuration, and protection scope.
 
-## Use FinShield in DSH
+## Choose your Agent
 
-The **FinShield DSH Windows plugin** adds a local sandbox to DSH's Agent execution environment while preserving your existing desktop app, account, and sessions. View installation, authorization, and actual protection status inside DSH.
+| Agent | Start here | Available integration |
+| --- | --- | --- |
+| DSH Desktop (Windows) | [Install the plugin](integrations/dsh/windows/README.md) | **Released**: `@finogeeks2026/finshield-dsh` |
+| Codex CLI (Windows) | [CLI integration guide](docs/codex-cli-en.md) | **CLI integration supported** |
+| Claude Code CLI (Windows) | [CLI integration guide](docs/claude-cli-en.md) | **CLI integration supported** |
+| WorkBuddy desktop (Windows) | [Desktop installation and launch](docs/getting-started-en.md#windows) | Desktop launcher |
+| Other Agents / Linux / macOS | [Compatibility and generic CLI examples](docs/agent-compatibility-en.md) | Check the specific Agent |
 
-In DSH Desktop, open **Plugins → Add plugin**, enter the npm package name [`@finogeeks2026/finshield`](https://www.npmjs.com/package/@finogeeks2026/finshield), then install and enable it. First-time setup requires administrator approval; restart DSH when prompted after configuration is complete and confirm the actual protection status on the plugin page.
+CLI integration and plugin release are separate states. Codex / Claude CLI results do not establish desktop-app or IDE-extension integration. Platform support does not verify every feature of every Agent.
 
-Available on Windows x64. See the [plugin guide](integrations/dsh/windows/README.md) for compatible versions, installation, and removal, or explore the [DSH safety assessments](https://safety.finaios.ai/agents/dsh/index.html).
+## Prefer plugin integration
 
-## Install FinShield
+In DSH Desktop Windows, open **Plugins → Add plugin**, install and enable [`@finogeeks2026/finshield-dsh`](https://www.npmjs.com/package/@finogeeks2026/finshield-dsh), then follow the prompts for native components, authorization, and required restarts. Confirm actual protection status. See the [plugin guide](integrations/dsh/windows/README.md) for version requirements, migration from the older package, and removal.
 
-On Windows, [download the install assistant](https://github.com/finogeeks/finsafe/releases/latest/download/install-finshield.cmd) and double-click it. For macOS, Linux, and offline packages, see the [latest release](https://github.com/finogeeks/finsafe/releases/latest). Full instructions are in the [getting started guide](docs/getting-started-en.md).
+Codex and Claude already support CLI integration without a plugin; follow the guides above. Standalone plugin delivery is described separately from existing CLI support. Confirm effective protection after installation or launch.
 
-## Feature comparison
+## Use the command line without a plugin
 
-Reproduced from the original Windows technical proposal. Detailed evaluation will follow.
+After installing FinShield, use `finsafe` to start the process that executes Agent work. On Windows, the Codex guide wraps `app-server` and connects a terminal UI; the Claude guide wraps the CLI directly. Both include preparation checks and protection verification.
 
-| Product | Runtime | Agent integration | Risky System Operations | File permissions | PII detection | Data retention |
-| --- | --- | --- | --- | --- | --- | --- |
-| FinShield | Native Windows | Supported | Supported | Supported | Supported | Supported |
-| SRT (Anthropic) | Native Windows | CLI Agents only | Partially supported | Supported | Unsupported | Unsupported |
-| Codex (OpenAI) | Native Windows | DSH task execution failed | Partially supported | Partially supported | Unsupported | Unsupported |
-| MXC (Microsoft) | Windows execution backend | DSH failed to start | — | — | — | — |
-| Docker Sandboxes | Linux microVM | Windows Agents unsupported | Isolates the host system | Supported | Unsupported | Unsupported |
-| OpenShell | WSL2 + Linux container | Windows Agents unsupported | Isolates the host system | Supported | Unsupported | Unsupported |
+[Install and choose a route](docs/getting-started-en.md) · [Codex CLI](docs/codex-cli-en.md) · [Claude Code CLI](docs/claude-cli-en.md)
 
-“—” means Agent startup failed and subsequent tests were not performed.
+Windows users can [download the install assistant](https://github.com/finogeeks/finsafe/releases/latest/download/install-finshield.cmd). See the [latest Release](https://github.com/finogeeks/finsafe/releases/latest) for macOS, Linux, and offline packages. For policy examples for other Agents, see the [compatibility matrix](docs/agent-compatibility-en.md); adapt and verify them for current versions.
 
-## Explore
+## Protection and evaluations
+
+- **File and workspace permissions** control reads and modifications within authorized scope.
+- **System and desktop restrictions** constrain Agent operations on processes, the system, and desktop.
+- **Sensitive-information inspection** detects and handles content on integrated, inspectable request paths according to policy.
+- **Records and audit** retain inspectable execution records according to product configuration.
+
+[Agent Safety Arena](https://safety.finaios.ai/) provides comparisons for multiple Agents, with recordings, conditions, and results.
+
+## Enterprise deployment and further reading
 
 - [Install and get started](docs/getting-started-en.md): downloads, installation, first launch, and permission checks.
-- [Windows illustrated overview](docs/finsafe-windows-overview-en.html): capabilities, architecture, and integration.
+- [Compatibility matrix](docs/agent-compatibility-en.md): Agent forms, platforms, plugin status, and verification evidence.
+- [Overall illustrated introduction](docs/finshield-overview-en.html): capabilities, enterprise management, and scoped evaluations.
 - [Documentation and whitepaper](docs/README.md): Windows, Linux/macOS, and the complete product approach.
 - [DSH Windows plugin](integrations/dsh/windows/README.md): installation, authorization, updates, and removal.
-- [Agent Safety Evaluation](https://safety.finaios.ai/agents/dsh/index.html): DSH recordings, test conditions, and results across four risk categories.
+- [Whitepaper](docs/finsafe-whitepaper-en.md): complete product approach, enterprise integration, and technical basis.
 - [Report a problem](https://github.com/finogeeks/finsafe/issues/new/choose) · [Report with your agent](CONTRIBUTING.md#preferred-intake-issues) · [Release history](CHANGELOG.md).
 
 Protection depends on the launch entry, effective permissions, and version. Content checks cover integrated, inspectable requests. Published by Finogeeks; use is subject to the supplied license terms.
 
+
+PII plugins extend sensitive-information detection and redaction. They serve a different purpose from the Agent integration plugins above.
 
 <!-- finshield-pii-plugins:start -->
 ## Develop a PII plugin (Windows)

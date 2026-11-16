@@ -4,9 +4,33 @@
 
 Choose the package for your operating system. Windows offers an install assistant and an offline EXE; macOS and Linux use CLI archives. Download information was checked on 2026-11-03 against [v0.10.1](https://github.com/finogeeks/finsafe/releases/tag/v0.10.1). For later versions, follow the assets and notes in the [latest Release](https://github.com/finogeeks/finsafe/releases/latest).
 
+## Choose an Agent and integration route
+
+Start with the [compatibility matrix](agent-compatibility-en.md) to confirm the Agent form, platform, and version scope.
+
+| Route | Where to start |
+| --- | --- |
+| Plugin (preferred) | Use the [released DSH Desktop Windows plugin](https://github.com/finogeeks/finsafe/blob/main/integrations/dsh/windows/README.md); follow its guide to install native components and confirm protection status |
+| CLI | [Codex CLI (Windows)](codex-cli-en.md) and [Claude Code CLI (Windows)](claude-cli-en.md) are both supported and require no plugin |
+| Desktop launcher | The standalone FinShield desktop route for WorkBuddy / DSH is described under Windows below |
+| Other Agents / platforms | Choose the [documented examples and scope](agent-compatibility-en.md); do not apply Windows commands directly |
+
+For PII detection / redaction extensions, use the [developer kit](https://github.com/finogeeks/finsafe/blob/main/pii-plugins/README.md). It serves a different purpose from Agent integration plugins.
+
+```mermaid
+flowchart TD
+    A[Choose Agent and platform] --> B{Released integration plugin?}
+    B -->|Yes| C[Install and enable through its guide]
+    B -->|No| D[Choose the CLI or desktop guide]
+    C --> E[Verify effective permission scope]
+    D --> E
+```
+
 ## Windows
 
-1. Install WorkBuddy or DSH separately. FinShield does not replace the Agent or configure its account.
+These steps cover standalone FinShield installation, preparation, and desktop launch. After installation and preparation, Codex / Claude users continue with their CLI guide; they do not need to find an Agent icon in the desktop Widget.
+
+1. Install and sign in to your Agent separately, such as Codex CLI, Claude Code, WorkBuddy, or DSH. FinShield does not replace the Agent or configure its account.
 2. [Download `install-finshield.cmd`](https://github.com/finogeeks/finsafe/releases/latest/download/install-finshield.cmd) and double-click it. The assistant uses English prompts. Press Enter to download the latest stable installer and verify its SHA-256 and publisher signature, confirm the administrator prompt, and follow the wizard. For offline installation, run the matching `finshield-<version>-x64-setup.exe` directly.
 3. Find the desktop Widget. When it shows Not prepared, click the orb and choose Start preparation. Review and authorize permissions in the supporting Console when required. Windows may request administrator consent.
 4. At Agent standby, expand the icons and select WorkBuddy or DSH. Correct invalid directories in Console: WorkBuddy needs its installation directory; DSH needs both Node.js and DSH directories.

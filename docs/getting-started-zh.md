@@ -6,9 +6,33 @@
 
 选择操作系统，下载对应发行文件。Windows 推荐安装助手，也可下载离线 EXE；macOS 与 Linux 使用命令行压缩包。本文下载信息于 2026-11-03 按 [v0.10.1](https://github.com/finogeeks/finsafe/releases/tag/v0.10.1) 核对，后续版本以 [最新 Release](https://github.com/finogeeks/finsafe/releases/latest) 的附件与说明为准。
 
+## 先选择 Agent 与接入方式
+
+先看[兼容矩阵](agent-compatibility-zh.md)，确认 Agent 形态、平台及版本范围。
+
+| 接入方式 | 从哪里开始 |
+| --- | --- |
+| 插件（优先） | DSH Desktop Windows 使用[已发布插件](https://github.com/finogeeks/finsafe/blob/main/integrations/dsh/windows/README-zh.md)；按其指南安装原生组件并确认保护状态 |
+| 命令行 | [Codex CLI（Windows）](codex-cli-zh.md)和[Claude Code CLI（Windows）](claude-cli-zh.md)均已支持，无需安装插件 |
+| 桌面入口 | WorkBuddy／DSH 的独立 FinShield 桌面入口见下文 Windows 步骤 |
+| 其他 Agent／平台 | 按[兼容矩阵中的示例与范围](agent-compatibility-zh.md)选择；不要直接套用 Windows 命令 |
+
+PII 检测／脱敏扩展见[开发包](https://github.com/finogeeks/finsafe/blob/main/pii-plugins/README-zh.md)，它与 Agent 接入插件用途不同。
+
+```mermaid
+flowchart TD
+    A[选择 Agent 与平台] --> B{已有正式接入插件?}
+    B -->|有| C[按插件指南安装与启用]
+    B -->|无| D[选择对应 CLI 或桌面指南]
+    C --> E[验证实际授权范围]
+    D --> E
+```
+
 ## Windows
 
-1. 先安装你要使用的 WorkBuddy 或 DSH。FinShield 不代替这些智能体，也不代办账号登录。
+以下介绍独立 FinShield 的安装、准备与桌面入口。Codex／Claude 用户完成安装和准备后，转到对应 CLI 指南，不需要在桌面控件中寻找这些 Agent 的启动图标。
+
+1. 先安装并登录你要使用的 Agent，例如 Codex CLI、Claude Code、WorkBuddy 或 DSH。FinShield 不代替这些智能体，也不代办账号登录。
 2. [下载 `install-finshield.cmd`](https://github.com/finogeeks/finsafe/releases/latest/download/install-finshield.cmd) 并双击运行。安装助手使用英文提示，按 Enter 开始下载最新稳定版，并校验 SHA-256 和发布者数字签名。出现管理员授权窗口时确认，再按向导完成安装。离线安装可直接运行同一版本的 `finshield-<版本>-x64-setup.exe`。
 3. 安装结束后找到桌面悬浮控件。显示“待准备”时，点击圆形按钮，再选“开始准备”；首次需要确认权限时，在辅助控制台检查范围并授权。Windows 可能请求管理员确认。
 4. 等到“智能体待命”，展开控件图标，选择 WorkBuddy 或 DSH。目录无效时，再进入辅助控制台修正：WorkBuddy 需要安装目录；DSH 需要 Node.js 与 DSH 两个目录。
