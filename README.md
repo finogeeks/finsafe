@@ -56,3 +56,19 @@ Reproduced from the original Windows technical proposal. Detailed evaluation wil
 - [Report a problem](https://github.com/finogeeks/finsafe/issues/new/choose) · [Release history](CHANGELOG.md).
 
 Protection depends on the launch entry, effective permissions, and version. Content checks cover integrated, inspectable requests. Published by Finogeeks; use is subject to the supplied license terms.
+
+
+<!-- finshield-pii-plugins:start -->
+## Develop a PII plugin (Windows)
+
+The [PII plugin developer kit](pii-plugins/README.md) includes the SDK, protocol,
+examples, local workbench and integration instructions. Use a Windows FinShield
+release with external PII support. `pii-plugins/release.json` identifies the
+matching product release and source revision.
+
+FinShield Personal Edition is free to use under its product terms. Commercial
+use of plugins developed with this kit requires prior written permission from
+Finogeeks. Free personal-edition use does not grant a plugin commercial license.
+See the [developer kit license](pii-plugins/LICENSE). Contact:
+[contact@finogeeks.com](mailto:contact@finogeeks.com).
+<!-- finshield-pii-plugins:end -->

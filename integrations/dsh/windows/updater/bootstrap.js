@@ -51,14 +51,14 @@ export function connectUpdater(staged,{call=nativeAdapter(staged.stage)}={}) {
   return {call,request};
 }
 
-export async function obtainUpdater(staged,settings,{connect=connectUpdater,start,context,
+export async function obtainUpdater(staged,settings,{connect=connectUpdater,start,context,startup=true,
   now=Date.now,deadlineMs=10000}={}) {
   const connection=connect(staged);
   const old=await connection.call({action:'open_updater_job'});
   const admit=async(deadline,launch)=>{
     const options={deadline,...(launch?{launch}: {})};
     await connection.request('hello',{},options);
-    if(context){const decision=await connection.request('admit',{context},options);connection.period=decision.period;connection.startupError=decision.error;}
+    if(context&&startup){const decision=await connection.request('admit',{context},options);connection.period=decision.period;connection.startupError=decision.error;}
     connection.admitted=true;
   };
   if(old.job) {

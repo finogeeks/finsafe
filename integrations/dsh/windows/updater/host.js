@@ -25,7 +25,7 @@ export function hostConnections({config,home,runtimeRoot,desktop,vendor}) {
     await call({action:'select_slot',installation:context.installation,configuration:context.configuration});
     return {settings,call,context};
   }
-  async function open(ordinary) {
+  async function open(ordinary,startup=true) {
     if(connection) return connection;
     // Initialization and disposal can overlap; share this activation's DLL load.
     const {settings,call,context}=await (support??=loadSupport());
@@ -37,7 +37,7 @@ export function hostConnections({config,home,runtimeRoot,desktop,vendor}) {
       saveInstanceSettings(settings,home);
       const inputs=await call({action:'host_inputs'});
       const staged=await stageUpdater({runtimeRoot,nodeExecutable:inputs.nodeExecutable,localAppData:settings.localAppData});
-      connection=await obtainUpdater(staged,settings,{context,connect:()=>connectUpdater(staged,{call})});
+      connection=await obtainUpdater(staged,settings,{context,startup,connect:()=>connectUpdater(staged,{call})});
     }else {
       const locations=await call({action:'locations'});
       connection=connectUpdater({root:locations.root},{call});
@@ -46,5 +46,5 @@ export function hostConnections({config,home,runtimeRoot,desktop,vendor}) {
     connection.context=context;
     return connection;
   }
-  return {obtain:()=>open(true),existing:()=>open(false)};
+  return {obtain:({startup=true}={})=>open(true,startup),existing:()=>open(false)};
 }

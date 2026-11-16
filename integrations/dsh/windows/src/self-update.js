@@ -6,6 +6,20 @@ import {pathToFileURL} from 'node:url';
 const packageName='@finogeeks2026/finshield-dsh';
 const currentVersion=JSON.parse(readFileSync(new URL('../package.json',import.meta.url),'utf8')).version;
 const attemptKey=Symbol.for('@finogeeks2026/finshield-dsh.self-update');
+const updateState=entry=>entry[attemptKey]??={busy:false,versions:new Set()};
+
+export function operationCompletion(ctx,running) {
+  if(!running)return ()=>true;
+  const entry=ctx.fiber.entry,state=updateState(entry);
+  // Older senders already mark this exact successor while handling settled.
+  state.operationSettled??=state.busy===true&&state.versions.has(currentVersion);
+  ctx.on('plugin-manager/operation',operation=>{
+    if(operation.target!==packageName&&operation.target!==entry.id)return;
+    if(operation.phase==='started')state.operationSettled=false;
+    if(operation.phase==='settled')state.operationSettled=true;
+  });
+  return ()=>state.operationSettled;
+}
 
 async function loadUpdatedModule(profile,version) {
   const source=join(profile.dir,'node_modules',packageName);
@@ -31,7 +45,7 @@ export function registerSelfUpdate(ctx,config,restore) {
   try {
     const entry=ctx.fiber.entry;
     if(!entry||ctx.get('hmr')!==undefined)return;
-    const state=entry[attemptKey]??={busy:false,versions:new Set()};
+    const state=updateState(entry);
     let active=true;
     ctx.effect(()=>()=>{active=false;});
     ctx.on('plugin-manager/operation',async operation=>{
@@ -43,6 +57,7 @@ export function registerSelfUpdate(ctx,config,restore) {
       if(!active||state.busy||operation.reason!=='install'||!ownBundle||operation.application!=='restart-required'
         ||operation.restartReason!=='no-hmr'||operation.changed!==true||operation.enabled===false||operation.errorCode
         ||typeof version!=='string'||!/^\d+\.\d+\.\d+$/.test(version)||version===currentVersion||state.versions.has(version))return;
+      state.operationSettled=true;
       state.busy=true;state.versions.add(version);
       const stable=entry.ctx,previous=entry.moduleNamespace,oldFiber=entry.fiber;
       let deleted=false,next,child;

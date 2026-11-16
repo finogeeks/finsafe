@@ -1,4 +1,15 @@
 // DSH lifetime and UI observation only. All native tasks belong to the updater.
+import {operationCompletion} from './self-update.js';
+export function activationLifecycle(ctx) {
+  let running=false;
+  try {
+    // DSH calls this synchronously if ready. Sample once; never wait for boot.
+    const cancel=ctx.get('appReady').onReady(()=>{running=true;});
+    cancel();
+  } catch {running=false;}
+  return {running,restartAllowed:operationCompletion(ctx,running)};
+}
+
 export function registerSettingsRestoration(ctx,restore,report) {
   ctx.on('plugin-manager/operation',async operation=>{
     if(operation.phase!=='settled'||!['applied','restart-required'].includes(operation.application))return;
@@ -11,7 +22,7 @@ export function registerSettingsRestoration(ctx,restore,report) {
   });
 }
 
-export function createActivation({observe,obtain,existing,report=()=>{}}) {
+export function createActivation({observe,obtain,existing,running=false,restartAllowed=()=>true,report=()=>{}}) {
   let bindFailed=false;
   let active=true,state={phase:'starting'},connection,client,binding,currentProtected=false;
   const failure=error=>{if(active){state={phase:'failed',currentProtected,error:error.message};report(error);}};
@@ -38,10 +49,10 @@ export function createActivation({observe,obtain,existing,report=()=>{}}) {
         if(!active) return;
         const token=observe();
         currentProtected=token.appContainer===true;
-        const selected=await (currentProtected?existing():obtain());
+        const selected=await (currentProtected?existing():obtain({startup:!running}));
         if(!active) return;
         connection=selected;
-        if(!currentProtected&&!connection.admitted&&!connection.runningPeriod)
+        if(!running&&!currentProtected&&!connection.admitted&&!connection.runningPeriod)
           {const decision=await connection.request('admit',{context:connection.context});connection.period=decision.period;connection.startupError=decision.error;}
         // A timely admission response releases startup cleanup ownership. Only
         // this old plugin apply remains unfinished while updater performs wrap.
@@ -53,11 +64,13 @@ export function createActivation({observe,obtain,existing,report=()=>{}}) {
     },
     async status() {
       if(!connection||!client||state.phase==='failed') return {...state,currentProtected};
-      try {const observed=await connection.request('status',{client});return state.phase==='failed'?state:{...observed,currentProtected};}
+      try {const observed=await connection.request('status',{client});return state.phase==='failed'?state:
+        {...observed,currentProtected,...(running?{restartAllowed:restartAllowed()}: {})};}
       catch(error){failure(error);return state;}
     },
     async restart() {
       if(!active||!connection||!client) throw Error('Updater client is unavailable');
+      if(running&&!restartAllowed())throw Error('DSH plugin operation has not settled');
       try {
         const result=await connection.request('restart',{client});
         return result;

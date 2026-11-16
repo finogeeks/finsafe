@@ -56,3 +56,17 @@ Windows [下载安装助手](https://github.com/finogeeks/finsafe/releases/lates
 - [问题反馈](https://github.com/finogeeks/finsafe/issues/new/choose) · [版本记录](CHANGELOG.md)。
 
 防护依赖实际启动入口、权限和版本；敏感信息检查仅覆盖已接入、可检查的请求。由 Finogeeks 发布，使用范围以发行或交付许可为准。
+
+
+<!-- finshield-pii-plugins:start -->
+## 开发 PII 插件（Windows）
+
+[PII 插件开发包](pii-plugins/README-zh.md)包含 SDK、协议、示例、本地调试工具和
+接入说明。正式接入须使用支持外部 PII 插件的 Windows FinShield 版本。
+`pii-plugins/release.json` 记录配套产品版本和源码版本。
+
+FinShield 个人版按其产品条款免费使用。基于本开发包开发的插件，如用于商业用途，
+必须事先取得凡泰极客的书面许可。个人版免费使用不代表获得插件商用授权。
+完整条款见[开发包许可](pii-plugins/LICENSE)。授权联系：
+[contact@finogeeks.com](mailto:contact@finogeeks.com)。
+<!-- finshield-pii-plugins:end -->

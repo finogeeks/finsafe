@@ -1,6 +1,6 @@
 # FinShield：保护你的隐私、系统和数据
 
-[English](README.md) · [FinShield官网](https://safety.finaios.ai/) · [npm包](https://www.npmjs.com/package/@finogeeks2026/finshield-dsh)
+[English](README.md) · [FinShield官网](https://finaios.ai/zh-hans/products/finshield/) · [npm包](https://www.npmjs.com/package/@finogeeks2026/finshield-dsh)
 
 **删文件很危险，但Agent能做的远不止删文件。你的隐私、系统和数据，也需要保护。FinShield为Windows上的DSH加上沙箱防护。Agent能越过哪些安全边界？FinShield能守住哪些？让实测结果说话。**
 
@@ -75,7 +75,7 @@ flowchart LR
 
 ## 文档与支持
 
-- [报告问题](https://github.com/finogeeks/finsafe/issues/new/choose)：附上Windows、DSH和插件版本、操作步骤及脱敏日志。
+- [反馈问题](https://github.com/finogeeks/finsafe/issues/new?template=plugin_feedback_zh.yml)：建议从插件页面点击“反馈问题”，按当前界面语言选择模板，自动填写插件名称、版本、系统和防护状态。只需补充问题描述，可附截图。
 - [运行与开发参考](OPERATIONS-zh.md)：离线安装、目录位置、生命周期、更新卸载和构建验证。
 - [架构与运行契约](DESIGN.md) · [第三方声明](THIRD-PARTY-NOTICES.md) · [产品许可证](LICENSE.rtf)。
 

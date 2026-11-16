@@ -2,8 +2,9 @@
 const React=require('react');
 const h=React.createElement;
 const {projectStatus,createProtectionStore}=PROTECTION_MODEL;
+const {feedbackUrl}=FEEDBACK_MODEL;
 const NS='finshield.windows';
-const PRODUCT_URL='https://safety.finaios.ai/';
+const PRODUCT_URL='https://finaios.ai/zh-hans/products/finshield/';
 const PACKAGE_NAME='@finogeeks2026/finshield-dsh';
 const zh={
   title:'FinShield',loading:'正在读取防护状态',loadingFirst:'正在连接FinShield',loadingSecond:'',loadingBody:'请稍候，防护状态以本次读取结果为准',
@@ -16,10 +17,11 @@ const zh={
   failed:'准备未完成',failedFirst:'防护准备未完成',failedSecond:'',failedBody:'DSH可以继续使用。请查看下方原因，或向我们反馈。',cancelled:'授权未完成',cancelledFirst:'这次授权未完成',cancelledSecond:'',cancelledBody:'DSH仍可继续使用',cancelledTitle:'为什么没有完成',cancelledExplanation:'本次授权已取消，防护设置尚未完成',cancelledAction:'需要完成授权并重启DSH后，防护才会生效',
   privacy:'隐私别乱碰',privacyBody:'约束摄录和截屏操作',interaction:'电脑别乱控',interactionBody:'限制窗口和鼠标干扰',system:'系统别乱改',systemBody:'限制进程与系统改动',data:'数据别乱动',dataBody:'保护敏感目录和文件',
   arena:'了解FinShield如何守护你',arenaUrl:'https://safety.finaios.ai/agents/dsh/zh-CN',productLink:'访问FinShield官网（新窗口打开）',work:'返回DSH，继续工作',startWork:'返回DSH，开始工作',progress:'查看准备步骤',installed:'插件安装完成',nativePreparing:'正在配置安全权限',waiting:'准备完成后，由你决定何时重启DSH',
-  resume:'DSH可照常使用，无需在此等待；准备好后会提醒你重启。',restartReminder:'请先保存工作，重启DSH会中断当前任务。暂时不重启，也可以继续使用DSH。',failureReason:'未完成的原因',updateFailure:'本次更新未完成',feedback:'到GitHub反馈问题 ↗',
+  resume:'DSH可照常使用，无需在此等待；准备好后会提醒你重启。',restartReminder:'请先保存工作，重启DSH会中断当前任务。暂时不重启，也可以继续使用DSH。',failureReason:'未完成的原因',updateFailure:'本次更新未完成',feedback:'反馈问题 ↗',feedbackLanguage:'zh',
   restart:'重启DSH',later:'稍后',laterRestart:'稍后重启',details:'查看详情',noticeTitle:'防护已就绪，重启后开启',noticeBody:'请先保存工作，DSH重启时会中断当前任务',
   refresh:'重新读取状态',setupFailed:'组件安装失败，错误码',jobFailure:'会话进程管理未完成',jobFailureBody:'未能将DSH加入FinShield的会话进程组，授权进度与此错误分别显示',technicalDetails:'技术详情',afterRestart:'重启后开启防护',
   marketUpdate:'更新到',marketInstalled:'已安装',marketNewer:'已安装较新版本',marketConfirm:'更新FinShield',marketFrom:'当前版本',marketSource:'下载源',marketStart:'开始更新',marketUpdating:'正在更新插件',marketDone:'插件包已更新。防护状态请查看防护页。',marketFailed:'插件更新未完成',marketClose:'关闭',marketCancel:'取消',
+  migrationNotice:'finshield 0.10.50 用户：在DSH中卸载旧插件 → 安装 finshield-dsh → 按提示重启。',
 };
 const en={
   title:'FinShield',loading:'Reading protection status',loadingFirst:'Connecting to FinShield',loadingSecond:'',loadingBody:'Please wait for the current session status',
@@ -31,10 +33,11 @@ const en={
   failed:'Setup incomplete',failedFirst:'Protection setup is incomplete',failedSecond:'',failedBody:'You can keep using DSH. See the reason below or report the issue.',cancelled:'Authorization incomplete',cancelledFirst:'Authorization did not finish',cancelledSecond:'',cancelledBody:'You can keep using DSH',cancelledTitle:'Why preparation did not finish',cancelledExplanation:'Authorization was cancelled before protection setup finished',cancelledAction:'Complete authorization and restart DSH to enable protection',
   privacy:'Privacy',privacyBody:'Limit recording & screenshots.',interaction:'Controls',interactionBody:'Limit window & mouse use.',system:'System',systemBody:'Limit processes & settings.',data:'Data',dataBody:'Protect sensitive files.',
   arena:'See how FinShield protects you',arenaUrl:'https://safety.finaios.ai/agents/dsh/index.html',productLink:'Visit the FinShield website (opens in a new window)',work:'Continue working in DSH',startWork:'Start working in DSH',progress:'View setup steps',installed:'Plugin installed',nativePreparing:'Configuring security permissions',waiting:'You choose when to restart after preparation',
-  resume:'Keep using DSH. No need to stay here; we will notify you to restart when ready.',restartReminder:'Save your work before restarting DSH; running tasks will be interrupted. You can restart later and keep using DSH.',failureReason:'Why setup did not finish',updateFailure:'Update did not finish',feedback:'Report an issue on GitHub ↗',
+  resume:'Keep using DSH. No need to stay here; we will notify you to restart when ready.',restartReminder:'Save your work before restarting DSH; running tasks will be interrupted. You can restart later and keep using DSH.',failureReason:'Why setup did not finish',updateFailure:'Update did not finish',feedback:'Report a problem ↗',feedbackLanguage:'en',
   restart:'Restart DSH',later:'Later',laterRestart:'Restart later',details:'View details',noticeTitle:'Protection is ready; restart to enable it',noticeBody:'Save your work first; restarting DSH interrupts current tasks',
   refresh:'Read status again',setupFailed:'Component installation failed with code',jobFailure:'Session process management is incomplete',jobFailureBody:'DSH could not join the FinShield session process group; authorization progress is shown separately',technicalDetails:'Technical details',afterRestart:'Protection starts after restart',
   marketUpdate:'Update to',marketInstalled:'Installed',marketNewer:'A newer version is installed',marketConfirm:'Update FinShield',marketFrom:'Current version',marketSource:'Download source',marketStart:'Start update',marketUpdating:'Updating plugin',marketDone:'The plugin package is updated. Check the protection page for its status.',marketFailed:'Plugin update did not finish',marketClose:'Close',marketCancel:'Cancel',
+  migrationNotice:'Using finshield 0.10.50? In DSH: uninstall the old plugin → install finshield-dsh → restart when prompted.',
 };
 const styles=`
 [data-plugin-detail="@finogeeks2026/finshield-dsh"],.finshield-page{--fs-line:#e5e7eb;--fs-paper:#fff;--fs-subtle:#f7f7f8;--fs-ink:#202020;--fs-muted:#646970;--fs-brand:#005fb8;--fs-green:#107c41;--fs-blue-bg:#edf5fc;--fs-warning:#925400;--fs-shadow:#20202014;font:14px/1.6 "Microsoft YaHei UI",sans-serif;color:var(--fs-ink)}
@@ -106,7 +109,8 @@ body[data-ds-dark-theme] .finshield-page button.fs-primary{color:#10243a}
 .finshield-page li[aria-current=step]{color:var(--fs-ink)}
 .finshield-page .fs-step-current,.finshield-page .fs-progress-spinner{display:inline-block;flex:none;width:10px;height:10px;border:1px solid var(--fs-line);border-top-color:var(--fs-brand);border-radius:50%;animation:fs-orbit-turn 1.5s linear infinite}
 .finshield-page progress{display:block;width:100%;height:7px;margin:10px 0;accent-color:var(--fs-brand)}
-.finshield-page .fs-footer{margin-top:12px}
+.finshield-page .fs-footer{display:flex;gap:24px;flex-wrap:wrap;margin-top:12px}
+.finshield-page .fs-migration-note{border-top:1px solid var(--fs-line);padding-top:12px;margin-top:16px;color:var(--fs-muted);line-height:1.7;overflow-wrap:anywhere}
 .finshield-page a{color:var(--fs-brand);text-decoration:none}
 .finshield-page a:hover{text-decoration:underline}
 .finshield-page .fs-error{color:var(--fs-muted);white-space:pre-wrap;overflow-wrap:anywhere;margin-top:12px}
@@ -223,12 +227,12 @@ function scrollPageToTop(element){
   for(let parent=element;parent;parent=parent.parentElement)parent.scrollTop=0;
 }
 function safetyDestination(href){
-  if(href==='https://www.finogeeks.com/products/finshield')return PRODUCT_URL;
+  if(href==='https://www.finogeeks.com/products/finshield'||href==='https://safety.finaios.ai/')return PRODUCT_URL;
   const match=/^https:\/\/agent-safety-arena\.finogeeks\.club\/([^?#]+)/.exec(href);
   if(!match)return href;
   const category={'screen-capture':'privacy','window-flood':'interaction','process-terminate':'system','protected-directory-delete':'data'}[match[1].split('/')[0]];
   if(!category&&!match[1].startsWith('agents/dsh/'))return href;
-  return PRODUCT_URL+'agents/dsh/'+(match[1].includes('zh-CN')?'zh-CN':'index.html')+(category?'#'+category:'');
+  return 'https://safety.finaios.ai/agents/dsh/'+(match[1].includes('zh-CN')?'zh-CN':'index.html')+(category?'#'+category:'');
 }
 function registerDetailScroll(ctx){
   if(typeof document==='undefined')return;
@@ -249,6 +253,7 @@ function registerDetailScroll(ctx){
 function ProductPage({t,store,work}){
   const pageRef=React.useRef(null);
   const snapshot=useProtection(store),phase=projectStatus(snapshot.status);
+  const restartAllowed=snapshot.status?.restartAllowed!==false;
   const targetPhase=snapshot.status?.phase;
   const updateReady=phase==='ready'&&snapshot.status?.reason==='update';
   const preparingUpdate=phase==='authorizing'&&snapshot.status?.reason==='update';
@@ -273,6 +278,7 @@ function ProductPage({t,store,work}){
     });
     return ()=>cancelAnimationFrame(frame);
   },[]);
+  const feedback=feedbackUrl({status:snapshot.status,language:t('feedbackLanguage')});
   const start=()=>{void store.restart().catch(()=>{});};
   const status=h('div',{className:'fs-status',role:'status'},h('span',{className:'fs-dot','aria-hidden':true}),t(phase==='authorizing'?(preparingUpdate?'updating':'authorizing'):hero));
   const session=phase!=='protected'?h('p',{className:'fs-preparing-session'},t(snapshot.status?.currentProtected?'currentProtected':'notProtected'),snapshot.status?.currentProtected&&snapshot.status.currentRelease?' '+snapshot.status.currentRelease:null):null;
@@ -280,7 +286,7 @@ function ProductPage({t,store,work}){
   const progressLabel=h('span',{role:'status'},t(operationLabel),typeof snapshot.status?.progress?.overall_percent==='number'?' '+snapshot.status.progress.overall_percent+'%':null);
   return h('section',{ref:pageRef,className:'finshield-page','data-phase':phase,'aria-label':t('title')},h('style',null,styles),h('div',{className:'fs-panel'},
     h('div',{className:'fs-hero'},h('div',{className:'fs-protected-copy'},h('h2',null,t(hero+'First'),t(hero+'Second')?h(React.Fragment,null,h('br'),t(hero+'Second')):null),t(hero+'Body')?h('p',{className:'fs-description'},t(hero+'Body')):null,
-      h('div',{className:'fs-actions'},phase==='ready'?h(React.Fragment,null,h('button',{className:'fs-primary',onClick:start},t('restart')),h('button',{onClick:()=>{store.dismiss();work();}},t('laterRestart'))):null,
+      h('div',{className:'fs-actions'},phase==='ready'&&restartAllowed?h(React.Fragment,null,h('button',{className:'fs-primary',onClick:start},t('restart')),h('button',{onClick:()=>{store.dismiss();work();}},t('laterRestart'))):null,
         ['authorizing','protected','failed'].includes(phase)?h('button',{onClick:work},t(phase==='protected'?'startWork':'work')):null,phase==='failed'?h('button',{onClick:()=>void store.refresh()},t('refresh')):null)),
       h('div',{className:'fs-protected-status'},art,h('div',{className:'fs-state-label'},status,session))),
     phase==='ready'?h('p',{className:'fs-restart-reminder'},t('restartReminder')):null,
@@ -293,10 +299,11 @@ function ProductPage({t,store,work}){
       h('p',{className:'fs-permission-prompt'},t(explanationAction))):null,
     ['authorizing','ready'].includes(phase)?h('details',{className:'fs-permission-help'},h('summary',null,t(explanation+'Title')),h('p',null,t(explanationBody))):null,
     updateReady&&snapshot.status?.authorizationPending?h('p',{className:'fs-description'},t('authorizationPending')):null,
-    (phase==='failed'||['failed','cancelled','reboot-required'].includes(targetPhase))?h('section',{className:'fs-failure-reason'},h('h3',null,t(snapshot.status?.reason==='update'?'updateFailure':'failureReason')),h('p',{className:'fs-error',role:'alert'},failure||(cancelled?t('cancelledExplanation'):t('failedBody'))),h('a',{className:'fs-feedback-link',href:'https://github.com/finogeeks/finsafe/issues/new/choose',target:'_blank',rel:'noopener noreferrer'},t('feedback'))):failure?h('p',{className:'fs-error',role:'alert'},failure):null,
+    (phase==='failed'||['failed','cancelled','reboot-required'].includes(targetPhase))?h('section',{className:'fs-failure-reason'},h('h3',null,t(snapshot.status?.reason==='update'?'updateFailure':'failureReason')),h('p',{className:'fs-error',role:'alert'},failure||(cancelled?t('cancelledExplanation'):t('failedBody'))),h('a',{className:'fs-feedback-link',href:feedback,target:'_blank',rel:'noopener noreferrer'},t('feedback'))):failure?h('p',{className:'fs-error',role:'alert'},failure):null,
     jobError?h('div',{className:'fs-error',role:'alert'},h('p',null,t('jobFailure')),h('p',null,t('jobFailureBody')),h('details',null,h('summary',null,t('technicalDetails')),h('p',null,jobError))):null,
     phase==='protected'?h('div',{className:'fs-areas'},...['privacy','interaction','system','data'].map(area=>h('section',{className:'fs-area',key:area},h('h3',null,t(area)),h('p',null,t(area+'Body'))))):null,
-    h('footer',{className:'fs-footer'},h('a',{href:t('arenaUrl'),target:'_blank',rel:'noopener noreferrer'},t('arena')+' ↗'))));
+    h('footer',{className:'fs-footer'},h('a',{href:t('arenaUrl'),target:'_blank',rel:'noopener noreferrer'},t('arena')+' ↗'),h('a',{href:feedback,target:'_blank',rel:'noopener noreferrer'},t('feedback'))),
+    h('p',{className:'fs-migration-note'},t('migrationNotice'))));
 }
 
 function RestartNotice({t,store,details}){

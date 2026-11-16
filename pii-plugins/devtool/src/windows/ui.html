@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PII Plugin Workbench</title>
+<style>
+body{font:16px system-ui,sans-serif;max-width:1000px;margin:40px auto;padding:0 24px;color:#17243b;background:#f5f7fa}h1{margin-bottom:8px}p{line-height:1.5}section{background:white;padding:24px;border:1px solid #dce2ea;border-radius:12px;margin:20px 0}textarea{box-sizing:border-box;width:100%;font:16px monospace;padding:14px;min-height:140px}button{padding:10px 16px;margin:12px 8px 0 0;border:1px solid #aebaca;border-radius:6px;background:white;cursor:pointer}button.primary{background:#155eef;color:white;border-color:#155eef}button:disabled{opacity:.5;cursor:wait}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f5f8;padding:16px}#status{overflow-wrap:anywhere}label{display:block;font-weight:600;margin-bottom:12px}small{color:#536176}
+</style>
+<h1>PII Plugin Workbench</h1>
+<p>Type the words a user would send. This tool wraps them in a plugin request, calls your EXE, and shows its result. FinShield and protected applications do not need to run.</p>
+<section>
+<div id="status" role="status">Reading plugin status…</div>
+<button id="restart">Rebuild and restart</button>
+<button id="stop">Stop plugin</button>
+<p><small>Edit your plugin code, then click Rebuild and restart. The tool stops the old EXE, compiles your project and starts the new EXE. Send the same text again to compare results. Close the tool terminal to exit.</small></p>
+</section>
+<section>
+<label for="text">User message (synthetic test data)</label>
+<textarea id="text">My resident ID is 11010119900101123X.</textarea>
+<button class="primary" id="send">Send to plugin</button>
+<p id="message" role="status"></p>
+<h2>Processed message preview</h2><pre id="preview">No result yet.</pre>
+<h2>Findings and edits</h2><pre id="result">{}</pre>
+</section>
+<script>
+const $=id=>document.getElementById(id);
+async function request(route,data){
+ const r=await fetch(route,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data||{})});
+ const v=await r.json();if(!r.ok)throw Error(v.error||'Request failed');return v;
+}
+async function status(){
+ const s=await(await fetch('/status')).json();
+ $('status').textContent=(s.ready&&s.pid?'Ready · PID '+s.pid:'Stopped')+'\n'+s.executable;
+ $('send').disabled=!s.ready||!s.pid;
+}
+async function action(fn){
+ document.querySelectorAll('button').forEach(b=>b.disabled=true);
+ try{await fn();$('message').textContent='';}catch(e){$('message').textContent=e.message;}
+ finally{document.querySelectorAll('button').forEach(b=>b.disabled=false);await status();}
+}
+$('send').onclick=()=>action(async()=>{const v=await request('/inspect',{text:$('text').value});$('preview').textContent=v.preview;$('result').textContent=JSON.stringify(v,null,2);});
+$('restart').onclick=()=>action(()=>request('/restart'));
+$('stop').onclick=()=>action(()=>request('/stop'));
+status().catch(e=>$('message').textContent=e.message);
+</script></html>

@@ -1,0 +1,8 @@
+[package]
+name = "finsafe-pii-redactor"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+[dependencies]
+finsafe-pii-plugin-sdk = { path = "../../sdk" }
+regex = "1.12"

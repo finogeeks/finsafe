@@ -1,0 +1,72 @@
+FinShield PII Plugin Developer Kit License
+PII 插件开发包许可协议
+
+Copyright (c) 2026 深圳凡泰极客科技有限责任公司 (Finogeeks).
+All rights reserved. 版权所有。
+
+简体中文
+
+1. 适用范围
+本协议适用于本目录中的协议定义、SDK、开发工具、示例、脚本及文档
+（以下统称“开发包”）。开发包属于专有软件；公开源码不代表开源授权。
+第三方组件继续适用各自的许可条款。
+
+2. 非商业使用
+在遵守本协议的前提下，凡泰极客允许您免费复制、编译和修改开发包，
+用于非商业用途的插件开发、测试和使用。您可以为非商业用途分发所开发的
+插件；其中包含的开发包代码及其修改版本必须保留本协议和版权声明。
+本协议不转移您独立编写的插件代码的所有权。
+
+3. 商业使用须另行授权
+将开发包或基于开发包开发的插件用于任何商业用途前，必须事先取得
+凡泰极客的书面许可。商业用途包括销售或收费分发插件、将插件集成到
+商业产品，以及通过插件提供商业服务。插件免费分发不自动免除商业用途
+的授权要求。非商业开发、测试或评估不授予后续商用权利。
+商用范围和条件以双方另行达成的书面许可为准。
+
+4. 与个人版免费使用的关系
+FinShield 个人版按其产品条款免费使用。个人版免费使用不代表获得
+本开发包或相关插件的商用授权。本协议不更改个人版或企业版产品条款，
+也不授权分发 FinShield 私有引擎源码。
+
+5. 其他条款与联系
+除本协议明确授予的权利外，凡泰极客保留其他权利。在适用法律允许的
+范围内，开发包按现状提供，不附带任何明示或默示保证。
+商业授权申请及许可问题请联系：contact@finogeeks.com。
+
+English
+
+1. Scope
+This license covers the protocol definitions, SDK, developer tools, examples,
+scripts and documentation in this directory (the "Kit"). The Kit is proprietary
+software. Public source availability does not grant an open-source license.
+Third-party components remain subject to their respective licenses.
+
+2. Noncommercial use
+Subject to this license, Finogeeks permits you to copy, compile and modify the
+Kit free of charge for noncommercial plugin development, testing and use. You
+may distribute the plugins you develop for noncommercial purposes. Any included
+Kit code and modifications to it must retain this license and copyright notice.
+This license does not transfer ownership of your independently authored plugin code.
+
+3. Separate permission for commercial use
+Before using the Kit or plugins developed with it for any commercial purpose,
+you must obtain prior written permission from Finogeeks. Commercial purposes
+include selling or distributing plugins for a fee, integrating plugins into
+commercial products, and providing commercial services through plugins.
+Distributing a plugin free of charge does not automatically exempt its
+commercial use from this requirement. Noncommercial development, testing or
+evaluation does not grant subsequent commercial-use rights. Commercial scope
+and conditions are governed by a separate written license between the parties.
+
+4. Relationship to free Personal Edition use
+FinShield Personal Edition is free to use under its product terms. Free use of
+Personal Edition does not grant commercial-use rights for the Kit or related
+plugins. This license does not change Personal or Enterprise Edition product
+terms or authorize distribution of private FinShield engine source code.
+
+5. Other terms and contact
+Finogeeks reserves all rights not expressly granted by this license. To the
+extent permitted by applicable law, the Kit is provided as is, without any
+express or implied warranty. For commercial permission and license questions,
+contact contact@finogeeks.com.

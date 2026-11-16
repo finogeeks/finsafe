@@ -1,6 +1,6 @@
 # FinShield for DSH Desktop: design and operation
 
-Revision: 2026-11-14. This document describes the Node plugin and independent
+Revision: 2026-11-15. This document describes the Node plugin and independent
 Node updater in this package. Unit and owned-fixture checks do not establish
 installed-product acceptance. The owner performs installation, Windows consent,
 restart and upgrade checks.
@@ -13,7 +13,7 @@ acceptance is pending. Configuration application no longer reads separate
 original-field records or uses historical ownership gates.
 
 Host self-update (source implemented, installed-product acceptance pending):
-`apply` adds one listener registration. A completed enabled self-update with HMR
+`apply` registers the update coordinator. A completed enabled self-update with HMR
 absent can load backend code from `<profile.dir>/.finshield-runtime/<version>/`
 and replace its managed instance without restarting DSH. The plugin waits for
 existing native restoration first. Import failure keeps the old instance; a
@@ -164,14 +164,14 @@ Output: keep, wrap, Host bind, a running scenario, or an actual error.
 Canonical:
 [startup and running periods](../../../docs/design/dsh-configuration-and-startup-order.md).
 
-```mermaid
-flowchart TD
-    A[Plugin apply] --> B{Existing running session for this Main?}
-    B -->|No| C[DSH startup period]
-    C --> D[Main retained in Job or Keep admission failure reported]
-    D --> E[DSH running period]
-    B -->|Yes| E
-```
+Activation entry follows the approved
+[#1082 flow](../../../docs/design/dsh-configuration-and-startup-order.md#activation-phase-and-running-restart-confirmation-1082),
+including false on readiness-read failure. The update coordinator retains current
+operation completion on the Loader entry across a self-update. Older senders'
+active handoff markers identify an already settled successor. HMR-loaded instances
+observe the later completion event; no-HMR successors use the completed handoff.
+No event timeout or replay is added. Startup Keep/Wrap and native preparation are
+unchanged; the platform feature matrix remains correct.
 
 Do not bind, download, Ensure, or wrap inside this section. Startup obtains
 the updater, then keeps or wraps. Keep completes `apply`, then assigns Main;
@@ -488,6 +488,78 @@ both bundles together. Native instance paths and FinSAFE identity do not change
 with the npm package name. The platform feature matrix remains correct because
 this rename changes no confinement, platform support or authorization behavior.
 
+Owner-approved notice, 2026-11-16: Discover details and the protection page
+show a short static note for `finshield 0.10.50` users:
+`finshield 0.10.50 用户：在DSH中卸载旧插件 → 安装 finshield-dsh → 按提示重启。`
+English carries the same version and steps. Discover places the native Markdown
+paragraph after its administrator-approval note. Protection places muted text
+after the assessment footer, separated by a fine rule. There is no update-guide
+link or installed-version detection. Normal enabled-plugin removal does not
+require an intermediate restart; the new plugin prompts after preparation.
+This notice changes no package, restart or confinement behavior and does not
+change already published old-package pages. The platform matrix remains correct.
+
+### Problem feedback
+
+Owner-approved flow, 2026-11-16: a persistent `反馈问题 ↗` link appears beside
+the existing footer links on Discover details and every protection-page state.
+Errors retain a nearby link to the same draft. English labels use `Report a
+problem ↗`. The issue title, form fields and environment summary follow the
+plugin's current Chinese or English UI language.
+
+The link selects the public repository's `plugin_feedback_zh.yml` or
+`plugin_feedback_en.yml` issue form and prefills its title, `plugin` and
+`environment` fields. The only field the customer must
+complete is the problem description. GitHub handles sign-in and submission.
+No issue is created by opening the link. The canonical forms are under
+`.github/ISSUE_TEMPLATE/`; stable publication copies these two exact files to
+the public repository before its pinned plugin commit is published to npm.
+The forms are shared by all FinSAFE-repository plugin reports. The `plugin`
+field accepts the caller's plugin name and stable identifier; it is not a fixed
+DSH-only dropdown. This DSH integration fills
+`FinShield DSH (@finogeeks2026/finshield-dsh)` automatically. Future plugins use
+the same `plugin`, `description` and `environment` field IDs with their own identity.
+Existing public issue templates remain untouched. GitHub's supported URL
+[prefill contract](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/creating-an-issue#creating-an-issue-from-a-url-query)
+was checked on 2026-11-16.
+
+Scope: the plugin's feedback draft. Parent: DSH plugin user support. Input:
+the displayed package version and current status. Output: a prefilled issue
+form in a new window. The user's description and final submission remain theirs.
+
+```mermaid
+flowchart LR
+    A[Select problem feedback] --> B[Fill known environment information]
+    B --> C[Open the form in the current UI language]
+    C --> D[Describe the problem]
+    D --> E[Submit the issue]
+```
+
+The existing authenticated status response adds an optional `feedback` summary:
+loaded plugin package version, DSH runtime package version, OS platform/release and process architecture. The
+Host reads these once without delaying startup or status, owns them only for
+its lifetime, and persists nothing. Missing or pending metadata leaves fields
+unknown without changing the observed protection state or starting recovery.
+The frontend selects these fields plus current protection, native release, phase and numeric setup
+error code. It never serializes the full status, raw errors, token identity,
+paths, configuration, logs or conversations into the public URL.
+
+Before installation, Discover remains native static Markdown. Its link includes
+the published page version and identifies Windows as the supported platform,
+not as a detected local OS. Local DSH/system details stay `未获取`. The client
+builder refreshes both localized links and their existing prototype drafts.
+Unavailable fields never become additional required customer input. The platform
+feature matrix remains correct: no confinement, permission, network policy or
+startup behavior changes.
+
+| Acceptance | Evidence |
+| --- | --- |
+| Footer feedback in all states and the same nearby error draft, in the current language | `feedback stays available in every protection state and drafts localized context without private diagnostics` |
+| Missing or unsafe fields remain unknown | `feedback accepts missing context and refuses arbitrary strings in automatic public fields` |
+| Actual runtime metadata survives observation errors without delaying status | `feedback reads the selected DSH runtime and remains available when protection observation fails`; `optional feedback metadata failure cannot replace actual protection state`; `pending feedback metadata cannot delay the existing status RPC` |
+| Static Discover drafts identify the page version | `localized Discover documents ship the approved introduction and all relative assessment images` |
+| Shared bilingual forms identify the plugin, require only description and precede npm publication | `test_bilingual_plugin_feedback_templates_have_one_customer_field_and_precede_npm` |
+
 FinShield installed and Discover detail pages reset their containing page's
 scroll position once when opened, including the native Plugins header above
 the detail. Do not align only the detail with scrollIntoView, which clips that
@@ -512,8 +584,8 @@ supply it. The approved local experience feed serves that introduction through
 a separate read-only Git repository without changing package or installation
 locations. See the full local-feed reader contract in the installation design.
 
-Owner link update, 2026-11-13: product links use `https://safety.finaios.ai/`.
-Assessment headings and GIF links use its DSH page, with `#privacy`,
+Owner link update, 2026-11-15: product links use `https://finaios.ai/zh-hans/products/finshield/`.
+Assessment headings and GIF links use `https://safety.finaios.ai/agents/dsh/`, with `#privacy`,
 `#interaction`, `#system` or `#data` for the corresponding category. The enabled
 client updates old links in its own cached Discover document only. GIF files
 remain relative package resources under `detail/assessments/`; the assessment

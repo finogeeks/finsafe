@@ -115,7 +115,7 @@ TLS inspection, PII or outbound-content filtering.
 Open **Plugins → Installed → FinShield** for the product page. It follows DSH's
 theme and language. Every explanatory link opens the
 [Agent Safety Arena](https://safety.finaios.ai/agents/dsh/index.html).
-The brand illustration opens the [FinShield product site](https://safety.finaios.ai/).
+The brand illustration opens the [FinShield product site](https://finaios.ai/zh-hans/products/finshield/).
 The page uses four safety areas in two columns, a single-line authorization heading,
 one font family and 14px/18px text. Localized `meta.detail` entries select the
 compact introduction under `detail/`. Discover renders this native Markdown

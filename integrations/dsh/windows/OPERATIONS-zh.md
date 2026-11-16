@@ -90,7 +90,7 @@ TLS 检查、PII 或出站内容过滤。
 
 在 **插件 → 已安装 → FinShield** 查看产品页面。页面跟随DSH主题和语言，全部说明链接跳转到
 [Agent安全测评](https://safety.finaios.ai/agents/dsh/zh-CN)。品牌图链接到
-[FinShield官网](https://safety.finaios.ai/)。四个安全按两列排列，
+[FinShield官网](https://finaios.ai/zh-hans/products/finshield/)。四个安全按两列排列，
 授权标题为单行，统一字体及14px、18px两档字号。本地化`meta.detail`选择`detail/`中
 紧凑介绍文档。发现页在安装前、启用时和卸载后统一使用原生Markdown和288×81动图，
 启用的防护页隐藏重复介绍，避免将开发者README放入产品页面。

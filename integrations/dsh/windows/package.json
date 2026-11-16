@@ -1,8 +1,8 @@
 {
   "name": "@finogeeks2026/finshield-dsh",
-  "version": "0.11.1",
+  "version": "0.11.6",
   "description": "Harness intelligence · Shield your world",
-  "homepage": "https://safety.finaios.ai/",
+  "homepage": "https://finaios.ai/zh-hans/products/finshield/",
   "icon": "./assets/finshield.png",
   "license": "SEE LICENSE IN LICENSE.rtf",
   "type": "module",
@@ -42,6 +42,7 @@
     "THIRD-PARTY-NOTICES.md",
     "src/preparation.js",
     "client/state.cjs",
+    "client/feedback.cjs",
     "src/activation.js",
     "src/self-update.js",
     "src/removal.js",

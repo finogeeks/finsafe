@@ -21,8 +21,9 @@ function createProtectionStore(read,restart,later) {
       try {status=await read();}catch(error){status={phase:'failed',protected:false,error:error.message};}
       if(version!==readVersion)return;
       const ready=status.phase==='ready';
-      const notice=ready&&!status.reminderDismissed?(!readySeen||reminderSeen!==status.reminderId||snapshot.notice):false;
-      if(ready){readySeen=true;reminderSeen=status.reminderId;}
+      const canConfirm=ready&&status.restartAllowed!==false;
+      const notice=canConfirm&&!status.reminderDismissed?(!readySeen||reminderSeen!==status.reminderId||snapshot.notice):false;
+      if(canConfirm){readySeen=true;reminderSeen=status.reminderId;}
       else if(['starting','installing','authorizing','protected'].includes(status.phase))readySeen=false;
       publish({...snapshot,status,notice});
     },

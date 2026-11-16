@@ -1,6 +1,6 @@
 # FinShield: protect your privacy, system and data
 
-[简体中文](README-zh.md) · [FinShield website](https://safety.finaios.ai/) · [npm package](https://www.npmjs.com/package/@finogeeks2026/finshield-dsh)
+[简体中文](README-zh.md) · [FinShield website](https://finaios.ai/zh-hans/products/finshield/) · [npm package](https://www.npmjs.com/package/@finogeeks2026/finshield-dsh)
 
 **Deleting files is dangerous, but agents can do much more. Your privacy, system and data need protection too. FinShield adds sandbox protection to DSH on Windows. Which security boundaries can agents cross, and which can FinShield defend? Let the test results speak.**
 
@@ -75,7 +75,7 @@ The plugin is distributed through npm. If native components are missing, it pref
 
 ## Documentation and support
 
-- [Report a problem](https://github.com/finogeeks/finsafe/issues/new/choose) with Windows, DSH and plugin versions, reproduction steps and redacted logs.
+- [Report a problem](https://github.com/finogeeks/finsafe/issues/new?template=plugin_feedback_en.yml): use the plugin page's feedback link to select the current UI language and fill the plugin name, version, system and protection details automatically. Add only the problem description and an optional screenshot.
 - [Operation and development](OPERATIONS.md): offline setup, directories, lifecycle, updates, removal, builds and verification.
 - [Design and operation contract](DESIGN.md) · [Third-party notices](THIRD-PARTY-NOTICES.md) · [Product license](LICENSE.rtf).
 

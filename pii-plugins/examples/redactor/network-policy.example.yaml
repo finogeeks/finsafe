@@ -1,0 +1,16 @@
+# Complete replacement for candidate.yaml -> policy.network.
+# The Python script resolves relative executable paths beside this file.
+network:
+  mode: proxy
+  tls_terminate: true
+  endpoints: ["*.*"]
+  llm_content:
+    retention: true
+    max_body_bytes: 16777216
+    plugins:
+      - id: resident-id-mask
+        detector: external
+        on_finding: warning
+        executable: finsafe-pii-redactor.exe
+        timeout_ms: 2000
+        allow_rewrite: true
