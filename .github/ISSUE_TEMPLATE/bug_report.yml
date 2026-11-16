@@ -1,22 +1,25 @@
 name: Bug report
-description: Report a problem with FinSAFE (CLI, fleet, or authority)
+description: Report a problem with FinSAFE or FinShield, including Desktop and DSH plugins
 title: "[bug]: "
 labels:
   - bug
+  - product:finsafe
   - triage:pending
 body:
   - type: markdown
     attributes:
       value: |
         Runtime fixes usually land in the upstream FinSAFE source repository; this issue tracks your report.
-        Please include version, OS, and clear reproduction steps.
+        Search open and closed issues first. Write the title and responses in English; you may discuss the bug with your agent in Chinese.
+        Report one failure per issue, with version, OS, and clear reproduction steps.
+        This tracker is public. Do not include credentials, customer data, or security-sensitive details; use your Finogeeks support channel for sensitive reports.
 
   - type: input
     id: version
     attributes:
       label: finsafe version
-      description: Output of `finsafe --version` (or release tag if using fleet archives only)
-      placeholder: "0.8.7"
+      description: Output of `finsafe --version`, release tag, or plugin package version. Include the DSH version for plugin reports. State if unknown.
+      placeholder: "FinSAFE 0.11.6; @finogeeks2026/finshield-dsh 0.11.6; DSH 0.2.2-rc.3"
     validations:
       required: true
 
@@ -39,6 +42,9 @@ body:
     attributes:
       label: Component
       options:
+        - Desktop / floating control / authorization
+        - FinShield DSH plugin
+        - PII inspection / approval / records
         - Personal CLI (`finsafe run`, `probe`, `doctor`)
         - Managed fleet (`finsafe-agent`, install-fleet)
         - Policy authority (`finsafe-authority-http`, `bundlectl`)
@@ -46,6 +52,20 @@ body:
         - Install script / packaging
         - Documentation only
         - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: P0 interrupts planned work. P1 comes before routine work. P2 enters normal planning. P3 waits for capacity. Maintainers or the reporting agent apply the corresponding priority label.
+      options:
+        - P0 - Critical
+        - P1 - High
+        - P2 - Normal
+        - P3 - Low
+      default: 2
     validations:
       required: true
 
@@ -79,7 +99,19 @@ body:
   - type: textarea
     id: extra
     attributes:
-      label: Additional context
-      description: Wrapper policy YAML, license.jws context (no secrets), systemd unit snippet, etc.
+      label: Screenshots, recordings, or logs
+      description: Include redacted evidence, relevant policy YAML, and rerun versions/results. Remove secrets and customer data.
+    validations:
+      required: false
+
+  - type: textarea
+    id: preliminary-analysis
+    attributes:
+      label: Local agent's preliminary cause analysis
+      description: Optional. Separate observed evidence, suspected causes, and what remains unverified. Source access is not required.
+      placeholder: |
+        Evidence:
+        Suspected cause:
+        Not yet verified:
     validations:
       required: false

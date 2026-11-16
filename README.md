@@ -53,7 +53,7 @@ Reproduced from the original Windows technical proposal. Detailed evaluation wil
 - [Documentation and whitepaper](docs/README.md): Windows, Linux/macOS, and the complete product approach.
 - [DSH Windows plugin](integrations/dsh/windows/README.md): installation, authorization, updates, and removal.
 - [Agent Safety Evaluation](https://safety.finaios.ai/agents/dsh/index.html): DSH recordings, test conditions, and results across four risk categories.
-- [Report a problem](https://github.com/finogeeks/finsafe/issues/new/choose) · [Release history](CHANGELOG.md).
+- [Report a problem](https://github.com/finogeeks/finsafe/issues/new/choose) · [Report with your agent](CONTRIBUTING.md#preferred-intake-issues) · [Release history](CHANGELOG.md).
 
 Protection depends on the launch entry, effective permissions, and version. Content checks cover integrated, inspectable requests. Published by Finogeeks; use is subject to the supplied license terms.
 
