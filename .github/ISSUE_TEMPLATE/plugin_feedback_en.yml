@@ -1,0 +1,30 @@
+name: Plugin problem report (English)
+description: Report a plugin problem. The plugin fills its name and environment information.
+title: "[Plugin feedback] Problem report"
+labels: [bug, "triage:pending"]
+body:
+  - type: input
+    id: plugin
+    attributes:
+      label: Plugin
+      description: Filled automatically. No changes are needed.
+      value: Unavailable
+    validations:
+      required: false
+  - type: textarea
+    id: description
+    attributes:
+      label: Problem description
+      description: Describe the problem. You can attach a screenshot.
+      placeholder: When I …, … happened.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment information (filled automatically)
+      description: You do not need to fill information marked as unavailable.
+      value: Unavailable (use the plugin's feedback link to fill this information)
+      render: text
+    validations:
+      required: false
