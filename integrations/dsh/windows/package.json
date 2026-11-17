@@ -1,6 +1,6 @@
 {
   "name": "@finogeeks2026/finshield-dsh",
-  "version": "0.11.6",
+  "version": "0.11.11",
   "description": "Harness intelligence · Shield your world",
   "homepage": "https://finaios.ai/zh-hans/products/finshield/",
   "icon": "./assets/finshield.png",
@@ -26,6 +26,7 @@
     "assets/finshield.png",
     "policy/candidate.yaml",
     "install",
+    "bin/README.md",
     "src/token.js",
     "locale",
     "detail",
@@ -46,8 +47,7 @@
     "src/activation.js",
     "src/self-update.js",
     "src/removal.js",
-    "updater",
-    "bin"
+    "updater"
   ],
   "engines": {
     "node": ">=24.9.0",
@@ -82,7 +82,6 @@
     "build:policy": "finsafe config resolve --manifest ../../../windows/config/dsh-plugin/manifest.yaml --output policy/candidate.yaml",
     "build": "node build-client.mjs",
     "test": "node --test test/*.test.js",
-    "build:native": "python build-native.py",
     "build:pnpm-parser": "node build-pnpm-parser.mjs"
   },
   "devDependencies": {
@@ -90,5 +89,8 @@
     "react-dom": "18.2.0",
     "@pnpm/modules-yaml": "1002.0.1",
     "esbuild": "0.25.12"
+  },
+  "dependencies": {
+    "@finogeeks2026/finsafe-sdk": "0.11.11"
   }
 }

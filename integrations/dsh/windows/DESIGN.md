@@ -5,6 +5,16 @@ Node updater in this package. Unit and owned-fixture checks do not establish
 installed-product acceptance. The owner performs installation, Windows consent,
 restart and upgrade checks.
 
+Common-code extraction (2026-11-17, owner-approved correction): this plugin
+contains only Node/JavaScript implementation and its page/configuration resources.
+It has no Rust crate, native build command or plugin-specific DLL. The declared
+[public Node SDK](../../../sdk/node/README.md) carries the personal edition's
+`finsafe_native.dll`. Prepare, Execution and Installer own common native operations;
+AppSeam owns DSH discovery, peer validation and compatibility. The existing
+personal CLI package builds the common C call boundary. Explicit selected
+installation/configuration inputs, singleton rules and lifecycle remain unchanged.
+SDK publication and installed-product acceptance are recorded separately.
+
 Configuration revision #1094, approved 2026-11-14: use the
 [canonical configuration algorithm](../../../docs/design/dsh-configuration-and-startup-order.md#312-plugin-configuration-changes-1064)
 for current-file updates, best-effort sibling backups, and field-only cleanup.
@@ -23,6 +33,12 @@ Downloads, package installation, DSH, HMR and native protection rules stay uncha
 This does not refresh Client modules or suppress DSH's restart-required result.
 The first listener-equipped version needs one normal load. The owner approved
 the versioned copy directory; no automatic directory cleanup is introduced.
+
+SDK migration compatibility (2026-11-17): the 0.11.6 and 0.11.8 senders copy
+`src`, `updater`, `install`, `policy` and `bin` before loading the successor.
+Keep `bin/README.md` in the delivered Node-only package so that this existing
+copy contract succeeds. It contains no DLL. The successor resolves the SDK
+from the profile's dependencies; native install and Restart retain their flows.
 
 Current source lifecycle (#1075; installed-product acceptance pending): Keep no longer assigns
 Main to the updater Job; wrapped DSH also launches outside that Job. Updater
@@ -98,8 +114,8 @@ DSH owns package selection, enablement, loading and disposal. The Host entry
 registers page services and cleanup, then schedules initialization. The updater
 owns native-task attachment and progress observation. Page Restart stops only
 old Main and uses AppSeam to launch and retain its replacement.
-A thin plugin-owned DLL supplies Windows transport, native identity/lifetime
-checks and fixed API calls. It is not a native updater daemon. The personal
+The Node SDK calls the common personal-edition DLL for native transport,
+identity/lifetime checks and existing product operations. It is not a native updater daemon. The personal
 Shell has no plugin listener; `finsafe desktop-channel` has been removed.
 
 The plugin has no independent version sequence. Its required npm version field
@@ -123,11 +139,11 @@ existing behavior. A personal installation elsewhere cannot replace this record.
 | Content | Resolved location |
 |---|---|
 | DSH desktop profile | `<DSH_HOME>/profiles/desktop/` |
-| Plugin instance settings and private Host DLL copy | `<DSH_HOME>/finsafe-windows/` |
+| Plugin instance settings and private Host SDK-library copy | `<DSH_HOME>/finsafe-windows/` |
 | Native runtime, default | `<ProgramFiles>/FinSAFE/dsh-plugin-versions/<release>/` |
 | Native configuration, default | `<ProgramData>/FinSAFE/dsh-plugin-versions/<release>/config/` |
 | Verified setup and results | `<LocalAppData>/FinSAFE/dsh-plugin/downloads/<version>/` |
-| Independent DLL, Koffi and updater code | `<LocalAppData>/FinSAFE/dsh-updater/<version>/` |
+| Node SDK, Koffi and updater code | `<LocalAppData>/FinSAFE/dsh-updater/<version>/` |
 | Node executable, reused in place | Actual DSH Host-selected primary runtime |
 | Optional configuration backups, implemented #1094 | `<DSH_HOME>/profiles/desktop/cordis.patch.yml.back` and `pnpm-workspace.yaml.back` |
 | Legacy AppSeam original-field records, no longer used | `<LocalAppData>/FinSAFE/AppSeam/dsh-originals/`; not a target startup input |
@@ -147,10 +163,10 @@ ordinary DOS/UNC spelling. Native handle/File ID checks remain separate from
 the values passed to setup and Desktop authorization.
 
 The ordinary Host executes its actual selected DSH Node in place. It copies
-Koffi, the plugin DLL and required scripts once per package version, outside the
+Koffi, the declared Node SDK and required scripts once per package version, outside the
 plugin package. Existing copies are reused without scanning or hashing their
 contents. No Node copy, hash manifest or full-release fingerprint is created.
-A versioned private Host DLL copy avoids holding the package's DLL open during
+A versioned private Host SDK-library copy avoids holding the package's DLL open during
 pnpm removal. File I/O for both copies is asynchronous. Published package versions
 identify these files; changing bytes under the same version is not a refresh route.
 The updater depends on the selected DSH runtime remaining available. Missing or
@@ -603,8 +619,10 @@ flowchart LR
     B --> C[Native compact layout in every plugin state]
 ```
 
-Stable publication builds the plugin DLL separately, then mirrors package-declared
-Node code, DLL, client, policy, license and notices into the public repository.
+Stable publication builds and signs the common personal-edition DLL, packages it
+in the public Node SDK and publishes the SDK before DSH. The public DSH mirror
+contains package-declared Node code, client, policy, license and notices, with no
+plugin native binary or Rust build.
 The publication step writes the configured HTTPS download base into
 `install/download-source.json`. Native setup reads that mirror's versioned
 `release.json`, selects the requested Windows installer's `mirror_name`, and

@@ -9,7 +9,7 @@
 
 这个目录是独立的 Rust workspace。可以单独复制出去编译和调试，不需要私有
 FinShield 代码、安装包、DSH 或 WorkBuddy。环境需要 Windows x64、stable Rust、
-MSVC 编译工具及 Cargo 注册表依赖。验证脚本另需 Python 3.11+。
+MSVC 编译工具及 Cargo 注册表依赖。验证脚本另需 Python 3.11+ 和 PyYAML。
 
 插件是普通的 Windows EXE，运行在 AppContainer 外。你只写接收文本、返回检测结果
 和可选改写文本的回调；SDK 处理 IPC。FinShield 负责选择当前文本、执行策略和转发。
@@ -60,7 +60,10 @@ redactor 示例用简单正则匹配 18 位身份证格式，默认把 110101199
 
 独立验证：
 
+先为执行验证的 Python 解释器安装 PyYAML，用于读取开发包中的网络 YAML 示例。
+
 ~~~powershell
+python -m pip install PyYAML
 python scripts/verify.py --dry-run
 python scripts/verify.py --export
 ~~~

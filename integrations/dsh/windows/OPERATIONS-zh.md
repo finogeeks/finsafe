@@ -8,7 +8,7 @@
 FinSAFE 稳定版安装包的网络和 Windows 安装授权。先打开一次 DSH 建立 Desktop
 profile，再按[桌面版安装步骤](README-zh.md#在dsh桌面版安装)操作。
 
-插件正常运行不依赖 PowerShell，复用 DSH 的 Node、现有原生 DLL 和完整 FinSAFE
+插件正常运行不依赖 PowerShell，复用 DSH 的 Node、公共 Node SDK 携带的个人版公共 DLL 和完整 FinSAFE
 安装器。可选的离线 PowerShell 辅助脚本仍需 PowerShell 7。
 
 常规安装使用[README中的应用内步骤](README-zh.md#在dsh桌面版安装)；离线安装使用下方附带的PowerShell脚本。
@@ -176,7 +176,7 @@ Desktop 拥有保留的 `desktop` profile，包操作使用 Desktop 插件管理
 
 ### 插件包验收
 
-先按下节命令构建客户端、策略、解析器和原生 DLL，再打包。
+先按下节命令构建客户端、策略和解析器；个人版公共 DLL 单独构建并打入 Node SDK。插件包不构建 Rust，也不携带专用 DLL。
 单独执行 `npm pack` 不会生成这些文件。在构建后的包目录执行：
 
 ```powershell
@@ -218,8 +218,8 @@ FinShield 发布流程使用 DSH 索引中的 Git 提交和包子目录。验收
 
 以下命令从 FinSAFE 仓库根目录执行。Python 标准库即可；无需安装 registry 服务。
 构建产物沿用现有打包流程。`build.json` 记录 `version`、`sourceCommit`、`plugin`、
-`installer`、`pluginSha256`、`installerSha256` 和 `bindingSha256`；文件路径为绝对路径。
-暂存插件包中的 `install/download-source.json` 必须指向 `http://127.0.0.1:18771`。
+`installer`、`sdk`、`pluginSha256`、`installerSha256` 和 `sdkSha256`；文件路径为绝对路径。
+SDK 单独打包，本地 registry 同时提供该依赖。暂存插件包中的 `install/download-source.json` 必须指向 `http://127.0.0.1:18771`。
 `prepare` 检查这些输入并导入不可变副本，不修改源包。两个版本使用相同下载根地址。
 
 ```powershell

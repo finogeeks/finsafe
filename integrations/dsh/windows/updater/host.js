@@ -1,6 +1,7 @@
 import {existsSync} from 'node:fs';
 import {mkdir,readFile,writeFile} from 'node:fs/promises';
-import {join} from 'node:path';
+import {dirname,join} from 'node:path';
+import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
 import {nativeAdapter} from './native.js';
 import {stageUpdater,connectUpdater,obtainUpdater,version} from './bootstrap.js';
@@ -8,17 +9,19 @@ import {resolveSettings,saveInstanceSettings} from '../src/settings.js';
 import {readKnownFolders} from '../src/token.js';
 
 const packageRoot=fileURLToPath(new URL('../',import.meta.url));
+const packageRequire=createRequire(import.meta.url);
 export function hostConnections({config,home,runtimeRoot,desktop,vendor}) {
   let connection,support;
   async function loadSupport() {
     const settings=resolveSettings(config,{dshHome:home,requestedRelease:version,...readKnownFolders(runtimeRoot)});
     // Load a private support copy so pnpm can remove the package while Host runs.
     // A confined copy does not bootstrap an ordinary updater.
-    const dll=join(packageRoot,'bin','finshield_dsh_native.dll');
-    const copy=join(home,'finsafe-windows','native',version);
+    const sdkRoot=dirname(packageRequire.resolve('@finogeeks2026/finsafe-sdk/package.json'));
+    const dll=join(sdkRoot,'bin','finsafe_native.dll');
+    const copy=join(home,'finsafe-windows','sdk',version);
     await mkdir(join(copy,'bin'),{recursive:true});
-    if(!existsSync(join(copy,'bin','finshield_dsh_native.dll'))) await writeFile(join(copy,'bin','finshield_dsh_native.dll'),await readFile(dll));
-    const call=nativeAdapter(copy,{require:vendor});
+    if(!existsSync(join(copy,'bin','finsafe_native.dll'))) await writeFile(join(copy,'bin','finsafe_native.dll'),await readFile(dll));
+    const call=nativeAdapter(packageRoot,{require:vendor,libraryRoot:copy});
     // The ordinary updater resolves the actual supervisor during authenticated bind.
     const context={desktop,runtimeRoot,home,installation:settings.installation,configuration:settings.configuration,
       requestedRelease:version,nativeVersionRoot:settings.nativeVersionRoot,configurationVersionRoot:settings.configurationVersionRoot};

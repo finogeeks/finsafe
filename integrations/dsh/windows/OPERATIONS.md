@@ -9,7 +9,7 @@ matching official FinSAFE stable release and Windows setup consent. Open DSH onc
 to create its Desktop profile. Follow the [Desktop installation steps](README.md#install-in-dsh-desktop).
 
 Normal plugin operation does not require PowerShell. It reuses DSH's Node,
-the existing native DLL and full FinSAFE installer. The optional offline
+the public Node SDK product DLL and full FinSAFE installer. The optional offline
 PowerShell helper below requires PowerShell 7.
 
 Use the [application installation steps](README.md#install-in-dsh-desktop). For offline setup, use the supplied PowerShell helper below.
@@ -215,7 +215,7 @@ owns its reserved `desktop` profile; use its plugin manager for package operatio
 
 ### Built-package acceptance
 
-Build the client, policy, parser and native DLL using the commands below before
+Build the client, policy and parser; build/package the public Node SDK product DLL separately before
 packing. `npm pack` alone does not build them. From the built package directory:
 
 ```powershell
@@ -267,11 +267,13 @@ FinShield failure.
 
 Run these commands from the FinSAFE repository root. Python's standard library
 is sufficient. Use the existing build/package workflow. Each `build.json` records
-`version`, `sourceCommit`, absolute `plugin` and `installer` paths, `pluginSha256`,
-`installerSha256` and `bindingSha256`. The staged package's
+`version`, `sourceCommit`, absolute `plugin`, `installer` and `sdk` archive paths,
+`pluginSha256`, `installerSha256` and `sdkSha256`. The SDK archive contains the
+common product DLL; the plugin archive declares the SDK dependency and has no native binary. The staged package's
 `install/download-source.json` must point to `http://127.0.0.1:18771`.
 `prepare` validates the inputs and imports immutable copies; it does not edit the
-source archives. Both versions use the same native download base.
+source archives. Both versions use the same native download base. The local registry also serves
+the separate public Node SDK dependency, including its personal-edition DLL.
 
 ```powershell
 python scripts/dev/dsh-market.py prepare C:/work/artifacts/A/build.json
@@ -341,6 +343,12 @@ acceptance run has passed. Recheck support against the DSH build under test.
 
 ## Build, publication and verification
 
+DSH has no Rust crate, native build command or plugin-specific DLL. The declared
+`@finogeeks2026/finsafe-sdk` dependency carries the common personal-edition DLL.
+Build that SDK through the product entry below and publish it before DSH. For
+owned pre-release installation tests, select the built SDK archive through the
+fixture's package-manager override; do not change the released dependency spec.
+
 The plugin downloads native FinShield installers through the configured public
 download mirror. It reads metadata for the requested version and verifies the
 installer's SHA-256 before setup. The release workflow supplies the mirror base;
@@ -364,7 +372,7 @@ npm --prefix integrations/dsh/windows ci --ignore-scripts --legacy-peer-deps
 npm --prefix integrations/dsh/windows run build
 npm --prefix integrations/dsh/windows run build:pnpm-parser
 ./target/release/finsafe.exe config resolve --manifest windows/config/dsh-plugin/manifest.yaml --output integrations/dsh/windows/policy/candidate.yaml
-npm --prefix integrations/dsh/windows run build:native
+python scripts/prod/build-node-sdk.py
 python scripts/dev/verify.py --lane dsh-windows-plugin --lane dsh-windows-updater --dry-run
 python scripts/dev/verify.py --lane dsh-windows-plugin --lane dsh-windows-updater
 ```

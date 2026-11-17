@@ -10,7 +10,8 @@ commercial license. See [LICENSE](LICENSE); contact
 
 Copy this directory anywhere. It is an independent Rust workspace. It needs
 Windows x64, stable Rust with the MSVC build tools, and registry access for the
-dependencies in Cargo.lock. Python 3.11+ runs the optional verification script.
+dependencies in Cargo.lock. The optional verification script needs Python 3.11+
+and PyYAML.
 No private FinShield source, installation, DSH, or WorkBuddy is needed.
 
 The plugin is an ordinary Windows EXE. You implement a callback that receives
@@ -167,7 +168,11 @@ Complex Messages source mappings remain unsupported. See [integration](docs/inte
 
 ## Verify the delivery boundary
 
+Install PyYAML for the Python interpreter that runs verification. It reads the
+packaged network YAML sample.
+
 ~~~powershell
+python -m pip install PyYAML
 python scripts/verify.py --dry-run
 python scripts/verify.py
 python scripts/verify.py --export

@@ -105,6 +105,9 @@ export function createUpdater({ports,startup}) {
         task.state={phase:'installing'};
         const setup=await ports.install(task.target,release,task.staged);
         if(setup.phase!=='completed'){task.state=setup;return;}
+        // Setup can create previously absent directories. Publish their actual
+        // native identities before a re-enabled client joins this ongoing task.
+        Object.assign(task.target,await ports.select(b,release));
         await ports.selected?.(b,task.target);
       }
       if(draining||session.closed||!await ports.mainAlive(b))return;
@@ -165,7 +168,8 @@ export function createUpdater({ports,startup}) {
     if(value.task||session.attempt)return {accepted:true};
     const key=taskKey(binding),retained=session.items.get(key);
     if(retained){value.task=retained;session.task=retained;return {accepted:true};}
-    let task=tasks.get(taskKey(binding));
+    let task=tasks.get(taskKey(binding))??[...tasks.values()].find(t=>!t.done&&t.target
+      &&t.binding.requestedRelease===binding.requestedRelease&&resource(t.target)===resource(binding));
     if(!task||task.done) {
       const ownInstall=binding.installationResource??binding.installation;
       const ownConfig=binding.configurationResource??binding.configuration;

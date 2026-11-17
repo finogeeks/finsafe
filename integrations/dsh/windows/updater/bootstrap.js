@@ -28,10 +28,13 @@ export async function stageUpdater({runtimeRoot,nodeExecutable:node,localAppData
         else throw Error('Linked staged dependency entry is not supported');
       }
     }
-    for(const name of ['updater','src','install','policy','bin']) {
+    for(const name of ['updater','src','install','policy']) {
       await copyDirectory(join(packageRoot,name),join(pending,name));
     }
     await writeFile(join(pending,'package.json'),await readFile(join(packageRoot,'package.json')));
+    const sdk=createRequire(join(packageRoot,'package.json'));
+    await copyDirectory(dirname(sdk.resolve('@finogeeks2026/finsafe-sdk/package.json')),
+      join(pending,'node_modules','@finogeeks2026','finsafe-sdk'));
     await copyDirectory(dirname(require.resolve('koffi')),join(pending,'node_modules','koffi'));
     const platformPackage=`@koromix/koffi-${process.platform}-${process.arch}`;
     await copyDirectory(dirname(require.resolve(platformPackage)),join(pending,'node_modules',platformPackage));

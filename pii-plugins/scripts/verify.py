@@ -239,6 +239,7 @@ def native(root, target):
 
 
 def verify(root, target):
+    command(root, sys.executable, "scripts/test_network_policy.py")
     boundary(root)
     command(root, "cargo", "fmt", "--all", "--", "--check")
     for action in ("test", "clippy", "build"):
@@ -259,7 +260,7 @@ def main():
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
     if args.dry_run:
-        print("Plan: check local paths; cargo fmt, locked workspace test/clippy/build; "
+        print("Plan: validate packaged network YAML (requires PyYAML); check local paths; cargo fmt, locked workspace test/clippy/build; "
               "Windows EXE CLI/HTML/rebuild/restart/cleanup and public launcher smoke. "
               + ("First copy only this kit to an external temporary directory." if args.export else "Use this kit directory."))
         return
