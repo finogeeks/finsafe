@@ -1,6 +1,6 @@
 # 通过命令行接入 Codex CLI（Windows）
 
-[English](codex-cli-en.md) · [文档目录](README-zh.md) · [兼容矩阵](agent-compatibility-zh.md)
+[English](en/agents/codex.md) · [文档目录](zh-CN/README.md) · [兼容矩阵](zh-CN/agents/compatibility.md)
 
 本指南采用 Safety Arena 的 Windows 接入方式：用 FinShield 启动 Codex `app-server`，再从普通终端连接该服务。**Codex 已支持 CLI 接入，无需安装插件。** 本页不覆盖 Codex 桌面版、IDE 扩展或 Linux/macOS 的 Agent 验证。
 
@@ -8,7 +8,7 @@ Arena 记录的 Codex 版本为 `0.166.0`，包裹实现说明采用 Windows Fin
 
 ## 准备
 
-1. 按[安装指南](getting-started-zh.md#windows)安装 Windows x64 FinShield，完成安全准备和授权。
+1. 按[安装指南](zh-CN/getting-started/install.md#windows)安装 Windows x64 FinShield，完成安全准备和授权。
 2. 单独安装并登录 Codex CLI，先确认它能正常使用。需要支持 `app-server --listen` 和 TUI `--remote` 的版本。
 3. 在 FinShield 控制台确认工作区、Codex 程序及所需配置／状态目录的访问范围。取得该安装实际使用、已准备的 `effective.yaml` 路径。不要把 DSH 插件专用配置直接当作通用 Agent 配置，也不要直接编辑生成的 `effective.yaml`。
 4. 修改授权范围时，通过产品配置流程重新生成配置并完成准备，再启动新会话。FinShield 不代办 Codex 账号或模型服务配置。
@@ -65,7 +65,7 @@ flowchart LR
 
 ## 验证与退出
 
-在新建测试会话中，按[授权范围验证](getting-started-zh.md#验证授权范围)检查工作区读写、只读目录与禁止访问目录。使用无敏感信息的测试文件；核对实际工具结果和文件内容。模型口头拒绝或服务监听成功均不能证明保护生效。
+在新建测试会话中，按[授权范围验证](zh-CN/getting-started/install.md#验证授权范围)检查工作区读写、只读目录与禁止访问目录。使用无敏感信息的测试文件；核对实际工具结果和文件内容。模型口头拒绝或服务监听成功均不能证明保护生效。
 
 `--integration-id codex` 仅标记记录来源，不选择权限。PII 检查还需匹配网络与内容检查配置，不能由本启动命令推断已开启。
 
@@ -81,4 +81,4 @@ flowchart LR
 | 无法连接服务 | 查看第一个终端的原始错误、监听地址及端口；确认服务没有退出 |
 | 模型连接或登录失败 | 先确认原生 Codex 登录、模型配置和网络可用，再检查沙箱授权及代理／证书配置；不要公开凭据 |
 
-实现依据：[Arena Codex 接入说明](https://github.com/finogeeks/agent-safety-arena/blob/main/docs/codex-finshield-recording.md)。反馈时提供 FinShield／Codex 版本、启动入口及脱敏错误，见[获取帮助](getting-started-zh.md#获取帮助)。
+实现依据：[Arena Codex 接入说明](https://github.com/finogeeks/agent-safety-arena/blob/main/docs/codex-finshield-recording.md)。反馈时提供 FinShield／Codex 版本、启动入口及脱敏错误，见[获取帮助](zh-CN/getting-started/install.md#获取帮助)。

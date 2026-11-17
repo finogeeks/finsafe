@@ -1,21 +1,21 @@
 # FinShield 快速上手
 
-[English](getting-started-en.md) · [文档目录](README-zh.md) · [Agent 安全测评](https://agent-safety-arena.finogeeks.club/zh-CN.html) ([English](https://agent-safety-arena.finogeeks.club/index.html))
+[English](en/getting-started/install.md) · [文档目录](zh-CN/README.md) · [Agent 安全测评](https://agent-safety-arena.finogeeks.club/zh-CN.html) ([English](https://agent-safety-arena.finogeeks.club/index.html))
 
-[文档目录](README-zh.md) · [产品首页](https://github.com/finogeeks/finsafe)
+[文档目录](zh-CN/README.md) · [产品首页](https://github.com/finogeeks/finsafe)
 
 选择操作系统，下载对应发行文件。Windows 推荐安装助手，也可下载离线 EXE；macOS 与 Linux 使用命令行压缩包。本文下载信息于 2026-11-03 按 [v0.10.1](https://github.com/finogeeks/finsafe/releases/tag/v0.10.1) 核对，后续版本以 [最新 Release](https://github.com/finogeeks/finsafe/releases/latest) 的附件与说明为准。
 
 ## 先选择 Agent 与接入方式
 
-先看[兼容矩阵](agent-compatibility-zh.md)，确认 Agent 形态、平台及版本范围。
+先看[兼容矩阵](zh-CN/agents/compatibility.md)，确认 Agent 形态、平台及版本范围。
 
 | 接入方式 | 从哪里开始 |
 | --- | --- |
 | 插件（优先） | DSH Desktop Windows 使用[已发布插件](https://github.com/finogeeks/finsafe/blob/main/integrations/dsh/windows/README-zh.md)；按其指南安装原生组件并确认保护状态 |
-| 命令行 | [Codex CLI（Windows）](codex-cli-zh.md)和[Claude Code CLI（Windows）](claude-cli-zh.md)均已支持，无需安装插件 |
+| 命令行 | [Codex CLI（Windows）](zh-CN/agents/codex.md)和[Claude Code CLI（Windows）](zh-CN/agents/claude.md)均已支持，无需安装插件 |
 | 桌面入口 | WorkBuddy／DSH 的独立 FinShield 桌面入口见下文 Windows 步骤 |
-| 其他 Agent／平台 | 按[兼容矩阵中的示例与范围](agent-compatibility-zh.md)选择；不要直接套用 Windows 命令 |
+| 其他 Agent／平台 | 按[兼容矩阵中的示例与范围](zh-CN/agents/compatibility.md)选择；不要直接套用 Windows 命令 |
 
 PII 检测／脱敏扩展见[开发包](https://github.com/finogeeks/finsafe/blob/main/pii-plugins/README-zh.md)，它与 Agent 接入插件用途不同。
 
@@ -63,7 +63,7 @@ flowchart TD
 finsafe hermes
 ```
 
-不要将“直接启动 Hermes”视为同一个受保护入口。网络与隐私检查的覆盖范围见 [Linux/macOS 资料安全说明](finsafe-linux-macos-overview-zh.html#data)。
+不要将“直接启动 Hermes”视为同一个受保护入口。网络与隐私检查的覆盖范围见 [Linux/macOS 资料安全说明](zh-CN/overview/linux-macos.html#data)。
 
 ## Linux
 

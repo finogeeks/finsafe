@@ -1,6 +1,6 @@
 # 智安盾Windows产品提要
 
-[English](finsafe-windows-overview-en.md) · [文档目录](README-zh.md) · [Agent 安全测评](https://agent-safety-arena.finogeeks.club/zh-CN.html) ([English](https://agent-safety-arena.finogeeks.club/index.html))
+[English](en/overview/windows.md) · [文档目录](zh-CN/README.md) · [Agent 安全测评](https://agent-safety-arena.finogeeks.club/zh-CN.html) ([English](https://agent-safety-arena.finogeeks.club/index.html))
 
 智安盾（FinShield）帮助企业在Windows电脑上更放心地使用智能体（Agent）：保护电脑和业务资料，同时收集业务过程中产生的运行数据，帮助企业积累数据资产。
 
@@ -40,6 +40,6 @@
 
 ## 进一步了解
 
-- [Windows图解介绍](finsafe-windows-overview.html)：安全保障、数据价值、技术架构与产品对比。
-- [敏感信息处理说明](finsafe-windows-overview.html#data)：告警、阻断与审批。
-- [企业接入与验证](finsafe-whitepaper-zh.md#六企业接入与验证)：单机与集中管理的部署选择。
+- [Windows图解介绍](zh-CN/overview/windows.html)：安全保障、数据价值、技术架构与产品对比。
+- [敏感信息处理说明](zh-CN/overview/windows.html#data)：告警、阻断与审批。
+- [企业接入与验证](zh-CN/reference/whitepaper.md#六企业接入与验证)：单机与集中管理的部署选择。

@@ -1,6 +1,6 @@
 # FinShield Windows product introduction
 
-[简体中文](finsafe-windows-overview-zh.md) · [Documentation](README.md) · [Agent Safety Evaluation](https://agent-safety-arena.finogeeks.club/index.html) ([中文](https://agent-safety-arena.finogeeks.club/zh-CN.html))
+[简体中文](zh-CN/overview/windows.md) · [Documentation](en/README.md) · [Agent Safety Evaluation](https://agent-safety-arena.finogeeks.club/index.html) ([中文](https://agent-safety-arena.finogeeks.club/zh-CN.html))
 
 FinShield helps enterprises use Agents on Windows computers with greater control: protect computers and business information, and collect operational data produced during work so the enterprise can build its own data assets.
 
@@ -40,6 +40,6 @@ FinShield collects and retains supported business records so enterprises can bui
 
 ## Further reading
 
-- [Windows illustrated overview](finsafe-windows-overview-en.html): security, data value, architecture, and comparisons.
-- [Sensitive information handling](finsafe-windows-overview-en.html#data): findings, blocking, and approval.
-- [Enterprise integration and validation](finsafe-whitepaper-en.md#6-enterprise-integration-and-validation): business needs, deployment considerations, and acceptance.
+- [Windows illustrated overview](en/overview/windows.html): security, data value, architecture, and comparisons.
+- [Sensitive information handling](en/overview/windows.html#data): findings, blocking, and approval.
+- [Enterprise integration and validation](en/reference/whitepaper.md#6-enterprise-integration-and-validation): business needs, deployment considerations, and acceptance.

@@ -1,6 +1,6 @@
 # Agent 兼容矩阵
 
-[English](agent-compatibility-en.md) · [文档目录](README-zh.md) · [快速开始](getting-started-zh.md)
+[English](en/agents/compatibility.md) · [文档目录](zh-CN/README.md) · [快速开始](zh-CN/getting-started/install.md)
 
 FinShield 面向主流 Agent 提供安全边界。优先使用已发布的 Agent 接入插件；没有插件时，可以通过 `finsafe` 命令行接入。产品支持 Windows、macOS 和 Linux，但每个 Agent 的形态、接入方式和验证范围需分别确认。
 
@@ -11,9 +11,9 @@ FinShield 面向主流 Agent 提供安全边界。优先使用已发布的 Agent
 | Agent／形态 | 平台 | Agent 接入插件 | 非插件接入 | 版本与验证范围 |
 | --- | --- | --- | --- | --- |
 | DSH Desktop | Windows x64 | **已发布**：`@finogeeks2026/finshield-dsh` | FinShield 桌面入口 | 插件要求 DSH `>=0.2.1-rc.5 <0.3.0`、Node `>=24.9.0`；以[插件说明](https://github.com/finogeeks/finsafe/blob/main/integrations/dsh/windows/README-zh.md)为准 |
-| Codex CLI | Windows x64 | 暂无公开插件入口 | **已支持 CLI**（测评验证）：`self-confine` 包裹 `app-server`，TUI 连接该服务；见[指南](codex-cli-zh.md) | Arena 配置记录 Codex `0.166.0`；Windows FinShield `0.10.9` 路径见下方实现说明；不构成后续版本的全量兼容承诺 |
-| Claude Code CLI | Windows x64 | 暂无公开插件入口 | **已支持 CLI**（测评验证）：`self-confine` 包裹 Claude CLI；见[指南](claude-cli-zh.md) | Arena 配置记录 Claude `2.1.314`；采用与 Codex 相同的已安装 FinShield 配置；具体案例以测评记录为准 |
-| WorkBuddy 桌面版 | Windows x64 | 本页不提供已发布独立插件入口 | FinShield 桌面入口 | 桌面接入与测评已有材料；版本和配置见[测评](https://safety.finaios.ai/)及[桌面上手](getting-started-zh.md#windows) |
+| Codex CLI | Windows x64 | 暂无公开插件入口 | **已支持 CLI**（测评验证）：`self-confine` 包裹 `app-server`，TUI 连接该服务；见[指南](zh-CN/agents/codex.md) | Arena 配置记录 Codex `0.166.0`；Windows FinShield `0.10.9` 路径见下方实现说明；不构成后续版本的全量兼容承诺 |
+| Claude Code CLI | Windows x64 | 暂无公开插件入口 | **已支持 CLI**（测评验证）：`self-confine` 包裹 Claude CLI；见[指南](zh-CN/agents/claude.md) | Arena 配置记录 Claude `2.1.314`；采用与 Codex 相同的已安装 FinShield 配置；具体案例以测评记录为准 |
+| WorkBuddy 桌面版 | Windows x64 | 本页不提供已发布独立插件入口 | FinShield 桌面入口 | 桌面接入与测评已有材料；版本和配置见[测评](https://safety.finaios.ai/)及[桌面上手](zh-CN/getting-started/install.md#windows) |
 | Codex、Hermes、OpenCode、agy CLI | Linux／macOS；按示例选择 | 本页不提供已发布插件入口 | **有示例**：通用 `run`／`self-confine` 与[策略样例](https://github.com/finogeeks/finsafe/tree/main/examples/wrapper-policies/agent-sandbox) | 示例可能沿用旧版 Agent 参数；使用前按当前版本核对、调整并验证，不能直接套用 Windows 指南 |
 | 其他 Agent／自建 Agent | 按发行包与主机能力选择 | 按该 Agent 的实际交付状态确认 | 通用 CLI 接入需要适配和验证 | 能启动进程不等于已验证该 Agent 的全部工具和防护能力 |
 
@@ -35,7 +35,7 @@ PII 开发包以 `pii-plugins/release.json` 标识配套产品版本。独立调
 | 网络与敏感信息检查 | 代理、TLS 检查、目标服务和请求格式是否已接入；CLI 包裹本身不证明 PII 检查开启 |
 | 运行记录与审计 | 当前版本、有效配置和实际产生的记录；`--integration-id` 仅标记来源，不授予权限 |
 
-Windows 使用 AppContainer；macOS 使用 Seatbelt；Linux 依赖 bubblewrap、cgroup 等主机能力。三者的权限、桌面与资源限制不完全相同，见 [Windows 产品介绍](finsafe-windows-overview-zh.md)及 [Linux/macOS 产品介绍](finsafe-linux-macos-overview-zh.md)。
+Windows 使用 AppContainer；macOS 使用 Seatbelt；Linux 依赖 bubblewrap、cgroup 等主机能力。三者的权限、桌面与资源限制不完全相同，见 [Windows 产品介绍](zh-CN/overview/windows.md)及 [Linux/macOS 产品介绍](zh-CN/overview/linux-macos.md)。
 
 ## 证据与更新
 
@@ -43,4 +43,4 @@ Windows 使用 AppContainer；macOS 使用 Seatbelt；Linux 依赖 bubblewrap、
 - [Claude 包裹实现](https://github.com/finogeeks/agent-safety-arena/blob/main/docs/claude-finshield-recording.md)及[测评版本配置](https://github.com/finogeeks/agent-safety-arena/blob/main/profiles/agents/claude/evaluation.json)。
 - [Agent Safety Arena](https://safety.finaios.ai/)：录像、测试条件和结果；测评工具中的接入不等于独立产品插件发布。
 
-升级 FinShield 或 Agent 后，记录两个产品的版本，重新进行[授权范围验证](getting-started-zh.md#验证授权范围)。新增矩阵条目时，同时提供交付入口、平台、版本和验证依据。
+升级 FinShield 或 Agent 后，记录两个产品的版本，重新进行[授权范围验证](zh-CN/getting-started/install.md#验证授权范围)。新增矩阵条目时，同时提供交付入口、平台、版本和验证依据。

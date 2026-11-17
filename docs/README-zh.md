@@ -1,31 +1,31 @@
 # FinShield 文档
 
-[English](README.md) · [产品首页](https://github.com/finogeeks/finsafe) · [最新下载](https://github.com/finogeeks/finsafe/releases/latest)
+[English](en/README.md) · [产品首页](https://github.com/finogeeks/finsafe) · [最新下载](https://github.com/finogeeks/finsafe/releases/latest)
 
 FinShield 为主流 Agent 提供文件、系统与桌面的安全边界。优先选择已发布的 Agent 接入插件；也可以通过 `finsafe` 命令行接入，并用 PII 插件扩展敏感信息检测与脱敏。
 
 ## 快速开始
 
-1. [查看兼容矩阵](agent-compatibility-zh.md)，确认 Agent 形态、平台、插件状态与验证范围。
-2. [选择接入方式并安装](getting-started-zh.md)：DSH Windows 优先使用已发布插件；Codex／Claude CLI 按各自指南接入。
-3. [验证保护生效](getting-started-zh.md#验证授权范围)，检查允许与拒绝两种操作。
+1. [查看兼容矩阵](zh-CN/agents/compatibility.md)，确认 Agent 形态、平台、插件状态与验证范围。
+2. [选择接入方式并安装](zh-CN/getting-started/install.md)：DSH Windows 优先使用已发布插件；Codex／Claude CLI 按各自指南接入。
+3. [验证保护生效](zh-CN/getting-started/install.md#验证授权范围)，检查允许与拒绝两种操作。
 
 ## Agent 接入指南
 
 | Agent | 推荐入口 | 可用接入 |
 | --- | --- | --- |
 | DSH Desktop（Windows） | [插件安装与使用](https://github.com/finogeeks/finsafe/blob/main/integrations/dsh/windows/README-zh.md) | 已发布：`@finogeeks2026/finshield-dsh` |
-| Codex CLI（Windows） | [命令行接入](codex-cli-zh.md) | **已支持 CLI 接入** |
-| Claude Code CLI（Windows） | [命令行接入](claude-cli-zh.md) | **已支持 CLI 接入** |
-| WorkBuddy 桌面版（Windows） | [桌面安装与启动](getting-started-zh.md#windows) | 桌面入口 |
-| 其他 Agent／Linux／macOS | [兼容范围与通用 CLI 示例](agent-compatibility-zh.md) | 按具体 Agent 确认 |
+| Codex CLI（Windows） | [命令行接入](zh-CN/agents/codex.md) | **已支持 CLI 接入** |
+| Claude Code CLI（Windows） | [命令行接入](zh-CN/agents/claude.md) | **已支持 CLI 接入** |
+| WorkBuddy 桌面版（Windows） | [桌面安装与启动](zh-CN/getting-started/install.md#windows) | 桌面入口 |
+| 其他 Agent／Linux／macOS | [兼容范围与通用 CLI 示例](zh-CN/agents/compatibility.md) | 按具体 Agent 确认 |
 
 ## 认识 FinShield 与防护配置
 
-- [整体图解介绍](finshield-overview-zh.html)：安全管控、运行记录、企业管理与实测对照。
-- [Windows 产品介绍](finsafe-windows-overview-zh.md)与[图解介绍](finsafe-windows-overview.html)：权限、系统与桌面限制，以及敏感信息检查。
-- [Linux/macOS 产品介绍](finsafe-linux-macos-overview-zh.md)与[图解介绍](finsafe-linux-macos-overview-zh.html)：平台能力、接入方式与限制。
-- [防护能力与平台条件](agent-compatibility-zh.md#防护能力与平台)：确认有效配置和实际请求覆盖范围。
+- [整体图解介绍](zh-CN/overview/finshield.html)：安全管控、运行记录、企业管理与实测对照。
+- [Windows 产品介绍](zh-CN/overview/windows.md)与[图解介绍](zh-CN/overview/windows.html)：权限、系统与桌面限制，以及敏感信息检查。
+- [Linux/macOS 产品介绍](zh-CN/overview/linux-macos.md)与[图解介绍](zh-CN/overview/linux-macos.html)：平台能力、接入方式与限制。
+- [防护能力与平台条件](zh-CN/agents/compatibility.md#防护能力与平台)：确认有效配置和实际请求覆盖范围。
 
 ## PII 插件开发
 
@@ -35,11 +35,21 @@ PII 插件扩展敏感信息处理规则，与 Agent 接入插件用途不同。
 
 ## 企业部署与深入阅读
 
-[智安盾白皮书](finsafe-whitepaper-zh.md)：完整产品方案、企业接入、技术依据与实验条件。产品介绍与白皮书作为深入阅读材料，实际安装先从对应 Agent 指南开始。
+[智安盾白皮书](zh-CN/reference/whitepaper.md)：完整产品方案、企业接入、技术依据与实验条件。产品介绍与白皮书作为深入阅读材料，实际安装先从对应 Agent 指南开始。
 
 ## 参考与支持
 
-- [安装、升级与卸载](getting-started-zh.md)。CLI 接口以所安装版本的 `finsafe help` 为准。
-- [Codex 排障](codex-cli-zh.md#常见问题) · [Claude 排障](claude-cli-zh.md#常见问题) · [获取帮助](getting-started-zh.md#获取帮助)。
+- [安装、升级与卸载](zh-CN/getting-started/install.md)。CLI 接口以所安装版本的 `finsafe help` 为准。
+- [Codex 排障](zh-CN/agents/codex.md#常见问题) · [Claude 排障](zh-CN/agents/claude.md#常见问题) · [获取帮助](zh-CN/getting-started/install.md#获取帮助)。
 - [Agent Safety Arena](https://safety.finaios.ai/)：对照录像、测试条件与结果；[测评实现与复现材料](https://github.com/finogeeks/agent-safety-arena)。
 - [版本记录](https://github.com/finogeeks/finsafe/blob/main/CHANGELOG.md) · [问题反馈](https://github.com/finogeeks/finsafe/issues/new/choose) · [用 Agent 提报](https://github.com/finogeeks/finsafe/blob/main/CONTRIBUTING-zh.md)。
+
+## 按主题浏览
+
+- [产品与保护边界](zh-CN/overview/README.md).
+- [安装与验证](zh-CN/getting-started/README.md).
+- [Agent 接入](zh-CN/agents/README.md).
+- [配置与验证防护](zh-CN/protection/README.md).
+- [PII 插件与扩展开发](zh-CN/development/README.md).
+- [企业部署](zh-CN/enterprise/README.md).
+- [参考资料与支持](zh-CN/reference/README.md).

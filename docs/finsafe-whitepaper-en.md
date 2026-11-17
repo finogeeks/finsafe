@@ -1,6 +1,6 @@
 # FinShield whitepaper: Agent security and data value
 
-[简体中文](finsafe-whitepaper-zh.md) · [Documentation](README.md) · [Agent Safety Evaluation](https://agent-safety-arena.finogeeks.club/index.html) ([中文](https://agent-safety-arena.finogeeks.club/zh-CN.html))
+[简体中文](zh-CN/reference/whitepaper.md) · [Documentation](en/README.md) · [Agent Safety Evaluation](https://agent-safety-arena.finogeeks.club/index.html) ([中文](https://agent-safety-arena.finogeeks.club/zh-CN.html))
 
 **Work within authorization boundaries and build data assets during business operations**
 
@@ -98,7 +98,7 @@ In SYS-12, Windows/FinSAFE 0.9.88 refused a termination handle and the same proc
 
 Access rules determine who can read, change, or delete information. In SYS-01, Windows/FinSAFE 0.9.79 prevented the protected run from adding modification rights for Users; the ordinary run added them. Information protection includes restricting changes to the access rules themselves. [SYS-01 evidence](https://finsafe-safety-arena.finogeeks.club/cases/SYS-01/index.html).
 
-Manage file access and content transmission separately. File rules govern information use; controlled egress manages destinations and inspects supported, parseable content. See [Windows sensitive-content handling](finsafe-windows-overview-en.html#data) and [Linux/macOS privacy inspection](finsafe-linux-macos-overview-en.html#data) for behaviors and coverage.
+Manage file access and content transmission separately. File rules govern information use; controlled egress manages destinations and inspects supported, parseable content. See [Windows sensitive-content handling](en/overview/windows.html#data) and [Linux/macOS privacy inspection](en/overview/linux-macos.html#data) for behaviors and coverage.
 
 ### 3.5 What the experiments establish
 
@@ -140,7 +140,7 @@ This shows the process data a normal task produces. Product retention collects a
 | Save content | Supported Windows retention uses AES-GCM records and user DPAPI key protection | Data the enterprise can keep |
 | Query process | Organize current input, model replies, and supported tool interactions; distinguish complete and interrupted records | Reviewable, traceable information |
 
-Linux/macOS primarily produce execution, network, and policy records, which differ from Windows conversation retention. See [Windows data value](finsafe-windows-overview-en.html#assets) and [Linux/macOS data value](finsafe-linux-macos-overview-en.html#assets).
+Linux/macOS primarily produce execution, network, and policy records, which differ from Windows conversation retention. See [Windows data value](en/overview/windows.html#assets) and [Linux/macOS data value](en/overview/linux-macos.html#assets).
 
 The order experiment illustrates available content; collection, association, retention, and queries explain how the product preserves it. Actual entries depend on effective platform configuration and identifiable protocols.
 
@@ -168,7 +168,7 @@ Linux suits nodes needing detailed CPU, memory, and process quotas; Mac uses nat
 
 Native product permissions, model judgment, OS constraints, and egress inspection can work together. Native controls govern tool authorization, OS mechanisms constrain resource access, and egress inspection handles permitted destinations and inspectable content.
 
-See the [Windows architecture](finsafe-windows-overview-en.html), [Linux/macOS architecture](finsafe-linux-macos-overview-en.html), and [enterprise integration](#6-enterprise-integration-and-validation).
+See the [Windows architecture](en/overview/windows.html), [Linux/macOS architecture](en/overview/linux-macos.html), and [enterprise integration](#6-enterprise-integration-and-validation).
 
 ## 6. Enterprise integration and validation
 
@@ -715,12 +715,12 @@ No. One experiment can produce many calls and samples. Count cases, sessions, ca
 
 ### Product and integration material
 
-- [Windows introduction](finsafe-windows-overview-en.md): security and data value.
-- [Windows illustrated overview](finsafe-windows-overview-en.html): architecture, mechanisms, integration, and comparisons.
-- [Linux/macOS introduction](finsafe-linux-macos-overview-en.md): the shared product approach.
-- [Linux/macOS illustrated overview](finsafe-linux-macos-overview-en.html): native mechanisms, architecture, and deployment.
-- [Windows sensitive-content handling](finsafe-windows-overview-en.html#data): findings, blocking, and per-request approval.
-- [Linux/macOS privacy inspection](finsafe-linux-macos-overview-en.html#data): platform differences and coverage.
+- [Windows introduction](en/overview/windows.md): security and data value.
+- [Windows illustrated overview](en/overview/windows.html): architecture, mechanisms, integration, and comparisons.
+- [Linux/macOS introduction](en/overview/linux-macos.md): the shared product approach.
+- [Linux/macOS illustrated overview](en/overview/linux-macos.html): native mechanisms, architecture, and deployment.
+- [Windows sensitive-content handling](en/overview/windows.html#data): findings, blocking, and per-request approval.
+- [Linux/macOS privacy inspection](en/overview/linux-macos.html#data): platform differences and coverage.
 - [Enterprise integration](#6-enterprise-integration-and-validation): local, managed, and central-execution considerations.
 
 ### Related evaluation research

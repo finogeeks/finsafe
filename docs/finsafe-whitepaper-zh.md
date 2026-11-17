@@ -1,6 +1,6 @@
 # 智安盾白皮书：AI智能体的安全保障与数据价值
 
-[English](finsafe-whitepaper-en.md) · [文档目录](README-zh.md) · [Agent 安全测评](https://agent-safety-arena.finogeeks.club/zh-CN.html) ([English](https://agent-safety-arena.finogeeks.club/index.html))
+[English](en/reference/whitepaper.md) · [文档目录](zh-CN/README.md) · [Agent 安全测评](https://agent-safety-arena.finogeeks.club/zh-CN.html) ([English](https://agent-safety-arena.finogeeks.club/index.html))
 
 **在授权边界内工作，在业务过程中积累数据资产**
 
@@ -98,7 +98,7 @@ UI-02展示另一种情况：同样在Windows与FinSAFE0.9.79下，保护组工�
 
 资料的访问权限决定了谁可以读取、修改或删除文件。SYS-01实验中，Windows上的FinSAFE0.9.79保护组未能为Users组新增修改授权，文件原权限保持；普通组则增加了授权。这项对照说明，资料保护还包括限制对访问规则本身的修改。[SYS-01原始证据](https://finsafe-safety-arena.finogeeks.club/cases/SYS-01/index.html)
 
-文件访问与内容发送还需要分别管理。文件规则决定资料可以怎样使用；受控出口管理连接目标，并对可解析的受支持内容执行敏感信息检查。告警、阻断和单次审批的具体行为见[Windows敏感信息处理说明](finsafe-windows-overview.html#data)与[Linux/macOS隐私防护说明](finsafe-linux-macos-overview-zh.html#data)。
+文件访问与内容发送还需要分别管理。文件规则决定资料可以怎样使用；受控出口管理连接目标，并对可解析的受支持内容执行敏感信息检查。告警、阻断和单次审批的具体行为见[Windows敏感信息处理说明](zh-CN/overview/windows.html#data)与[Linux/macOS隐私防护说明](zh-CN/overview/linux-macos.html#data)。
 
 ### 3.5 从实验得到的共同认识
 
@@ -144,7 +144,7 @@ Safety Arena记录了一项使用演示数据的订单整理任务：创建金�
 | 保存内容 | Windows支持的留存路径使用本地加密存储，采用AES-GCM加密记录，并通过用户DPAPI保护密钥 | 企业可以持续保存的数据 |
 | 查询过程 | 查询视图组织当前输入、模型回复与支持的工具交互，区分完整和中断记录 | 能够查看和回溯的过程信息 |
 
-Linux与macOS主要形成执行、网络和策略记录，其数据内容与Windows对话留存不同。具体实现见[Windows数据价值介绍](finsafe-windows-overview.html#assets)与[Linux/macOS数据价值介绍](finsafe-linux-macos-overview-zh.html#assets)。
+Linux与macOS主要形成执行、网络和策略记录，其数据内容与Windows对话留存不同。具体实现见[Windows数据价值介绍](zh-CN/overview/windows.html#assets)与[Linux/macOS数据价值介绍](zh-CN/overview/linux-macos.html#assets)。
 
 订单实验说明过程内容的丰富性；产品的采集、关联、保存与查询能力，说明这些内容如何被企业留下来。实际留存条目由各平台的有效配置和可识别协议决定。
 
@@ -172,7 +172,7 @@ Linux适合需要细化CPU、内存与进程资源控制的执行节点；Mac使
 
 产品原生权限、模型判断、系统执行约束和出口检查可以配合使用。原生机制决定工具调用如何获准，系统机制约束实际进程能访问什么，出口检查处理允许到达的目标与可检查内容。
 
-平台架构与操作说明见[Windows图解介绍](finsafe-windows-overview.html)、[Linux/macOS图解介绍](finsafe-linux-macos-overview-zh.html)和[企业接入与验证](finsafe-whitepaper-zh.md#六企业接入与验证)。
+平台架构与操作说明见[Windows图解介绍](zh-CN/overview/windows.html)、[Linux/macOS图解介绍](zh-CN/overview/linux-macos.html)和[企业接入与验证](zh-CN/reference/whitepaper.md#六企业接入与验证)。
 
 ## 六、企业接入与验证
 
@@ -187,7 +187,7 @@ Linux适合需要细化CPU、内存与进程资源控制的执行节点；Mac使
 
 验证时，正常任务和风险任务都需要观察：获准工作是否完成，越界操作是否受到约束，记录是否能够查到，来源和会话关系是否正确。采用相同条件比较接入前后变化，有助于判断新增控制的实际作用。
 
-本地CLI、Windows桌面入口和托管组件分别承担不同职责。企业集中部署涉及签名策略、设备注册、终端服务和审计交付，交付方式与验收记录按平台核对。接入与验证建议见[企业接入与验证](finsafe-whitepaper-zh.md#六企业接入与验证)。
+本地CLI、Windows桌面入口和托管组件分别承担不同职责。企业集中部署涉及签名策略、设备注册、终端服务和审计交付，交付方式与验收记录按平台核对。接入与验证建议见[企业接入与验证](zh-CN/reference/whitepaper.md#六企业接入与验证)。
 
 跨产品比较同样需要明确产品版本、模型、原生权限、主机条件与任务集合；安全效果、正常工作与数据留存分别评价。完整方法见[附录B](#附录b测试条件与验证方法)。
 
@@ -730,13 +730,13 @@ Trace Data在本文中指智能体运行过程数据，包括任务背景、对�
 
 ### 产品与部署资料
 
-- [Windows产品提要](finsafe-windows-overview-zh.md)：安全保障与数据价值的简要说明。
-- [Windows图解介绍](finsafe-windows-overview.html)：架构、机制、接入与产品比较。
-- [Linux/macOS产品提要](finsafe-linux-macos-overview-zh.md)：双平台产品主线。
-- [Linux/macOS图解介绍](finsafe-linux-macos-overview-zh.html)：原生机制、架构与部署方式。
-- [Windows敏感信息处理](finsafe-windows-overview.html#data)：告警、阻断与单次审批的具体行为。
-- [Linux/macOS隐私防护](finsafe-linux-macos-overview-zh.html#data)：平台差异与检测范围。
-- [企业接入与验证](finsafe-whitepaper-zh.md#六企业接入与验证)：本地、托管与集中执行的交付选择。
+- [Windows产品提要](zh-CN/overview/windows.md)：安全保障与数据价值的简要说明。
+- [Windows图解介绍](zh-CN/overview/windows.html)：架构、机制、接入与产品比较。
+- [Linux/macOS产品提要](zh-CN/overview/linux-macos.md)：双平台产品主线。
+- [Linux/macOS图解介绍](zh-CN/overview/linux-macos.html)：原生机制、架构与部署方式。
+- [Windows敏感信息处理](zh-CN/overview/windows.html#data)：告警、阻断与单次审批的具体行为。
+- [Linux/macOS隐私防护](zh-CN/overview/linux-macos.html#data)：平台差异与检测范围。
+- [企业接入与验证](zh-CN/reference/whitepaper.md#六企业接入与验证)：本地、托管与集中执行的交付选择。
 
 ### 相关评测研究
 

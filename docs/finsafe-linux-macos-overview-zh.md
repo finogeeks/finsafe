@@ -1,6 +1,6 @@
 # 智安盾Linux/macOS产品提要
 
-[English](finsafe-linux-macos-overview-en.md) · [文档目录](README-zh.md) · [Agent 安全测评](https://agent-safety-arena.finogeeks.club/zh-CN.html) ([English](https://agent-safety-arena.finogeeks.club/index.html))
+[English](en/overview/linux-macos.md) · [文档目录](zh-CN/README.md) · [Agent 安全测评](https://agent-safety-arena.finogeeks.club/zh-CN.html) ([English](https://agent-safety-arena.finogeeks.club/index.html))
 
 智安盾（FinShield）帮助企业在Linux与Mac电脑上更放心地使用智能体（Agent）：保护电脑和业务资料，同时收集业务过程中产生的运行数据，帮助企业积累数据资产。
 
@@ -40,6 +40,6 @@
 
 ## 进一步了解
 
-- [Linux/macOS图解介绍](finsafe-linux-macos-overview-zh.html)：安全保障、数据价值、技术架构、应用接入与企业部署。
-- [隐私防护说明](finsafe-linux-macos-overview-zh.html#data)：平台差异与检测范围。
-- [企业接入与验证](finsafe-whitepaper-zh.md#六企业接入与验证)：单机与集中管理的部署选择。
+- [Linux/macOS图解介绍](zh-CN/overview/linux-macos.html)：安全保障、数据价值、技术架构、应用接入与企业部署。
+- [隐私防护说明](zh-CN/overview/linux-macos.html#data)：平台差异与检测范围。
+- [企业接入与验证](zh-CN/reference/whitepaper.md#六企业接入与验证)：单机与集中管理的部署选择。

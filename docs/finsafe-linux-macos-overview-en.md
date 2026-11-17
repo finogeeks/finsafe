@@ -1,6 +1,6 @@
 # FinShield Linux/macOS product introduction
 
-[简体中文](finsafe-linux-macos-overview-zh.md) · [Documentation](README.md) · [Agent Safety Evaluation](https://agent-safety-arena.finogeeks.club/index.html) ([中文](https://agent-safety-arena.finogeeks.club/zh-CN.html))
+[简体中文](zh-CN/overview/linux-macos.md) · [Documentation](en/README.md) · [Agent Safety Evaluation](https://agent-safety-arena.finogeeks.club/index.html) ([中文](https://agent-safety-arena.finogeeks.club/zh-CN.html))
 
 FinShield helps enterprises use Agents on Linux and Mac computers with greater control: protect computers and business information, and collect operational data produced during work so the enterprise can build its own data assets.
 
@@ -40,6 +40,6 @@ FinShield collects and retains supported business records so enterprises can bui
 
 ## Further reading
 
-- [Linux/macOS illustrated overview](finsafe-linux-macos-overview-en.html): security, data value, architecture, integration, and enterprise deployment.
-- [Privacy inspection scope](finsafe-linux-macos-overview-en.html#data): platform differences and coverage limits.
-- [Enterprise integration and validation](finsafe-whitepaper-en.md#6-enterprise-integration-and-validation): business needs, deployment considerations, and acceptance.
+- [Linux/macOS illustrated overview](en/overview/linux-macos.html): security, data value, architecture, integration, and enterprise deployment.
+- [Privacy inspection scope](en/overview/linux-macos.html#data): platform differences and coverage limits.
+- [Enterprise integration and validation](en/reference/whitepaper.md#6-enterprise-integration-and-validation): business needs, deployment considerations, and acceptance.

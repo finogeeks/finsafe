@@ -1,6 +1,6 @@
 # 通过命令行接入 Claude Code（Windows）
 
-[English](claude-cli-en.md) · [文档目录](README-zh.md) · [兼容矩阵](agent-compatibility-zh.md)
+[English](en/agents/claude.md) · [文档目录](zh-CN/README.md) · [兼容矩阵](zh-CN/agents/compatibility.md)
 
 本指南采用 Safety Arena 的 Windows 路径：用 FinShield `self-confine` 启动 Claude Code CLI，在普通终端中保留交互界面。**Claude 已支持 CLI 接入，无需安装插件。** 本页不覆盖 Claude 桌面版或 Linux/macOS 的 Agent 验证。
 
@@ -8,7 +8,7 @@ Arena 配置记录 Claude `2.1.314`，使用与 Codex 路径相同的已安装 F
 
 ## 准备
 
-1. 按[安装指南](getting-started-zh.md#windows)安装 Windows x64 FinShield，完成安全准备和授权。
+1. 按[安装指南](zh-CN/getting-started/install.md#windows)安装 Windows x64 FinShield，完成安全准备和授权。
 2. 单独安装并登录 Claude Code CLI，先确认普通运行和所需工具可用。下面命令使用实际的原生 `claude.exe`；只有 npm 启动脚本时，先确认对应安装方式，不直接将 `.cmd`／`.ps1` 替代 EXE。
 3. 在 FinShield 控制台确认工作区、Claude 程序、所需配置／状态目录及 shell 的访问范围。取得该安装实际使用、已准备的 `effective.yaml` 路径；不要直接编辑生成文件或复用 DSH 插件专用配置。
 4. 本指南的测评依据采用 PowerShell 工具路径。先确认当前 Claude 版本的 Windows shell 配置可用；Git Bash 启动失败不能当作安全拦截证据。其他 shell 路径需要单独验证。
@@ -51,7 +51,7 @@ flowchart LR
 
 ## 验证与退出
 
-在新建测试会话中按[授权范围验证](getting-started-zh.md#验证授权范围)检查允许的工作区写入、只读文件修改被拒及禁止目录读取被拒。使用预先创建的无敏感信息测试文件，核对实际工具结果与文件内容。模型口头拒绝、shell 启动失败或文件不存在都不能证明保护生效。
+在新建测试会话中按[授权范围验证](zh-CN/getting-started/install.md#验证授权范围)检查允许的工作区写入、只读文件修改被拒及禁止目录读取被拒。使用预先创建的无敏感信息测试文件，核对实际工具结果与文件内容。模型口头拒绝、shell 启动失败或文件不存在都不能证明保护生效。
 
 网络与 PII 检查仅覆盖实际接入、可检查的路径；本启动命令不自动证明内容检查开启。要扩展检测／脱敏规则，参阅 [Windows PII 插件开发包](https://github.com/finogeeks/finsafe/blob/main/pii-plugins/README-zh.md)。
 
@@ -67,4 +67,4 @@ flowchart LR
 | 配置或准备错误 | 核对 FinShield 安装、有效配置和准备结果，通过产品流程修正；不靠跳过权限确认排错 |
 | 登录、模型或网络失败 | 区分 Agent 原生配置与沙箱网络限制，检查实际代理／证书配置并脱敏日志 |
 
-实现依据：[Arena Claude 接入说明](https://github.com/finogeeks/agent-safety-arena/blob/main/docs/claude-finshield-recording.md)。反馈时提供 FinShield／Claude 版本、shell、启动入口及脱敏错误，见[获取帮助](getting-started-zh.md#获取帮助)。
+实现依据：[Arena Claude 接入说明](https://github.com/finogeeks/agent-safety-arena/blob/main/docs/claude-finshield-recording.md)。反馈时提供 FinShield／Claude 版本、shell、启动入口及脱敏错误，见[获取帮助](zh-CN/getting-started/install.md#获取帮助)。

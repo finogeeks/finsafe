@@ -1,6 +1,6 @@
 # Agent compatibility matrix
 
-[简体中文](agent-compatibility-zh.md) · [Documentation](README.md) · [Get started](getting-started-en.md)
+[简体中文](zh-CN/agents/compatibility.md) · [Documentation](en/README.md) · [Get started](en/getting-started/install.md)
 
 FinShield provides a security boundary for mainstream Agents. Prefer a released Agent integration plugin; use the `finsafe` CLI when no plugin is available. The product supports Windows, macOS, and Linux, but each Agent form, integration route, and verification scope must be checked separately.
 
@@ -11,9 +11,9 @@ Reviewed on 2026-11-16. **CLI supported** means command-line integration is avai
 | Agent / form | Platform | Agent integration plugin | Route without a plugin | Versions and verification scope |
 | --- | --- | --- | --- | --- |
 | DSH Desktop | Windows x64 | **Released**: `@finogeeks2026/finshield-dsh` | FinShield desktop launcher | Requires DSH `>=0.2.1-rc.5 <0.3.0` and Node `>=24.9.0`; follow the [plugin guide](https://github.com/finogeeks/finsafe/blob/main/integrations/dsh/windows/README.md) |
-| Codex CLI | Windows x64 | No public plugin entry currently | **CLI supported** (evaluation verified): `self-confine` wraps `app-server`; the TUI connects to that server. See the [guide](codex-cli-en.md) | Arena records Codex `0.166.0`; its Windows FinShield `0.10.9` route is documented below. This is not a blanket compatibility promise for later releases |
-| Claude Code CLI | Windows x64 | No public plugin entry currently | **CLI supported** (evaluation verified): `self-confine` wraps the Claude CLI. See the [guide](claude-cli-en.md) | Arena records Claude `2.1.314` and uses the same installed FinShield configuration as Codex; consult individual evaluation records |
-| WorkBuddy desktop | Windows x64 | No released standalone plugin entry on this page | FinShield desktop launcher | Desktop integration and evaluation material exist; consult the [evaluations](https://safety.finaios.ai/) and [desktop setup](getting-started-en.md#windows) for versions and configuration |
+| Codex CLI | Windows x64 | No public plugin entry currently | **CLI supported** (evaluation verified): `self-confine` wraps `app-server`; the TUI connects to that server. See the [guide](en/agents/codex.md) | Arena records Codex `0.166.0`; its Windows FinShield `0.10.9` route is documented below. This is not a blanket compatibility promise for later releases |
+| Claude Code CLI | Windows x64 | No public plugin entry currently | **CLI supported** (evaluation verified): `self-confine` wraps the Claude CLI. See the [guide](en/agents/claude.md) | Arena records Claude `2.1.314` and uses the same installed FinShield configuration as Codex; consult individual evaluation records |
+| WorkBuddy desktop | Windows x64 | No released standalone plugin entry on this page | FinShield desktop launcher | Desktop integration and evaluation material exist; consult the [evaluations](https://safety.finaios.ai/) and [desktop setup](en/getting-started/install.md#windows) for versions and configuration |
 | Codex, Hermes, OpenCode, agy CLI | Linux / macOS; select by example | No released plugin entry on this page | **Examples available**: generic `run` / `self-confine` and [sample policies](https://github.com/finogeeks/finsafe/tree/main/examples/wrapper-policies/agent-sandbox) | Examples can contain older Agent arguments. Check, adapt, and verify them for the installed version. Windows guides do not transfer directly |
 | Other / custom Agents | Depends on release package and host capabilities | Check actual delivery status for that Agent | Generic CLI integration needs adaptation and verification | Starting a process does not verify all Agent tools or protection features |
 
@@ -35,7 +35,7 @@ The PII kit's `pii-plugins/release.json` identifies its matching product release
 | Network and sensitive-information inspection | Integrated proxy, TLS inspection, destination, and request format; CLI wrapping alone does not prove PII inspection is enabled |
 | Records and audit | Installed version, effective configuration, and actual records; `--integration-id` labels the source and grants no permissions |
 
-Windows uses AppContainer, macOS uses Seatbelt, and Linux depends on host capabilities such as bubblewrap and cgroup. Their permission, desktop, and resource controls differ. See the [Windows introduction](finsafe-windows-overview-en.md) and [Linux/macOS introduction](finsafe-linux-macos-overview-en.md).
+Windows uses AppContainer, macOS uses Seatbelt, and Linux depends on host capabilities such as bubblewrap and cgroup. Their permission, desktop, and resource controls differ. See the [Windows introduction](en/overview/windows.md) and [Linux/macOS introduction](en/overview/linux-macos.md).
 
 ## Evidence and updates
 
@@ -43,4 +43,4 @@ Windows uses AppContainer, macOS uses Seatbelt, and Linux depends on host capabi
 - [Claude wrapping implementation](https://github.com/finogeeks/agent-safety-arena/blob/main/docs/claude-finshield-recording.md) and [evaluation version profile](https://github.com/finogeeks/agent-safety-arena/blob/main/profiles/agents/claude/evaluation.json).
 - [Agent Safety Arena](https://safety.finaios.ai/): recordings, conditions, and results. Integration in an evaluation tool does not establish a standalone product plugin release.
 
-After upgrading FinShield or an Agent, record both versions and repeat the [permission checks](getting-started-en.md#verify-permission-scope). Add a delivery entry, platform, versions, and verification evidence with each new matrix entry.
+After upgrading FinShield or an Agent, record both versions and repeat the [permission checks](en/getting-started/install.md#verify-permission-scope). Add a delivery entry, platform, versions, and verification evidence with each new matrix entry.

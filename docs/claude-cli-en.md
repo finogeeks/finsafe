@@ -1,6 +1,6 @@
 # Connect Claude Code through the command line (Windows)
 
-[简体中文](claude-cli-zh.md) · [Documentation](README.md) · [Compatibility matrix](agent-compatibility-en.md)
+[简体中文](zh-CN/agents/claude.md) · [Documentation](en/README.md) · [Compatibility matrix](en/agents/compatibility.md)
 
 This guide uses Safety Arena's Windows route: start Claude Code CLI with FinShield `self-confine`, keeping the interactive UI in an ordinary terminal. **Claude CLI integration is supported now and requires no plugin.** It does not cover Claude Desktop or Agent verification on Linux/macOS.
 
@@ -8,7 +8,7 @@ Arena records Claude `2.1.314` and uses the same installed FinShield `effective.
 
 ## Prepare
 
-1. [Install Windows x64 FinShield](getting-started-en.md#windows) and complete preparation and authorization.
+1. [Install Windows x64 FinShield](en/getting-started/install.md#windows) and complete preparation and authorization.
 2. Install and sign in to Claude Code CLI separately. Confirm ordinary execution and required tools work first. The commands use the actual native `claude.exe`; if only an npm launcher exists, check the installation rather than directly replacing the EXE with a `.cmd` / `.ps1` script.
 3. In the FinShield Console, confirm access to the workspace, Claude executable, required configuration / state directories, and shell. Obtain the actual prepared `effective.yaml` path for that installation. Do not edit the generated file or reuse a DSH-plugin-specific configuration.
 4. The evaluation underlying this guide uses the PowerShell tool route. Confirm that the installed Claude version's Windows shell configuration works first. A Git Bash startup failure is not evidence of security enforcement. Other shell routes need separate verification.
@@ -51,7 +51,7 @@ flowchart LR
 
 ## Verify and exit
 
-In a new test session, follow the [permission checks](getting-started-en.md#verify-permission-scope): workspace writes succeed, read-only modifications fail, and inaccessible-directory reads fail. Use existing nonsensitive test files and inspect actual tool results and contents. A model's verbal refusal, shell startup failure, or nonexistent file does not establish protection.
+In a new test session, follow the [permission checks](en/getting-started/install.md#verify-permission-scope): workspace writes succeed, read-only modifications fail, and inaccessible-directory reads fail. Use existing nonsensitive test files and inspect actual tool results and contents. A model's verbal refusal, shell startup failure, or nonexistent file does not establish protection.
 
 Network and PII inspection covers only integrated, inspectable paths. This launch command alone does not establish content-inspection coverage. To extend detection / redaction rules, see the [Windows PII developer kit](https://github.com/finogeeks/finsafe/blob/main/pii-plugins/README.md).
 
@@ -67,4 +67,4 @@ Exit Claude CLI normally and confirm the wrapped process has ended. Start a new 
 | Configuration or preparation error | Check the FinShield installation, effective configuration, and preparation result; correct through the product rather than bypassing permission prompts |
 | Sign-in, model, or network fails | Separate native Agent configuration from sandbox network restrictions; check the actual proxy / certificate configuration and redact logs |
 
-Implementation basis: [Arena Claude integration](https://github.com/finogeeks/agent-safety-arena/blob/main/docs/claude-finshield-recording.md). For support, include FinShield / Claude versions, shell, launch route, and redacted errors; see [Get help](getting-started-en.md#get-help).
+Implementation basis: [Arena Claude integration](https://github.com/finogeeks/agent-safety-arena/blob/main/docs/claude-finshield-recording.md). For support, include FinShield / Claude versions, shell, launch route, and redacted errors; see [Get help](en/getting-started/install.md#get-help).

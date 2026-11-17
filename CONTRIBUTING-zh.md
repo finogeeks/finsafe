@@ -1,5 +1,7 @@
 # 参与贡献 finogeeks/finsafe
 
+> 本文件与首页、产品文档由私有上游 `docs/public/` 统一维护并自动发布。请修改上游源文件；没有上游访问权限时，可在本仓库提 Issue 或建议 PR，由维护者迁回上游。模板和技能继续遵循既有维护流程。
+
 **English:** [CONTRIBUTING.md](CONTRIBUTING.md)
 
 感谢帮助改进 FinSAFE。本仓库是**公开发布镜像**：预编译 CLI 二进制、安装脚本、示例与终端用户文档，**不包含** FinSAFE 引擎源代码。
@@ -9,15 +11,14 @@
 | 你想改什么 | 实际编写位置 | 如何贡献 |
 |------------|--------------|----------|
 | **`finsafe` 行为缺陷** | 私有上游 monorepo | 开 **[GitHub Issue](https://github.com/finogeeks/finsafe/issues/new)**，加 `bug` 标签并附复现步骤 |
-| **发布的产品文档**（`docs/`） | 上游 `docs/public-finsafe/docs/product/` | 开 **issue** 说明修改，或在此开 **PR** 作为建议（见下文） |
-| **报障规范、issue 模板、skills、根目录 README** | 本仓库 | 直接开 **PR** |
+| **发布的产品文档**（`docs/`） | 上游 `docs/public/docs/` | 开 **issue** 说明修改，或在此开 **PR** 作为建议（见下文） |
+| **issue 模板、skills** | 本仓库 | 直接开 **PR** |
 | **安装脚本**（`install.sh`、`install.ps1` 等） | 上游 + 发布同步 | 同文档 — 优先 issue |
 | **运行时 / Rust 代码** | 不在本仓库 | **仅 issue** — 本镜像无法合并代码 PR |
 
 发布流程将上游批准的产品文档同步到 `docs/`，并分别发布指定的接入与开发套件文件。
 产品文档修改需回到上游源文件，才能在下次发布后保留。
-根目录报障规范、issue 模板和 skills 在本仓库维护，发布时会保留；
-不会再将旧文档目录整体覆盖到本仓库。
+首页、贡献指南和 AGENTS.md 也由上游源文件统一发布；issue 模板与 skills 保留既有维护流程。
 
 ## 推荐入口：Issue
 
@@ -68,5 +69,4 @@ FinSAFE / FinShield 的新问题统一在本仓库提交。原 `finogeeks/produc
 
 ## 发布
 
-公开 [GitHub Releases](https://github.com/finogeeks/finsafe/releases) 发布 CLI 包与同步后的文档。
-文档修正会在**下一次**发布（或维护者单独 docs 同步）后出现在 `main`。
+公开 [GitHub Releases](https://github.com/finogeeks/finsafe/releases) 发布产品包。文档在相关上游修改合入 `main` 后自动同步，也支持维护者单独重跑同步。

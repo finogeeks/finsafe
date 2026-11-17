@@ -1,6 +1,6 @@
 # Connect Codex CLI through the command line (Windows)
 
-[简体中文](codex-cli-zh.md) · [Documentation](README.md) · [Compatibility matrix](agent-compatibility-en.md)
+[简体中文](zh-CN/agents/codex.md) · [Documentation](en/README.md) · [Compatibility matrix](en/agents/compatibility.md)
 
 This guide uses Safety Arena's Windows route: start Codex `app-server` through FinShield, then connect from an ordinary terminal. **Codex CLI integration is supported now and requires no plugin.** It does not cover the Codex desktop app, IDE extension, or Agent verification on Linux/macOS.
 
@@ -8,7 +8,7 @@ Arena records Codex `0.166.0`; its wrapping specification uses Windows FinShield
 
 ## Prepare
 
-1. [Install Windows x64 FinShield](getting-started-en.md#windows) and complete preparation and authorization.
+1. [Install Windows x64 FinShield](en/getting-started/install.md#windows) and complete preparation and authorization.
 2. Install and sign in to Codex CLI separately. Confirm it works normally. Its version must support `app-server --listen` and TUI `--remote`.
 3. In the FinShield Console, confirm access to the workspace, Codex executable, and required configuration / state directories. Obtain the actual prepared `effective.yaml` path for that installation. Do not reuse a DSH-plugin-specific configuration as a generic Agent configuration or edit generated `effective.yaml` directly.
 4. If permissions change, regenerate the configuration through the product workflow and complete preparation before starting a new session. FinShield does not set up Codex accounts or model providers.
@@ -65,7 +65,7 @@ flowchart LR
 
 ## Verify and exit
 
-In a new test session, follow the [permission checks](getting-started-en.md#verify-permission-scope) for writable, read-only, and inaccessible directories. Use nonsensitive test files and inspect actual tool results and file contents. A model's verbal refusal or a listening server does not establish protection.
+In a new test session, follow the [permission checks](en/getting-started/install.md#verify-permission-scope) for writable, read-only, and inaccessible directories. Use nonsensitive test files and inspect actual tool results and file contents. A model's verbal refusal or a listening server does not establish protection.
 
 `--integration-id codex` only labels record attribution and does not select permissions. PII inspection also needs matching network and content-inspection configuration; this launch command alone does not establish coverage.
 
@@ -81,4 +81,4 @@ Exit the Codex session in the second terminal, then stop `app-server` in the fir
 | Cannot connect | Read the first terminal's original error and check the listening address, port, and whether the server exited |
 | Model connection or sign-in fails | Check native Codex sign-in, model configuration, and connectivity first, then sandbox permissions and proxy / certificate settings; do not disclose credentials |
 
-Implementation basis: [Arena Codex integration](https://github.com/finogeeks/agent-safety-arena/blob/main/docs/codex-finshield-recording.md). For support, include FinShield / Codex versions, launch route, and redacted errors; see [Get help](getting-started-en.md#get-help).
+Implementation basis: [Arena Codex integration](https://github.com/finogeeks/agent-safety-arena/blob/main/docs/codex-finshield-recording.md). For support, include FinShield / Codex versions, launch route, and redacted errors; see [Get help](en/getting-started/install.md#get-help).

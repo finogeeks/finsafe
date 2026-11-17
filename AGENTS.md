@@ -1,14 +1,16 @@
 # Agent instructions for finogeeks/finsafe
 
+> This file, the homepages and product documents are generated from the private upstream `docs/public/` source. Change that source; contributors without upstream access can file a public issue or suggestion PR for maintainers to port. Templates and skills keep their existing ownership.
+
 This is the public FinSAFE / FinShield release and documentation repository.
 Report product bugs in **finogeeks/finsafe**. Runtime source and fixes belong
 in the private upstream repository; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Report and verify bugs
 
-Read [finsafe-report-bug](skills/finsafe-report-bug/SKILL.md) when reporting a
+Read [finsafe-report-bug](https://github.com/finogeeks/finsafe/blob/main/skills/finsafe-report-bug/SKILL.md) when reporting a
 bug, collecting evidence, checking a duplicate, or verifying a reported fix.
-Use the [bug form](.github/ISSUE_TEMPLATE/bug_report.yml).
+Use the [bug form](https://github.com/finogeeks/finsafe/blob/main/.github/ISSUE_TEMPLATE/bug_report.yml).
 
 - Chat can use Chinese. Write issue titles, descriptions, and comments in English.
   Preserve exact error messages in their original language.
@@ -33,6 +35,9 @@ Use the [bug form](.github/ISSUE_TEMPLATE/bug_report.yml).
 Read files before editing and inspect command results before claiming success.
 Validate changed YAML, local links, skill metadata, and whitespace. Release
 publication owns `docs/` and selected integration/developer-kit subtrees.
-Root instructions, contribution guides, issue templates, and skills are
-maintained here and preserved by publication. Keep existing issue triage
+Homepages, these agent instructions, contribution guides and product documents
+are generated from the private upstream docs/public source and its publication
+manifest. Do not independently edit generated copies here; propose the source
+change upstream, or open a public issue/suggestion for maintainers to port.
+Issue templates and skills retain their existing ownership and automation. Keep existing issue triage
 labels and automation intact.

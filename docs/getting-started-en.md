@@ -1,19 +1,19 @@
 # Get started with FinShield
 
-[简体中文](getting-started-zh.md) · [Documentation](README.md) · [Product home](https://github.com/finogeeks/finsafe) · [Agent Safety Evaluation](https://agent-safety-arena.finogeeks.club/index.html) ([中文](https://agent-safety-arena.finogeeks.club/zh-CN.html))
+[简体中文](zh-CN/getting-started/install.md) · [Documentation](en/README.md) · [Product home](https://github.com/finogeeks/finsafe) · [Agent Safety Evaluation](https://agent-safety-arena.finogeeks.club/index.html) ([中文](https://agent-safety-arena.finogeeks.club/zh-CN.html))
 
 Choose the package for your operating system. Windows offers an install assistant and an offline EXE; macOS and Linux use CLI archives. Download information was checked on 2026-11-03 against [v0.10.1](https://github.com/finogeeks/finsafe/releases/tag/v0.10.1). For later versions, follow the assets and notes in the [latest Release](https://github.com/finogeeks/finsafe/releases/latest).
 
 ## Choose an Agent and integration route
 
-Start with the [compatibility matrix](agent-compatibility-en.md) to confirm the Agent form, platform, and version scope.
+Start with the [compatibility matrix](en/agents/compatibility.md) to confirm the Agent form, platform, and version scope.
 
 | Route | Where to start |
 | --- | --- |
 | Plugin (preferred) | Use the [released DSH Desktop Windows plugin](https://github.com/finogeeks/finsafe/blob/main/integrations/dsh/windows/README.md); follow its guide to install native components and confirm protection status |
-| CLI | [Codex CLI (Windows)](codex-cli-en.md) and [Claude Code CLI (Windows)](claude-cli-en.md) are both supported and require no plugin |
+| CLI | [Codex CLI (Windows)](en/agents/codex.md) and [Claude Code CLI (Windows)](en/agents/claude.md) are both supported and require no plugin |
 | Desktop launcher | The standalone FinShield desktop route for WorkBuddy / DSH is described under Windows below |
-| Other Agents / platforms | Choose the [documented examples and scope](agent-compatibility-en.md); do not apply Windows commands directly |
+| Other Agents / platforms | Choose the [documented examples and scope](en/agents/compatibility.md); do not apply Windows commands directly |
 
 For PII detection / redaction extensions, use the [developer kit](https://github.com/finogeeks/finsafe/blob/main/pii-plugins/README.md). It serves a different purpose from Agent integration plugins.
 
@@ -61,7 +61,7 @@ Add the directory to `PATH` to use `finsafe` directly. Follow that package's hel
 finsafe hermes
 ```
 
-Starting Hermes directly is a different entry. See the [Linux/macOS information security overview](finsafe-linux-macos-overview-en.html#data) for network and privacy-inspection coverage.
+Starting Hermes directly is a different entry. See the [Linux/macOS information security overview](en/overview/linux-macos.html#data) for network and privacy-inspection coverage.
 
 ## Linux
 
