@@ -13,7 +13,7 @@
 | **`finsafe` 行为缺陷** | 私有上游 monorepo | 开 **[GitHub Issue](https://github.com/finogeeks/finsafe/issues/new)**，加 `bug` 标签并附复现步骤 |
 | **发布的产品文档**（`docs/`） | 上游 `docs/public/docs/` | 开 **issue** 说明修改，或在此开 **PR** 作为建议（见下文） |
 | **issue 模板、skills** | 本仓库 | 直接开 **PR** |
-| **安装脚本**（`install.sh`、`install.ps1` 等） | 上游 + 发布同步 | 同文档 — 优先 issue |
+| **安装脚本**（如 `install.sh`） | 上游 + 发布同步 | 同文档 — 优先 issue |
 | **运行时 / Rust 代码** | 不在本仓库 | **仅 issue** — 本镜像无法合并代码 PR |
 
 发布流程将上游批准的产品文档同步到 `docs/`，并分别发布指定的接入与开发套件文件。

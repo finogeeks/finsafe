@@ -15,7 +15,7 @@ prebuilt CLI binaries, install scripts, examples, and end-user documentation. It
 | **Bug in `finsafe` behavior** | Private upstream monorepo | Open a **[GitHub Issue](https://github.com/finogeeks/finsafe/issues/new)** with the `bug` label and reproduction steps |
 | **Published product documentation** (`docs/`) | `docs/public/docs/` upstream | Open an **issue** describing the fix, or a **pull request here** as a suggestion (see below) |
 | **Issue templates and skills** | This repository | Open a **pull request here** |
-| **Install scripts** (`install.sh`, `install.ps1`, …) | Upstream + release sync | Same as documentation — issue preferred |
+| **Install scripts** (such as `install.sh`) | Upstream + release sync | Same as documentation — issue preferred |
 | **Runtime / Rust code** | Not in this repo | **Issues only** — we cannot merge code PRs on this mirror |
 
 Releases publish the approved product documents from upstream into `docs/`,
