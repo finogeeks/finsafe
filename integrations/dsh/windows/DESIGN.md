@@ -8,7 +8,7 @@ restart and upgrade checks.
 Common-code extraction (2026-11-17, owner-approved correction): this plugin
 contains only Node/JavaScript implementation and its page/configuration resources.
 It has no Rust crate, native build command or plugin-specific DLL. The declared
-[public Node SDK](../../../sdk/node/README.md) carries the personal edition's
+[public Node SDK](https://www.npmjs.com/package/@finogeeks2026/finsafe-sdk) carries the personal edition's
 `finsafe_native.dll`. Prepare, Execution and Installer own common native operations;
 AppSeam owns DSH discovery, peer validation and compatibility. The existing
 personal CLI package builds the common C call boundary. Explicit selected
@@ -16,7 +16,7 @@ installation/configuration inputs, singleton rules and lifecycle remain unchange
 SDK publication and installed-product acceptance are recorded separately.
 
 Configuration revision #1094, approved 2026-11-14: use the
-[canonical configuration algorithm](../../../docs/design/dsh-configuration-and-startup-order.md#312-plugin-configuration-changes-1064)
+[canonical configuration algorithm](#appseam-settings)
 for current-file updates, best-effort sibling backups, and field-only cleanup.
 Source and owned-fixture checks implement this revision; installed-product
 acceptance is pending. Configuration application no longer reads separate
@@ -45,19 +45,19 @@ Main to the updater Job; wrapped DSH also launches outside that Job. Updater
 observes the retained Main process handle through an asynchronous exit wait.
 Main exit ends updater; updater exit or startup recovery leaves DSH running.
 The updater Job still owns startup discovery and cleanup of updater and its
-installation work. See the [canonical revision](../../../docs/design/dsh-configuration-and-startup-order.md#approved-lifecycle-revision-source-implemented).
+installation work. See the [canonical revision](#components-and-ownership).
 The shared-Job description below is historical implementation context, not
 the current lifetime contract or acceptance of this revision.
 
-Owner issue [#1029](https://github.com/Geeksfino/finsafe/issues/1029): startup
+Owner issue revision 1029: startup
 enters running with Main retained in updater's Job or a reported Keep admission
 failure. Updater creates and joins its Job before listening.
 Keep completes `apply` before explicitly assigning Main;
 Job admission failure is reported while DSH continues. Wrap retains a replacement
 that inherits the Job at creation.
 Page Restart replaces Main through this updater and retains the Job. Canonical:
-[updater process lifetime](../../../docs/design/dsh-plugin-updater.md#5-updater-process-lifetime)
-and [startup and running periods](../../../docs/design/dsh-configuration-and-startup-order.md).
+[updater process lifetime](#components-and-ownership)
+and [startup and running periods](#activation-and-readiness).
 Source implements startup keep-or-wrap, Main ownership, then running bind and
 the three native-work scenarios. Installed-product acceptance remains separate.
 
@@ -90,7 +90,7 @@ work should first evaluate rerunning the existing full installer.
 All DSH launches use one initialization flow. Launch origin must not select
 behavior. Startup wrap is only for an already-ready ordinary Host, before the
 Job. See
-[startup wrap versus keep](../../../docs/design/dsh-configuration-and-startup-order.md#2-startup-period).
+[startup wrap versus keep](#activation-and-readiness).
 
 FinShield uses FinSAFE AppContainer confinement for the DSH Host and its tools.
 The original Desktop, icon, account and sessions remain in use. Main remains an
@@ -178,10 +178,10 @@ Staging does not authenticate the package source; see the accepted vulnerabiliti
 Scope: one backend activation. Input: current Host and selected instance.
 Output: keep, wrap, Host bind, a running scenario, or an actual error.
 Canonical:
-[startup and running periods](../../../docs/design/dsh-configuration-and-startup-order.md).
+[startup and running periods](#activation-and-readiness).
 
 Activation entry follows the approved
-[#1082 flow](../../../docs/design/dsh-configuration-and-startup-order.md#activation-phase-and-running-restart-confirmation-1082),
+[#1082 flow](#activation-and-readiness),
 including false on readiness-read failure. The update coordinator retains current
 operation completion on the Loader entry across a self-update. Older senders'
 active handoff markers identify an already settled successor. HMR-loaded instances
@@ -248,7 +248,7 @@ Server identity includes the ordinary Node selected by the client's actual DSH
 Host command line and its staged updater entry point. Windows native path
 resolution establishes executable-path equality without content hashing.
 Create the work pipe before wrap launch. Do not wait for bind. Child:
-[Host bind](../../../docs/design/dsh-configuration-and-startup-order.md#31-host-bind).
+[Host bind](#ipc-and-bound-targets).
 
 `hello` and `bind` establish protocol and client context. Fixed bound operations
 are `status`, `ensure`, `restart`, `release` and `uninstall`; unknown operations
@@ -281,14 +281,14 @@ admission; failure does not reject that completed activation. Wrap
 uses the existing AppSeam launch; launcher and replacement Main inherit the Job
 at creation. Retention records the new Main owner without waiting for new Host
 bind or new `apply`. Child:
-[Wrap restart](../../../docs/design/dsh-configuration-and-startup-order.md#23-wrap-restart).
+[Wrap restart](#restart).
 Running-period work is first install, update, or authorization ready. When the
 selected target enters authorization Ready, including reuse for an upgrade,
 updater checks its installation/configuration usability and whether this DSH
 needs a wrapper switch. It retains one Restart/Later decision for that target;
 status polling and reconnect return that decision without business rechecks.
 Child:
-[Page and native work](../../../docs/design/dsh-configuration-and-startup-order.md#32-page-and-native-work).
+[Page and native work](#activation-and-readiness).
 Later keeps this session. The page is DSH UI; it does not own lifetime.
 
 Page Restart records restarting, acknowledges promptly, and directly executes
@@ -313,7 +313,7 @@ the Job. Do not rebuild updater or wrap. Issue #1029 was a missing work-pipe
 listen before launch, not an AppContainer namespace block.
 
 Canonical:
-[startup and running periods](../../../docs/design/dsh-configuration-and-startup-order.md).
+[startup and running periods](#activation-and-readiness).
 
 ```mermaid
 flowchart TD

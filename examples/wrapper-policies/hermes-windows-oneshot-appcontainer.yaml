@@ -7,17 +7,15 @@
 # - Package SID + Job Object + DACL grants on policy roots.
 # - Built-in deny-read (confidential paths) applies unless you set
 #   skip_default_deny_read: true.
-# - Large Python venvs / node_modules: FinSAFE prefers ProjFS projection of
-#   runtime trees (`finsafe setup-windows`; reboot only if probe reports
-#   restart_required). Do NOT list the venv in read_only_paths.
+# - Programs, venvs and Node dependencies keep their original paths.
+# - Before launch, declare the exact runtime and base-interpreter read boundaries
+#   in installed effective YAML and run `finsafe prepare` for that configuration.
+#   The wrapper does not discover extra runtime permissions or repair ACLs.
 #
-# Use this when you need confidential deny-read, network: none / allowlist, or
-# managed-fleet AppContainer posture. For the default Hermes desktop path
-# (host-wide read, write allowlist, no ProjFS), prefer hermes-windows-oneshot.yaml.
+# Use this AppContainer policy for Hermes. `hermes-windows-oneshot.yaml` is the
+# same backend. Explicit `windows.backend: restricted_token` is a retired error.
 #
 # Notes:
-# - Do NOT add the venv (or `.`) to read_only_paths; large trees trip the
-#   inheritable-ACL guard / need ProjFS. Auto-detected runtime grants cover it.
 # - Do NOT set `stdio: { mode: inherit }` for interactive PowerShell use; the
 #   default capture mode replays output after the child exits.
 # - Paths use ${USERPROFILE}; create `./workspace` first.
@@ -41,4 +39,4 @@ filesystem:
   read_only_paths: []
   read_write_paths:
     - "./workspace"
-    - "${USERPROFILE}/.hermes"
+    - '${USERPROFILE}\.hermes'

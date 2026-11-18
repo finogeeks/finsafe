@@ -40,7 +40,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
 $TargetTriple = "x86_64-pc-windows-msvc"
-$FleetBinaryNames = @("finsafe.exe", "finsafe-agent.exe", "finsafe-winhelper.exe")
+$FleetBinaryNames = @("finsafe.exe", "finsafe-agent.exe")
 
 function Write-Info([string] $Message) {
   Write-Host "==> $Message"

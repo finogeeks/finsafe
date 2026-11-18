@@ -233,7 +233,7 @@ The plugin package and native installer are separate inputs. An unpublished
 plugin version also needs its matching native installer and valid download
 metadata/checksum. Record any test download source in the staged artifact;
 do not silently substitute a public version. The local market permits only the
-temporary profile scope setting described below.
+the selected test profile.
 
 ### Market-update acceptance
 
@@ -244,102 +244,17 @@ and subdirectory, and validate the index with DSH's parser. A local index URL
 is only a catalog; it does not make its package or native installer local.
 Check the actual URLs and commits before the user starts acceptance.
 
-The checked-in [local-market tool](../../../scripts/dev/dsh-market.py) preserves
-the earlier local HTTP/npm approach for the two requested lifecycle scenarios.
-An owned profile passed install, update and removal through actual DSH services
-in separate processes. Desktop acceptance remains with the user. This does not
-prove Git delivery. See the [design and evidence](../../../docs/design/dsh-local-market.md).
+For public-package acceptance, use two immutable published versions and the
+DSH Desktop plugin manager. Install version A, verify protection, then update to
+version B and verify the package version, actual protection and removal.
+Record package and native versions separately. A local catalog is not proof of
+Git delivery or of native installation. Keep each installed version's original
+package source and metadata available during the test.
 
-Expose version A first. Accept install/remove, then reinstall A and leave it
-installed. Add version B without changing A's files or source. Use DSH's Update
-action and check the result after restart. Test package removal separately from
-native-runtime uninstall, as described above. Do not publish either version
-to a public service without release authorization.
-
-The tool does not change user or global npm configuration. With designer approval,
-temporarily bind the package scope in the target DSH profile so queries and
-removal retain the local source after restart. Keep the default registry unchanged.
-After removing the registry plugin, restore the original file exactly. Keep the
-original failed step and pnpm output; a source failure alone does not identify a
-FinShield failure.
-
-### Local-market commands
-
-Run these commands from the FinSAFE repository root. Python's standard library
-is sufficient. Use the existing build/package workflow. Each `build.json` records
-`version`, `sourceCommit`, absolute `plugin`, `installer` and `sdk` archive paths,
-`pluginSha256`, `installerSha256` and `sdkSha256`. The SDK archive contains the
-common product DLL; the plugin archive declares the SDK dependency and has no native binary. The staged package's
-`install/download-source.json` must point to `http://127.0.0.1:18771`.
-`prepare` validates the inputs and imports immutable copies; it does not edit the
-source archives. Both versions use the same native download base. The local registry also serves
-the separate public Node SDK dependency, including its personal-edition DLL.
-
-```powershell
-python scripts/dev/dsh-market.py prepare C:/work/artifacts/A/build.json
-python scripts/dev/dsh-market.py prepare C:/work/artifacts/B/build.json
-python scripts/dev/dsh-market.py expose 0.10.55
-python scripts/dev/dsh-market.py configure-profile "$env:USERPROFILE/.dsh/profiles/desktop"
-python scripts/dev/dsh-market.py serve
-```
-
-The example uses A=0.10.55 and B=0.10.56. Use the versions in your actual builds.
-Data defaults to the Git-ignored `dist/dsh-market/acceptance/`. To isolate a run,
-put `--root <directory>` before the subcommand and use that root for all commands.
-A port conflict fails; the tool does not select a different port. Keep `serve`
-running and stop it with Ctrl+C. In another terminal, run:
-
-```powershell
-python scripts/dev/dsh-market.py check
-```
-
-This downloads and verifies plugin/native artifacts. It proves HTTP consistency
-only. Requests are logged in `requests.jsonl`; record the acceptance start time
-to distinguish self-check traffic from user downloads. In DSH, add the index
-`http://127.0.0.1:18771/index.json`. If the current installation uses `file:`,
-remove it through DSH, then install A from this market. Do not edit its source
-record to create an update baseline. The user performs installation, authorization,
-restart, normal use and removal. Check logs and actual Host protection, then
-install A again from the same source. When ready to test updating, run:
-
-```powershell
-python scripts/dev/dsh-market.py expose 0.10.56
-```
-
-Refresh the market in DSH, use the existing Update action, restart and check
-the actual version and protection. If native B is already present, record that
-this run did not cover its download and installation. After acceptance, remove
-the local registry plugin through DSH before restoring:
-
-```powershell
-python scripts/dev/dsh-market.py restore-profile "$env:USERPROFILE/.dsh/profiles/desktop"
-```
-
-Original `.npmrc` bytes or absence are saved under `profile-bindings/` in the
-data directory. This can contain local credentials; do not commit or share it.
-Repeated configuration/restoration is idempotent. If another operation changed
-the file, restoration fails and retains the backup instead of overwriting it.
-Keep the data directory until restoration succeeds. Server shutdown does not
-restore configuration. Then remove the local index through DSH and stop the
-server. No global npm settings or system certificates need changes.
-
-For tool maintenance, run `verify.py --lane dsh-local-market --lane dsh-local-market-runtime`,
-first with `--dry-run`. The latter uses an owned temporary profile and actual
-installed DSH services. It checks naturally generated dependency metadata and
-source continuity; it does not operate the current Desktop or run native setup.
-
-Start each independent configuration scenario with ordinary pnpm-generated
-`node_modules/.modules.yaml` and the intended baseline configuration. Do not
-edit that metadata to match the protected environment. Keep generated metadata
-through a single install/update/remove scenario so the test exercises continuity.
-
-Research reviewed on 2026-11-14 at upstream commit `39163dd30f703a79079e2d2446545cff3c453738`:
-[module tutorial](https://github.com/deepseek-ai/deepseek-harness/blob/39163dd30f703a79079e2d2446545cff3c453738/docs/user/develop/basic/index.md),
-[package tutorial](https://github.com/deepseek-ai/deepseek-harness/blob/39163dd30f703a79079e2d2446545cff3c453738/docs/user/develop/basic/publish.md),
-[Desktop development](https://github.com/deepseek-ai/deepseek-harness/blob/39163dd30f703a79079e2d2446545cff3c453738/apps/desktop/README.md#develop),
-and [plugin-manager source/update rules](https://github.com/deepseek-ai/deepseek-harness/blob/39163dd30f703a79079e2d2446545cff3c453738/packages/boot/plugin-manager/README.md).
-These are development procedures, not evidence that a FinShield Desktop
-acceptance run has passed. Recheck support against the DSH build under test.
+The internal local-market harness is not part of this public package. Its
+commands and private design references are intentionally omitted here. The
+public installation, update and removal procedures are in this guide and the
+[README](README.md). Desktop acceptance still requires an actual user run.
 
 ## Build, publication and verification
 

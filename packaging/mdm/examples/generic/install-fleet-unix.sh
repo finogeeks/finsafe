@@ -45,8 +45,46 @@ fi
 
 OS="$(uname -s)"
 INSTALL_BIN="/usr/local/bin"
+case "$OS" in
+  Linux) PLUGIN_HOME="/root" ;;
+  Darwin) PLUGIN_HOME="/var/root" ;;
+  *) die "unsupported OS: $OS" ;;
+esac
+TIER_PROFILE=tier1-only
 
 install_binaries() {
+  local capability="$SOURCE_DIR/artifact-capability.json"
+  local detector_source="$SOURCE_DIR/plugins/finsafe-pii-detector/plugin"
+  local models_source="$SOURCE_DIR/plugins/finsafe-pii-detector/pii-models"
+  if [[ -f "$capability" ]]; then
+    command -v python3 >/dev/null 2>&1 || die "python3 is required to read fleet capability metadata"
+    TIER_PROFILE="$(python3 - "$capability" <<'PY'
+import json, sys
+with open(sys.argv[1], encoding="utf-8") as source:
+    data = json.load(source)
+if data.get("schema_version") != 1 or data.get("kind") != "fleet":
+    raise SystemExit("invalid fleet artifact capability metadata")
+profile = data.get("profile")
+if profile not in ("tier1-only", "tier2-required"):
+    raise SystemExit("unknown fleet artifact capability profile")
+if profile == "tier2-required":
+    if data.get("detector_bundle_id") != "finsafe.pii-detector":
+        raise SystemExit("Tier-2 fleet artifact has an unexpected bundle identity")
+elif data.get("detector_bundle_id") is not None:
+    raise SystemExit("Tier-1-only fleet artifact must not declare a detector bundle")
+print(profile)
+PY
+    )" || die "could not read fleet capability metadata"
+  fi
+  if [[ "$TIER_PROFILE" == "tier2-required" ]]; then
+    [[ "$OS" != "Windows_NT" ]] || die "Tier-2 detector installation is unsupported on Windows"
+    [[ -f "$detector_source" && -x "$detector_source" && ! -L "$detector_source" ]] \
+      || die "Tier-2 fleet detector executable is missing or unsafe"
+    [[ -d "$models_source" && ! -L "$models_source" ]] \
+      || die "Tier-2 fleet model bundle is missing or unsafe"
+    "$detector_source" --verify-bundle "$models_source" \
+      || die "Tier-2 fleet detector bundle verification failed"
+  fi
   local name
   for name in finsafe finsafe-agent finsafe-helper finsafe-supervisor finsafe-landlock-shim; do
   if [[ -f "$SOURCE_DIR/$name" ]]; then
@@ -56,6 +94,48 @@ install_binaries() {
   done
   [[ -f "$INSTALL_BIN/finsafe" ]] || die "missing finsafe in fleet archive"
   [[ -f "$INSTALL_BIN/finsafe-agent" ]] || die "missing finsafe-agent in fleet archive"
+  if [[ -f "$capability" ]]; then
+    install -m 644 "$capability" "$INSTALL_BIN/artifact-capability.json"
+    info "installed $INSTALL_BIN/artifact-capability.json"
+  fi
+  if [[ "$TIER_PROFILE" == "tier2-required" ]]; then
+    local plugin_root="$PLUGIN_HOME/.finsafe/plugins"
+    local plugin_stage="$plugin_root/.finsafe-pii-detector.stage.$$"
+    local plugin_dest="$plugin_root/finsafe-pii-detector"
+    local plugin_backup="$plugin_root/.finsafe-pii-detector.backup.$$"
+    [[ ! -L "$PLUGIN_HOME/.finsafe" && ! -L "$plugin_root" ]] \
+      || die "refusing symlinked ~/.finsafe plugin root"
+    mkdir -p "$plugin_root"
+    [[ ! -e "$plugin_stage" && ! -L "$plugin_stage" ]] \
+      || die "detector staging path already exists"
+    [[ ! -e "$plugin_backup" && ! -L "$plugin_backup" ]] \
+      || die "detector backup path already exists"
+    mkdir -m 700 "$plugin_stage"
+    install -m 755 "$detector_source" "$plugin_stage/plugin"
+    for name in \
+      ner/config.json ner/model.onnx ner/model.onnx.jws ner/tokenizer.json \
+      ocr/det.onnx ocr/det.onnx.jws ocr/dict.txt ocr/rec.onnx ocr/rec.onnx.jws \
+      bundle.jws
+    do
+      [[ -f "$models_source/$name" && ! -L "$models_source/$name" ]] \
+        || die "Tier-2 model file is missing or unsafe: $name"
+      mkdir -p "$plugin_stage/pii-models/$(dirname "$name")"
+      install -m 644 "$models_source/$name" "$plugin_stage/pii-models/$name"
+    done
+    "$plugin_stage/plugin" --verify-bundle "$plugin_stage/pii-models" \
+      || die "staged Tier-2 fleet bundle verification failed"
+    if [[ -e "$plugin_dest" || -L "$plugin_dest" ]]; then
+      mv "$plugin_dest" "$plugin_backup" || die "could not preserve prior detector plugin"
+    fi
+    if mv "$plugin_stage" "$plugin_dest"; then
+      rm -rf "$plugin_backup"
+    else
+      [[ ! -e "$plugin_backup" && ! -L "$plugin_backup" ]] \
+        || mv "$plugin_backup" "$plugin_dest"
+      die "could not promote verified detector plugin"
+    fi
+    info "installed verified detector plugin: $plugin_dest"
+  fi
 }
 
 deploy_sentinel() {

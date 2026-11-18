@@ -46,7 +46,7 @@ $binaryDir = $SourceDir
 if ([string]::IsNullOrWhiteSpace($binaryDir)) {
   $binaryDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 }
-foreach ($name in @("finsafe.exe", "finsafe-agent.exe", "finsafe-winhelper.exe")) {
+foreach ($name in @("finsafe.exe", "finsafe-agent.exe")) {
   $source = Join-Path $binaryDir $name
   if (-not (Test-Path -LiteralPath $source)) {
     throw "Missing $name under $binaryDir. Extract finsafe-fleet-v* or pass -SourceDir."
@@ -83,15 +83,6 @@ New-ItemProperty `
 
 sc.exe failure $serviceName reset= 86400 actions= restart/60000/restart/60000/""/60000 | Out-Null
 sc.exe start $serviceName | Out-Null
-
-$finsafeExe = Join-Path $InstallDir "finsafe.exe"
-if (Test-Path -LiteralPath $finsafeExe) {
-  Write-Host "FinSAFE: running one-time Windows sandbox setup (finsafe-winhelper service)..."
-  & $finsafeExe setup-windows --no-elevate
-  if ($LASTEXITCODE -ne 0) {
-    throw "finsafe setup-windows failed (exit $LASTEXITCODE)"
-  }
-}
 
 Write-Host "FinSAFE Windows agent service installed. Remove FINSAFE_ENROLL_TOKEN after enrolled.json appears."
 

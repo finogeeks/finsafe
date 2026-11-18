@@ -1,28 +1,15 @@
-# Windows: wrap one-shot Hermes under RestrictedToken (default desktop path).
+# Windows: wrap one-shot Hermes under AppContainer.
 # From a PowerShell prompt in your project directory:
 #   mkdir workspace 2>$null
 #   finsafe --policy examples/wrapper-policies/hermes-windows-oneshot.yaml run hermes --version
 #   finsafe --policy examples/wrapper-policies/hermes-windows-oneshot.yaml run hermes chat -q "Reply with exactly: ok" -Q --source tool
 #
-# Backend: WRITE_RESTRICTED RestrictedToken (Codex-aligned weaker posture)
-# - Host-wide read (Hermes can read its venv / site-packages without recursive
-#   AppContainer DACL labeling or ProjFS projection).
-# - `msys2_child_ipc: true` so Hermes tools can spawn Git-for-Windows bash as
-#   children (public #34). That puts the operator SID in WRITE_RESTRICTED
-#   restricting SIDs: NTFS write allowlisting does **not** apply to user-owned
-#   objects for this session. Omit the flag (or set false) to keep capability-ACE
-#   write allowlisting; child git-bash will then fail Cygwin init (Win32 5).
-# - Built-in confidential deny-read is skipped for this path (host-wide read).
-# - No AppContainer LowBox profile; attestation reports windows_restricted_token
-#   and degraded_execution=true.
-#
-# Prefer this for typical Hermes / network:host agents. For stronger AppContainer
-# isolation (deny-read, WFP fencing on none/allowlist), see
-# hermes-windows-oneshot-appcontainer.yaml.
+# Backend: AppContainer / LowBox
+# - Package SID + Job Object + DACL grants from completed `finsafe prepare`.
+# - Filesystem access comes only from the selected effective YAML.
+# - Explicit `windows.backend: restricted_token` is a retired-backend error.
 #
 # Notes:
-# - Do NOT add the venv (or `.`) to read_only_paths — unnecessary on RestrictedToken
-#   and harmful on AppContainer (large-tree ACL guard).
 # - Do NOT set `stdio: { mode: inherit }` for interactive PowerShell use; the
 #   default capture mode replays output after the child exits.
 # - Paths use ${USERPROFILE}; FinSAFE expands them when the policy loads, and
@@ -43,13 +30,9 @@ resources:
   cpu_max: "100000 100000"
   timeout_ms: 120000
 windows:
-  backend: restricted_token
-  # Child git-bash / Cygwin IPC (Hermes tools). Weakens RT write allowlisting.
-  msys2_child_ipc: true
+  backend: appcontainer
 filesystem:
-  # Explicit opt-out documents the weaker path; Auto+host also skips builtins.
-  skip_default_deny_read: true
   read_only_paths: []
   read_write_paths:
     - "./workspace"
-    - "${USERPROFILE}/.hermes"
+    - '${USERPROFILE}\.hermes'

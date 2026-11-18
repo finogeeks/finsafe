@@ -190,7 +190,7 @@ npm pack --ignore-scripts --pack-destination C:/work/artifacts
 
 插件包与原生安装器是两项输入。未公开发布的插件版本，也需要对应版本的原生
 安装器、有效下载元数据和校验值。测试下载源应记录在暂存产物中，不得静默
-替换成公开版本。本地市场仅允许下述目标 profile 的临时 scope 配置。
+替换成公开版本。测试来源须限定在预先选定的测试 profile 中。
 
 ### 市场更新验收
 
@@ -199,85 +199,13 @@ FinShield 发布流程使用 DSH 索引中的 Git 提交和包子目录。验收
 并通过 DSH 的索引解析器验证。本地索引 URL 只是目录，不代表插件包和原生安装器
 也来自本地。用户开始验收前，先核对实际地址和提交。
 
-仓库中的[本地市场工具](../../../scripts/dev/dsh-market.py)保留此前的本地 HTTP/npm
-方式，只覆盖这次要求的两条生命周期流程。独立 profile 已通过实际 DSH 服务的
-安装、重启后更新及卸载；真实 Desktop 操作待用户验收。这项验收不证明正式 Git 传输通过。
-边界和证据见[设计](../../../docs/design/dsh-local-market.md)。
+公开插件包验收使用两个来源固定的已发布版本，通过 DSH 桌面版插件管理器操作。
+先安装版本 A 并确认实际保护，再更新到版本 B，核对插件版本、防护状态和移除结果。
+分别记录插件与原生组件版本。一个本地索引不证明 Git 传输或原生安装已经通过；
+测试期间应保留每个已安装版本的原始包来源与元数据。
 
-先只展示版本 A。安装、移除验收通过后，重新安装 A 并保留。再增加版本 B，
-不修改 A 的文件或来源。通过 DSH 更新按钮操作，重启后核对结果。
-插件包移除和原生运行时卸载按上节说明分别验收。
-没有发布授权时，不向公共服务发布这两个版本。
-
-本工具不改用户级或全局 npm 配置。经设计者批准，可以临时增加目标 DSH profile
-的 scope registry，使重启后的查询和移除仍使用本地来源；不改变默认 registry。
-测试结束且 registry 插件已移除后，精确恢复原文件。保留原始失败步骤和 pnpm 输出，
-不能仅凭来源失败就认定是 FinShield 的故障。
-
-### 本地市场命令
-
-以下命令从 FinSAFE 仓库根目录执行。Python 标准库即可；无需安装 registry 服务。
-构建产物沿用现有打包流程。`build.json` 记录 `version`、`sourceCommit`、`plugin`、
-`installer`、`sdk`、`pluginSha256`、`installerSha256` 和 `sdkSha256`；文件路径为绝对路径。
-SDK 单独打包，本地 registry 同时提供该依赖。暂存插件包中的 `install/download-source.json` 必须指向 `http://127.0.0.1:18771`。
-`prepare` 检查这些输入并导入不可变副本，不修改源包。两个版本使用相同下载根地址。
-
-```powershell
-python scripts/dev/dsh-market.py prepare C:/work/artifacts/A/build.json
-python scripts/dev/dsh-market.py prepare C:/work/artifacts/B/build.json
-python scripts/dev/dsh-market.py expose 0.10.55
-python scripts/dev/dsh-market.py configure-profile "$env:USERPROFILE/.dsh/profiles/desktop"
-python scripts/dev/dsh-market.py serve
-```
-
-示例 A 为 0.10.55、B 为 0.10.56；按实际产物版本执行。默认数据目录为
-`dist/dsh-market/acceptance/`，受 Git 忽略。需要隔离目录时，在子命令前使用 `--root`；
-同一轮所有命令必须使用同一目录。端口占用直接报错，不自动换端口。
-`serve` 保持运行；Ctrl+C 停止。另一个终端执行：
-
-```powershell
-python scripts/dev/dsh-market.py check
-```
-
-该检查下载并校验插件和原生安装器，只证明 HTTP 接口与产物一致。自检请求记录在
-`requests.jsonl` 中；开始用户验收前记录时间，区分之后的真实下载。
-在 DSH 的索引源界面添加 `http://127.0.0.1:18771/index.json`。
-若已安装的是 `file:` 包，先通过 DSH 移除，再从此市场安装 A，不能修改依赖来源冒充更新基线。
-用户自行操作安装、授权、重启、使用和卸载。检查日志及 Host 防护后，再从同源安装 A。
-准备验收更新时，执行：
-
-```powershell
-python scripts/dev/dsh-market.py expose 0.10.56
-```
-
-在 DSH 刷新市场，通过现有更新按钮更新，重启并核对实际版本和防护。
-若当前已有 B 的原生组件，本轮不能算覆盖了 B 的下载与安装，须如实记录。
-验收结束后，先通过 DSH 移除本地 registry 插件，再恢复：
-
-```powershell
-python scripts/dev/dsh-market.py restore-profile "$env:USERPROFILE/.dsh/profiles/desktop"
-```
-
-原始 `.npmrc` 字节或不存在状态保存于数据目录的 `profile-bindings/`，可能含本机凭据，
-不得提交或分享该目录。重复配置/恢复不改变结果。若期间有其他修改，恢复报错并保留备份，
-不覆盖新内容。不要提前删除数据目录；停止服务器也不会自动恢复配置。
-随后通过 DSH 删除本地索引源，停止服务器。不需要修改全局 npm 配置或系统证书。
-
-维护工具时运行 `verify.py --lane dsh-local-market --lane dsh-local-market-runtime`，
-先加 `--dry-run` 阅读计划。后者使用独立临时 profile 和实际已安装 DSH 服务，
-验证自然生成的依赖元数据及来源连续性，不操作当前 Desktop 或运行原生安装。
-
-每个独立的配置场景从普通 pnpm 生成的 `node_modules/.modules.yaml` 和预定配置
-基线开始，不手工修改该元数据来匹配受保护环境。一次安装、更新、移除场景内部
-保留自然生成的元数据，才能验证流程连续性。
-
-调研日期：2026-11-14；上游提交：`39163dd30f703a79079e2d2446545cff3c453738`。
-依据为官方[模块教程](https://github.com/deepseek-ai/deepseek-harness/blob/39163dd30f703a79079e2d2446545cff3c453738/docs/user/develop/basic/index.md)、
-[打包教程](https://github.com/deepseek-ai/deepseek-harness/blob/39163dd30f703a79079e2d2446545cff3c453738/docs/user/develop/basic/publish.md)、
-[Desktop 开发说明](https://github.com/deepseek-ai/deepseek-harness/blob/39163dd30f703a79079e2d2446545cff3c453738/apps/desktop/README.md#develop)及
-[插件管理器来源与更新规则](https://github.com/deepseek-ai/deepseek-harness/blob/39163dd30f703a79079e2d2446545cff3c453738/packages/boot/plugin-manager/README.md)。
-以上是开发方法，不是 FinShield Desktop 已通过验收的证据。使用时须核对待测 DSH
-版本是否支持对应入口。
+内部本地市场验收工具不随公开插件包交付，这里不再列出其命令和内部设计链接。
+公开安装、更新与卸载步骤见本指南及 [README](README-zh.md)。真实桌面验收仍需实际运行。
 
 ## 构建、发布与验证
 

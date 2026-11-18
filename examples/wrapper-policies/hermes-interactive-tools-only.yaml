@@ -25,10 +25,9 @@ resources:
   pids_max: "256"
   cpu_max: "100000 100000"
 windows:
-  backend: restricted_token
+  backend: appcontainer
 filesystem:
-  skip_default_deny_read: true
   read_only_paths: []
   read_write_paths:
     - "./workspace"
-    - "${USERPROFILE}/.hermes"
+    - '${USERPROFILE}\.hermes'
