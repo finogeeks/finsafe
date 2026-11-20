@@ -355,7 +355,7 @@ if [ ! -d "$inner_dir" ] && [ "$archive_name" != "$legacy_archive" ]; then
   for candidate in finsafe-v*-"$TRIPLE"; do
     [ -d "$candidate" ] && [ ! -L "$candidate" ] || continue
     artifact_version=${candidate#finsafe-v}
-    artifact_version=${artifact_version%-$TRIPLE}
+    artifact_version=${artifact_version%-"$TRIPLE"}
     printf '%s\n' "$artifact_version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' || continue
     [ -z "$inner_dir" ] || die "multiple Unix payload directories after extract"
     inner_dir="$candidate"
