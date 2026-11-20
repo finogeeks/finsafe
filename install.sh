@@ -348,6 +348,20 @@ else
   die "could not find zstd, and this tar does not support --zstd. Install zstd (e.g. brew install zstd / apt install zstd) and retry."
 fi
 
+# A Windows-only release can carry an older, checksum-verified Unix archive.
+if [ ! -d "$inner_dir" ] && [ "$archive_name" != "$legacy_archive" ]; then
+  expected_dir="$inner_dir"
+  inner_dir=""
+  for candidate in finsafe-v*-"$TRIPLE"; do
+    [ -d "$candidate" ] && [ ! -L "$candidate" ] || continue
+    artifact_version=${candidate#finsafe-v}
+    artifact_version=${artifact_version%-$TRIPLE}
+    printf '%s\n' "$artifact_version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' || continue
+    [ -z "$inner_dir" ] || die "multiple Unix payload directories after extract"
+    inner_dir="$candidate"
+  done
+  [ -n "$inner_dir" ] || die "expected directory missing after extract: $expected_dir"
+fi
 [ -d "$inner_dir" ] || die "expected directory missing after extract: $inner_dir"
 [ -f "$inner_dir/finsafe" ] || die "expected binary missing: $inner_dir/finsafe"
 
