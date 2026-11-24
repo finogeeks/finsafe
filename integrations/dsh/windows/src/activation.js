@@ -1,3 +1,4 @@
+import {createActivation as createCommonActivation} from '../updater/common/activation.js';
 // DSH lifetime and UI observation only. All native tasks belong to the updater.
 import {operationCompletion} from './self-update.js';
 export function activationLifecycle(ctx) {
@@ -22,78 +23,32 @@ export function registerSettingsRestoration(ctx,restore,report) {
   });
 }
 
-export function createActivation({observe,obtain,existing,running=false,restartAllowed=()=>true,report=()=>{}}) {
-  let bindFailed=false;
-  let active=true,state={phase:'starting'},connection,client,binding,currentProtected=false;
-  const failure=error=>{if(active){state={phase:'failed',currentProtected,error:error.message};report(error);}};
-  const bind=value=>{
-    connection=value;
-    binding=(async()=>{
-      client=(await connection.request('bind',{context:connection.context})).client;
-      return connection;
-    })();
-    return binding;
-  };
-  async function run() {
-    if(!active||!connection) return;
-    // This runs in the next turn, after the plugin's apply has completed.
-    if(connection.period==='keep')await connection.request('keep',{context:connection.context});
-    if(!active)return;
-    try {await bind(connection);}catch(error){bindFailed=true;throw error;}
-    if(!active) return;
-    await connection.request('ensure',{client});
-  }
-  return {
-    start() {
-      const startup=(async()=>{
-        if(!active) return;
-        const token=observe();
-        currentProtected=token.appContainer===true;
-        const selected=await (currentProtected?existing():obtain({startup:!running}));
-        if(!active) return;
-        connection=selected;
-        if(!running&&!currentProtected&&!connection.admitted&&!connection.runningPeriod)
-          {const decision=await connection.request('admit',{context:connection.context});connection.period=decision.period;connection.startupError=decision.error;}
-        // A timely admission response releases startup cleanup ownership. Only
-        // this old plugin apply remains unfinished while updater performs wrap.
-        if(connection.startupError){state={phase:'starting',error:connection.startupError};report(Error(connection.startupError));}
-        if(connection.period==='wrap')await new Promise(()=>{});
-      })().catch(failure);
-      startup.then(()=>{setImmediate(()=>void run().catch(failure));},failure);
-      return startup;
-    },
-    async status() {
-      if(!connection||!client||state.phase==='failed') return {...state,currentProtected};
-      try {const observed=await connection.request('status',{client});return state.phase==='failed'?state:
-        {...observed,currentProtected,...(running?{restartAllowed:restartAllowed()}: {})};}
-      catch(error){failure(error);return state;}
-    },
-    async restart() {
-      if(!active||!connection||!client) throw Error('Updater client is unavailable');
-      if(running&&!restartAllowed())throw Error('DSH plugin operation has not settled');
+export function createActivation(options) {
+  // Use the common request-error policy used by OpenCode. These diagnostics
+  // describe calls, never authorization state, and cannot close observation.
+  let startupError,commandError;
+  const connect=acquire=>acquire&&(async(...args)=>{
+    const connection=await acquire(...args);
+    startupError=connection.startupError;
+    return {...connection,async request(operation,...fields) {
+      const command=!['admit','hello','bind','status','release'].includes(operation);
       try {
-        const result=await connection.request('restart',{client});
+        const result=await connection.request(operation,...fields);
+        if(operation==='admit')startupError=result.error;
+        if(command)commandError=undefined;
         return result;
-      } catch(error){failure(error);throw error;}
-    },
-    async later() {
-      if(!active||!connection||!client)throw Error('Updater client is unavailable');
-      return connection.request('later',{client});
-    },
-    async restore() {
-      if(binding)await binding;
-      if(!connection||!client)throw Error('Updater client is unavailable');
-      return connection.request('restore',{client});
-    },
-    async dispose() {
-      active=false;
-      try {
-        if(bindFailed)return;
-        if(binding) await binding;
-        else if(connection) await bind(connection);
-        else await bind(await existing());
-        if(client) await connection.request('release',{client});
-      } catch(error) {report(Error(`FinShield cleanup failed; the sandbox override may remain: ${error.message}`));throw error;}
-    },
-  };
+      } catch(error) {
+        if(operation==='admit')startupError=error.message;
+        if(command)commandError=error.message;
+        throw error;
+      }
+    }};
+  });
+  const activation=createCommonActivation({...options,application:'DSH',propagateRequestErrors:true,
+    obtain:connect(options.obtain),existing:connect(options.existing)});
+  return {...activation,async status() {
+    const observed=await activation.status();
+    const error=[...new Set([observed.error,startupError,commandError].filter(Boolean))].join('; ');
+    return {...observed,...(error?{error}:{})};
+  }};
 }

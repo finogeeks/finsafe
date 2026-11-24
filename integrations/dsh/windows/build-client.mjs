@@ -1,6 +1,11 @@
 import {readFileSync,writeFileSync,existsSync} from 'node:fs';
 import {createRequire} from 'node:module';
 import {remoteContract} from './src/contract.js';
+const commonBuild=new URL('../../common/windows/build.mjs',import.meta.url);
+if(existsSync(commonBuild)){
+  const {stageUpdaterCommon}=await import(commonBuild.href);
+  await stageUpdaterCommon(new URL('./',import.meta.url));
+}else await import('./updater/common/index.js');
 const require=createRequire(import.meta.url),{feedbackUrl}=require('./client/feedback.cjs');
 const version=JSON.parse(readFileSync(new URL('./package.json',import.meta.url),'utf8')).version;
 const source=readFileSync(new URL('./client/page.cjs',import.meta.url),'utf8');

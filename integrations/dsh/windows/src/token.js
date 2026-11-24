@@ -1,10 +1,8 @@
-import { createRequire } from 'node:module';
-import { join } from 'node:path';
+import {loadKoffi} from '../updater/native.js';
 
 /** Native known folders in the current user context; resolved values cross the handoff explicitly. */
-export function readKnownFolders(runtimeRoot) {
-  const require=createRequire(join(runtimeRoot,'node_modules','@deepseek-ai','dsh','package.json'));
-  const koffi=require('koffi');
+export function readKnownFolders() {
+  const koffi=loadKoffi();
   const ole=koffi.load('ole32.dll'),shell=koffi.load('shell32.dll');
   const guid=ole.func('int32_t __stdcall CLSIDFromString(str16 text, void* value)');
   const folder=shell.func('int32_t __stdcall SHGetKnownFolderPath(void* id, uint32_t flags, void* token, void* path)');
@@ -23,9 +21,8 @@ export function readKnownFolders(runtimeRoot) {
   return result;
 }
 
-export function readCurrentUserSid(runtimeRoot) {
-  const require = createRequire(join(runtimeRoot, 'node_modules', '@deepseek-ai', 'dsh', 'package.json'));
-  const koffi = require('koffi');
+export function readCurrentUserSid() {
+  const koffi = loadKoffi();
   const kernel = koffi.load('kernel32.dll'), security = koffi.load('advapi32.dll');
   const current = kernel.func('void* __stdcall GetCurrentProcess()');
   const close = kernel.func('int __stdcall CloseHandle(void* handle)');
@@ -48,10 +45,9 @@ export function readCurrentUserSid(runtimeRoot) {
   } finally { if (text) free(text); close(token); }
 }
 
-/** Read the current native token using the Koffi already carried by installed DSH. */
+/** Read the current native token using the SDK-owned Koffi. */
 export function readCurrentToken(runtimeRoot, expectedSid) {
-  const require = createRequire(join(runtimeRoot, 'node_modules', '@deepseek-ai', 'dsh', 'package.json'));
-  const koffi = require('koffi');
+  const koffi = loadKoffi();
   const kernel = koffi.load('kernel32.dll');
   const security = koffi.load('advapi32.dll');
   const current = kernel.func('void* __stdcall GetCurrentProcess()');

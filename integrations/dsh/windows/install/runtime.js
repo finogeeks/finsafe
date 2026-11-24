@@ -1,9 +1,7 @@
 import {createHash,randomUUID} from 'node:crypto';
-import {existsSync,mkdirSync,mkdtempSync,readFileSync,writeFileSync} from 'node:fs';
+import {mkdirSync,mkdtempSync,readFileSync,writeFileSync} from 'node:fs';
 import {join} from 'node:path';
-import {execFile} from 'node:child_process';
-import {fileURLToPath,pathToFileURL} from 'node:url';
-import {parseArgs} from 'node:util';
+import {fileURLToPath} from 'node:url';
 import {nativeAdapter} from '../updater/native.js';
 
 export const runtimeFiles=['finsafe.exe','finsafe-desktop.exe','finsafe-service.exe','finsafe-installer-actions.exe',
@@ -74,12 +72,11 @@ export async function stageRuntime(destination,version,options={}) {
 export async function installRuntime(destination,version,options={}) {
   if(options.confined)throw Error('Protected Host cannot install native FinSAFE');
   const staged=options.staged??await stageRuntime(destination,version,options);
-  if(staged.version!==version)throw Error('Staged release differs from requested native target');
   const packagePath=staged.package;
   const operationId=randomUUID();
   const request={version,package:packagePath,operation_id:operationId,
-    installation:options.installation || join(process.env.ProgramFiles,'FinSAFE','dsh-plugin'),
-    configuration:options.configuration || join(process.env.ProgramData,'FinSAFE','dsh-plugin','config'),
+    installation:options.installation,
+    configuration:options.configuration,
     previousInstallation:options.previousInstallation,
     candidate:options.candidate || fileURLToPath(new URL('../policy/candidate.yaml',import.meta.url)),
     integration_outputs:false,self_update_enabled:false};
@@ -98,13 +95,6 @@ export async function installRuntime(destination,version,options={}) {
     resultPath:result.resultPath,retainedWorker:result.retainedWorker,rebootRequired:result.code!==0};
 }
 
-export function runProcess(executable,args,options={}) {
-  return new Promise((resolve,reject)=>execFile(executable,args,{...options,windowsHide:true,maxBuffer:1024*1024},(error,stdout,stderr)=>{
-    if(error && typeof error.code!=='number') return reject(error);
-    resolve({code:error?.code || 0,stdout,stderr});
-  }));
-}
-
 export async function executeSetup(request,{invoke}={}) {
   if(request.self_update_enabled!==false) throw new Error('Plugin setup must disable FinSAFE self-update');
   const call=invoke??nativeAdapter(fileURLToPath(new URL('../',import.meta.url)));
@@ -113,26 +103,12 @@ export async function executeSetup(request,{invoke}={}) {
 
 /** Native setup owns terminal outcomes. Reading one result does not retry setup or authorize. */
 export function observeSetupResult(state,path) {
-  if(!path || !existsSync(path)) return state;
-  const result=JSON.parse(readFileSync(path,'utf8'));
+  if(!path) return state;
+  let result;
+  try {result=JSON.parse(readFileSync(path,'utf8'));}
+  catch(error){if(error.code==='ENOENT')return state;throw error;}
   if(!Number.isInteger(result.code) || !['completed','cancelled','failed','reboot-required'].includes(result.phase)) {
     throw new Error('Invalid native setup result');
   }
   return {...state,...(state.phase==='installing'?{phase:result.phase,error:result.detail || undefined}:{}),nativeSetup:result};
-}
-
-export function parseRuntimeArguments(args) {
-  const {values}=parseArgs({args,options:Object.fromEntries(
-    ['downloads','installation','configuration','pwsh','local-app-data'].map(name=>[name,{type:'string'}]))});
-  for(const name of ['downloads','installation','configuration']) {
-    if(!values[name]) throw new Error(`Missing --${name}`);
-  }
-  return {destination:values.downloads,options:{installation:values.installation,
-    configuration:values.configuration,pwsh:values.pwsh,localAppData:values['local-app-data']}};
-}
-
-if(process.argv[1] && import.meta.url===pathToFileURL(process.argv[1]).href) {
-  const version=JSON.parse(readFileSync(new URL('../package.json',import.meta.url),'utf8')).version;
-  const {destination,options}=parseRuntimeArguments(process.argv.slice(2));
-  process.stdout.write(JSON.stringify(await installRuntime(destination,version,options)));
 }

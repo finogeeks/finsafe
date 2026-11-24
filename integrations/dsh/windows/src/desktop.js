@@ -1,7 +1,6 @@
 import {createRequire} from 'node:module';
-import {isAbsolute,join} from 'node:path';
+import {join} from 'node:path';
 import {pathToFileURL} from 'node:url';
-import Schema from '@deepseek-ai/schemastery';
 import {readCurrentToken} from './token.js';
 import {registerStatus,readFeedbackEnvironment} from './status.js';
 import {activationLifecycle,createActivation,registerSettingsRestoration} from './activation.js';
@@ -9,27 +8,24 @@ import {hostConnections} from '../updater/host.js';
 import {registerSelfUpdate} from './self-update.js';
 import {registerRemoval,loadRemovalRuntime} from './removal.js';
 
+const runtimeRoot=process.argv[2];
+const vendor=createRequire(join(runtimeRoot,'node_modules','@deepseek-ai','dsh','package.json'));
+
 export const name='finsafe-windows';
 export const inject=['typert'];
-export const Config=Schema.object({installation:Schema.string(),configuration:Schema.string(),
-  stateDirectory:Schema.string(),nativeVersionRoot:Schema.string(),
-  configurationVersionRoot:Schema.string(),downloadRoot:Schema.string()});
 
-export async function apply(ctx,config={}) {
+export async function apply(ctx) {
   const lifecycle=activationLifecycle(ctx);
-  if(process.platform!=='win32'||!/dsh-desktop-host[\\/]lib[\\/]index\.js$/.test(process.argv[1]||'')) throw Error('FinShield requires the Windows DSH Desktop Host');
-  const runtimeRoot=process.argv[2];
-  if(!runtimeRoot||!isAbsolute(runtimeRoot)) throw Error('Missing DSH runtime directory');
-  const vendor=createRequire(join(runtimeRoot,'node_modules','@deepseek-ai','dsh','package.json'));
   const {resolveDshHome}=await import(pathToFileURL(vendor.resolve('@deepseek-ai/dsh-home-paths')).href);
   const {bindTypertRemote}=await import(pathToFileURL(vendor.resolve('@deepseek-ai/dsh-typert-protocol')).href);
-  const connections=hostConnections({config,home:resolveDshHome(),runtimeRoot,desktop:process.execPath,vendor});
+  const connections=hostConnections({home:resolveDshHome(),runtimeRoot,desktop:process.execPath,vendor});
   const observe=()=>readCurrentToken(runtimeRoot);
   const activation=createActivation({observe,...connections,...lifecycle,report:error=>ctx.logger.error(error.message)});
   registerSettingsRestoration(ctx,()=>activation.restore(),error=>ctx.logger.error(error.message));
-  registerStatus(ctx,()=>activation.status(),observe,bindTypertRemote,()=>activation.restart(),()=>activation.later(),()=>readFeedbackEnvironment(runtimeRoot));
+  registerStatus(ctx,()=>activation.status(),observe,bindTypertRemote,()=>activation.exit(),()=>activation.later(),()=>readFeedbackEnvironment(runtimeRoot));
   ctx.effect(()=>()=>activation.dispose());
-  registerSelfUpdate(ctx,config,()=>activation.restore());
+  registerSelfUpdate(ctx,{},()=>activation.restore(),()=>loadRemovalRuntime(vendor),release=>activation.install(release));
   registerRemoval(ctx,()=>activation.restore(),()=>loadRemovalRuntime(vendor));
+  // Keep returns to Loader; startup Wrap uses the updater's Main-stop handoff.
   await activation.start();
 }

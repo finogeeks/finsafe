@@ -1,53 +1,38 @@
-import {existsSync} from 'node:fs';
-import {mkdir,readFile,writeFile} from 'node:fs/promises';
-import {dirname,join} from 'node:path';
-import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
 import {nativeAdapter} from './native.js';
 import {stageUpdater,connectUpdater,obtainUpdater,version} from './bootstrap.js';
-import {resolveSettings,saveInstanceSettings} from '../src/settings.js';
+import {resolveSettings} from '../src/settings.js';
 import {readKnownFolders} from '../src/token.js';
 
 const packageRoot=fileURLToPath(new URL('../',import.meta.url));
-const packageRequire=createRequire(import.meta.url);
-export function hostConnections({config,home,runtimeRoot,desktop,vendor}) {
+export function hostConnections({home,runtimeRoot,desktop,vendor}) {
   let connection,support;
   async function loadSupport() {
-    const settings=resolveSettings(config,{dshHome:home,requestedRelease:version,...readKnownFolders(runtimeRoot)});
-    // Load a private support copy so pnpm can remove the package while Host runs.
+    const settings=resolveSettings({dshHome:home,requestedRelease:version,...readKnownFolders(runtimeRoot)});
+    // The package-owned SDK supplies its removal-safe native copy.
     // A confined copy does not bootstrap an ordinary updater.
-    const sdkRoot=dirname(packageRequire.resolve('@finogeeks2026/finsafe-sdk/package.json'));
-    const dll=join(sdkRoot,'bin','finsafe_native.dll');
-    const copy=join(home,'finsafe-windows','sdk',version);
-    await mkdir(join(copy,'bin'),{recursive:true});
-    if(!existsSync(join(copy,'bin','finsafe_native.dll'))) await writeFile(join(copy,'bin','finsafe_native.dll'),await readFile(dll));
-    const call=nativeAdapter(packageRoot,{require:vendor,libraryRoot:copy});
+    const call=nativeAdapter(packageRoot);
     // The ordinary updater resolves the actual supervisor during authenticated bind.
-    const context={desktop,runtimeRoot,home,installation:settings.installation,configuration:settings.configuration,
+    const context={usage:{agent_id:'dsh',launch_method:'plugin',plugin_id:'@finogeeks2026/finshield-dsh',plugin_version:version,agent_version:'unknown'},desktop,runtimeRoot,home,installation:settings.installation,configuration:settings.configuration,
       requestedRelease:version,nativeVersionRoot:settings.nativeVersionRoot,configurationVersionRoot:settings.configurationVersionRoot};
     await call({action:'select_slot',installation:context.installation,configuration:context.configuration});
     return {settings,call,context};
   }
-  async function open(ordinary,startup=true) {
+  async function open(ordinary) {
     if(connection) return connection;
     // Initialization and disposal can overlap; share this activation's DLL load.
     const {settings,call,context}=await (support??=loadSupport());
     if(ordinary) {
-      await mkdir(settings.stateDirectory,{recursive:true});
-      // The discovery location is fixed to this actual home. Result/diagnostic
-      // files can use the configured stateDirectory without hiding that choice
-      // from the resident updater or a later activation.
-      saveInstanceSettings(settings,home);
       const inputs=await call({action:'host_inputs'});
       const staged=await stageUpdater({runtimeRoot,nodeExecutable:inputs.nodeExecutable,localAppData:settings.localAppData});
-      connection=await obtainUpdater(staged,settings,{context,startup,connect:()=>connectUpdater(staged,{call})});
+      connection=await obtainUpdater(staged,settings,{context,startup:false,connect:()=>connectUpdater(staged,{call})});
     }else {
       const locations=await call({action:'locations'});
-      connection=connectUpdater({root:locations.root},{call});
-      connection.runningPeriod=true;
+      connection=connectUpdater({root:locations.root,version},{call});
+      await connection.request('hello');
     }
     connection.context=context;
     return connection;
   }
-  return {obtain:({startup=true}={})=>open(true,startup),existing:()=>open(false)};
+  return {obtain:()=>open(true),existing:()=>open(false)};
 }

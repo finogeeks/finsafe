@@ -9,9 +9,9 @@ FinSAFE 稳定版安装包的网络和 Windows 安装授权。先打开一次 DS
 profile，再按[桌面版安装步骤](README-zh.md#在dsh桌面版安装)操作。
 
 插件正常运行不依赖 PowerShell，复用 DSH 的 Node、公共 Node SDK 携带的个人版公共 DLL 和完整 FinSAFE
-安装器。可选的离线 PowerShell 辅助脚本仍需 PowerShell 7。
+安装器。
 
-常规安装使用[README中的应用内步骤](README-zh.md#在dsh桌面版安装)；离线安装使用下方附带的PowerShell脚本。
+安装入口只有 DSH 的“＋插件”和市场，参见[README中的应用内步骤](README-zh.md#在dsh桌面版安装)。
 
 首次激活且缺少原生运行时时，插件通过对应完整 Windows 安装器下载安装，保留现有的
 发布包 SHA256 校验。激活立即返回，安装和授权在后台继续。updater 调用所选安装目录的
@@ -45,17 +45,6 @@ updater 退出或启动恢复不会结束 DSH。插件移除不会结束此生�
 页面 Restart 保留 updater 和 Job，停止旧 Main 后通过 AppSeam 启动替代 Main，并切换退出等待；
 此时不执行安装或授权，也不等待新 Host bind。
 
-也可在启动 DSH 前，从解包后的插件源码目录执行：
-
-```powershell
-./install/Install-Plugin.ps1 -Archive <plugin.tgz>
-```
-
-`-DshDirectory` 指定原 Desktop 安装目录，`-DshHome` 覆盖 DSH 解析的数据根。
-`-InstallDirectory` 和 `-ConfigDirectory` 指定原生绝对路径。
-打开原DSH继续后台授权。`-Offline`只控制DSH依赖解析，原生下载仍需网络。
-需要明确重试安装时，再次运行此脚本。
-
 插件激活使用以下默认位置：
 
 | 内容 | 默认位置 |
@@ -63,16 +52,14 @@ updater 退出或启动恢复不会结束 DSH。插件移除不会结束此生�
 | 完整原生运行时 | `%ProgramFiles%/FinSAFE/dsh-plugin-versions/<release>/` |
 | candidate 和 effective 配置 | `%ProgramData%/FinSAFE/dsh-plugin-versions/<release>/config/` |
 | 下载与原生安装结果 | `%LOCALAPPDATA%/FinSAFE/dsh-plugin/downloads/<release>/` |
-| 实例设置与 Host 支持库副本 | `<DSH_HOME>/finsafe-windows/` |
+| 插件安装诊断结果 | `<DSH_HOME>/finsafe-windows/` |
 | 独立 updater 及依赖 | `%LOCALAPPDATA%/FinSAFE/dsh-updater/` |
 
-实际路径来自 Windows 已知文件夹和 DSH 实际启动输入，支持自定义安装和 home、
-移动后的用户目录、空格和中文路径。插件使用独立的 `finshield.dsh` 安全域，保留
+实际路径来自 Windows 已知文件夹和 DSH 实际启动输入，使用实际 DSH home，
+支持移动后的用户目录、空格和中文路径。插件使用独立的 `finshield.dsh` 安全域，保留
 个人版文件、配置和授权。一个 FinSAFE 产品按目标目录保存安装记录，不同目录
 可以保留不同版本。
-现有 `installation`、`configuration` 精确路径设置保留原意。新版本的根目录由单独的
-`nativeVersionRoot`、`configurationVersionRoot`、`downloadRoot` 设置选择。离线脚本保留
-其明确的安装、配置路径输入，不移动现有安装。
+原生安装和配置路径按目标版本及 Windows 已知文件夹计算，不提供原生安装路径设置。
 
 ```mermaid
 flowchart LR
@@ -113,16 +100,12 @@ Main，并保留原 updater 和 Job。本期不支持改变 FinSAFE ID。
 使用 DSH 标准控制停用或删除插件。updater 可用时，清理仅恢复 AppSeam 拥有的
 Desktop sandbox 字段；pnpm storeDir 绑定在停用和移除时保留。
 后续修改冲突或 updater 不可用会报错，原覆盖值可能保留，
-不保证自动恢复。离线脚本移除前，先在运行中的 DSH 停用插件以执行正常清理。
+不保证自动恢复。
 插件包裹启动前会关闭配置热加载，保存停用状态时保持关闭。
 移除已启用的 FinShield 包时，先启用 HMR，再执行 DSH 的移除操作。
 没有 HMR 时保存的插件和配置变更需要重启生效。
 退出并重新打开后改变后续激活。停用不能把
-已运行的 Host 移出 AppContainer。附带脚本还可清理本插件元数据：
-
-```powershell
-./install/Install-Plugin.ps1 -Remove
-```
+已运行的 Host 移出 AppContainer。
 
 删除插件包保留原生文件、下载、日志、备份及授权。需要删除原生运行时时，使用
 该目录的 `finsafe-uninstall.exe` 或对应 Windows 已安装应用条目。原生卸载只影响

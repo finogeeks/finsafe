@@ -9,10 +9,9 @@ matching official FinSAFE stable release and Windows setup consent. Open DSH onc
 to create its Desktop profile. Follow the [Desktop installation steps](README.md#install-in-dsh-desktop).
 
 Normal plugin operation does not require PowerShell. It reuses DSH's Node,
-the public Node SDK product DLL and full FinSAFE installer. The optional offline
-PowerShell helper below requires PowerShell 7.
+the public Node SDK product DLL and full FinSAFE installer.
 
-Use the [application installation steps](README.md#install-in-dsh-desktop). For offline setup, use the supplied PowerShell helper below.
+Install through DSH's Add Plugin entry or market. See the [application installation steps](README.md#install-in-dsh-desktop).
 
 On first activation, a missing native runtime is downloaded and installed through
 the matching full Windows installer. The existing release SHA256 check remains.
@@ -62,19 +61,6 @@ FinSAFE does not reload Host. Installation stops with updater; accepted
 authorization continues independently. Page Restart retains updater and its Job
 and switches the exit wait to the replacement Main.
 
-The supplied script can complete bundle and native setup before DSH starts.
-Run it from an unpacked plugin source package:
-
-```powershell
-./install/Install-Plugin.ps1 -Archive <plugin.tgz>
-```
-
-`-DshDirectory` selects the original Desktop installation. `-DshHome` overrides
-DSH's resolved data root. `-InstallDirectory` and `-ConfigDirectory` select native
-absolute paths. Open the original DSH to continue background authorization.
-`-Offline` affects DSH dependencies; native download still needs
-the network. Rerun the script for an explicit setup retry.
-
 Plugin activation uses these default locations:
 
 | Content | Default location |
@@ -82,19 +68,17 @@ Plugin activation uses these default locations:
 | Full native runtime | `%ProgramFiles%/FinSAFE/dsh-plugin-versions/<release>/` |
 | Candidate and effective policy | `%ProgramData%/FinSAFE/dsh-plugin-versions/<release>/config/` |
 | Downloads and native setup results | `%LOCALAPPDATA%/FinSAFE/dsh-plugin/downloads/<release>/` |
-| Instance settings and Host support copy | `<DSH_HOME>/finsafe-windows/` |
+| Plugin setup diagnostics | `<DSH_HOME>/finsafe-windows/` |
 | Independent updater and dependencies | `%LOCALAPPDATA%/FinSAFE/dsh-updater/` |
 | AppSeam original-field records | `%LOCALAPPDATA%/FinSAFE/AppSeam/dsh-originals/` |
 
 Windows known folders and DSH actual launch inputs determine paths, including
-custom homes, relocated user folders and custom installations. The plugin uses its independent
+the actual DSH home and relocated user folders. The plugin uses its independent
 `finshield.dsh` security domain. It preserves personal-edition files,
 configuration and authorization. One FinSAFE product stores installation records
 by target directory. Different directories can retain different versions.
-Existing exact `installation` and `configuration` settings keep their meaning.
-Separate `nativeVersionRoot`, `configurationVersionRoot` and `downloadRoot`
-settings select roots for new versions. The offline helper retains its explicit
-installation/configuration inputs; it does not move an existing installation.
+The plugin derives native installation and configuration paths from the requested
+release and Windows known folders. It exposes no native installation-path settings.
 
 ```mermaid
 flowchart LR
@@ -148,17 +132,13 @@ Use DSH's controls to disable or remove the bundle. With an available updater,
 cleanup restores the AppSeam-owned desktop sandbox fields. The pnpm storeDir
 binding remains on disablement and removal. Later user edits
 or unavailable cleanup produce an error; the override can remain. There is no
-automatic crash recovery. Disable in running DSH before offline script removal.
+automatic crash recovery.
 Plugin Wrap closes profile hot reload before starting protected DSH. Saved
 disablement keeps it closed. Removal of an enabled FinShield bundle enables HMR
 before DSH's removal operation. Changes saved without HMR require restart.
 Quit and reopen
 Desktop to change future activation. Disabling cannot remove AppContainer from an existing
-Host. The metadata-aware script removal is:
-
-```powershell
-./install/Install-Plugin.ps1 -Remove
-```
+Host.
 
 Bundle removal retains native files, downloads, logs, backups and authorization.
 Remove the native runtime separately through its directory's
@@ -260,6 +240,9 @@ public installation, update and removal procedures are in this guide and the
 
 DSH has no Rust crate, native build command or plugin-specific DLL. The declared
 `@finogeeks2026/finsafe-sdk` dependency carries the common personal-edition DLL.
+It also carries pinned Koffi and its Windows x64 native addon. The plugin does
+not require Koffi from the DSH installation. Updater staging copies the complete
+SDK package. DSH's selected Node runtime is still used in place.
 Build that SDK through the product entry below and publish it before DSH. For
 owned pre-release installation tests, select the built SDK archive through the
 fixture's package-manager override; do not change the released dependency spec.

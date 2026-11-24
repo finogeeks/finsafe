@@ -12,22 +12,22 @@ export async function readFeedbackEnvironment(runtimeRoot) {
 }
 
 /** Use DSH's authenticated Gateway; never expose another local HTTP server. */
-export function registerStatus(ctx, readState, readToken, bindRemote, restart, later, readEnvironment=()=>({})) {
+export function registerStatus(ctx, readState, readToken, bindRemote, exit, later, readEnvironment=()=>({})) {
   // This Host's runtime metadata is fixed for its lifetime. It does not gate startup.
   let feedback={};
   void Promise.resolve().then(readEnvironment).then(value=>{feedback=value;},()=>{});
   const service = {ctx,async status() {
     let state,token,localError;
     try {token=readToken();}catch(error){localError=error;}
-    try {state=await readState();}catch(error){state={phase:'failed',error:error.message};}
+    try {state=await readState();}catch(error){state={error:error.message};}
     if(localError) {
-      const result={...state,phase:'failed',error:localError.message,feedback,observedAt:new Date().toISOString()};
+      const result={...state,error:[state?.error,localError.message].filter(Boolean).join('; '),feedback,observedAt:new Date().toISOString()};
       delete result.currentProtected;delete result.protected;delete result.token;
       return result;
     }
     return {...state,token,protected:token.appContainer,currentProtected:token.appContainer,feedback,observedAt:new Date().toISOString()};
-  },async restart() {
-    return restart();
+  },async exit() {
+    return exit();
   },async later() {
     if(!later)throw Error('Updater reminder is unavailable');
     return later();

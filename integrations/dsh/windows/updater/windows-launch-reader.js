@@ -1,9 +1,9 @@
-import {createRequire} from 'node:module';
+import {loadKoffi} from './native.js';
 import {parentPort,workerData} from 'node:worker_threads';
 
 // Blocking Win32 reads run here; error retrieval stays on the calling thread.
-const {koffiPath,handle,processHandle,stream}=workerData;
-const koffi=createRequire(koffiPath)('koffi'),kernel=koffi.load('kernel32.dll');
+const {handle,processHandle,stream}=workerData;
+const koffi=loadKoffi(),kernel=koffi.load('kernel32.dll');
 const read=kernel.func('int __stdcall ReadFile(uintptr_t, void*, uint32, void*, void*)');
 const lastError=kernel.func('uint32 __stdcall GetLastError()');
 try {

@@ -1,11 +1,10 @@
-import {createRequire} from 'node:module';
+import {sdk} from './native.js';
 import {EventEmitter} from 'node:events';
 import {Worker} from 'node:worker_threads';
 
 // Fixed Windows x64 Wrap transport. Authorization still uses the existing DLL.
-export function createWindowsLauncher(vendor=createRequire(import.meta.url)) {
-  if(process.platform!=='win32'||process.arch!=='x64')throw Error('Wrap launcher requires Windows x64');
-  const koffi=vendor('koffi'),kernel=koffi.load('kernel32.dll'),fn=signature=>kernel.func(signature);
+export function createWindowsLauncher(vendor=()=>sdk) {
+  const koffi=vendor('@finogeeks2026/finsafe-sdk').loadKoffi(),kernel=koffi.load('kernel32.dll'),fn=signature=>kernel.func(signature);
   const api={
     error:fn('uint32 __stdcall GetLastError()'),close:fn('int __stdcall CloseHandle(uintptr_t)'),
     pipe:fn('int __stdcall CreatePipe(void*, void*, void*, uint32)'),
@@ -77,7 +76,7 @@ export function createWindowsLauncher(vendor=createRequire(import.meta.url)) {
         child.pid=info.readUInt32LE(16);[input,stdoutWrite,stderrWrite].forEach(close);
         for(const [stream,handle] of [['stdout',stdout],['stderr',stderr]]) {
           const worker=new Worker(new URL('./windows-launch-reader.js',import.meta.url),{
-            workerData:{koffiPath:vendor.resolve('koffi'),handle,processHandle,stream},
+            workerData:{handle,processHandle,stream},
           });
           workers++;
           worker.on('message',message=>{

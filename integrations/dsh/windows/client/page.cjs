@@ -8,36 +8,36 @@ const PRODUCT_URL='https://finaios.ai/zh-hans/products/finshield/';
 const PACKAGE_NAME='@finogeeks2026/finshield-dsh';
 const zh={
   title:'FinShield',loading:'正在读取防护状态',loadingFirst:'正在连接FinShield',loadingSecond:'',loadingBody:'请稍候，防护状态以本次读取结果为准',
+  installingFirst:'正在安装防护组件',installingBody:'DSH可照常使用，安装完成后将继续准备防护。',downloadingFirst:'正在下载更新包',downloadingBody:'DSH可照常使用，下载完成后将继续安装。',
   authorizing:'正在准备防护',installing:'正在安装防护组件',authorizingFirst:'首次设好安全边界，日常打开直接用',authorizingSecond:'',
   authorizingBody:'为DSH配置安全隔离规则，约束AI对电脑的访问与操作。完成后，日常启动无需重复准备。',authorizationTitle:'为什么需要管理员确认',authorizationBody:'FinShield需要管理员权限来配置Windows隔离规则，让DSH按设定的访问边界运行',authorizationAction:'出现Windows权限提示时，核对程序信息后选择“是”。',notProtected:'当前会话尚未受保护',
-  updating:'正在准备更新',updatingFirst:'让AI做事，别让它惹事',updatingSecond:'',updatingBody:'安装并配置新版本防护，完成后会提醒你重启。',updateTitle:'更新期间需要做什么',updateBody:'更新所需的下载、安装和授权会在准备阶段完成',updateAction:'出现Windows权限提示时，核对程序信息后选择“是”。',updateReady:'更新已就绪',updateReadyFirst:'新版本已就绪，重启即可切换',updateReadySecond:'',updateReadyBody:'新版本已安装并完成配置，重启DSH后生效。',currentProtected:'当前会话已受保护',authorizationPending:'目标授权待完成',downloading:'正在下载更新包',
-  ready:'防护已就绪',readyFirst:'准备就绪，重启后开启防护',readySecond:'',readyBody:'安全隔离规则已配置完成，重启DSH后生效。',restartTitle:'为什么需要重启',restartBody:'DSH将进入已配置的防护环境，使访问限制生效',restartAction:'现在不方便重启？选择“稍后重启”继续工作，当前会话尚未受保护',
+  updating:'正在准备更新',updatingFirst:'让AI做事，别让它惹事',updatingSecond:'',updatingBody:'正在安装新版本。安装完成后，请关闭应用并手动重新打开。',updateTitle:'更新期间需要做什么',updateBody:'先安装插件，再安装FinShield，下次打开时加载新版',updateAction:'出现Windows权限提示时，核对程序信息后选择“是”。',updateReady:'更新已安装',updateReadyFirst:'新版本已安装，下次打开生效',updateReadySecond:'',updateReadyBody:'插件和FinShield已安装。退出DSH后，请手动重新打开以生效。',currentProtected:'当前会话已受保护',authorizationPending:'目标授权待完成',downloading:'正在下载更新包',
+  ready:'防护已就绪',readyFirst:'准备就绪，重新打开后开启防护',readySecond:'',readyBody:'请先保存工作并退出DSH，然后手动重新打开以启用准备好的防护。',exitTitle:'为什么需要重新打开',exitBody:'准备完成不会改变当前会话。下次正常启动时启用防护。',exitAction:'现在退出，或选择“稍后”继续工作。退出后需要手动重新打开。',
   protected:'防护已开启',protectedFirst:'让AI做事，别让它惹事',protectedSecond:'',protectedBody:'',
-  restarting:'正在重启DSH',restartingFirst:'正在重新打开DSH',restartingSecond:'请稍候',restartingBody:'新会话启动后，将重新读取实际防护状态',
-  failed:'准备未完成',failedFirst:'防护准备未完成',failedSecond:'',failedBody:'DSH可以继续使用。请查看下方原因，或向我们反馈。',cancelled:'授权未完成',cancelledFirst:'这次授权未完成',cancelledSecond:'',cancelledBody:'DSH仍可继续使用',cancelledTitle:'为什么没有完成',cancelledExplanation:'本次授权已取消，防护设置尚未完成',cancelledAction:'需要完成授权并重启DSH后，防护才会生效',
+  exiting:'正在退出DSH',exitingFirst:'正在退出DSH',exitingSecond:'请稍候',exitingBody:'退出后，请从原入口手动重新打开。',
+  failed:'准备未完成',failedFirst:'防护准备未完成',failedSecond:'',failedBody:'DSH可以继续使用。请查看下方原因，或向我们反馈。',cancelled:'授权未完成',cancelledFirst:'这次授权未完成',cancelledSecond:'',cancelledBody:'DSH仍可继续使用',cancelledTitle:'为什么没有完成',cancelledExplanation:'这次授权操作已取消',cancelledAction:'需要完成授权并退出后手动重新打开DSH后，防护才会生效',
   privacy:'隐私别乱碰',privacyBody:'约束摄录和截屏操作',interaction:'电脑别乱控',interactionBody:'限制窗口和鼠标干扰',system:'系统别乱改',systemBody:'限制进程与系统改动',data:'数据别乱动',dataBody:'保护敏感目录和文件',
-  arena:'了解FinShield如何守护你',arenaUrl:'https://safety.finaios.ai/agents/dsh/zh-CN',productLink:'访问FinShield官网（新窗口打开）',work:'返回DSH，继续工作',startWork:'返回DSH，开始工作',progress:'查看准备步骤',installed:'插件安装完成',nativePreparing:'正在配置安全权限',waiting:'准备完成后，由你决定何时重启DSH',
-  resume:'DSH可照常使用，无需在此等待；准备好后会提醒你重启。',restartReminder:'请先保存工作，重启DSH会中断当前任务。暂时不重启，也可以继续使用DSH。',failureReason:'未完成的原因',updateFailure:'本次更新未完成',feedback:'反馈问题 ↗',feedbackLanguage:'zh',
-  restart:'重启DSH',later:'稍后',laterRestart:'稍后重启',details:'查看详情',noticeTitle:'防护已就绪，重启后开启',noticeBody:'请先保存工作，DSH重启时会中断当前任务',
-  refresh:'重新读取状态',setupFailed:'组件安装失败，错误码',jobFailure:'会话进程管理未完成',jobFailureBody:'未能将DSH加入FinShield的会话进程组，授权进度与此错误分别显示',technicalDetails:'技术详情',afterRestart:'重启后开启防护',
+  arena:'了解FinShield如何守护你',arenaUrl:'https://safety.finaios.ai/agents/dsh/zh-CN',productLink:'访问FinShield官网（新窗口打开）',work:'返回DSH，继续工作',startWork:'返回DSH，开始工作',progress:'查看准备步骤',installed:'插件安装完成',nativePreparing:'正在配置安全权限',waiting:'准备完成后，请退出并手动重新打开应用',
+  resume:'可以继续工作；准备完成后请退出并手动重新打开。',exitReminder:'请先保存工作。此操作将退出应用，不会自动重新打开。',failureReason:'未完成的原因',updateFailure:'本次更新未完成',feedback:'反馈问题 ↗',feedbackLanguage:'zh',
+  exit:'退出DSH',later:'稍后',laterExit:'稍后',details:'查看详情',noticeTitle:'防护已就绪，下次打开生效',noticeBody:'请先保存工作并退出应用，然后手动重新打开。',
+  refresh:'重新读取状态',setupFailed:'组件安装失败，错误码',jobFailure:'会话进程管理未完成',jobFailureBody:'未能将DSH加入FinShield的会话进程组，授权进度与此错误分别显示',technicalDetails:'技术详情',afterExit:'重新打开后开启防护',
   marketUpdate:'更新到',marketInstalled:'已安装',marketNewer:'已安装较新版本',marketConfirm:'更新FinShield',marketFrom:'当前版本',marketSource:'下载源',marketStart:'开始更新',marketUpdating:'正在更新插件',marketDone:'插件包已更新。防护状态请查看防护页。',marketFailed:'插件更新未完成',marketClose:'关闭',marketCancel:'取消',
-  migrationNotice:'finshield 0.10.50 用户：在DSH中卸载旧插件 → 安装 finshield-dsh → 按提示重启。',
 };
 const en={
   title:'FinShield',loading:'Reading protection status',loadingFirst:'Connecting to FinShield',loadingSecond:'',loadingBody:'Please wait for the current session status',
+  installingFirst:'Installing protection components',installingBody:'You can keep using DSH while installation continues.',downloadingFirst:'Downloading the update',downloadingBody:'You can keep using DSH while the download continues.',
   authorizing:'Preparing protection',installing:'Installing protection components',authorizingFirst:'Set boundaries once. Reuse them every day.',authorizingSecond:'',authorizingBody:'Configure isolation rules for DSH to limit AI access and actions on your computer. Daily launches reuse this setup.',authorizationTitle:'Why administrator consent is needed',authorizationBody:'FinShield needs administrator permission to configure Windows isolation rules so DSH runs within the selected access boundaries',authorizationAction:'If Windows asks for permission, check the program details, then select Yes.',notProtected:'Current session is not protected yet',
-  updating:'Preparing an update',updatingFirst:'Let AI work. Keep trouble out.',updatingSecond:'',updatingBody:'Installing and configuring the update. We will notify you to restart when ready.',updateTitle:'What to do during the update',updateBody:'Download, installation and authorization finish during preparation',updateAction:'If Windows asks for permission, check the program details, then select Yes.',updateReady:'Update ready',updateReadyFirst:'Update ready. Restart to switch.',updateReadySecond:'',updateReadyBody:'The new version is installed and configured. Restart DSH to apply it.',currentProtected:'Current session is protected',authorizationPending:'Target authorization pending',downloading:'Downloading the update',
-  ready:'Protection ready',readyFirst:'Ready. Restart to enable protection.',readySecond:'',readyBody:'Isolation rules are configured. Restart DSH to apply them.',restartTitle:'Why restart?',restartBody:'DSH will enter the configured protected environment and the access limits will take effect',restartAction:'Choose Restart later to keep working; protection is not enabled for the current session yet',
+  updating:'Preparing an update',updatingFirst:'Let AI work. Keep trouble out.',updatingSecond:'',updatingBody:'Installing and configuring the update. Close and reopen manually when preparation is ready.',updateTitle:'What to do during the update',updateBody:'Install the plugin, then FinShield. The next normal start loads the update.',updateAction:'If Windows asks for permission, check the program details, then select Yes.',updateReady:'Update installed',updateReadyFirst:'Update installed. Applies on the next start.',updateReadySecond:'',updateReadyBody:'The plugin and FinShield update are installed. Exit DSH, then open it manually to apply them.',currentProtected:'Current session is protected',authorizationPending:'Target authorization pending',downloading:'Downloading the update',
+  ready:'Protection ready',readyFirst:'Ready. Close and reopen manually to enable protection.',readySecond:'',readyBody:'Save your work, exit DSH, then open it manually to use the prepared protection.',exitTitle:'Why close and reopen?',exitBody:'Preparation does not change this session. The next normal start uses the prepared protection.',exitAction:'Exit now, or choose Later to keep working. Open the application manually after exit.',
   protected:'Protection is enabled',protectedFirst:'Let AI work. Keep trouble out.',protectedSecond:'',protectedBody:'',
-  restarting:'Restarting DSH',restartingFirst:'Opening DSH again',restartingSecond:'Please wait',restartingBody:'We will read the actual protection status when the new session starts',
-  failed:'Setup incomplete',failedFirst:'Protection setup is incomplete',failedSecond:'',failedBody:'You can keep using DSH. See the reason below or report the issue.',cancelled:'Authorization incomplete',cancelledFirst:'Authorization did not finish',cancelledSecond:'',cancelledBody:'You can keep using DSH',cancelledTitle:'Why preparation did not finish',cancelledExplanation:'Authorization was cancelled before protection setup finished',cancelledAction:'Complete authorization and restart DSH to enable protection',
+  exiting:'Exiting DSH',exitingFirst:'Exiting DSH',exitingSecond:'Please wait',exitingBody:'After exit, open the application manually from its normal entry.',
+  failed:'Setup incomplete',failedFirst:'Protection setup is incomplete',failedSecond:'',failedBody:'You can keep using DSH. See the reason below or report the issue.',cancelled:'Authorization incomplete',cancelledFirst:'Authorization did not finish',cancelledSecond:'',cancelledBody:'You can keep using DSH',cancelledTitle:'Why preparation did not finish',cancelledExplanation:'This authorization attempt was cancelled',cancelledAction:'Complete authorization and exit DSH to enable protection',
   privacy:'Privacy',privacyBody:'Limit recording & screenshots.',interaction:'Controls',interactionBody:'Limit window & mouse use.',system:'System',systemBody:'Limit processes & settings.',data:'Data',dataBody:'Protect sensitive files.',
-  arena:'See how FinShield protects you',arenaUrl:'https://safety.finaios.ai/agents/dsh/index.html',productLink:'Visit the FinShield website (opens in a new window)',work:'Continue working in DSH',startWork:'Start working in DSH',progress:'View setup steps',installed:'Plugin installed',nativePreparing:'Configuring security permissions',waiting:'You choose when to restart after preparation',
-  resume:'Keep using DSH. No need to stay here; we will notify you to restart when ready.',restartReminder:'Save your work before restarting DSH; running tasks will be interrupted. You can restart later and keep using DSH.',failureReason:'Why setup did not finish',updateFailure:'Update did not finish',feedback:'Report a problem ↗',feedbackLanguage:'en',
-  restart:'Restart DSH',later:'Later',laterRestart:'Restart later',details:'View details',noticeTitle:'Protection is ready; restart to enable it',noticeBody:'Save your work first; restarting DSH interrupts current tasks',
-  refresh:'Read status again',setupFailed:'Component installation failed with code',jobFailure:'Session process management is incomplete',jobFailureBody:'DSH could not join the FinShield session process group; authorization progress is shown separately',technicalDetails:'Technical details',afterRestart:'Protection starts after restart',
+  arena:'See how FinShield protects you',arenaUrl:'https://safety.finaios.ai/agents/dsh/index.html',productLink:'Visit the FinShield website (opens in a new window)',work:'Continue working in DSH',startWork:'Start working in DSH',progress:'View setup steps',installed:'Plugin installed',nativePreparing:'Configuring security permissions',waiting:'When preparation finishes, exit and reopen manually',
+  resume:'Keep working while preparation continues. Close and reopen manually when ready.',exitReminder:'Save your work first. This action exits the application and does not reopen it.',failureReason:'Why setup did not finish',updateFailure:'Update did not finish',feedback:'Report a problem ↗',feedbackLanguage:'en',
+  exit:'Exit DSH',later:'Later',laterExit:'Later',details:'View details',noticeTitle:'Protection ready; applies on the next start',noticeBody:'Save your work, exit the application, then open it manually.',
+  refresh:'Read status again',setupFailed:'Component installation failed with code',jobFailure:'Session process management is incomplete',jobFailureBody:'DSH could not join the FinShield session process group; authorization progress is shown separately',technicalDetails:'Technical details',afterExit:'Protection starts after exit',
   marketUpdate:'Update to',marketInstalled:'Installed',marketNewer:'A newer version is installed',marketConfirm:'Update FinShield',marketFrom:'Current version',marketSource:'Download source',marketStart:'Start update',marketUpdating:'Updating plugin',marketDone:'The plugin package is updated. Check the protection page for its status.',marketFailed:'Plugin update did not finish',marketClose:'Close',marketCancel:'Cancel',
-  migrationNotice:'Using finshield 0.10.50? In DSH: uninstall the old plugin → install finshield-dsh → restart when prompted.',
 };
 const styles=`
 [data-plugin-detail="@finogeeks2026/finshield-dsh"],.finshield-page{--fs-line:#e5e7eb;--fs-paper:#fff;--fs-subtle:#f7f7f8;--fs-ink:#202020;--fs-muted:#646970;--fs-brand:#005fb8;--fs-green:#107c41;--fs-blue-bg:#edf5fc;--fs-warning:#925400;--fs-shadow:#20202014;font:14px/1.6 "Microsoft YaHei UI",sans-serif;color:var(--fs-ink)}
@@ -72,7 +72,7 @@ body[data-ds-dark-theme] :is([data-plugin-detail="@finogeeks2026/finshield-dsh"]
 .finshield-page .fs-protected-status{display:flex;align-items:center;justify-content:center;gap:20px;min-height:84px;padding:14px 48px 14px 16px;border-radius:8px;background:var(--fs-blue-bg)}
 .finshield-page .fs-protected-status .fs-status{white-space:nowrap}
 .finshield-page .fs-preparing-session{color:var(--fs-muted);margin-top:4px}
-.finshield-page .fs-preparing-resume,.finshield-page .fs-restart-reminder,.finshield-page .fs-failure-reason{border-top:1px solid var(--fs-line);padding-top:14px;margin-top:14px}
+.finshield-page .fs-preparing-resume,.finshield-page .fs-exit-reminder,.finshield-page .fs-failure-reason{border-top:1px solid var(--fs-line);padding-top:14px;margin-top:14px}
 .finshield-page .fs-failure-reason h3{font-size:14px;font-weight:500}
 .finshield-page .fs-feedback-link{display:inline-block;margin-top:12px}
 .finshield-page .fs-visible-progress{margin-top:16px;color:var(--fs-brand)}
@@ -110,7 +110,6 @@ body[data-ds-dark-theme] .finshield-page button.fs-primary{color:#10243a}
 .finshield-page .fs-step-current,.finshield-page .fs-progress-spinner{display:inline-block;flex:none;width:10px;height:10px;border:1px solid var(--fs-line);border-top-color:var(--fs-brand);border-radius:50%;animation:fs-orbit-turn 1.5s linear infinite}
 .finshield-page progress{display:block;width:100%;height:7px;margin:10px 0;accent-color:var(--fs-brand)}
 .finshield-page .fs-footer{display:flex;gap:24px;flex-wrap:wrap;margin-top:12px}
-.finshield-page .fs-migration-note{border-top:1px solid var(--fs-line);padding-top:12px;margin-top:16px;color:var(--fs-muted);line-height:1.7;overflow-wrap:anywhere}
 .finshield-page a{color:var(--fs-brand);text-decoration:none}
 .finshield-page a:hover{text-decoration:underline}
 .finshield-page .fs-error{color:var(--fs-muted);white-space:pre-wrap;overflow-wrap:anywhere;margin-top:12px}
@@ -252,17 +251,21 @@ function registerDetailScroll(ctx){
 }
 function ProductPage({t,store,work}){
   const pageRef=React.useRef(null);
-  const snapshot=useProtection(store),phase=projectStatus(snapshot.status);
-  const restartAllowed=snapshot.status?.restartAllowed!==false;
+  const snapshot=useProtection(store),phase=snapshot.exitPending?'exiting':projectStatus(snapshot.status);
+  const exitAllowed=true;
   const targetPhase=snapshot.status?.phase;
+  const currentProtected=snapshot.status?.currentProtected??snapshot.status?.protected;
+  const preparing=['downloading','installing','authorizing','waiting-authorization'].includes(phase);
+  const authorizing=['authorizing','waiting-authorization'].includes(phase);
   const updateReady=phase==='ready'&&snapshot.status?.reason==='update';
-  const preparingUpdate=phase==='authorizing'&&snapshot.status?.reason==='update';
-  const cancelled=phase==='failed'&&targetPhase==='cancelled';
-  const hero=updateReady?'updateReady':preparingUpdate?'updating':cancelled?'cancelled':phase;
-  const explanation=phase==='ready'?'restart':preparingUpdate?'update':cancelled?'cancelled':'authorization';
+  const preparingUpdate=preparing&&snapshot.status?.reason==='update';
+  const cancelled=targetPhase==='cancelled';
+  const hero=updateReady?'updateReady':preparingUpdate?'updating':phase==='failed'&&cancelled?'cancelled':authorizing?'authorizing':phase;
+  const explanation=phase==='ready'?'exit':preparingUpdate?'update':cancelled?'cancelled':'authorization';
   const explanationBody=updateReady?'updateReadyBody':cancelled?'cancelledExplanation':explanation+'Body';
   const explanationAction=preparingUpdate&&!snapshot.status?.currentProtected?'authorizationAction':explanation+'Action';
   const operationLabel=targetPhase==='installing'?'installing':targetPhase==='downloading'?'downloading':'nativePreparing';
+  const currentStep=snapshot.status?.progress?.items?.at(-1)?.path;
   const setup=snapshot.status?.nativeSetup;
   const installing=['installing','downloading'].includes(targetPhase);
   const jobError=snapshot.status?.jobError;
@@ -279,41 +282,42 @@ function ProductPage({t,store,work}){
     return ()=>cancelAnimationFrame(frame);
   },[]);
   const feedback=feedbackUrl({status:snapshot.status,language:t('feedbackLanguage')});
-  const start=()=>{void store.restart().catch(()=>{});};
+  const start=()=>{void store.exit().catch(()=>{});};
   const status=h('div',{className:'fs-status',role:'status'},h('span',{className:'fs-dot','aria-hidden':true}),t(phase==='authorizing'?(preparingUpdate?'updating':'authorizing'):hero));
-  const session=phase!=='protected'?h('p',{className:'fs-preparing-session'},t(snapshot.status?.currentProtected?'currentProtected':'notProtected'),snapshot.status?.currentProtected&&snapshot.status.currentRelease?' '+snapshot.status.currentRelease:null):null;
-  const art=h('a',{className:'fs-art',href:PRODUCT_URL,target:'_blank',rel:'noopener noreferrer','aria-label':t('productLink')},phase==='authorizing'?h('span',{className:'fs-moving','aria-hidden':true}):null,h('img',{src:BRAND_LOGO,alt:''}));
+  const session=phase!=='protected'&&(typeof currentProtected==='boolean'||preparing||['ready','exiting'].includes(phase))?h('p',{className:'fs-preparing-session'},t(typeof currentProtected==='boolean'?currentProtected?'currentProtected':'notProtected':'loading'),currentProtected&&snapshot.status.currentRelease?' '+snapshot.status.currentRelease:null):null;
+  const art=h('a',{className:'fs-art',href:PRODUCT_URL,target:'_blank',rel:'noopener noreferrer','aria-label':t('productLink')},preparing?h('span',{className:'fs-moving','aria-hidden':true}):null,h('img',{src:BRAND_LOGO,alt:''}));
   const progressLabel=h('span',{role:'status'},t(operationLabel),typeof snapshot.status?.progress?.overall_percent==='number'?' '+snapshot.status.progress.overall_percent+'%':null);
   return h('section',{ref:pageRef,className:'finshield-page','data-phase':phase,'aria-label':t('title')},h('style',null,styles),h('div',{className:'fs-panel'},
     h('div',{className:'fs-hero'},h('div',{className:'fs-protected-copy'},h('h2',null,t(hero+'First'),t(hero+'Second')?h(React.Fragment,null,h('br'),t(hero+'Second')):null),t(hero+'Body')?h('p',{className:'fs-description'},t(hero+'Body')):null,
-      h('div',{className:'fs-actions'},phase==='ready'&&restartAllowed?h(React.Fragment,null,h('button',{className:'fs-primary',onClick:start},t('restart')),h('button',{onClick:()=>{store.dismiss();work();}},t('laterRestart'))):null,
-        ['authorizing','protected','failed'].includes(phase)?h('button',{onClick:work},t(phase==='protected'?'startWork':'work')):null,phase==='failed'?h('button',{onClick:()=>void store.refresh()},t('refresh')):null)),
+      h('div',{className:'fs-actions'},phase==='ready'&&exitAllowed?h(React.Fragment,null,h('button',{className:'fs-primary',onClick:start},t('exit')),h('button',{onClick:()=>{store.dismiss();work();}},t('laterExit'))):null,
+        preparing||['protected','failed'].includes(phase)?h('button',{onClick:work},t(phase==='protected'?'startWork':'work')):null,phase==='failed'||failure||snapshot.requestError?h('button',{onClick:()=>void store.refresh()},t('refresh')):null)),
       h('div',{className:'fs-protected-status'},art,h('div',{className:'fs-state-label'},status,session))),
-    phase==='ready'?h('p',{className:'fs-restart-reminder'},t('restartReminder')):null,
-    phase==='authorizing'?h(React.Fragment,null,h('p',{className:'fs-preparing-resume'},t('resume')),
+    phase==='ready'?h('p',{className:'fs-exit-reminder'},t('exitReminder')):null,
+    preparing?h(React.Fragment,null,h('p',{className:'fs-preparing-resume'},t('resume')),
       h('div',{className:'fs-visible-progress'},progressLabel,h('progress',{max:100,value:typeof snapshot.status?.progress?.overall_percent==='number'?snapshot.status.progress.overall_percent:undefined,'aria-label':t(operationLabel)})),
+      currentStep?h('p',{className:'fs-description',style:{overflowWrap:'anywhere'}},currentStep):null,
       h('details',{className:'fs-progress'},h('summary',null,t('progress')),h('div',{className:'fs-progress-content'},h('ol',null,
         h('li',{'aria-current':installing?'step':undefined,className:installing?undefined:'fs-step-done'},h('span',{className:installing?'fs-step-current':undefined,'aria-hidden':true},installing?null:'✓'),t(installing?operationLabel:'installed')),
         h('li',{'aria-current':installing?undefined:'step'},h('span',{className:installing?undefined:'fs-step-current','aria-hidden':true},installing?'○':null),t('nativePreparing')),
-        h('li',null,h('span',{'aria-hidden':true},'○'),t('afterRestart'))))),
-      h('p',{className:'fs-permission-prompt'},t(explanationAction))):null,
-    ['authorizing','ready'].includes(phase)?h('details',{className:'fs-permission-help'},h('summary',null,t(explanation+'Title')),h('p',null,t(explanationBody))):null,
+        h('li',null,h('span',{'aria-hidden':true},'○'),t('afterExit'))))),
+      authorizing?h('p',{className:'fs-permission-prompt'},t(explanationAction)):null):null,
+    authorizing||phase==='ready'?h('details',{className:'fs-permission-help'},h('summary',null,t(explanation+'Title')),h('p',null,t(explanationBody))):null,
     updateReady&&snapshot.status?.authorizationPending?h('p',{className:'fs-description'},t('authorizationPending')):null,
     (phase==='failed'||['failed','cancelled','reboot-required'].includes(targetPhase))?h('section',{className:'fs-failure-reason'},h('h3',null,t(snapshot.status?.reason==='update'?'updateFailure':'failureReason')),h('p',{className:'fs-error',role:'alert'},failure||(cancelled?t('cancelledExplanation'):t('failedBody'))),h('a',{className:'fs-feedback-link',href:feedback,target:'_blank',rel:'noopener noreferrer'},t('feedback'))):failure?h('p',{className:'fs-error',role:'alert'},failure):null,
     jobError?h('div',{className:'fs-error',role:'alert'},h('p',null,t('jobFailure')),h('p',null,t('jobFailureBody')),h('details',null,h('summary',null,t('technicalDetails')),h('p',null,jobError))):null,
+    snapshot.requestError?h('p',{className:'fs-error',role:'alert'},snapshot.requestError):null,
     phase==='protected'?h('div',{className:'fs-areas'},...['privacy','interaction','system','data'].map(area=>h('section',{className:'fs-area',key:area},h('h3',null,t(area)),h('p',null,t(area+'Body'))))):null,
-    h('footer',{className:'fs-footer'},h('a',{href:t('arenaUrl'),target:'_blank',rel:'noopener noreferrer'},t('arena')+' ↗'),h('a',{href:feedback,target:'_blank',rel:'noopener noreferrer'},t('feedback'))),
-    h('p',{className:'fs-migration-note'},t('migrationNotice'))));
+    h('footer',{className:'fs-footer'},h('a',{href:t('arenaUrl'),target:'_blank',rel:'noopener noreferrer'},t('arena')+' ↗'),h('a',{href:feedback,target:'_blank',rel:'noopener noreferrer'},t('feedback')))));
 }
 
-function RestartNotice({t,store,details}){
+function ExitNotice({t,store,details}){
   const snapshot=useProtection(store);
   if(!snapshot.notice||snapshot.pageVisible||snapshot.status?.phase!=='ready')return null;
   const update=snapshot.status?.reason==='update';
-  return h('section',{className:'finshield-page finshield-notice',role:'status'},h('style',null,styles),h('h3',null,t(update?'updateReady':'noticeTitle')),h('p',null,t(update?'updateReadyBody':'noticeBody')),update?h('p',null,t('restartReminder')):null,
+  return h('section',{className:'finshield-page finshield-notice',role:'status'},h('style',null,styles),h('h3',null,t(update?'updateReady':'noticeTitle')),h('p',null,t(update?'updateReadyBody':'noticeBody')),update?h('p',null,t('exitReminder')):null,
     update&&snapshot.status?.authorizationPending?h('p',null,t('authorizationPending')):null,
     snapshot.status?.authorization?.error?h('p',{className:'fs-error'},snapshot.status.authorization.error):null,
-    h('div',{className:'fs-actions'},h('button',{className:'fs-primary',onClick:()=>{void store.restart().catch(()=>{});}},t('restart')),h('button',{onClick:store.dismiss},t('later')),details?h('button',{onClick:details},t('details')):null));
+    h('div',{className:'fs-actions'},h('button',{className:'fs-primary',onClick:()=>{void store.exit().catch(()=>{});}},t('exit')),h('button',{onClick:store.dismiss},t('later')),details?h('button',{onClick:details},t('details')):null));
 }
 exports.inject=['slots','locale','remote','layout'];
 exports.apply=async function apply(ctx){
@@ -324,10 +328,10 @@ exports.apply=async function apply(ctx){
   await ctx.remote.$mount(REMOTE_CONTRACT);
   ctx.inject(['remote.finsafeWindows'],ctx=>{
   const invoke=async request=>{const result=await request;if(!result.ok)throw new Error(result.error?.message || 'DSH request failed');return result.value;};
-  const store=createProtectionStore(()=>invoke(ctx.remote.finsafeWindows.status()),()=>invoke(ctx.remote.finsafeWindows.restart()),()=>invoke(ctx.remote.finsafeWindows.later()));
+  const store=createProtectionStore(()=>invoke(ctx.remote.finsafeWindows.status()),()=>invoke(ctx.remote.finsafeWindows.exit()),()=>invoke(ctx.remote.finsafeWindows.later()));
   ctx.effect(()=>{let active=true,timer;const tick=async()=>{await store.refresh();if(active)timer=setTimeout(tick,2000);};void tick();return ()=>{active=false;clearTimeout(timer);};});
   const work=()=>ctx.layout.selectPanel(null);
   ctx.effect(()=>ctx.slots.inject('plugins.bundle.config',()=>ctx.slots.register({name:'plugins.bundle.config',key:REMOTE_CONTRACT.package,locale:NS,inject:()=>({t,store,work})},ProductPage)));
-  ctx.effect(()=>ctx.slots.inject('shell.overlay',()=>ctx.slots.register({name:'shell.overlay',id:REMOTE_CONTRACT.package,locale:NS,inject:()=>({t,store,details:ctx.get('pluginNavigation')?()=>ctx.get('pluginNavigation').openBundle(REMOTE_CONTRACT.package):undefined})},RestartNotice)));
+  ctx.effect(()=>ctx.slots.inject('shell.overlay',()=>ctx.slots.register({name:'shell.overlay',id:REMOTE_CONTRACT.package,locale:NS,inject:()=>({t,store,details:ctx.get('pluginNavigation')?()=>ctx.get('pluginNavigation').openBundle(REMOTE_CONTRACT.package):undefined})},ExitNotice)));
   });
 };

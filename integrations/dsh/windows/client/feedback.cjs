@@ -4,14 +4,14 @@ const copy={
     source:'入口',discover:'发现详情页',protection:'防护页',state:'当前状态',protected:'当前防护',enabled:'已开启',disabled:'未开启',
     nativeVersion:'当前原生组件版本',stage:'失败阶段',code:'错误码',report:'问题反馈',separator:'：',
     windows:value=>`Windows（系统构建 ${value}）`,supported:'Windows（插件适用平台；实际系统版本未获取）',
-    phases:{starting:'正在连接',downloading:'正在下载',installing:'正在安装',authorizing:'正在准备防护',ready:'等待重启',
-      protected:'防护已开启',failed:'未完成',cancelled:'已取消','reboot-required':'需要系统重启',restarting:'正在重启'}},
+    phases:{starting:'正在连接',downloading:'正在下载',installing:'正在安装',authorizing:'正在准备防护',ready:'等待退出后手动重新打开',
+      protected:'防护已开启',failed:'未完成',cancelled:'已取消','reboot-required':'需要系统重启',exiting:'正在退出'}},
   en:{unknown:'Unavailable',pluginVersion:'Plugin version',pageVersion:'Page version',dshVersion:'DSH version',os:'OS',arch:'Architecture',
     source:'Source',discover:'Discover details',protection:'Protection page',state:'Current state',protected:'Current protection',enabled:'Enabled',disabled:'Disabled',
     nativeVersion:'Current native version',stage:'Failure stage',code:'Error code',report:'Problem report',separator:': ',
     windows:value=>`Windows (system build ${value})`,supported:'Windows (supported platform; actual system version unavailable)',
-    phases:{starting:'Connecting',downloading:'Downloading',installing:'Installing',authorizing:'Preparing protection',ready:'Restart needed',
-      protected:'Protection enabled',failed:'Incomplete',cancelled:'Cancelled','reboot-required':'System restart required',restarting:'Restarting'}},
+    phases:{starting:'Connecting',downloading:'Downloading',installing:'Installing',authorizing:'Preparing protection',ready:'Close and reopen manually',
+      protected:'Protection enabled',failed:'Incomplete',cancelled:'Cancelled','reboot-required':'System restart required',exiting:'Exiting'}},
 };
 function feedbackUrl({version:pluginVersion,status={},source='protection',language='zh'}={}) {
   const locale=language==='en'?'en':'zh',t=copy[locale],unknown=t.unknown;

@@ -53,23 +53,23 @@ Prevention success follows each case's target effect and decision criteria. Thes
    ```
 
 3. Enable FinShield and follow the native setup and Windows authorization prompts. Save active tasks first.
-4. When prompted, choose **Restart DSH**. Open **Plugins → Installed → FinShield** and confirm the actual protection state.
+4. When prompted, choose **Exit DSH**, then open DSH manually. Open **Plugins → Installed → FinShield** and confirm the actual protection state.
 
 ```mermaid
 flowchart LR
     A[Install through the app] --> B[Complete native setup and authorization]
-    B --> C[Restart DSH when prompted]
+    B --> C[Exit DSH and open it manually]
     C --> D[Confirm actual protection]
 ```
 
 Use DSH Desktop's plugin manager. The generic `dsh plugin --profile web add …` command targets a different profile; a separately installed CLI may also refuse to write to the application-managed `desktop` profile.
 
-The plugin is distributed through npm. If native components are missing, it prefers the configured public release storage for the matching installer, with GitHub assets of the same version as fallback and SHA256 verification. Native setup needs Windows consent; an updater process handles installation, authorization coordination and required restarts. Installation alone does not establish protection: check the actual state on the plugin page.
+The plugin is distributed through npm. If native components are missing, it prefers the configured public release storage for the matching installer, with GitHub assets of the same version as fallback and SHA256 verification. Native setup needs Windows consent; an updater process handles installation, authorization coordination and exit reminders. Installation alone does not establish protection: check the actual state on the plugin page.
 
 ## Everyday use
 
 - **Check status**: open FinShield from DSH's installed plugins to see installation, authorization and actual protection status.
-- **Update**: update the plugin through DSH and follow the native component update and restart prompts.
+- **Update**: update the plugin through DSH and follow the native component update prompts, then close DSH and open it manually. The next start loads the new plugin.
 - **Disable**: disable it in DSH, then exit and reopen the application. Disabling does not move a running process out of the sandbox.
 - **Uninstall**: removing the plugin retains native components, configuration and logs. Uninstall native components separately through their Windows Installed Apps entry; see [operation details](OPERATIONS.md#disable-and-remove).
 

@@ -7,7 +7,7 @@ export async function loadRemovalRuntime(vendor) {
   const boot=await import(pathToFileURL(vendor.resolve('@deepseek-ai/dsh-app-boot')).href);
   const YAML=vendor('yaml');
   const {writeFileAtomic}=await import(pathToFileURL(vendor.resolve('@deepseek-ai/dsh-atomic-write')).href);
-  return {...boot,async enableHmr(profile){
+  return {...boot,async enableHmr(profile,enabled=true){
     let text;
     try {text=await readFile(profile.patchPath,'utf8');}
     catch(error){if(error.code!=='ENOENT')throw error;text='[]\n';}
@@ -16,7 +16,7 @@ export async function loadRemovalRuntime(vendor) {
     if(!YAML.isSeq(doc.contents))throw Error('DSH desktop patch must be a YAML array');
     const rows=doc.contents.items.filter(row=>YAML.isMap(row)&&row.get('id')==='hmr');
     if(rows.length>1)throw Error('Ambiguous DSH HMR entries');
-    const row=rows[0]??doc.createNode({id:'hmr'}),previous=row.get('disabled',true),disabled=doc.createNode(false);
+    const row=rows[0]??doc.createNode({id:'hmr'}),previous=row.get('disabled',true),disabled=doc.createNode(!enabled);
     for(const key of ['comment','commentBefore','spaceBefore','anchor'])if(previous?.[key]!==undefined)disabled[key]=previous[key];
     row.set('disabled',disabled);if(!rows.length)doc.contents.add(row);
     await writeFileAtomic(profile.patchPath,doc.toString(),{mode:0o600});

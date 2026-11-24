@@ -1,6 +1,136 @@
 # FinShield for DSH Desktop: design and operation
 
-Revision: 2026-11-15. This document describes the Node plugin and independent
+## DSH activation correction, 2026-11-24
+
+This revision restores DSH startup and update ordering. It takes precedence over
+older activation and query ordering below. The shared updater adds one optional
+`prepareUpdates` input, enabled only by DSH. Other plugin behavior, SDK, AppSeam,
+Core, HMR and selected installation paths are unchanged.
+No confinement capability changes; the platform feature matrix needs no update.
+
+The plugin samples `appReady` and registers status, commands and cleanup before
+awaiting the existing shared activation. Keep returns to DSH Loader. After the
+pure decision returns Wrap, updater stops old Main and proceeds directly with
+the existing replacement launch. DSH admission uses the original `onStopped`
+handoff; it does not wait for replacement Main retention. The new AppContainer
+Host keeps and completes loading. Replacement does not wait for new Host bind.
+
+The existing shared `decideStartup()` is unchanged: an AppContainer Host always
+keeps, without an authorization read. An ordinary Host wraps only when the
+selected authorization is complete; otherwise it keeps. The startup workflow
+below separates input reads, the pure decision and replacement execution.
+For DSH, the updater receives the pure decision immediately, executes Wrap and
+replies at the original Main-stop handoff. Running activation still skips startup
+admission; an AppContainer Host only connects to the existing ordinary updater.
+The shared coordinator retains session and Main ownership. The DSH adapter
+only forwards the existing `onStopped` handoff to its waiting admission request.
+Native `stop_main`, its 10-second exit wait and HMR behavior are unchanged.
+
+Scope: DSH activation workflows. Input: current Host and explicit selection.
+Outputs: Keep after startup admission, Wrap after old Main stops, or the actual
+operation error. Status registration and queries remain independent of startup
+completion. Background installation and authorization do not delay Keep.
+
+```mermaid
+flowchart TD
+    A[Host loads plugin] --> B[Read current startup facts]
+    B --> C[Decide startup: return Keep or Wrap immediately]
+    C -->|Keep, including Host already in AppContainer| D[Plugin returns; current Host continues]
+    C -->|Wrap| E[Execute existing application replacement]
+    E --> F[New Host loads plugin]
+    F --> B
+```
+
+The replacement node uses `updater/launch.js`: stop Main, emit the existing
+`onStopped` handoff, disable HMR, open the work listener, then launch through
+FinShield and retain replacement Main. No plugin reply, page request or new
+Host bind gates launch after Main stops. A replacement failure follows the
+existing error reporting and cleanup branch of the shared startup workflow.
+
+| Flow node | Existing implementation |
+| --- | --- |
+| Host loads plugin; Keep returns | `src/desktop.js`: `apply()` awaits `activation.start()` |
+| Read current startup facts | Shared activation and updater `admit()`; AppContainer skips authorization reads |
+| Decide startup | Shared synchronous `decideStartup()`; unchanged |
+| Execute existing application replacement | Shared `executeStartup()` owns the operation; `updater/launch.js` executes it |
+| Original Main-stop handoff | DSH `updater/coordinator.js` forwards `onStopped`; server awaits admission |
+| New Host loads plugin | The same entry and current AppContainer token select Keep |
+
+DSH uses the common request-error propagation policy also used by OpenCode.
+Admission and management-command errors are call diagnostics, not authorization
+results. The adapter retains the startup diagnostic for this activation and the
+latest command diagnostic until a command succeeds. An established binding
+continues to read status after admission timeout or Exit RPC failure. A new
+activation does not inherit these diagnostics. Query errors propagate to the
+existing DSH status boundary, which keeps current Host token evidence separate.
+Neither query failures nor command failures trigger retries or another Wrap.
+
+Native and HTTP calls load the same plugin-owned SDK through the existing
+common package loader. For the frozen 0.11.6/0.11.8 script-only copy layout,
+the DSH adapter supplies the installed DSH package as that loader's source.
+It does not search a profile-level SDK or use another plugin's dependencies.
+This is a fixed layout mapping, not a file-existence or version precheck.
+Normal packages and self-contained staged packages keep their own source.
+This restores old-sender loading without adding a successor activation path.
+
+The plugin, its SDK and its normal selected FinShield use one release. The
+existing explicit update is the only cross-release operation: plugin A and SDK A
+install and authorize FinShield B. They do not load SDK B or activate plugin B in that operation.
+No new file, release or layout admission check is added before a native call.
+
+### Update preparation completion, 2026-11-24
+
+The owner restored the earlier DSH completion boundary: only a target that
+satisfies the existing Wrap conditions can prompt the user to reopen DSH.
+Installed files with pending authorization do not meet that boundary. This
+supersedes the DSH install-only behavior in the shared manual-reopen revision.
+
+Scope: the update requested by the loaded plugin. Inputs: the explicit target
+release and current native state. Output: actual preparation progress, failure,
+cancellation, or a reopen reminder for the prepared target. Startup still uses
+the unchanged Keep/Wrap flow above.
+
+```mermaid
+flowchart TD
+    A[Install target FinShield] --> B[Authorize target using the retained installer worker]
+    B --> C[Observe actual target authorization through SDK HTTP]
+    C -->|Incomplete| D[Show progress without a reopen reminder]
+    C -->|Failed or cancelled| E[Show the actual result without a reopen reminder]
+    C -->|Wrap conditions satisfied| F[Offer manual reopen]
+    F --> G[Next startup uses the existing Keep/Wrap flow]
+```
+
+DSH enables `prepareUpdates` on the shared coordinator. Explicit update requests
+then continue through its existing backend and authorization operations instead
+of returning `ready` with `authorizationPending: true` after installation.
+`updater/server.js` already transfers the installer's retained worker to the
+existing Desktop authorization entry. Reuse that handoff before the current
+session ends. Native authorization still owns consent, completion and validity;
+the existing SDK HTTP observation supplies progress and the terminal result.
+The option defaults to false for other callers. No updater or successor-plugin
+activation, extra startup check, polling loop, or new authorization mechanism
+is introduced. Installed upgrade acceptance remains separate from unit results.
+
+The DSH adapter also removes the prior Host-script-name/platform refusal, the
+launcher platform/architecture precheck, and the
+Node executable/directory metadata preflight. Node and Windows receive the
+selected paths directly and report their actual load or process-creation error.
+Settings are read directly; only an absent optional settings file selects the
+existing defaults. The unused JavaScript installation-record/version/path
+assessment and second staged-release comparison are removed. Optional setup
+results are also read directly, without an existence probe. Background
+installation selection still belongs to the
+existing native owner. IPC authentication, external input parsing, download
+integrity and authorization admission remain at their existing boundaries.
+
+Focused tests cover delayed acquisition and admission, HTTP progress and final
+results through the shared updater and DSH page store, error retention, and old
+copy loading. Installed-product startup, replacement and authorization acceptance
+remain separate. The common coordinator's matching-protected-target observation
+shortcut is outside this DSH-only correction; this revision does not claim that
+external authorization changes on that branch are now observable.
+
+Revision: 2026-11-21. This document describes the Node plugin and independent
 Node updater in this package. Unit and owned-fixture checks do not establish
 installed-product acceptance. The owner performs installation, Windows consent,
 restart and upgrade checks.
@@ -14,6 +144,51 @@ AppSeam owns DSH discovery, peer validation and compatibility. The existing
 personal CLI package builds the common C call boundary. Explicit selected
 installation/configuration inputs, singleton rules and lifecycle remain unchanged.
 SDK publication and installed-product acceptance are recorded separately.
+
+Package delivery, 2026-11-21: DSH supplies Schemastery from its runtime.
+Schemastery remains a declared optional peer for host compatibility and a
+development dependency for authoring. Optional peer metadata prevents npm from
+automatically installing another host schema package. The plugin still requires
+that API when DSH loads it. Resolve Schemastery from the selected DSH runtime,
+including when an older self-update sender loads a private successor copy.
+Do not depend on a peer package in the profile or the original pnpm directory.
+The Node SDK owns pinned Koffi and its Windows x64
+native package. Host bindings use the SDK's public `loadKoffi` entry. Updater
+staging copies the complete SDK; it does not resolve Koffi from DSH. The only
+regular installation dependency is the FinSAFE Node SDK, which DSH does not ship.
+Host bindings copy the complete declared SDK into a process-private snapshot,
+including its code, DLL and dependencies. The snapshot's package name and version
+must match the plugin's exact dependency; a mismatch reports both identities and
+stops loading. Complete the matching package update and reopen DSH to recover.
+Resolve the public SDK entry from this snapshot. Token observation, the native
+adapter, Host DLL copy and updater staging all use this same SDK snapshot.
+A hoisted update cannot replace its files or reuse an older module's namespace.
+This adds no lifecycle state, dependency fallback or new preparation operation.
+The SDK loads Koffi from its own process-private temporary copy so Windows does
+not pin the removable package's native addon. Its first native load copies about
+2.83 MB synchronously; the existing Host DLL and updater staging remain asynchronous.
+
+Remaining host dependencies have distinct purposes:
+
+| Dependency | Source and purpose |
+| --- | --- |
+| Node executable | The actual DSH-selected runtime, executed in place by the updater |
+| Schemastery | Declared optional peer; uses DSH's configuration schema contract |
+| React and DSH UI primitives | DSH client module loader; renders inside DSH |
+| DSH home, Typert, app-boot and atomic-write modules | Host integration for profile, RPC and removal |
+| YAML | DSH dependency tree; edits the host's patch format during removal |
+| FinSAFE Node SDK and Koffi | Plugin-declared SDK delivery; independent of DSH's Koffi |
+
+This change removes the Koffi dependency on the host. It does not make the DSH
+plugin independent of DSH's APIs or copy a second host framework into the plugin.
+
+Shared Node updater extraction, 2026-11-20. The common activation, acquisition,
+protocol and coordinator source lives in `integrations/common/windows`. Build
+staging delivers those modules inside this package's `updater/common` directory.
+DSH keeps its application adapter, appReady sample, operation completion events,
+HMR and package removal integration. The existing process, Job, communication
+and replacement contracts remain the baseline. Installed acceptance of the
+extraction is pending.
 
 Configuration revision #1094, approved 2026-11-14: use the
 [canonical configuration algorithm](#appseam-settings)
@@ -45,21 +220,17 @@ Main to the updater Job; wrapped DSH also launches outside that Job. Updater
 observes the retained Main process handle through an asynchronous exit wait.
 Main exit ends updater; updater exit or startup recovery leaves DSH running.
 The updater Job still owns startup discovery and cleanup of updater and its
-installation work. See the [canonical revision](#components-and-ownership).
-The shared-Job description below is historical implementation context, not
-the current lifetime contract or acceptance of this revision.
-
-Owner issue revision 1029: startup
-enters running with Main retained in updater's Job or a reported Keep admission
-failure. Updater creates and joins its Job before listening.
-Keep completes `apply` before explicitly assigning Main;
-Job admission failure is reported while DSH continues. Wrap retains a replacement
-that inherits the Job at creation.
-Page Restart replaces Main through this updater and retains the Job. Canonical:
-[updater process lifetime](#components-and-ownership)
-and [startup and running periods](#activation-and-readiness).
-Source implements startup keep-or-wrap, Main ownership, then running bind and
-the three native-work scenarios. Installed-product acceptance remains separate.
+installation work. See the
+[lifecycle ownership summary](#components-and-ownership).
+Owner-approved current-state revision, 2026-11-21,
+[#1159](https://github.com/Geeksfino/finsafe/issues/1159): the
+[shared activation and Startup decision](#activation-and-readiness)
+replace historical Job, retention and Keep phase gates. Main ownership and the
+#1075 lifetime mechanism remain. The
+[DSH page observation contract](#page-observation-and-presentation)
+replaces page-local business phases and fabricated protection on read failure.
+Both revisions are implemented in source; native product acceptance is pending.
+Historical source and fixture results do not verify these revisions.
 
 The selected FinSAFE Desktop CLI calls the same prompt-return authorization
 function as Widget and Console. Native task state and progress are observed at
@@ -88,8 +259,9 @@ remains visible when available. Partial files or configuration may remain; futur
 work should first evaluate rerunning the existing full installer.
 
 All DSH launches use one initialization flow. Launch origin must not select
-behavior. Startup wrap is only for an already-ready ordinary Host, before the
-Job. See
+behavior. Current token and the synchronous appReady sample select phase.
+Startup Wrap is only for an already-ready ordinary Host; Main stays outside
+updater Job throughout. See
 [startup wrap versus keep](#activation-and-readiness).
 
 FinShield uses FinSAFE AppContainer confinement for the DSH Host and its tools.
@@ -128,6 +300,26 @@ plugin selects the native target release; the updater package version does not.
 
 ## Installation instances and paths
 
+Installation is available through DSH's Add Plugin entry and its market.
+The plugin derives paths from the current requested release and actual Windows
+known folders; it exposes no installation-path configuration. The plugin does
+not persist or reload a second settings snapshot. The Host passes the derived paths to the authenticated updater;
+the updater retains the target for the current operation. An old plugin can
+install a newer native release using that operation's explicit target.
+Installation registration and authorization records retain their native owners.
+Setup results remain diagnostic output and never select the next installation.
+
+Scope: plugin settings resolution. Parent: activation and management. Inputs:
+requested release and Windows known folders. Output:
+explicit operation paths. Program and SDK errors remain visible. Default paths
+do not depend on previous executions. Platform confinement behavior is unchanged.
+
+```mermaid
+flowchart LR
+    V[Requested release and known folders] --> R[Derive operation paths]
+    R --> U[Existing SDK updater workflow]
+```
+
 The installation directory selects the existing native record, installed version,
 update policy and uninstall ownership. The configuration directory selects the
 candidate/effective YAML. User SID plus `security_domain_id: finshield.dsh`
@@ -139,7 +331,7 @@ existing behavior. A personal installation elsewhere cannot replace this record.
 | Content | Resolved location |
 |---|---|
 | DSH desktop profile | `<DSH_HOME>/profiles/desktop/` |
-| Plugin instance settings and private Host SDK-library copy | `<DSH_HOME>/finsafe-windows/` |
+| Plugin setup diagnostics | `<DSH_HOME>/finsafe-windows/` |
 | Native runtime, default | `<ProgramFiles>/FinSAFE/dsh-plugin-versions/<release>/` |
 | Native configuration, default | `<ProgramData>/FinSAFE/dsh-plugin-versions/<release>/config/` |
 | Verified setup and results | `<LocalAppData>/FinSAFE/dsh-plugin/downloads/<version>/` |
@@ -151,19 +343,18 @@ existing behavior. A personal installation elsewhere cannot replace this record.
 These are templates, not machine-specific paths. DSH's home resolver and actual
 Host command line determine home, profile, selected runtime and available Node.
 Native Windows known folders determine user and system roots, including relocated
-folders, without AppContainer package redirection. Explicit absolute instance
-settings are supported. Native file resolution supplies resource comparison keys;
+folders, without AppContainer package redirection. Absolute instance
+operation inputs are supplied internally. Native file resolution supplies resource comparison keys;
 Node does not strip extended path prefixes or reconstruct drive/user paths.
 `DSH_HOME` is passed explicitly to setup, preparation, compatibility and launch.
-The fixed `<DSH_HOME>/finsafe-windows/config.json` discovery entry retains any
-custom setup-result directory. Ordinary bootstrap uses the selected DSH Node
+Ordinary bootstrap uses the selected DSH Node
 directly. Setup runs through the existing DLL in that updater; runtime operation
 requires no extra Node process or PowerShell. Application paths retain
 ordinary DOS/UNC spelling. Native handle/File ID checks remain separate from
 the values passed to setup and Desktop authorization.
 
 The ordinary Host executes its actual selected DSH Node in place. It copies
-Koffi, the declared Node SDK and required scripts once per package version, outside the
+the declared Node SDK with its bundled Koffi and required scripts once per package version, outside the
 plugin package. Existing copies are reused without scanning or hashing their
 contents. No Node copy, hash manifest or full-release fingerprint is created.
 A versioned private Host SDK-library copy avoids holding the package's DLL open during
@@ -177,27 +368,31 @@ Staging does not authenticate the package source; see the accepted vulnerabiliti
 
 Scope: one backend activation. Input: current Host and selected instance.
 Output: keep, wrap, Host bind, a running scenario, or an actual error.
-Canonical:
+Canonical routing:
+[shared activation](#activation-and-readiness).
+Canonical DSH children:
 [startup and running periods](#activation-and-readiness).
 
-Activation entry follows the approved
-[#1082 flow](#activation-and-readiness),
-including false on readiness-read failure. The update coordinator retains current
-operation completion on the Loader entry across a self-update. Older senders'
-active handoff markers identify an already settled successor. HMR-loaded instances
-observe the later completion event; no-HMR successors use the completed handoff.
-No event timeout or replay is added. Startup Keep/Wrap and native preparation are
-unchanged; the platform feature matrix remains correct.
+Sample `appReady` synchronously at entry before the first asynchronous operation;
+keep the existing false/unknown/error default. Protected Host connects to the
+existing updater because of its actual token. Ordinary running activation skips
+Startup decision; ordinary startup uses current selected-target readiness for
+Keep/Wrap. Existing updater, unchanged Main, previous Keep/Wrap and completed
+work cannot establish running phase. Remove `mainRetained`, `session.keep`,
+their early returns and otherwise-unused Keep acknowledgment; no replacement
+history flag or disk record.
 
-Do not bind, download, Ensure, or wrap inside this section. Startup obtains
-the updater, then keeps or wraps. Keep completes `apply`, then assigns Main;
-status and logs report any Job failure without stopping DSH or changing the
-actual Host protection result. Wrap retains its inherited
-replacement. Running binds, then
-observes or runs one scenario: first install, update, or authorization ready.
-Keep assignment failure does not establish Job membership or a Job-close
-termination guarantee for that Main. Later activation of the retained session
-does not repeat startup wrap eligibility.
+Keep completes `apply`, binds and enters Running preparation for this activation.
+Main stays outside updater Job with verified process-handle ownership and an
+asynchronous exit wait. Completion and status do not repeat Startup decision;
+a new activation uses current Host token, phase and readiness again. Duplicate
+attachment of the same activation to the same live Host may reuse it. A different
+Host needs verified attachment and actual token observation even under unchanged Main.
+
+The Loader entry owns current operation completion across self-update. Preserve
+matching `started`/`settled`, the older sender's active completed handoff, and
+independent target readiness. Neither condition alone permits runtime Restart.
+Do not add event timeouts, replay, polling, recovery or readiness checks.
 
 An AppContainer Host can only connect to the existing outside updater; it cannot
 bootstrap an ordinary process or perform installation itself. The authenticated
@@ -220,10 +415,15 @@ installation. Service configuration and maintenance remain installer operations;
 the updater does not inspect the SYSTEM Service process.
 It does not unpack the installer or reproduce installer/authorization algorithms.
 
-Prepare ensure/status retain native task attachment, completed-state reuse,
+Prepare ensure/status retain native task attachment, native completed-state reuse,
 actual outcomes and percentage calculation. Node shares only matching active
-work. Completed tasks are re-evaluated on a new activation. Conflicting mutations
-of an installation or configuration fail visibly. Opening a page only observes
+work. Reassess applicability on activation/new-Host attachment and existing
+preparation-result events. Actual installation and authorization retain native
+validity rules. Completed protection belongs only to its verified Host. Review
+`beginAssessment`, `session.items`, `satisfied` and `restartPolicy` together; a
+new ordinary Host cannot inherit old protection or `restartPolicy:never`. Preserve
+ready actions and Later dismissal while applicable without duplicate work.
+Conflicting mutations of an installation or configuration fail visibly. Opening a page only observes
 status; unknown percentage remains indeterminate. No retry-to-success loop or
 Console/authorization button is added.
 The optional progress heading names installation or authorization from the native
@@ -263,7 +463,7 @@ reuse or departed targets. A protected Host's existing supervisor is validated
 as part of its relationship to Main. Separate clients do not replace each other's
 targets. Matching active tasks can attach; distinct native resources retain
 separate results. Each native bind has its own Main handle. The session keeps
-the binding that retained replacement Main for Job membership and exit observation;
+the binding that retained replacement Main for lifecycle ownership and exit observation;
 a Host rebind does not replace that lifecycle owner. Concurrent independent Hosts sharing the same profile are
 outside this implementation scope, as confirmed by the owner. Normal packaged
 DSH uses its own single-instance lock.
@@ -275,31 +475,31 @@ choosing Restart DSH all enter the same apply flow. Do not classify launch
 origin. Actual Host protection and native readiness govern keep versus wrap
 in the **startup** period.
 
-An ordinary activation that is already native-ready wraps in startup. Old Main
-stays outside updater's Job during Keep/Wrap. Keep completes `apply` before Job
-admission; failure does not reject that completed activation. Wrap
-uses the existing AppSeam launch; launcher and replacement Main inherit the Job
-at creation. Retention records the new Main owner without waiting for new Host
-bind or new `apply`. Child:
-[Wrap restart](#restart).
-Running-period work is first install, update, or authorization ready. When the
-selected target enters authorization Ready, including reuse for an upgrade,
-updater checks its installation/configuration usability and whether this DSH
-needs a wrapper switch. It retains one Restart/Later decision for that target;
-status polling and reconnect return that decision without business rechecks.
-Child:
-[Page and native work](#activation-and-readiness).
-Later keeps this session. The page is DSH UI; it does not own lifetime.
+An ordinary startup activation with an installed and authorized selected target
+Wraps; absent/mismatched installation or incomplete authorization returns Keep.
+Read errors return Keep with their actual cause. Startup decision does not
+prepare or add a Core precheck. Main stays outside updater Job on Keep and
+replacement. Existing explicit breakaway AppSeam launch retains verified Main
+without waiting for new Host bind or apply.
+
+Running preparation retains first install, update and authorization operations.
+Assess current-target reminders on activation/verified attachment and existing
+preparation-result events through existing bindings. Keep one applicable action
+and Later dismissal; status reads do not add a second reminder policy or submit
+work. Completed protection cannot transfer to another Host. Later keeps the
+session; preparation completion requires the existing permitted confirmation.
+The page observes current facts and does not own lifetime.
 
 Page Restart records restarting, acknowledges promptly, and directly executes
 the command with the retained selected target. Report the actual operation
 failure. Progress and result records support display and cleanup; they do not
 suppress commands or select a target.
 This updater stops old Main, waits for that Main to exit, then launches through
-AppSeam and retains new Main in the same Job. Restart performs no installation
-or authorization. It does not wait for old Host exit or new Host bind.
+AppSeam with existing explicit breakaway and retains new Main outside updater
+Job. Restart performs no installation or authorization. It does not wait for
+old Host exit or new Host bind.
 
-Wrap failures are written synchronously to updater's persistent `startup-*.log`
+Wrap failures are reported through existing best-effort `startup-*.log` output
 with the operation, target paths/release, Main identity and original error. If
 original Main is still live, keep it. Otherwise clean the failed launcher and
 pipes and exit updater; its Job closes. Add no retry, recovery process or ordinary
@@ -312,17 +512,38 @@ If bind fails in the running period, report the connection failure and keep
 the Job. Do not rebuild updater or wrap. Issue #1029 was a missing work-pipe
 listen before launch, not an AppContainer namespace block.
 
-Canonical:
-[startup and running periods](#activation-and-readiness).
+Canonical lifecycle:
+[Main ownership and running period](#restart).
+Replacement stops only retained old Main; independent Main exit ends updater.
+Updater exit or ordinary acquisition recovery leaves DSH alive outside its Job.
+Preserve native handles and asynchronous exit observation independently of Host bind.
 
-```mermaid
-flowchart TD
-    A[DSH startup period] --> B[Main retained in Job or Keep admission failure reported]
-    B --> C[DSH running period]
-    C -->|Independent Main exit| D[Updater exits; Job closes]
-    C -->|Page Restart| E[Updater replaces Main through AppSeam]
-    E -->|Replacement Main retained in Job| C
-```
+### Page observation and presentation
+
+Use the canonical
+[DSH page observation revision](#page-observation-and-presentation).
+`src/status.js` independently observes current Host token and updater task/result;
+the page receives both through the existing DSH status service. An updater error
+cannot erase a valid token. Whole-RPC failure reports that observation error and
+establishes neither unprotected state nor incomplete authorization. Never carry
+another Host's protection forward.
+
+Render actual installation, authorization, update or requested Restart first;
+show current protection separately. Then show an applicable prepared-target
+switch, retaining Loader/settled permission. Otherwise a valid protected token
+shows protection enabled. Missing information stays loading; actual errors keep
+their cause. Internal starting or unknown task data does not imply authorization.
+Remove duplicated page business phase, unknown-to-authorizing and fabricated
+`protected:false` paths. Keep UI request, visibility, submission and Later state.
+Restart submission keeps a UI-only pending flag after acknowledgment until a
+fresh observation arrives. In-flight observations cannot clear that flag.
+Request errors clear pending UI and remain separate from observed task facts.
+Registration stays independent of inferred startup decisions. Page open/refresh
+only observes; add no polling, timeout, retry, precheck or recovery.
+
+Verify all page observation scenarios and actions in the canonical contract,
+separately from native desktop acceptance. The DSH-only revision changes neither
+OpenCode page design nor startup, preparation and replacement algorithms.
 
 ## AppSeam settings
 
@@ -465,8 +686,7 @@ change the current AppContainer, Job, native runtime or authorization.
 If the updater or identity is unavailable, cleanup reports failure and the override
 can remain on a later ordinary launch. There is no crash recovery or promise that
 a disabled plugin will run again. The removal adapter requires the enabled
-plugin; offline removal and removal after disablement retain DSH's existing
-rules. The current Host keeps its startup sandbox policy and AppContainer.
+plugin; removal after disablement retains DSH's existing rules. The current Host keeps its startup sandbox policy and AppContainer.
 
 Bundle removal retains updater, native files, configuration and authorization.
 Explicit native uninstall is separate: the fixed ordinary-only operation first
@@ -504,16 +724,10 @@ both bundles together. Native instance paths and FinSAFE identity do not change
 with the npm package name. The platform feature matrix remains correct because
 this rename changes no confinement, platform support or authorization behavior.
 
-Owner-approved notice, 2026-11-16: Discover details and the protection page
-show a short static note for `finshield 0.10.50` users:
-`finshield 0.10.50 用户：在DSH中卸载旧插件 → 安装 finshield-dsh → 按提示重启。`
-English carries the same version and steps. Discover places the native Markdown
-paragraph after its administrator-approval note. Protection places muted text
-after the assessment footer, separated by a fine rule. There is no update-guide
-link or installed-version detection. Normal enabled-plugin removal does not
-require an intermediate restart; the new plugin prompts after preparation.
-This notice changes no package, restart or confinement behavior and does not
-change already published old-package pages. The platform matrix remains correct.
+Owner decision, 2026-11-24: remove the old-package migration notice from
+Discover details and the protection page in both languages. This copy change
+does not change installation, restart or confinement behavior. The platform
+feature matrix remains correct.
 
 ### Problem feedback
 

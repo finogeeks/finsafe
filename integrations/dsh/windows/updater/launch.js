@@ -40,7 +40,7 @@ export async function launchWrap(binding,{invoke,spawnChild=spawn,
     onStopped();
     operation='disable_hmr';await invoke('disable_hmr');
     operation='listen_work_pipe';await listen();
-    const env={...process.env,DSH_HOME:binding.home};delete env.ELECTRON_RUN_AS_NODE;
+    const env={...process.env,DSH_HOME:binding.home,FINSHIELD_USAGE_CONTEXT:JSON.stringify(binding.usage??{agent_id:'dsh',launch_method:'plugin',plugin_id:'@finogeeks2026/finshield-dsh',agent_version:'unknown',plugin_version:'unknown'})};delete env.ELECTRON_RUN_AS_NODE;
     operation='launch_protected';
     child=spawnChild(binding.settings.executable,
       ['app','launch','dsh-desktop','--yaml-path',binding.settings.yamlPath,'--replace-existing-components','--',binding.desktop],
