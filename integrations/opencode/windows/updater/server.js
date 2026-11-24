@@ -10,7 +10,6 @@ import {protocol,validateRequest,projectState} from '../updater/protocol.js';
 import {readPreparation,obtainShell} from '../src/preparation.js';
 import {createOperations} from './operations.js';
 import {launchHost,createConnectionConfirmation} from './launch.js';
-import {saveInstanceSettings} from '../src/instance-settings.js';
 const root=fileURLToPath(new URL('../',import.meta.url));
 const diagnostic=createDiagnostics(process.argv[7]);
 const record=(event,fields={})=>diagnostic({at:new Date().toISOString(),event,...fields});
@@ -48,7 +47,6 @@ const ports={
   ...createOperations({native,call}),restore:async()=>{},
   async detach(b){if(!b.native)return call({action:'detach_startup_main',startup:startup.startup});b.closing=true;await Promise.allSettled([...b.calls]);return call({action:'detach',native:b.native});},
   async wrap(b,observeReplacement,onStopped){
-    saveInstanceSettings(b.settings,b.home);
     const confirmation=confirmations.begin(b.mainKey);
     try{return await launchHost(b,{record,observeReplacement,onStopped,confirm:confirmation.wait,
       replace:()=>native(b,'replace_host'),

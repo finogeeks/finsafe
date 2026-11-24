@@ -1,5 +1,31 @@
 # OpenCode Windows plugin architecture
 
+## Derived operation inputs (2026-11-24)
+
+The owner decision in issue #1180 removes the generated settings snapshot.
+OpenCode configuration remains the only user configuration entry. Each activation
+derives installation and configuration paths from the loaded package's requested
+release and Windows known folders. Native-path overrides and the manual external
+installation workflow are retired. No read, write, migration or replacement cache
+exists for `<OpenCode config home>/finsafe-windows/config.json`.
+
+The existing updater holds the explicit target during an old-plugin/new-native
+update. The SDK/native owners supply installation registration, previous-installation
+inputs, configuration and authorization facts. Native receipts and diagnostic
+results keep their existing contracts. No startup check or lifecycle state is added.
+
+```mermaid
+flowchart LR
+    A[Activation inputs and requested release] --> B[Derive paths from known folders]
+    B --> C[Existing updater operation]
+    C --> D[SDK and native owners]
+    D --> E[Operation result]
+```
+
+Earlier external/shared selection evidence below is historical. Owned fixtures
+cover interrupted installation, manual reopen and updater A preparing native B;
+they do not establish real Desktop acceptance for this revision.
+
 ## Separate startup decision revision (2026-11-23)
 
 The owner-agreed [shared startup decision design](../../../docs/internal/design/plugin-startup-decision.md)
@@ -74,9 +100,8 @@ an absent executable during startup as Keep, followed by installation. Neither
 result proves the current Host's token. A status read starts no backend and
 needs no visible Widget/Console.
 
-Keep explicit external/shared selection read-only, actual Main/Host attachment,
-native command submission, no rollback and protected-session close/reopen limits.
-Executing external FinShield must also match the plugin release. Read-only HTTP
+Keep actual Main/Host attachment, native command submission, no rollback and
+protected-session close/reopen limits. Read-only HTTP
 observation binds to the selected instance, independently of the SDK release.
 Present active A and prepared B separately until #1163 activation completes.
 Existing implementation/preview evidence does not verify this migration.
@@ -535,7 +560,7 @@ updater keeps its own A runtime and SDK while executing the B installation and
 authorization task. Its own version is not the target. No updater replacement,
 SDK hot replacement, new ordinary process or version-negotiation flow is added.
 Normal ordinary startup still creates a fresh updater through the existing
-acquisition operation. `manageInstallation:false` remains read-only.
+acquisition operation. Plugin activation always uses the normal managed flow.
 
 Existing `ensure` handles same-version state and full preparation. The
 install-only acknowledgment is not completion or authorization success.
@@ -566,10 +591,9 @@ During setup, a byte-for-byte match for the original prototype Candidate
 selects the bundled formal Candidate for the new version. Staging keeps edited
 Candidates and leaves the active installation's configuration in place.
 
-Development selects existing `finsafe.shared` with `manageInstallation:false`.
-Its configuration and authorization remain unchanged. Native management requires
-the plugin's own domain, `finshield.opencode`, for product setup or authorization.
-The package's requested native release never selects an external runtime update.
+Native management uses the plugin's own domain, `finshield.opencode`, for product
+setup or authorization. Development fixtures leave `finsafe.shared` unchanged.
+Real setup requires the final-stage disposable Desktop test environment.
 
 OpenCode's Extensions switch controls GUI only. Native negative-ID configuration
 controls server loading. Removing the package entry releases its management

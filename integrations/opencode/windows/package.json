@@ -1,9 +1,26 @@
 {
   "name": "@finogeeks2026/finshield-opencode",
-  "version": "0.11.50",
+  "version": "0.11.51",
   "type": "module",
   "license": "SEE LICENSE IN LICENSE.rtf",
   "description": "FinShield protection for the native OpenCode desktop backend",
+  "keywords": [
+    "opencode-plugin",
+    "opencode",
+    "finshield",
+    "windows",
+    "appcontainer",
+    "security"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/finogeeks/finsafe.git",
+    "directory": "integrations/opencode/windows"
+  },
+  "homepage": "https://github.com/finogeeks/finsafe/blob/main/integrations/opencode/windows/README.md",
+  "bugs": {
+    "url": "https://github.com/finogeeks/finsafe/issues"
+  },
   "exports": {
     ".": "./src/index.js",
     "./gui-experimental": "./dist/gui-experimental.cjs"
@@ -30,7 +47,7 @@
     "prepack": "npm run build"
   },
   "dependencies": {
-    "@finogeeks2026/finsafe-sdk": "0.11.50"
+    "@finogeeks2026/finsafe-sdk": "0.11.51"
   },
   "devDependencies": {
     "@opencode/plugin": "2.3.0",

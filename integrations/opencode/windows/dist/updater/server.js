@@ -456,8 +456,8 @@ function createDiagnostics(destination, { append = appendFile } = {}) {
 }
 
 // updater/server.js
-import { readFileSync as readFileSync4 } from "node:fs";
-import { join as join5, dirname as dirname2 } from "node:path";
+import { readFileSync as readFileSync3 } from "node:fs";
+import { join as join4, dirname as dirname2 } from "node:path";
 import { fileURLToPath } from "node:url";
 import { randomUUID as randomUUID2 } from "node:crypto";
 
@@ -770,21 +770,8 @@ function observeSetupResult(state, path) {
   return { ...state, ...state.phase === "installing" ? { phase: result.phase, error: result.detail || void 0 } : {}, nativeSetup: result };
 }
 
-// src/instance-settings.js
-import { existsSync as existsSync3, readFileSync as readFileSync3, mkdirSync as mkdirSync2, writeFileSync as writeFileSync2 } from "node:fs";
-import { isAbsolute as isAbsolute2, join as join4 } from "node:path";
-function saveInstanceSettings(settings, home) {
-  const directory = join4(home, "finsafe-windows");
-  mkdirSync2(directory, { recursive: true });
-  writeFileSync2(join4(directory, "config.json"), JSON.stringify(settings));
-}
-
 // updater/operations.js
 function createOperations({ native: native2, call: call2, read = readPreparation, stage = stageRuntime, install = installRuntime, authorize }) {
-  const external = (b) => b.manageInstallation === false;
-  const requireManaged = (b) => {
-    if (external(b)) throw Error("The selected external FinSAFE installation is managed outside this plugin");
-  };
   const submit = authorize ?? ((b) => prepareRuntime({ ...b.settings, retainedWorker: b.retainedWorker }, {
     run: (exe, args, options2) => submitDesktopAuthorization(exe, args, {
       ...options2,
@@ -801,11 +788,9 @@ function createOperations({ native: native2, call: call2, read = readPreparation
       return { ...b, ...selected, selected: true, settings: { ...b.settings, ...selected, version: release } };
     },
     async stage(b, release, signal) {
-      requireManaged(b);
       return stage(b.settings.downloads, release, { signal });
     },
     async install(b, release, staged) {
-      requireManaged(b);
       if (staged.installed) return { phase: "completed" };
       const candidate = await native2(b, "stage_configuration"), inputs = await native2(b, "setup_inputs");
       const result = await install(b.settings.downloads, release, {
@@ -818,11 +803,7 @@ function createOperations({ native: native2, call: call2, read = readPreparation
       b.retainedWorker = result.retainedWorker;
       return { phase: result.rebootRequired ? "reboot-required" : "completed", nativeSetup: { code: result.exitCode } };
     },
-    async selected(b, target) {
-      saveInstanceSettings(target.settings, b.home);
-    },
     async prepare(b, connection) {
-      if (external(b)) return read(connection);
       const result = await submit(b);
       b.retainedWorker = void 0;
       return result;
@@ -899,7 +880,7 @@ var diagnostic = createDiagnostics(process.argv[7]);
 var record = (event, fields = {}) => diagnostic({ at: (/* @__PURE__ */ new Date()).toISOString(), event, ...fields });
 var report = (error) => record("error", { error: error.message, stack: error.stack });
 process.on("uncaughtExceptionMonitor", report);
-var version = JSON.parse(readFileSync4(join5(root, "package.json"), "utf8")).version;
+var version = JSON.parse(readFileSync3(join4(root, "package.json"), "utf8")).version;
 var call = nativeAdapter(root);
 var folders = readKnownFolders(root);
 var build = { version };
@@ -950,7 +931,6 @@ var ports = {
     return call({ action: "detach", native: b.native });
   },
   async wrap(b, observeReplacement, onStopped) {
-    saveInstanceSettings(b.settings, b.home);
     const confirmation = confirmations.begin(b.mainKey);
     try {
       return await launchHost(b, {
@@ -987,10 +967,10 @@ async function materialize(message, context) {
   const b = await call({ action: "bind", connection: message.connection, context });
   const c = b.context;
   record("host-bound", { hostPid: b.pid, mainPid: b.main, protected: b.protected });
-  if (!b.protected) roots.set(b.profile, { nativeVersionRoot: c.nativeVersionRoot, configurationVersionRoot: c.configurationVersionRoot, downloads: join5(folders.localAppData, "FinSAFE", "opencode-plugin/downloads") });
+  if (!b.protected) roots.set(b.profile, { nativeVersionRoot: c.nativeVersionRoot, configurationVersionRoot: c.configurationVersionRoot, downloads: join4(folders.localAppData, "FinSAFE", "opencode-plugin/downloads") });
   const trusted = roots.get(b.profile);
   if (!trusted) throw Error("No ordinary-bound OpenCode version roots");
-  const binding = { ...b, ...c, calls: /* @__PURE__ */ new Set(), roots: trusted, settings: { ...c, ...folders, executable: join5(c.installation, "finsafe.exe"), yamlPath: join5(c.configuration, "effective.yaml"), downloads: trusted.downloads } };
+  const binding = { ...b, ...c, calls: /* @__PURE__ */ new Set(), roots: trusted, settings: { ...c, ...folders, executable: join4(c.installation, "finsafe.exe"), yamlPath: join4(c.configuration, "effective.yaml"), downloads: trusted.downloads } };
   return binding;
 }
 async function dispatch(message, afterReply) {

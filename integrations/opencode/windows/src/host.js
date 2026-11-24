@@ -1,11 +1,12 @@
 import {platform,release,arch} from 'node:os';
 import {resolveSettings,version} from './settings.js';
+import {readKnownFolders} from './known-folders.js';
 import {loadNative,hostConnections,packageRoot} from '../updater/bootstrap.js';
 import {createActivation} from '../src/activation.js';
 export async function activateHost(options={}, {load=loadNative,mainPid,desktop,connectedHostPid,startup=true,prepare=true,connect=hostConnections}={}) {
   if(process.platform!=='win32')throw Error('FinShield requires Windows OpenCode Desktop');
   const call=load(),identity=()=>call({action:'identity'});
-  const settings=resolveSettings(options);
+  const settings=resolveSettings(options,readKnownFolders());
   await call({action:'select_slot',installation:settings.installation,configuration:settings.configuration});
   const token=await identity();
   if(connectedHostPid!==undefined&&connectedHostPid!==token.pid)throw Error('OpenCode Main business Host differs from the attached native Host');
@@ -16,7 +17,7 @@ export async function activateHost(options={}, {load=loadNative,mainPid,desktop,
     await call({action:'opencode_context',context:{mainPid}});
   const context={usage:{agent_id:'opencode',launch_method:'plugin',plugin_id:'@finogeeks2026/finshield-opencode',plugin_version:feedback.pluginVersion,agent_version:'unknown'},mainPid:inputs.mainPid,mainCreated:inputs.mainCreated,connectedHostPid,desktop:options.desktop??inputs.desktop,backend:process.execPath,runtimeRoot:packageRoot,
     home:settings.home,serviceFile:options.serviceFile??inputs.serviceFile??settings.serviceFile,installation:settings.installation,configuration:settings.configuration,
-    manageInstallation:options.manageInstallation!==false,
+    manageInstallation:true,
     requestedRelease:version,nativeVersionRoot:settings.nativeVersionRoot,configurationVersionRoot:settings.configurationVersionRoot};
   const connections=connect(settings,context,call);
   const activation=createActivation({observe:()=>({appContainer:token.protected}),...connections,

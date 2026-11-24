@@ -94,21 +94,16 @@ Downloads and updater stages use their own `opencode-plugin` and
 The updater installs and authorizes the selected version through the shared SDK.
 During an update it stages the existing desired Candidate. An exact match for
 the prototype default selects the formal bundled Candidate for the new version.
-The external FinSAFE executable must support
+The matching FinSAFE executable supports
 `app launch opencode --retain-main PID:CREATED --replace-host PID:CREATED`. Plugin removal retains native runtime,
 configuration and authorization.
 
-## Develop with existing shared authorization
-
-Select the existing instance explicitly:
-
-```json
-{"plugins":[{"package":"C:/owned-test/packages/node_modules/@finogeeks2026/finshield-opencode","options":{"installation":"C:/Program Files/FinSAFE","configuration":"C:/ProgramData/FinSAFE/config","manageInstallation":false}}]}
-```
-
-External mode consumes the installed version in place. It does not install,
-update, authorize, revoke, repair or replace shared configuration. Preserve the
-normal Windows user environment. Core performs its existing security admission.
+OpenCode's configuration is the only user configuration entry. The plugin derives
+native and configuration paths from its requested release and Windows known
+folders. Manual native executable, YAML and version-root overrides are retired.
+It does not read or write `finsafe-windows/config.json`, migrate an old snapshot,
+or save runtime process and resource data. The updater keeps an explicit update
+target in memory; installation registration and authorization remain native-owned.
 
 ## Verify
 
@@ -119,11 +114,12 @@ python test/verify.py --lane unit --lane native --lane page --dry-run
 python test/verify.py --lane unit --lane native --lane page
 ```
 
-The `installed` lane requires explicit existing shared inputs. Set
+The former external-instance `installed` lane is retired. Set
 `FINSHIELD_OPENCODE_SDK_ARCHIVE` for a verification run with a locally packed SDK.
-The lane packs and
-installs into an owned directory, opens an owned Windows shortcut, observes the
-actual token/native connection/session and checks unchanged shared file hashes.
+The final-stage `product` lane uses the normal plugin installation flow, opens
+an owned Windows shortcut, observes the actual token/native connection/session
+and checks unchanged shared file hashes. It requires a declared disposable
+Windows test account and its own authorization; do not run it on a working desktop.
 The `policy` lane uses an explicit compatible FinSAFE executable and temporary
 files only. Final-stage `product`, `lifecycle` and `isolation` need their stated
 owned inputs; they are not part of automatic unit checks.
