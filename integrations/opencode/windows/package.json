@@ -1,6 +1,6 @@
 {
   "name": "@finogeeks2026/finshield-opencode",
-  "version": "0.11.51",
+  "version": "0.11.52",
   "type": "module",
   "license": "SEE LICENSE IN LICENSE.rtf",
   "description": "FinShield protection for the native OpenCode desktop backend",
@@ -29,7 +29,6 @@
     "src",
     "dist",
     "updater",
-    "bin/node.exe",
     "policy",
     "LICENSE.rtf",
     "release.json",
@@ -47,7 +46,7 @@
     "prepack": "npm run build"
   },
   "dependencies": {
-    "@finogeeks2026/finsafe-sdk": "0.11.51"
+    "@finogeeks2026/finsafe-sdk": "0.11.52"
   },
   "devDependencies": {
     "@opencode/plugin": "2.3.0",
@@ -55,7 +54,6 @@
     "react-dom": "18.2.0",
     "effect": "4.1.0",
     "esbuild": "0.25.12",
-    "node-win-x64": "24.22.1",
     "solid-js": "1.9.19",
     "vite": "7.3.8",
     "vite-plugin-solid": "2.11.9"

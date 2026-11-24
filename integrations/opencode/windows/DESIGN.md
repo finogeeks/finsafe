@@ -1,5 +1,52 @@
 # OpenCode Windows plugin architecture
 
+## Reuse OpenCode's runtime (#1189, 2026-11-25)
+
+The owner approved reusing OpenCode's installed runtime for the independent
+updater. The ordinary plugin Host supplies its current executable through
+`process.execPath`. AppSeam starts that executable outside the Host replacement
+tree, with `BUN_BE_BUN=1` in that child process's environment. This uses Bun's
+[documented standalone CLI mode](https://bun.sh/docs/compiler/executables#act-as-the-bun-cli).
+The child executes the staged `updater/server.js` and its existing arguments.
+The updater removes the mode variable before starting any management or Host
+work, so normal OpenCode launches do not inherit Bun CLI mode.
+
+Scope: updater components. Parent: native desktop plugin activation. Inputs:
+the ordinary Host executable and this release's staged package. Output: an
+independent ordinary updater using the delivered SDK. Launch errors retain the
+existing diagnostic and status path. Invariants: no new startup precheck,
+runtime download or global Node dependency; no Core, authentication, Job,
+authorization, manual reopen or protected-Host bootstrap changes.
+
+```mermaid
+flowchart LR
+    P[OpenCode plugin] -->|Installed OpenCode runtime| U[Independent updater]
+    U --> S[Package-owned common SDK]
+    S --> N[Existing native operations]
+```
+
+The package contains no Node executable or `node-win-x64` dependency. Staging
+keeps the complete SDK and release directory contract. An old
+`opencode-updater/runtime/node.exe` is ignored and left untouched; it is not a
+fallback. The common transport retains its existing `node` executable field
+for compatibility with its other callers. No DSH implementation is copied.
+An updater already running from the previous release retains its existing
+lifetime. Manual close/reopen starts the new updater with the Host runtime.
+
+Research on 2026-11-24 used installed OpenCode Desktop 2.3.2, whose backend
+contains Bun 1.4.4. A separate backend process executed external JavaScript,
+loaded package SDK 0.11.50 and Koffi 3.1.1, and completed synchronous FFI and
+asynchronous native build-info calls. The delivered SDK DLL's Authenticode
+signature was valid. These are runtime compatibility probes, not clean-profile
+installation, updater lifecycle or protected-session acceptance. Other OpenCode
+versions still require acceptance; do not add an inferred version admission gate.
+Compiled Bun executables built without CLI support cannot use this mechanism;
+report their actual launch error instead of installing another runtime.
+
+Changed artifacts must use a new coordinated plugin/SDK/native release version.
+Published 0.11.50 bytes and existing version stages remain immutable. Source
+development and owned fixtures do not authorize npm publication or user setup.
+
 ## Derived operation inputs (2026-11-24)
 
 The owner decision in issue #1180 removes the generated settings snapshot.
@@ -151,8 +198,8 @@ bundles Koffi 3.1.1 with its Windows x64 native component, using npm's bundled
 dependency contract. Existing direct Windows bindings use its public
 `loadKoffi` entry. The independent updater copies the complete SDK. It requires
 no separate Koffi copy and resolves no native dependency from OpenCode.
-The plugin still includes Node for its independent process because OpenCode's
-compiled Bun backend does not supply that runtime. The GUI uses OpenCode's
+The independent process reuses OpenCode's compiled Bun runtime as defined above.
+The GUI uses OpenCode's
 declared shared modules; React/React DOM are built into the page.
 
 Preview publication rejects an SDK archive without the Windows x64 addon.

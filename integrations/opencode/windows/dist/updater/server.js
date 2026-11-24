@@ -875,12 +875,14 @@ function createConnectionConfirmation({ timeout = 45e3 } = {}) {
 }
 
 // updater/server.js
+delete process.env.BUN_BE_BUN;
 var root = fileURLToPath(new URL("../", import.meta.url));
 var diagnostic = createDiagnostics(process.argv[7]);
 var record = (event, fields = {}) => diagnostic({ at: (/* @__PURE__ */ new Date()).toISOString(), event, ...fields });
 var report = (error) => record("error", { error: error.message, stack: error.stack });
 process.on("uncaughtExceptionMonitor", report);
 var version = JSON.parse(readFileSync3(join4(root, "package.json"), "utf8")).version;
+record("runtime", { executable: process.execPath, bunVersion: process.versions.bun ?? null, version });
 var call = nativeAdapter(root);
 var folders = readKnownFolders(root);
 var build = { version };

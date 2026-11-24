@@ -70,8 +70,9 @@ npm run build
 npm pack --ignore-scripts --pack-destination C:\owned-test
 ```
 
-The package carries the updater's Node runtime, JavaScript, Candidate and
-notices. The declared SDK carries the common product DLL. For development
+The package carries JavaScript, Candidate and notices. The independent updater
+uses OpenCode's installed Bun runtime; users need no additional Node or Bun
+installation. The declared SDK carries Koffi and the common product DLL. For development
 before the matching SDK is published, build and pack it with the
 [SDK build instructions](../../../sdk/node/README.md) and install from that
 local archive.

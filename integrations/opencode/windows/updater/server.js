@@ -10,12 +10,15 @@ import {protocol,validateRequest,projectState} from '../updater/protocol.js';
 import {readPreparation,obtainShell} from '../src/preparation.js';
 import {createOperations} from './operations.js';
 import {launchHost,createConnectionConfirmation} from './launch.js';
+// Bun CLI mode is only for this process's entry, never for a business Host.
+delete process.env.BUN_BE_BUN;
 const root=fileURLToPath(new URL('../',import.meta.url));
 const diagnostic=createDiagnostics(process.argv[7]);
 const record=(event,fields={})=>diagnostic({at:new Date().toISOString(),event,...fields});
 const report=error=>record('error',{error:error.message,stack:error.stack});
 process.on('uncaughtExceptionMonitor',report);
 const version=JSON.parse(readFileSync(join(root,'package.json'),'utf8')).version;
+record('runtime',{executable:process.execPath,bunVersion:process.versions.bun??null,version});
 const call=nativeAdapter(root),folders=readKnownFolders(root);
 const build={version};
 await call({action:'select_slot',installation:process.argv[2],configuration:process.argv[3]});
