@@ -7,7 +7,7 @@ FinShield 为主流 Agent 提供文件、系统与桌面的安全边界。优先
 ## 快速开始
 
 1. [查看兼容矩阵](zh-CN/agents/compatibility.md)，确认 Agent 形态、平台、插件状态与验证范围。
-2. [选择接入方式并安装](zh-CN/getting-started/install.md)：DSH Windows 优先使用已发布插件；Codex／Claude CLI 按各自指南接入。
+2. [选择接入方式并安装](zh-CN/getting-started/install.md)：DSH／OpenCode Windows 按插件指南接入；Hermes Desktop 可从 FinShield 桌面启动，Kilo CLI 使用测试插件；Codex／Claude CLI 按各自指南接入。
 3. [验证保护生效](zh-CN/getting-started/install.md#验证授权范围)，检查允许与拒绝两种操作。
 
 ## Agent 接入指南
@@ -15,6 +15,9 @@ FinShield 为主流 Agent 提供文件、系统与桌面的安全边界。优先
 | Agent | 推荐入口 | 可用接入 |
 | --- | --- | --- |
 | DSH Desktop（Windows） | [插件安装与使用](https://github.com/finogeeks/finsafe/blob/main/integrations/dsh/windows/README-zh.md) | 已发布：`@finogeeks2026/finshield-dsh` |
+| OpenCode Desktop（Windows） | [插件安装与使用](zh-CN/getting-started/install.md#opencode-desktop) | **已发布**：`@finogeeks2026/finshield-opencode`；也可从 FinShield 桌面启动 |
+| Hermes Desktop（Windows） | [桌面安装与启动](zh-CN/getting-started/install.md#hermes-desktop) | FinShield 桌面入口 |
+| Kilo CLI（Windows） | [测试插件接入](zh-CN/getting-started/install.md#kilo-cli) | `@finogeeks2026/finshield-kilo`（测试版，本地交互 TUI） |
 | Codex CLI（Windows） | [命令行接入](zh-CN/agents/codex.md) | **已支持 CLI 接入** |
 | Claude Code CLI（Windows） | [命令行接入](zh-CN/agents/claude.md) | **已支持 CLI 接入** |
 | WorkBuddy 桌面版（Windows） | [桌面安装与启动](zh-CN/getting-started/install.md#windows) | 桌面入口 |

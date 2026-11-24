@@ -7,7 +7,7 @@ FinShield gives mainstream Agents a security boundary for files, system function
 ## Get started
 
 1. [Check compatibility](agents/compatibility.md): Agent form, platform, plugin status, and verification scope.
-2. [Choose an integration route and install](getting-started/install.md): prefer the released DSH Windows plugin; follow the individual CLI guides for Codex and Claude.
+2. [Choose an integration route and install](getting-started/install.md): follow the DSH / OpenCode Windows plugin guides, use the FinShield launcher for Hermes Desktop or the test plugin for Kilo CLI, and follow the individual CLI guides for Codex and Claude.
 3. [Verify protection](getting-started/install.md#verify-permission-scope) with both allowed and denied operations.
 
 ## Agent integration guides
@@ -15,6 +15,9 @@ FinShield gives mainstream Agents a security boundary for files, system function
 | Agent | Recommended entry | Available integration |
 | --- | --- | --- |
 | DSH Desktop (Windows) | [Plugin installation and use](https://github.com/finogeeks/finsafe/blob/main/integrations/dsh/windows/README.md) | Released: `@finogeeks2026/finshield-dsh` |
+| OpenCode Desktop (Windows) | [Plugin installation and use](getting-started/install.md#opencode-desktop) | **Released**: `@finogeeks2026/finshield-opencode`; also available through the FinShield desktop launcher |
+| Hermes Desktop (Windows) | [Desktop installation and launch](getting-started/install.md#hermes-desktop) | FinShield desktop launcher |
+| Kilo CLI (Windows) | [Test plugin integration](getting-started/install.md#kilo-cli) | `@finogeeks2026/finshield-kilo` (test release, local interactive TUI) |
 | Codex CLI (Windows) | [CLI integration](agents/codex.md) | **CLI integration supported** |
 | Claude Code CLI (Windows) | [CLI integration](agents/claude.md) | **CLI integration supported** |
 | WorkBuddy desktop (Windows) | [Desktop installation and launch](getting-started/install.md#windows) | Desktop launcher |

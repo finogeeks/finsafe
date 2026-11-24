@@ -4,13 +4,16 @@
 
 FinShield 面向主流 Agent 提供安全边界。优先使用已发布的 Agent 接入插件；没有插件时，可以通过 `finsafe` 命令行接入。产品支持 Windows、macOS 和 Linux，但每个 Agent 的形态、接入方式和验证范围需分别确认。
 
-本页于 2026-11-16 整理。**已支持 CLI**表示现在即可通过命令行接入；**已发布**表示有公开交付入口；**测评验证**表示有特定版本、配置和案例的测评证据；**有示例**表示有策略材料，仍需验证当前版本。Agent 接入能力与独立插件交付状态分别列出，暂无公开插件入口不影响已有 CLI 接入。
+本页于 2026-11-24 整理。**已支持 CLI**表示现在即可通过命令行接入；**已发布**表示有公开交付入口；**测评验证**表示有特定版本、配置和案例的测评证据；**有示例**表示有策略材料，仍需验证当前版本。Agent 接入能力与独立插件交付状态分别列出，暂无公开插件入口不影响已有 CLI 接入。
 
 ## 按 Agent 选择
 
 | Agent／形态 | 平台 | Agent 接入插件 | 非插件接入 | 版本与验证范围 |
 | --- | --- | --- | --- | --- |
 | DSH Desktop | Windows x64 | **已发布**：`@finogeeks2026/finshield-dsh` | FinShield 桌面入口 | 插件要求 DSH `>=0.2.1-rc.5 <0.3.0`、Node `>=24.9.0`；以[插件说明](https://github.com/finogeeks/finsafe/blob/main/integrations/dsh/windows/README-zh.md)为准 |
+| OpenCode Desktop | Windows x64 | **已发布**：`@finogeeks2026/finshield-opencode`；见[安装说明](zh-CN/getting-started/install.md#opencode-desktop) | FinShield 辅助控制台／悬浮控件桌面入口 | 接入目标为 Desktop/SDK 2.3.0；2.3.2 另有已安装版本退出记录。插件保护执行 Host，桌面 Main 保持普通进程；具体 Agent 版本以已发布插件的要求为准 |
+| Hermes Desktop | Windows x64 | 本页不提供已发布的 Hermes 独立插件入口 | FinShield 辅助控制台／悬浮控件桌面入口；见[启动说明](zh-CN/getting-started/install.md#hermes-desktop) | 可发现已注册 MSIX 和源码安装。桌面以原生配置连接受保护的执行 Host，桌面界面本身不在隔离内；Hermes 实验插件与该启动入口分别说明 |
+| Kilo CLI，本地交互 TUI | Windows x64 | **测试版**：`@finogeeks2026/finshield-kilo@0.11.1-debug.6` | 本页不提供独立桌面启动入口 | Kilo 7.8.27，配套原生 FinShield 0.11.1；已有受保护进程绑定记录，会话恢复与退出验收尚未完成。无界面、远程、桌面版及 IDE 形态不在该范围；见[测试接入](zh-CN/getting-started/install.md#kilo-cli) |
 | Codex CLI | Windows x64 | 暂无公开插件入口 | **已支持 CLI**（测评验证）：`self-confine` 包裹 `app-server`，TUI 连接该服务；见[指南](zh-CN/agents/codex.md) | Arena 配置记录 Codex `0.166.0`；Windows FinShield `0.10.9` 路径见下方实现说明；不构成后续版本的全量兼容承诺 |
 | Claude Code CLI | Windows x64 | 暂无公开插件入口 | **已支持 CLI**（测评验证）：`self-confine` 包裹 Claude CLI；见[指南](zh-CN/agents/claude.md) | Arena 配置记录 Claude `2.1.314`；采用与 Codex 相同的已安装 FinShield 配置；具体案例以测评记录为准 |
 | WorkBuddy 桌面版 | Windows x64 | 本页不提供已发布独立插件入口 | FinShield 桌面入口 | 桌面接入与测评已有材料；版本和配置见[测评](https://safety.finaios.ai/)及[桌面上手](zh-CN/getting-started/install.md#windows) |
@@ -21,7 +24,7 @@ Codex CLI 的测评结果不覆盖 Codex 桌面版或 IDE 扩展；Claude Code C
 
 ## 两类插件
 
-- **Agent 接入插件**：将 FinShield 接入 Agent，处理安装、启动、授权和保护状态。DSH Windows 插件属于这一类。
+- **Agent 接入插件**：将 FinShield 接入 Agent，处理安装、启动、授权和保护状态。DSH、OpenCode Desktop 及 Kilo CLI 测试插件属于这一类。
 - **PII 检测／脱敏插件**：扩展敏感信息识别与文本改写规则。已有[Windows 开发包](https://github.com/finogeeks/finsafe/blob/main/pii-plugins/README-zh.md)，包含 SDK、协议、示例和本地调试工具。它不是 Codex／Claude 接入插件。
 
 PII 开发包以 `pii-plugins/release.json` 标识配套产品版本。独立调试通过不代表某个 Agent 的真实请求已被检查；正式接入还需匹配产品版本、网络配置与可检查的请求路径。插件商用须事先取得书面许可，见[开发包许可](https://github.com/finogeeks/finsafe/blob/main/pii-plugins/LICENSE)。
