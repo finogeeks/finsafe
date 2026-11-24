@@ -838,13 +838,12 @@ in the public Node SDK and publishes the SDK before DSH. The public DSH mirror
 contains package-declared Node code, client, policy, license and notices, with no
 plugin native binary or Rust build.
 The publication step writes the configured HTTPS download base into
-`install/download-source.json`. Native setup reads that mirror's versioned
-`release.json`, selects the requested Windows installer's `mirror_name`, and
-verifies its SHA-256 before staging. Network errors, HTTP failures and a
-30-second request timeout trigger one fallback to the same GitHub release and
-its SHA256SUMS. Invalid metadata, checksum failures and caller cancellation
-stop setup without fallback. Neither source substitutes the latest release.
-If both downloads fail, the error retains both source URLs. Current configuration uses a public COS origin;
+`install/download-source.json`. DSH and OpenCode share the verified installer
+download operation in their delivered `updater/common/download.js`.
+CDN and GitHub start together. The first source whose version,
+metadata and SHA-256 checks pass wins; pending requests are cancelled.
+Neither source substitutes the latest release. If both fail, report both errors.
+Caller cancellation cancels both sources. Current configuration uses a public COS origin;
 a CDN domain can use the same contract. Existing updater processes retain the
 download code they started with until their session ends.
 The custom DSH index pins a public commit/subdirectory and originating source

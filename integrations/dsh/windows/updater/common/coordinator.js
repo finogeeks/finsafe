@@ -51,8 +51,9 @@ export function createUpdater({ports,startup,application="application",prepareUp
   }
   async function observedStatus(value) {
     const result=status(value),task=value.session.task??value.task,target=task?.target??value.binding;
-    if((result.phase!=='starting'&&!task?.authorization)||value.result||value.session.wrapping||attemptFor(value)
+    if((task&&!task.authorization)||(result.phase!=='starting'&&!task?.authorization)||value.result||value.session.wrapping||attemptFor(value)
       ||!shell||shell.target!==resource(target))return result;
+    if(task?.observeAfter>Date.now())return result;
     try {
       const state=await ports.preparation(target,shell.connection);
       value.authorizationAttempt??=active(state)?state.attempt:undefined;
@@ -164,10 +165,16 @@ export function createUpdater({ports,startup,application="application",prepareUp
         task.state={phase:'ready',reason:'update',authorizationPending:true};return;
       }
       if(!backendObtained)connection=await obtainTargetShell(task.target);
-      task.authorization=true;task.reason=task.update?'update':needsSetup?'install':'authorization';
-      delete task.state;
+      task.reason=task.update?'update':needsSetup?'install':'authorization';
+      task.state={phase:'authorizing',reason:task.reason};
+      // Native acknowledgment establishes that this request has started. Until
+      // then, Shell can still expose the previous task or an absent Effective.
+      const submission=readOnly?undefined:await ports.prepare(task.target,connection);
+      task.authorization=true;
+      // Wait three seconds after ACK to improve status-query accuracy while
+      // Shell's cached observations settle. Native execution continues now.
+      if(!readOnly)task.observeAfter=Date.now()+3000;
       if(!readOnly) {
-        const submission=await ports.prepare(task.target,connection);
         const completion=submission?.completion?await submission.completion:submission;
         if(Number.isInteger(completion?.exit_code)&&completion.exit_code!==0)
           throw Error(completion.error||`Desktop authorization command exited (${completion.exit_code})`);
