@@ -4,7 +4,7 @@
 
 **Let mainstream Agents work within clear security boundaries.**
 
-FinShield (formerly FinSAFE) gives Agents a security boundary for files, system functions, and the desktop. Prefer a released Agent integration plugin, or connect through the `finsafe` CLI when no plugin is available. The product supports Windows, macOS, and Linux; see the [compatibility matrix](docs/en/agents/compatibility.md) for each Agent form and verification scope.
+FinShield (formerly FinSAFE) gives DSH, OpenCode, Hermes, Kilo, Codex, Claude Code, WorkBuddy, and other Agents a security boundary for files, system functions, and the desktop. Prefer a released Agent integration plugin, or connect through the `finsafe` CLI when no plugin is available. The product supports Windows, macOS, and Linux; see the [compatibility matrix](docs/en/agents/compatibility.md) for each Agent form and verification scope.
 
 [简体中文](README-zh.md) · [FinShield on finaios.ai](https://finaios.ai/en/products/finshield/)
 
@@ -24,6 +24,9 @@ Select a GIF for the full assessment. Previews are reused from the DSH plugin an
 | Agent | Start here | Available integration |
 | --- | --- | --- |
 | DSH Desktop (Windows) | [Install the plugin](https://github.com/finogeeks/finsafe/blob/main/integrations/dsh/windows/README.md) | **Released**: `@finogeeks2026/finshield-dsh` |
+| OpenCode Desktop (Windows) | [Plugin installation and use](docs/en/getting-started/install.md#opencode-desktop) | **Released**: `@finogeeks2026/finshield-opencode`; also available through the FinShield desktop launcher |
+| Hermes Desktop (Windows) | [Desktop installation and launch](docs/en/getting-started/install.md#hermes-desktop) | FinShield desktop launcher |
+| Kilo CLI (Windows) | [Test plugin integration](docs/en/getting-started/install.md#kilo-cli) | `@finogeeks2026/finshield-kilo` (test release, local interactive TUI) |
 | Codex CLI (Windows) | [CLI integration guide](docs/en/agents/codex.md) | **CLI integration supported** |
 | Claude Code CLI (Windows) | [CLI integration guide](docs/en/agents/claude.md) | **CLI integration supported** |
 | WorkBuddy desktop (Windows) | [Desktop installation and launch](docs/en/getting-started/install.md#windows) | Desktop launcher |
@@ -35,7 +38,20 @@ CLI integration and plugin release are separate states. Codex / Claude CLI resul
 
 In DSH Desktop Windows, open **Plugins → Add plugin**, install and enable [`@finogeeks2026/finshield-dsh`](https://www.npmjs.com/package/@finogeeks2026/finshield-dsh), then follow the prompts for native components, authorization, and required restarts. Confirm actual protection status. See the [plugin guide](https://github.com/finogeeks/finsafe/blob/main/integrations/dsh/windows/README.md) for version requirements, migration from the older package, and removal.
 
-Codex and Claude already support CLI integration without a plugin; follow the guides above. Standalone plugin delivery is described separately from existing CLI support. Confirm effective protection after installation or launch.
+For **OpenCode Desktop on Windows x64**, save your work and close OpenCode, then run this in PowerShell with the default per-user Desktop installation:
+
+```powershell
+$openCodeCli = "$env:LOCALAPPDATA\Programs\ai.opencode.desktop\resources\opencode-cli.exe"
+& $openCodeCli plugin add '@finogeeks2026/finshield-opencode'
+```
+
+For an all-users Desktop installation, use `$env:ProgramFiles\ai.opencode.desktop\resources\opencode-cli.exe`. For a custom installation, use its `resources\opencode-cli.exe`. If `opencode` is already on PATH, `opencode plugin add @finogeeks2026/finshield-opencode` is also available.
+
+Open OpenCode and go to **Settings → FinShield**. The plugin downloads and installs matching native FinShield components and requests Windows authorization. After preparation, save your work, exit, and reopen OpenCode manually, then confirm protection status. See [installation and directory locations](docs/en/getting-started/install.md#opencode-desktop) and the [published plugin guide](https://github.com/finogeeks/finsafe/blob/main/integrations/opencode/windows/README.md).
+
+For the Kilo CLI local interactive TUI test plugin and version scope, see [Kilo integration](docs/en/getting-started/install.md#kilo-cli).
+
+Hermes Desktop and OpenCode Desktop can also start through the FinShield desktop launcher. Codex and Claude already support CLI integration without a plugin; follow the guides above. Standalone plugin delivery is described separately from existing CLI support. Confirm effective protection after installation or launch.
 
 ## Use the command line without a plugin
 

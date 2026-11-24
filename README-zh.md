@@ -4,7 +4,7 @@
 
 **让主流 Agent 在清晰的安全边界内工作。**
 
-FinShield（智安盾，原 FinSAFE）为 Agent 提供文件、系统与桌面的安全边界。优先使用已发布的 Agent 接入插件；没有插件时，也可以通过 `finsafe` 命令行接入。支持 Windows、macOS 和 Linux，各 Agent 的接入形态与验证范围见[兼容矩阵](docs/zh-CN/agents/compatibility.md)。
+FinShield（智安盾，原 FinSAFE）为 DSH、OpenCode、Hermes、Kilo、Codex、Claude Code、WorkBuddy 等 Agent 提供文件、系统与桌面的安全边界。优先使用已发布的 Agent 接入插件；没有插件时，也可以通过 `finsafe` 命令行接入。支持 Windows、macOS 和 Linux，各 Agent 的接入形态与验证范围见[兼容矩阵](docs/zh-CN/agents/compatibility.md)。
 
 [English](README.md) · [FinShield 产品页（finaios.ai）](https://finaios.ai/zh-hans/products/finshield/)
 
@@ -24,6 +24,9 @@ FinShield（智安盾，原 FinSAFE）为 Agent 提供文件、系统与桌面�
 | Agent | 从这里开始 | 可用接入 |
 | --- | --- | --- |
 | DSH Desktop（Windows） | [安装插件](https://github.com/finogeeks/finsafe/blob/main/integrations/dsh/windows/README-zh.md) | **已发布**：`@finogeeks2026/finshield-dsh` |
+| OpenCode Desktop（Windows） | [插件安装与使用](docs/zh-CN/getting-started/install.md#opencode-desktop) | **已发布**：`@finogeeks2026/finshield-opencode`；也可从 FinShield 桌面启动 |
+| Hermes Desktop（Windows） | [桌面安装与启动](docs/zh-CN/getting-started/install.md#hermes-desktop) | FinShield 桌面入口 |
+| Kilo CLI（Windows） | [测试插件接入](docs/zh-CN/getting-started/install.md#kilo-cli) | `@finogeeks2026/finshield-kilo`（测试版，本地交互 TUI） |
 | Codex CLI（Windows） | [命令行接入指南](docs/zh-CN/agents/codex.md) | **已支持 CLI 接入** |
 | Claude Code CLI（Windows） | [命令行接入指南](docs/zh-CN/agents/claude.md) | **已支持 CLI 接入** |
 | WorkBuddy 桌面版（Windows） | [桌面安装与启动](docs/zh-CN/getting-started/install.md#windows) | 桌面入口 |
@@ -35,7 +38,20 @@ CLI 接入与插件发布是不同状态。Codex／Claude 的 CLI 结果不代�
 
 DSH Desktop Windows 用户可在应用内进入 **插件 → 添加插件**，安装并启用 [`@finogeeks2026/finshield-dsh`](https://www.npmjs.com/package/@finogeeks2026/finshield-dsh)，按提示安装原生组件、完成授权和所需重启，再确认实际保护状态。版本要求、旧包迁移和停用步骤见[插件指南](https://github.com/finogeeks/finsafe/blob/main/integrations/dsh/windows/README-zh.md)。
 
-Codex、Claude 已支持命令行接入，无需安装插件，见上表指南。独立插件的交付状态与已有 CLI 接入能力分别说明；安装或启动完成后仍需确认保护生效。
+**OpenCode Desktop（Windows x64）**用户先保存工作、退出 OpenCode，再在 PowerShell 中安装插件。Desktop 按用户默认安装时使用：
+
+```powershell
+$openCodeCli = "$env:LOCALAPPDATA\Programs\ai.opencode.desktop\resources\opencode-cli.exe"
+& $openCodeCli plugin add '@finogeeks2026/finshield-opencode'
+```
+
+若 Desktop 为全机安装，将路径改为 `$env:ProgramFiles\ai.opencode.desktop\resources\opencode-cli.exe`；自定义安装则使用该目录下的 `resources\opencode-cli.exe`。已有 PATH 中的 `opencode` 命令时，也可运行 `opencode plugin add @finogeeks2026/finshield-opencode`。
+
+打开 OpenCode，进入 **Settings → FinShield**。插件会下载并安装版本匹配的 FinShield 原生组件，按提示完成 Windows 授权；准备完成后保存工作，退出并手动重新打开 OpenCode，再确认保护状态。安装位置与配置目录见[安装及目录说明](docs/zh-CN/getting-started/install.md#opencode-desktop)，另见[已发布插件指南（英文）](https://github.com/finogeeks/finsafe/blob/main/integrations/opencode/windows/README.md)。
+
+Kilo CLI 本地交互 TUI 的测试插件与版本范围见[Kilo 接入说明](docs/zh-CN/getting-started/install.md#kilo-cli)。
+
+Hermes Desktop 和 OpenCode Desktop 也可通过 FinShield 桌面入口启动。Codex、Claude 已支持命令行接入，无需安装插件，见上表指南。独立插件的交付状态与已有 CLI 接入能力分别说明；安装或启动完成后仍需确认保护生效。
 
 ## 不使用插件，也可以用命令行
 
