@@ -14,13 +14,13 @@ FinShield gives mainstream Agents a security boundary for files, system function
 
 | Agent | Recommended entry | Available integration |
 | --- | --- | --- |
-| DSH Desktop (Windows) | [Plugin installation and use](https://github.com/finogeeks/finsafe/blob/main/integrations/dsh/windows/README.md) | Released: `@finogeeks2026/finshield-dsh` |
-| OpenCode Desktop (Windows) | [Plugin installation and use](getting-started/install.md#opencode-desktop) | **Released**: `@finogeeks2026/finshield-opencode`; also available through the FinShield desktop launcher |
-| Hermes Desktop (Windows) | [Desktop installation and launch](getting-started/install.md#hermes-desktop) | FinShield desktop launcher |
-| Kilo CLI (Windows) | [Test plugin integration](getting-started/install.md#kilo-cli) | `@finogeeks2026/finshield-kilo` (test release, local interactive TUI) |
 | Codex CLI (Windows) | [CLI integration](agents/codex.md) | **CLI integration supported** |
 | Claude Code CLI (Windows) | [CLI integration](agents/claude.md) | **CLI integration supported** |
-| WorkBuddy desktop (Windows) | [Desktop installation and launch](getting-started/install.md#windows) | Desktop launcher |
+| OpenCode Desktop (Windows) | [Plugin installation and use](https://github.com/finogeeks/finsafe/blob/main/integrations/opencode/windows/README.md) | **Released**: `@finogeeks2026/finshield-opencode`; also available through the FinShield desktop launcher |
+| Hermes Desktop (Windows) | [Desktop installation and launch](getting-started/install.md#hermes-desktop) | FinShield desktop launcher |
+| Kilo CLI (Windows) | [Test plugin integration](getting-started/install.md#kilo-cli) | `@finogeeks2026/finshield-kilo` (test release, local interactive TUI) |
+| DSH Desktop (Windows) | [Plugin installation and use](https://github.com/finogeeks/finsafe/blob/main/integrations/dsh/windows/README.md) | Released: `@finogeeks2026/finshield-dsh` |
+| WorkBuddy desktop (Windows) | [Desktop installation and launch](agents/workbuddy.md) | Desktop launcher |
 | Other Agents / Linux / macOS | [Compatibility and generic CLI examples](agents/compatibility.md) | Check the specific Agent |
 
 ## Understand FinShield and configure protection
@@ -57,3 +57,7 @@ The [FinShield whitepaper](reference/whitepaper.md) covers product capabilities,
 - [PII plugins and extensions](development/README.md).
 - [Enterprise deployment](enterprise/README.md).
 - [Reference and support](reference/README.md).
+
+## Architecture and diagrams
+
+[Browse architecture diagrams and technical designs](architecture/README.md)。

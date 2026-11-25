@@ -23,7 +23,7 @@ async function renderDiagram() {
 }
 
 onMounted(renderDiagram)
-watch(isDark, renderDiagram)
+watch([isDark, graph], renderDiagram)
 </script>
 
 <template>

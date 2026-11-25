@@ -20,17 +20,24 @@ function rewriteUrl(value, sourcePath, html) {
   return path + suffix
 }
 
-export function rewriteLinks(body, sourcePath, html = false) {
+function transformLinks(body, rewrite, html = false) {
   const transform = (part) => part
-    .replace(/(\]\(\s*<?)([^<>\s)]+)(?=>?\s*(?:["'][^\n]*["']\s*)?\))/g,
-      (_, prefix, url) => prefix + rewriteUrl(url, sourcePath, html))
+    .replace(/(!?\[([^\]\n]*)\]\(\s*<?)([^<>\s)]+)(>?(?:\s+["'][^\n]*["'])?\s*\))/g,
+      (whole, prefix, label, url, suffix) => {
+        const target = rewrite(url, label)
+        return target === null ? label : prefix + target + suffix
+      })
     .replace(/(^ {0,3}\[[^\]\n]+\]:\s*<?)([^>\s]+)/gm,
-      (_, prefix, url) => prefix + rewriteUrl(url, sourcePath, html))
-    .replace(/(\b(?:href|src)=["'])([^"']+)/gi,
-      (_, prefix, url) => prefix + rewriteUrl(url, sourcePath, html))
+      (_, prefix, url) => { const target = rewrite(url); return target === null ? '' : prefix + target })
+    .replace(/\b(?:href|src)=["']([^"']+)["']/gi,
+      (whole, url) => { const target = rewrite(url); return target === null ? '' : whole.replace(url, target) })
   if (html) return transform(body)
   return body.split(/(^```[^\n]*\n[\s\S]*?^```[^\n]*(?:\n|$)|^~~~[^\n]*\n[\s\S]*?^~~~[^\n]*(?:\n|$))/m)
     .map((part, index) => index % 2 ? part : transform(part)).join('')
+}
+
+export function rewriteLinks(body, sourcePath, html = false) {
+  return transformLinks(body, (value) => rewriteUrl(value, sourcePath, html), html)
 }
 
 async function* files(root, prefix = '') {
@@ -41,10 +48,11 @@ async function* files(root, prefix = '') {
   }
 }
 
-export async function prepareContent(docsRoot, output) {
+export async function prepareContent(docsRoot, output, options = {}) {
   // Only the caller-owned generated directory is replaced, never source docs.
   await rm(output, { recursive: true, force: true })
   const pages = []
+  const documents = []
   for (const locale of locales) {
     for await (const relative of files(join(docsRoot, locale))) {
       const sourcePath = posix.join(locale, relative)
@@ -53,13 +61,90 @@ export async function prepareContent(docsRoot, output) {
       const destination = html
         ? posix.join('public', sourcePath.replace(/\.html$/, '-diagram.html'))
         : sourcePath.replace(/(^|\/)README\.md$/, '$1index.md')
-      const body = await readFile(join(docsRoot, sourcePath), 'utf8')
-      const content = rewriteLinks(body, sourcePath, html)
-      const path = join(output, destination)
+      documents.push({ source: posix.join('docs', sourcePath), destination: html ? destination.slice(7) : destination, html,
+        path: join(docsRoot, sourcePath) })
+    }
+  }
+  const repositoryRoot = resolve(options.repositoryRoot ?? join(docsRoot, '..'))
+  for (const entry of options.documents ?? []) {
+    if (entry.destination.startsWith('zh-CN/') && options.documents.some((other) => other.source === entry.source && other.destination.startsWith('en/'))) {
+      throw new Error(`Missing Chinese translation: ${entry.source}`)
+    }
+    if (!/^(en|zh-CN)\/.+\.md$/.test(entry.destination) || entry.destination.split('/').includes('..')
+        || documents.some((document) => document.destination === entry.destination)) {
+      throw new Error(`Invalid or duplicate site destination: ${entry.destination}`)
+    }
+    const path = resolve(repositoryRoot, process.env.FINSHIELD_DOCS_REPO && entry.upstreamSource ? entry.upstreamSource : entry.source)
+    if (!path.startsWith(repositoryRoot + '/') && !path.startsWith(repositoryRoot + '\\')) throw new Error(`Source leaves repository: ${entry.source}`)
+    documents.push({ ...entry, source: entry.linkSource ?? entry.source, path, html: false })
+  }
+  const assets = new Set()
+  const aliases = options.aliases ?? {}
+  const excluded = new Set(options.unpublishedReferences ?? [])
+  const publicAssets = new Set(options.publicAssets ?? [])
+  const slug = (heading) => heading.toLowerCase().replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/[^\p{L}\p{N}_ -]/gu, '').replaceAll(' ', '-')
+  const headings = (body) => [...body.replace(/^```[^\n]*\n[\s\S]*?^```[^\n]*(?:\n|$)|^~~~[^\n]*\n[\s\S]*?^~~~[^\n]*(?:\n|$)/gm, '')
+    .matchAll(/^#{1,6} (.+)\r?$/gm)].map((match) => slug(match[1]))
+  for (const document of documents) document.body = await readFile(document.path, 'utf8')
+  for (const document of documents.filter((entry) => entry.translationOf)) {
+    const original = documents.find((entry) => entry.source === document.translationOf)
+    if (!original) throw new Error(`Missing translation source: ${document.translationOf}`)
+    const from = headings(original.body), to = headings(document.body)
+    document.anchors = from.length === to.length ? new Map(from.map((anchor, index) => ['#' + anchor, '#' + to[index]])) : new Map()
+  }
+  for (const document of documents) {
+      let body = document.body
+      if (document.section) {
+        const heading = new RegExp(`^### ${document.section}\\r?$`, 'm').exec(body)
+        if (!heading) throw new Error(`Missing section ${document.section} in ${document.source}`)
+        const tail = body.slice(heading.index + heading[0].length)
+        body = '# ' + document.section + '\n' + tail.split(/^#{1,3} /m)[0]
+      }
+      if (document.title) body = body.replace(/^# .+$/m, '# ' + document.title)
+      if (document.lead) body = body.replace(/^(# .+\n)/, '$1\n' + document.lead + '\n')
+      const locale = document.destination.startsWith('zh-CN/') ? 'zh-CN' : 'en'
+      const content = transformLinks(body, (value, label) => {
+        if ((value.startsWith('#') && !document.section) || /^(?:data:|mailto:)/i.test(value)) return value
+        let link = value
+        const github = value.match(/^https:\/\/(?:github\.com\/finogeeks\/finsafe\/blob|raw\.githubusercontent\.com\/finogeeks\/finsafe)\/main\/(.*)$/)
+        if (github) link = github[1]
+        else if (/^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(value)) return value
+        const match = link.match(/^([^?#]*)(.*)$/)
+        const target = github ? match[1] : match[1] ? posix.normalize(posix.join(posix.dirname(document.source), match[1])) : document.source
+        if (excluded.has(target)) return null
+        let suffix = match[2]
+        const linkLocale = label === 'English' || label === '英文' ? 'en'
+          : ['中文', '简体中文', 'Chinese'].includes(label) ? 'zh-CN' : locale
+        const section = documents.find((entry) => entry.source === target && entry.section && suffix === '#' + entry.section.toLowerCase().replaceAll(' ', '-'))
+        let route = section ?? documents.find((entry) => (entry.source === target || entry.translationOf === target) && !entry.section && entry.destination.startsWith(linkLocale + '/'))
+          ?? documents.find((entry) => entry.source === target && !entry.section)
+        if (section) suffix = ''
+        if (route?.translationOf === target && route.anchors?.has(suffix)) suffix = route.anchors.get(suffix)
+        if (target === 'README.md' || target === 'README-zh.md') route = { destination: `${locale}/index.md` }
+        if (aliases[target]) { route = { destination: `${locale}/${aliases[target]}` }; suffix = '' }
+        if (route) {
+          let destination = route.destination
+          if (document.html) destination = destination.replace(/\.md$/, '.html')
+          return posix.relative(posix.dirname(document.destination), destination) + suffix
+        }
+        if (/\.(?:png|jpe?g|gif|webp|svg|rtf|txt|yaml)$/i.test(target) && !target.startsWith('../')) {
+          if (!publicAssets.has(target)) throw new Error(`Asset is not approved for public documentation: ${target}`)
+          assets.add(target)
+          return (document.html ? '/finsafe' : '') + '/source-assets/' + target + suffix
+        }
+        if (target.endsWith('.md') && !target.startsWith('../')) throw new Error(`Documentation target is not on the site: ${document.source}: ${value}`)
+        return github ? value : remoteRepository + target.replace(/^\.\.\//, '') + suffix
+      }, document.html)
+      const path = join(output, document.html ? 'public/' + document.destination : document.destination)
       await mkdir(dirname(path), { recursive: true })
       await writeFile(path, content, 'utf8')
-      if (!html) pages.push({ source: sourcePath, route: destination.replace(/\.md$/, '.html') })
-    }
+      if (!document.html) pages.push({ source: document.source, route: document.destination.replace(/\.md$/, '.html') })
+  }
+  for (const asset of assets) {
+    const path = join(output, 'public/source-assets', asset)
+    await mkdir(dirname(path), { recursive: true })
+    await cp(join(repositoryRoot, asset), path)
   }
   await writeFile(join(output, 'pages.json'), JSON.stringify(pages, null, 2) + '\n')
   return pages
@@ -67,7 +152,10 @@ export async function prepareContent(docsRoot, output) {
 
 async function main() {
   const output = resolve(siteRoot, '.generated')
-  const pages = await prepareContent(resolve(siteRoot, '..'), output)
+  const imports = JSON.parse(await readFile(join(siteRoot, 'content.json'), 'utf8'))
+  const pages = await prepareContent(resolve(siteRoot, '..'), output, {
+    ...imports, repositoryRoot: process.env.FINSHIELD_DOCS_REPO ?? resolve(siteRoot, '../..'),
+  })
   await cp(join(siteRoot, '.vitepress'), join(output, '.vitepress'), { recursive: true })
   await cp(join(siteRoot, 'public'), join(output, 'public'), { recursive: true })
   await writeFile(join(output, 'index.md'), `---
