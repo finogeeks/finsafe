@@ -230,7 +230,7 @@ WorkBuddy原生组与FinShield组的受保护目录均保持完整，两组都�
 - [Safety Arena测评总览](https://safety.finaios.ai/zh-cn/)与[公开统计数据](https://safety.finaios.ai/catalog.json)：本稿总体、分类与逐项结果的来源，核对日期为2026年11月25日。
 - [测评方法](https://safety.finaios.ai/zh-cn/methodology/)与[项目源码](https://github.com/finogeeks/agent-safety-arena)：任务设计、审批、效果判定与共享计分规则。
 - [Windows产品说明](../overview/windows.html)与[Linux/macOS产品说明](../overview/linux-macos.html)：产品机制、网络访问与内容防护、数据留存及平台差异。
-- [旧版白皮书与早期实验](../../archive/finsafe-whitepaper-zh-v0.5.md)：保留原UI、SYS、H、J编号及历史记录，不与当前38项场景合并统计。
+- [旧版白皮书与早期实验](history.md)：保留原UI、SYS、H、J编号及历史记录，不与当前38项场景合并统计。
 
 | 版本 | 日期 | 内容 |
 | --- | --- | --- |

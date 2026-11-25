@@ -6,7 +6,7 @@
 
 FinShield (formerly FinSAFE) gives DSH, OpenCode, Hermes, Kilo, Codex, Claude Code, WorkBuddy, and other Agents a security boundary for files, system functions, and the desktop. Prefer a released Agent integration plugin, or connect through the `finsafe` CLI when no plugin is available. The product supports Windows, macOS, and Linux; see the [compatibility matrix](docs/en/agents/compatibility.md) for each Agent form and verification scope.
 
-[简体中文](README-zh.md) · [FinShield on finaios.ai](https://finaios.ai/en/products/finshield/)
+[简体中文](README-zh.md) · [Technical documentation](https://finogeeks.github.io/finsafe/) · [FinShield on finaios.ai](https://finaios.ai/en/products/finshield/)
 
 ## Four risks when Agents operate your computer
 
