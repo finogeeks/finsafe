@@ -14,13 +14,13 @@ FinShield 为主流 Agent 提供文件、系统与桌面的安全边界。优先
 
 | Agent | 推荐入口 | 可用接入 |
 | --- | --- | --- |
+| WorkBuddy 桌面版（Windows） | [桌面安装与启动](agents/workbuddy.md) | 桌面入口 |
 | DSH Desktop（Windows） | [插件安装与使用](https://github.com/finogeeks/finsafe/blob/main/integrations/dsh/windows/README-zh.md) | 已发布：`@finogeeks2026/finshield-dsh` |
-| OpenCode Desktop（Windows） | [插件安装与使用](getting-started/install.md#opencode-desktop) | **已发布**：`@finogeeks2026/finshield-opencode`；也可从 FinShield 桌面启动 |
-| Hermes Desktop（Windows） | [桌面安装与启动](getting-started/install.md#hermes-desktop) | FinShield 桌面入口 |
-| Kilo CLI（Windows） | [测试插件接入](getting-started/install.md#kilo-cli) | `@finogeeks2026/finshield-kilo`（测试版，本地交互 TUI） |
 | Codex CLI（Windows） | [命令行接入](agents/codex.md) | **已支持 CLI 接入** |
 | Claude Code CLI（Windows） | [命令行接入](agents/claude.md) | **已支持 CLI 接入** |
-| WorkBuddy 桌面版（Windows） | [桌面安装与启动](getting-started/install.md#windows) | 桌面入口 |
+| OpenCode Desktop（Windows） | [插件安装与使用](https://github.com/finogeeks/finsafe/blob/main/integrations/opencode/windows/README-zh.md) | **已发布**：`@finogeeks2026/finshield-opencode`；也可从 FinShield 桌面启动 |
+| Hermes Desktop（Windows） | [桌面安装与启动](getting-started/install.md#hermes-desktop) | FinShield 桌面入口 |
+| Kilo CLI（Windows） | [测试插件接入](getting-started/install.md#kilo-cli) | `@finogeeks2026/finshield-kilo`（测试版，本地交互 TUI） |
 | 其他 Agent／Linux／macOS | [兼容范围与通用 CLI 示例](agents/compatibility.md) | 按具体 Agent 确认 |
 
 ## 认识 FinShield 与防护配置
@@ -57,3 +57,7 @@ PII 插件扩展敏感信息处理规则，与 Agent 接入插件用途不同。
 - [PII 插件与扩展开发](development/README.md).
 - [企业部署](enterprise/README.md).
 - [参考资料与支持](reference/README.md).
+
+## 架构与图示
+
+[查看架构图与技术设计](architecture/README.md)。

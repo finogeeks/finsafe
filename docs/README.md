@@ -14,17 +14,18 @@ FinShield gives mainstream Agents a security boundary for files, system function
 
 | Agent | Recommended entry | Available integration |
 | --- | --- | --- |
-| DSH Desktop (Windows) | [Plugin installation and use](https://github.com/finogeeks/finsafe/blob/main/integrations/dsh/windows/README.md) | Released: `@finogeeks2026/finshield-dsh` |
-| OpenCode Desktop (Windows) | [Plugin installation and use](en/getting-started/install.md#opencode-desktop) | **Released**: `@finogeeks2026/finshield-opencode`; also available through the FinShield desktop launcher |
-| Hermes Desktop (Windows) | [Desktop installation and launch](en/getting-started/install.md#hermes-desktop) | FinShield desktop launcher |
-| Kilo CLI (Windows) | [Test plugin integration](en/getting-started/install.md#kilo-cli) | `@finogeeks2026/finshield-kilo` (test release, local interactive TUI) |
 | Codex CLI (Windows) | [CLI integration](en/agents/codex.md) | **CLI integration supported** |
 | Claude Code CLI (Windows) | [CLI integration](en/agents/claude.md) | **CLI integration supported** |
-| WorkBuddy desktop (Windows) | [Desktop installation and launch](en/getting-started/install.md#windows) | Desktop launcher |
+| OpenCode Desktop (Windows) | [Plugin installation and use](https://github.com/finogeeks/finsafe/blob/main/integrations/opencode/windows/README.md) | **Released**: `@finogeeks2026/finshield-opencode`; also available through the FinShield desktop launcher |
+| Hermes Desktop (Windows) | [Desktop installation and launch](en/getting-started/install.md#hermes-desktop) | FinShield desktop launcher |
+| Kilo CLI (Windows) | [Test plugin integration](en/getting-started/install.md#kilo-cli) | `@finogeeks2026/finshield-kilo` (test release, local interactive TUI) |
+| DSH Desktop (Windows) | [Plugin installation and use](https://github.com/finogeeks/finsafe/blob/main/integrations/dsh/windows/README.md) | Released: `@finogeeks2026/finshield-dsh` |
+| WorkBuddy desktop (Windows) | [Desktop installation and launch](en/agents/workbuddy.md) | Desktop launcher |
 | Other Agents / Linux / macOS | [Compatibility and generic CLI examples](en/agents/compatibility.md) | Check the specific Agent |
 
 ## Understand FinShield and configure protection
 
+- [FinShield product introduction](en/overview/product-introduction.md): cross-platform positioning, security, integration and Windows evaluation results.
 - [Overall illustrated introduction](en/overview/finshield.html): security controls, records, enterprise management, and scoped evaluations.
 - [Windows introduction](en/overview/windows.md) and [illustrated overview](en/overview/windows.html): permissions, system and desktop restrictions, and sensitive-information inspection.
 - [Linux/macOS introduction](en/overview/linux-macos.md) and [illustrated overview](en/overview/linux-macos.html): platform capabilities, integration routes, and limits.
@@ -56,3 +57,7 @@ The [FinShield whitepaper](en/reference/whitepaper.md) covers product capabiliti
 - [PII plugins and extensions](en/development/README.md).
 - [Enterprise deployment](en/enterprise/README.md).
 - [Reference and support](en/reference/README.md).
+
+## Architecture and diagrams
+
+[Browse architecture diagrams and technical designs](en/architecture/README.md)。

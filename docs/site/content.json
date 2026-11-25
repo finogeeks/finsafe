@@ -1,0 +1,193 @@
+{
+  "documents": [
+    {
+      "source": "integrations/dsh/windows/README.md",
+      "destination": "en/agents/dsh.md",
+      "title": "DSH Desktop (Windows)"
+    },
+    {
+      "source": "integrations/dsh/windows/OPERATIONS.md",
+      "destination": "en/agents/dsh-operations.md"
+    },
+    {
+      "source": "pii-plugins/README.md",
+      "destination": "en/development/pii.md"
+    },
+    {
+      "source": "pii-plugins/docs/debugging.md",
+      "destination": "en/development/pii-debugging.md"
+    },
+    {
+      "source": "pii-plugins/examples/redactor/README.md",
+      "destination": "en/development/pii-redactor.md"
+    },
+    {
+      "source": "integrations/dsh/windows/README-zh.md",
+      "destination": "zh-CN/agents/dsh.md",
+      "title": "DSH 桌面版（Windows）"
+    },
+    {
+      "source": "integrations/dsh/windows/OPERATIONS-zh.md",
+      "destination": "zh-CN/agents/dsh-operations.md"
+    },
+    {
+      "source": "pii-plugins/README-zh.md",
+      "destination": "zh-CN/development/pii.md"
+    },
+    {
+      "source": "pii-plugins/docs/debugging-zh.md",
+      "destination": "zh-CN/development/pii-debugging.md"
+    },
+    {
+      "source": "pii-plugins/examples/redactor/README-zh.md",
+      "destination": "zh-CN/development/pii-redactor.md"
+    },
+    {
+      "source": "integrations/dsh/windows/DESIGN.md",
+      "destination": "en/architecture/dsh.md"
+    },
+    {
+      "source": "docs/site/translations/dsh/DESIGN-zh.md",
+      "destination": "zh-CN/architecture/dsh.md",
+      "translationOf": "integrations/dsh/windows/DESIGN.md",
+      "upstreamSource": "docs/public/site/translations/dsh/DESIGN-zh.md",
+      "linkSource": "integrations/dsh/windows/DESIGN-zh.md"
+    },
+    {
+      "source": "integrations/dsh/windows/THIRD-PARTY-NOTICES.md",
+      "destination": "en/reference/dsh-notices.md"
+    },
+    {
+      "source": "docs/site/translations/dsh/THIRD-PARTY-NOTICES-zh.md",
+      "destination": "zh-CN/reference/dsh-notices.md",
+      "translationOf": "integrations/dsh/windows/THIRD-PARTY-NOTICES.md",
+      "upstreamSource": "docs/public/site/translations/dsh/THIRD-PARTY-NOTICES-zh.md",
+      "linkSource": "integrations/dsh/windows/THIRD-PARTY-NOTICES-zh.md"
+    },
+    {
+      "source": "integrations/dsh/windows/bin/README.md",
+      "destination": "en/reference/dsh-native-components.md"
+    },
+    {
+      "source": "docs/site/translations/dsh/bin/README-zh.md",
+      "destination": "zh-CN/reference/dsh-native-components.md",
+      "translationOf": "integrations/dsh/windows/bin/README.md",
+      "upstreamSource": "docs/public/site/translations/dsh/bin/README-zh.md",
+      "linkSource": "integrations/dsh/windows/bin/README-zh.md"
+    },
+    {
+      "source": "integrations/opencode/windows/README.md",
+      "destination": "en/agents/opencode.md"
+    },
+    {
+      "source": "docs/site/translations/opencode/README-zh.md",
+      "destination": "zh-CN/agents/opencode.md",
+      "translationOf": "integrations/opencode/windows/README.md",
+      "upstreamSource": "docs/public/site/translations/opencode/README-zh.md",
+      "linkSource": "integrations/opencode/windows/README-zh.md"
+    },
+    {
+      "source": "integrations/opencode/windows/DESIGN.md",
+      "destination": "en/architecture/opencode.md"
+    },
+    {
+      "source": "docs/site/translations/opencode/DESIGN-zh.md",
+      "destination": "zh-CN/architecture/opencode.md",
+      "translationOf": "integrations/opencode/windows/DESIGN.md",
+      "upstreamSource": "docs/public/site/translations/opencode/DESIGN-zh.md",
+      "linkSource": "integrations/opencode/windows/DESIGN-zh.md"
+    },
+    {
+      "source": "integrations/opencode/windows/THIRD-PARTY-NOTICES.md",
+      "destination": "en/reference/opencode-notices.md"
+    },
+    {
+      "source": "docs/site/translations/opencode/THIRD-PARTY-NOTICES-zh.md",
+      "destination": "zh-CN/reference/opencode-notices.md",
+      "translationOf": "integrations/opencode/windows/THIRD-PARTY-NOTICES.md",
+      "upstreamSource": "docs/public/site/translations/opencode/THIRD-PARTY-NOTICES-zh.md",
+      "linkSource": "integrations/opencode/windows/THIRD-PARTY-NOTICES-zh.md"
+    },
+    {
+      "source": "pii-plugins/docs/protocol.md",
+      "destination": "en/development/pii-protocol.md"
+    },
+    {
+      "source": "docs/site/translations/pii/protocol-zh.md",
+      "destination": "zh-CN/development/pii-protocol.md",
+      "translationOf": "pii-plugins/docs/protocol.md",
+      "upstreamSource": "docs/public/site/translations/pii/protocol-zh.md",
+      "linkSource": "pii-plugins/docs/protocol-zh.md"
+    },
+    {
+      "source": "pii-plugins/docs/integration.md",
+      "destination": "en/development/pii-integration.md"
+    },
+    {
+      "source": "docs/site/translations/pii/integration-zh.md",
+      "destination": "zh-CN/development/pii-integration.md",
+      "translationOf": "pii-plugins/docs/integration.md",
+      "upstreamSource": "docs/public/site/translations/pii/integration-zh.md",
+      "linkSource": "pii-plugins/docs/integration-zh.md"
+    },
+    {
+      "source": "docs/en/getting-started/install.md",
+      "destination": "en/agents/hermes.md",
+      "section": "Hermes Desktop",
+      "upstreamSource": "docs/public/docs/en/getting-started/install.md",
+      "lead": "Before starting Hermes, complete [Windows installation and preparation](https://github.com/finogeeks/finsafe/blob/main/docs/en/getting-started/install.md#windows)."
+    },
+    {
+      "source": "docs/en/getting-started/install.md",
+      "destination": "en/agents/kilo.md",
+      "section": "Kilo CLI",
+      "upstreamSource": "docs/public/docs/en/getting-started/install.md"
+    },
+    {
+      "source": "docs/zh-CN/getting-started/install.md",
+      "destination": "zh-CN/agents/hermes.md",
+      "section": "Hermes Desktop",
+      "upstreamSource": "docs/public/docs/zh-CN/getting-started/install.md",
+      "lead": "开始使用 Hermes 前，先完成 [Windows 安装与权限准备](https://github.com/finogeeks/finsafe/blob/main/docs/zh-CN/getting-started/install.md#windows)。",
+      "title": "Hermes 桌面接入（Windows）"
+    },
+    {
+      "source": "docs/zh-CN/getting-started/install.md",
+      "destination": "zh-CN/agents/kilo.md",
+      "section": "Kilo CLI",
+      "upstreamSource": "docs/public/docs/zh-CN/getting-started/install.md",
+      "title": "Kilo CLI 接入"
+    },
+    {
+      "source": "CONTRIBUTING.md",
+      "upstreamSource": "docs/public/CONTRIBUTING.md",
+      "destination": "en/reference/contributing.md"
+    },
+    {
+      "source": "CONTRIBUTING-zh.md",
+      "upstreamSource": "docs/public/CONTRIBUTING-zh.md",
+      "destination": "zh-CN/reference/contributing.md"
+    }
+  ],
+  "aliases": {
+    "CHANGELOG.md": "reference/changelog.md"
+  },
+  "unpublishedReferences": [
+    "docs/internal/design/opencode-personal-app-seam.md",
+    "docs/internal/design/plugin-startup-decision.md",
+    "docs/internal/design/plugin-updater-shared.md",
+    "integrations/opencode/windows/docs/verification.md",
+    "integrations/opencode/windows/docs/retained-main-host-handoff.md",
+    "integrations/opencode/windows/docs/local-npm.md",
+    "windows/prototypes/assets/opencode-plugin-layout-2026-11-21.png"
+  ],
+  "publicAssets": [
+    "integrations/dsh/windows/detail/assessments/window-flood.gif",
+    "integrations/dsh/windows/detail/assessments/screen-capture.gif",
+    "integrations/dsh/windows/detail/assessments/protected-directory-delete.gif",
+    "integrations/dsh/windows/detail/assessments/process-terminate.gif",
+    "integrations/dsh/windows/LICENSE.rtf",
+    "integrations/opencode/windows/LICENSE.rtf",
+    "pii-plugins/examples/redactor/network-policy.example.yaml"
+  ]
+}
