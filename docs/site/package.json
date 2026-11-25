@@ -1,0 +1,17 @@
+{
+  "name": "finshield-documentation",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "dev": "node prepare.mjs && vitepress dev .generated --host 127.0.0.1",
+    "build": "node prepare.mjs && vitepress build .generated",
+    "preview": "vitepress preview .generated --host 127.0.0.1",
+    "test": "node --test prepare.test.mjs",
+    "check": "npm test && npm run build && node check.mjs"
+  },
+  "devDependencies": {
+    "mermaid": "^11.12.0",
+    "vitepress": "1.6.4"
+  }
+}

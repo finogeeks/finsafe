@@ -230,7 +230,7 @@ In a separate test, the native WorkBuddy run granted Everyone modification permi
 - [Safety Arena overview](https://safety.finaios.ai/) and [public catalog](https://safety.finaios.ai/catalog.json): overall, category and scenario results, checked on 2026-11-25.
 - [Methodology](https://safety.finaios.ai/methodology/) and [source repository](https://github.com/finogeeks/agent-safety-arena): task design, approvals, effect assessment and shared scoring.
 - [Windows](../overview/windows.html) and [Linux/macOS](../overview/linux-macos.html) documentation: product mechanisms, network access and content protection, retention and platform differences.
-- [Earlier whitepaper and experiments](../../archive/finsafe-whitepaper-en-v0.4.md): preserve original UI/SYS/H/J identifiers and historical records, without combining them with the current 38 scenarios.
+- [Earlier whitepaper and experiments](history.md): preserve original UI/SYS/H/J identifiers and historical records, without combining them with the current 38 scenarios.
 
 | Version | Date | Change |
 | --- | --- | --- |

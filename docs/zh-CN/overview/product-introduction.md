@@ -1,5 +1,7 @@
 # FinShield智安盾产品介绍
 
+[English](../../en/overview/product-introduction.md) · [文档目录](../README.md)
+
 ## 一、FinShield是什么
 
 FinShield（智安盾）是一款面向AI智能体（Agent）的安全防护与数据收集产品，支持Windows、macOS和Linux，帮助企业管控智能体的操作权限，并将业务过程中产生的数据沉淀为企业资产。

@@ -25,6 +25,7 @@ FinShield gives mainstream Agents a security boundary for files, system function
 
 ## Understand FinShield and configure protection
 
+- [FinShield product introduction](overview/product-introduction.md): cross-platform positioning, security, integration and Windows evaluation results.
 - [Overall illustrated introduction](overview/finshield.html): security controls, records, enterprise management, and scoped evaluations.
 - [Windows introduction](overview/windows.md) and [illustrated overview](overview/windows.html): permissions, system and desktop restrictions, and sensitive-information inspection.
 - [Linux/macOS introduction](overview/linux-macos.md) and [illustrated overview](overview/linux-macos.html): platform capabilities, integration routes, and limits.
