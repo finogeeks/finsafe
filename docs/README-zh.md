@@ -25,6 +25,7 @@ FinShield 为主流 Agent 提供文件、系统与桌面的安全边界。优先
 
 ## 认识 FinShield 与防护配置
 
+- [FinShield简版产品介绍](zh-CN/overview/product-introduction.md)：跨平台定位、安全防护、接入方式与Windows实测结果。
 - [整体图解介绍](zh-CN/overview/finshield.html)：安全管控、运行记录、企业管理与实测对照。
 - [Windows 产品介绍](zh-CN/overview/windows.md)与[图解介绍](zh-CN/overview/windows.html)：权限、系统与桌面限制，以及敏感信息检查。
 - [Linux/macOS 产品介绍](zh-CN/overview/linux-macos.md)与[图解介绍](zh-CN/overview/linux-macos.html)：平台能力、接入方式与限制。
@@ -38,7 +39,7 @@ PII 插件扩展敏感信息处理规则，与 Agent 接入插件用途不同。
 
 ## 企业部署与深入阅读
 
-[智安盾白皮书](zh-CN/reference/whitepaper.md)：完整产品方案、企业接入、技术依据与实验条件。产品介绍与白皮书作为深入阅读材料，实际安装先从对应 Agent 指南开始。
+[智安盾白皮书](zh-CN/reference/whitepaper.md)：产品能力、接入方式、技术实现与Safety Arena当前Windows测评，附38项场景清单和统计方法。产品介绍与白皮书作为深入阅读材料，实际安装先从对应 Agent 指南开始。
 
 ## 参考与支持
 
