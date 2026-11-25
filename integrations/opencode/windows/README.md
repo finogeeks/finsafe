@@ -1,37 +1,89 @@
-# FinShield for OpenCode Desktop on Windows
+# FinShield for OpenCode Desktop
 
-OpenCode uses a separate package and declares the FinSAFE Node SDK.
+[Product GitHub](https://github.com/finogeeks/finsafe) · [Safety Arena](https://safety.finaios.ai/) · [npm](https://www.npmjs.com/package/@finogeeks2026/finshield-opencode)
 
-DSH is a design reference. OpenCode has its own updater, page, configuration
-and tests. It declares `@finogeeks2026/finsafe-sdk` for product operations.
+**Let your agent work. Keep its access under control.**
 
-The plugin uses FinSAFE AppSeam to replace the ordinary Host with an AppContainer
-Host while keeping Desktop Main. OpenCode owns native recovery, authentication
-and sessions. Use the matching SDK and CLI with the retained-Main launch support.
-Target: Windows x64 and OpenCode Desktop/SDK 2.3.0.
-See [architecture](DESIGN.md) and [verification](docs/verification.md).
+Agents can do more than delete files: they can access private information, disrupt your desktop and change system settings. FinShield adds Windows sandbox protection to OpenCode Desktop's execution backend, helping keep agent operations within configured access boundaries while you keep your usual coding workflow.
+
+See what those boundaries can mean in practice:
+
+| Privacy | Desktop | System | Data |
+| :---: | :---: | :---: | :---: |
+| [![Screen capture comparison](https://raw.githubusercontent.com/finogeeks/finsafe/main/integrations/dsh/windows/detail/assessments/screen-capture.gif)](https://safety.finaios.ai/screen-capture/dsh/dsh-desktop-file-v3-20261109/index.html) | [![Desktop interference comparison](https://raw.githubusercontent.com/finogeeks/finsafe/main/integrations/dsh/windows/detail/assessments/window-flood.gif)](https://safety.finaios.ai/window-flood/dsh/dsh-finshield-pro-20261105/index.html) | [![Process protection comparison](https://raw.githubusercontent.com/finogeeks/finsafe/main/integrations/dsh/windows/detail/assessments/process-terminate.gif)](https://safety.finaios.ai/process-terminate/dsh/dsh-python-file-v2-20261111/index.html) | [![File protection comparison](https://raw.githubusercontent.com/finogeeks/finsafe/main/integrations/dsh/windows/detail/assessments/protected-directory-delete.gif)](https://safety.finaios.ai/protected-directory-delete/dsh/dsh-direct-v4-20261112/index.html) |
+| Screen capture | Disruptive pop-ups | Process termination | Protected-directory deletion |
+
+These GIFs are excerpts from FinShield's published **DSH evaluations**, not OpenCode test runs. Select a GIF for the conditions, full recordings and results. Each comparison shows separate test runs.
+
+[Install](#install) · [Browse DSH evaluations](https://safety.finaios.ai/agents/dsh/) · [Evaluation source and methods](https://github.com/finogeeks/agent-safety-arena)
+
+## Requirements
+
+- Windows x64.
+- OpenCode Desktop V2. The integration currently targets OpenCode Desktop/SDK 2.3.0.
+- An internet connection to download the plugin and its native components.
+
+Install [OpenCode Desktop](https://opencode.ai/) first if you do not already have it.
 
 ## Install
 
-```powershell
-& "$env:LOCALAPPDATA\Programs\ai.opencode.desktop\resources\opencode-cli.exe" plugin add '@finogeeks2026/finshield-opencode'
+With the OpenCode V2 CLI installed, run:
+
+```sh
+opencode plugin add @finogeeks2026/finshield-opencode
 ```
 
-This uses Desktop's bundled CLI at its default per-user Windows path and needs
-no `opencode` command on PATH. For a different Desktop installation directory,
-use its `resources\opencode-cli.exe`. See [local npm setup and command troubleshooting](docs/local-npm.md#powershell-cannot-find-opencode).
+Restart OpenCode Desktop to load the plugin. Desktop only? See [Install without the CLI](#install-without-the-cli).
 
-Open OpenCode Desktop and go to **Settings > FinShield**. Follow Windows
-authorization when prompted. When protection is ready, save your work and choose **Exit OpenCode**.
-Open OpenCode manually to use the prepared protection. There is no running Restart action.
+## What happens on first launch
+
+FinShield automatically prepares its components and configures Windows sandbox permissions in the background. This can take a while; you can keep using OpenCode while it finishes. Windows may ask for administrator consent.
+
+When ready, FinShield prompts you to exit and reopen OpenCode. After that, protection starts automatically on normal launches. You can check its status at any time in **Settings > FinShield**.
 
 ## Update
 
-FinShield checks the configured package through OpenCode when Desktop starts
-and once per hour while it is open. You can also select **Check for updates**
-on the FinShield page. Select **Update** to install the plugin, then the matching
-FinShield native components. When installation finishes, close OpenCode and open
-it manually to load the new version. Installation does not establish authorization.
+Use **Check for updates** on the FinShield settings page. After an update finishes, save your work, exit OpenCode and open it again manually. Check the current protection status after reopening.
+
+## Troubleshooting
+
+### Install without the CLI
+
+Add FinShield to `plugins` in `%USERPROFILE%\.config\opencode\opencode.json`, keeping your other settings and plugin entries:
+
+```json
+{
+  "plugins": ["@finogeeks2026/finshield-opencode"]
+}
+```
+
+If the folder or file does not exist, create it. If you already use `opencode.jsonc` or a custom configuration directory, edit that configuration instead. Restart Desktop; OpenCode downloads and loads the configured plugin automatically. See [OpenCode's plugin documentation](https://opencode.ai/docs/plugins/).
+
+### FinShield does not appear in Settings
+
+Confirm that you edited the global configuration used by this Desktop installation, that the field is `plugins` for V2, and that the package name is `@finogeeks2026/finshield-opencode`. Check for JSON errors and plugin download or load errors before repeating installation.
+
+### The plugin is installed but protection is not active
+
+Check **Settings > FinShield** for preparation progress or an error. When preparation is ready, exit and reopen OpenCode as prompted to activate protection.
+
+## Links and support
+
+- [FinShield product and documentation](https://github.com/finogeeks/finsafe)
+- [Agent Safety Arena](https://safety.finaios.ai/) · [Evaluation source and methods](https://github.com/finogeeks/agent-safety-arena)
+- [Latest product releases](https://github.com/finogeeks/finsafe/releases)
+- [Report a problem](https://github.com/finogeeks/finsafe/issues/new/choose)
+
+## Scope and license
+
+This Windows integration protects the backend Host and retains Desktop Main. Network mode is `host`; do not interpret the AppContainer integration as a claim of complete network isolation. See the product's compatibility and verification documentation for the current supported scope and remaining acceptance limits.
+
+Use is governed by the [product license supplied with the integration](https://github.com/finogeeks/finsafe/blob/main/integrations/opencode/windows/LICENSE.rtf).
+
+## Maintainer notes
+
+<details>
+<summary>Startup, packaging and verification in the source checkout</summary>
 
 ## Startup
 
@@ -56,7 +108,7 @@ flowchart LR
 ## Build and package
 
 For npm-style local experience, use the committed
-[local npm preview tool and guide](docs/local-npm.md). It serves the plugin,
+`docs/local-npm.md` in the source checkout. It serves the plugin,
 matching SDK and native installer, then prints the normal `opencode plugin add`
 command. It does not install the plugin or launch OpenCode for the user.
 
@@ -74,7 +126,7 @@ The package carries JavaScript, Candidate and notices. The independent updater
 uses OpenCode's installed Bun runtime; users need no additional Node or Bun
 installation. The declared SDK carries Koffi and the common product DLL. For development
 before the matching SDK is published, build and pack it with the
-[SDK build instructions](../../../sdk/node/README.md) and install from that
+SDK build instructions in `sdk/node/README.md` in the source checkout and install from that
 local archive.
 
 Install the archive in an owned package directory and add its installed package
@@ -128,3 +180,5 @@ owned inputs; they are not part of automatic unit checks.
 Cross-native-version authorization reuse, model/MCP/network cases, full crash
 and multi-window recovery remain unaccepted. Network mode is `host`. The SDK
 dependency tree has 24 moderate audit findings; no public-release claim is made.
+
+</details>
