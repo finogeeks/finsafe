@@ -38,7 +38,7 @@ PII plugins extend sensitive-information processing and serve a different purpos
 
 ## Enterprise deployment and further reading
 
-The [FinShield whitepaper](reference/whitepaper.md) covers the complete product approach, enterprise integration, technical basis, and experiments. Product introductions and the whitepaper provide further reading; start installation with the relevant Agent guide.
+The [FinShield whitepaper](reference/whitepaper.md) covers product capabilities, integration, implementation and current Safety Arena Windows results, including the 38-scenario matrix and scoring methods. Product introductions and the whitepaper provide further reading; start installation with the relevant Agent guide.
 
 ## Reference and support
 
