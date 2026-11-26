@@ -131,7 +131,7 @@ export async function prepareContent(docsRoot, output, options = {}) {
         if (/\.(?:png|jpe?g|gif|webp|svg|rtf|txt|yaml)$/i.test(target) && !target.startsWith('../')) {
           if (!publicAssets.has(target)) throw new Error(`Asset is not approved for public documentation: ${target}`)
           assets.add(target)
-          return (document.html ? '/finsafe' : '') + '/source-assets/' + target + suffix
+          return '/source-assets/' + target + suffix
         }
         if (target.endsWith('.md') && !target.startsWith('../')) throw new Error(`Documentation target is not on the site: ${document.source}: ${value}`)
         return github ? value : remoteRepository + target.replace(/^\.\.\//, '') + suffix

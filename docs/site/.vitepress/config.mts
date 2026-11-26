@@ -55,11 +55,11 @@ function sidebar(language: 'en' | 'zh-CN') {
 export default defineConfig({
   title: 'FinShield Docs',
   description: 'FinShield installation, Agent integrations, protection boundaries and verification.',
-  base: '/finsafe/',
+  base: '/',
   cleanUrls: false,
   lastUpdated: false,
-  head: [['link', { rel: 'icon', type: 'image/svg+xml', href: '/finsafe/favicon.svg' }]],
-  sitemap: { hostname: 'https://finogeeks.github.io/finsafe/' },
+  head: [['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }]],
+  sitemap: { hostname: 'https://finshield.finogeeks.club/' },
   locales: {
     en: {
       label: 'English', lang: 'en', link: '/en/',
