@@ -1,24 +1,22 @@
 const copy={
   en:{exitUnavailable:'Close OpenCode and open it again to apply the prepared update.',
     exitReminder:'Save your work first. This action exits OpenCode. Open it manually to use the prepared protection.',
-    arena:'How FinShield protects you',about:'FinShield website',feedback:'Feedback',
+    arena:'How FinShield protects you',feedback:'Feedback',
     packageUpdateAvailable:'FinShield update available',packageUpdate:'Install update',packageUpdating:'Installing update…',
     packageUpdateInstalled:'FinShield plugin package updated',packageUpdateReload:'Waiting for the new plugin to load. If it does not load automatically, close OpenCode and open it manually.',
     packageUpdateResult:'Check FinShield for the loaded plugin and preparation result.',
     loadedPlugin:'Loaded plugin',failureReason:'FinShield preparation did not finish',
     packageUpdateCurrent:'OpenCode did not report a FinShield update',packageUpdateCheckFailed:'Could not check for FinShield updates',
-    packageUpdateFailed:'Could not update FinShield',
-    migrationNotice:''},
+    packageUpdateFailed:'Could not update FinShield'},
   zh:{exitUnavailable:'请关闭 OpenCode 后重新打开，以应用准备好的更新。',
     exitReminder:'请先保存工作。此操作将退出 OpenCode；退出后请手动重新打开以启用防护。',
-    about:'FinShield 官网',feedback:'反馈问题',
+    feedback:'反馈问题',
     packageUpdateAvailable:'发现 FinShield 新版本',packageUpdate:'安装更新',packageUpdating:'正在安装更新…',
     packageUpdateInstalled:'FinShield 插件包已更新',packageUpdateReload:'等待新版插件加载。如未自动加载，请手动关闭并重新打开 OpenCode。',
     packageUpdateResult:'请在 FinShield 页面查看已加载插件和防护准备结果。',
     loadedPlugin:'已加载插件',failureReason:'FinShield 准备未完成的原因',
     packageUpdateCurrent:'OpenCode 未报告 FinShield 更新',packageUpdateCheckFailed:'无法检查 FinShield 更新',
-    packageUpdateFailed:'FinShield 更新失败',
-    migrationNotice:''},
+    packageUpdateFailed:'FinShield 更新失败'},
 };
 
 // The outgoing Host can publish a GUI before startup receipt admission finishes.

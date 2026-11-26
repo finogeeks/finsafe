@@ -8,7 +8,6 @@ const h=React.createElement;
 const {projectStatus,createProtectionStore}=PROTECTION_MODEL;
 const {feedbackUrl}=FEEDBACK_MODEL;
 const NS='finshield.windows';
-const PRODUCT_URL='https://finaios.ai/zh-hans/products/finshield/';
 const PACKAGE_NAME='@finogeeks2026/finshield-opencode';
 const zh={
   title:'FinShield',loading:'正在读取防护状态',loadingFirst:'正在连接FinShield',loadingSecond:'',loadingBody:'请稍候，防护状态以本次读取结果为准',
@@ -21,13 +20,12 @@ const zh={
   exiting:'正在退出OpenCode',exitingFirst:'正在退出OpenCode',exitingSecond:'退出后请手动重新打开',exitingBody:'退出后，请从原入口手动重新打开。',
   failed:'准备未完成',failedFirst:'防护准备未完成',failedSecond:'',failedBody:'OpenCode可以继续使用。请查看下方原因，或向我们反馈。',cancelled:'授权未完成',cancelledFirst:'这次授权未完成',cancelledSecond:'',cancelledBody:'OpenCode仍可继续使用',cancelledTitle:'为什么没有完成',cancelledExplanation:'这次授权操作已取消',cancelledAction:'完成授权后，选择开启防护，使访问限制生效',
   privacy:'隐私别乱碰',privacyBody:'约束摄录和截屏操作',interaction:'电脑别乱控',interactionBody:'限制窗口和鼠标干扰',system:'系统别乱改',systemBody:'限制进程与系统改动',data:'数据别乱动',dataBody:'保护敏感目录和文件',
-   about:'了解 FinShield',aboutUrl:'https://finaios.ai/zh-hans/products/finshield/',
-   arena:'了解 FinShield 如何保护你',arenaUrl:'https://safety.finaios.ai/',productLink:'访问FinShield官网（新窗口打开）',work:'返回OpenCode，继续工作',startWork:'返回OpenCode，开始工作',progress:'查看准备步骤',installed:'插件安装完成',nativePreparing:'正在配置安全权限',waiting:'准备完成后，请退出并手动重新打开应用',
+   documentation:'使用文档',documentationUrl:'https://finshield.finogeeks.club/zh-CN/agents/opencode.html',
+   arena:'了解 FinShield 如何保护你',arenaUrl:'https://safety.finaios.ai/',productLink:'打开FinShield使用文档（新窗口打开）',work:'返回OpenCode，继续工作',startWork:'返回OpenCode，开始工作',progress:'查看准备步骤',installed:'插件安装完成',nativePreparing:'正在配置安全权限',waiting:'准备完成后，请退出并手动重新打开应用',
   resume:'可以继续工作；准备完成后请退出并手动重新打开。',exitReminder:'请先保存工作。此操作将退出应用，不会自动重新打开。',failureReason:'未完成的原因',updateFailure:'本次更新未完成',feedback:'反馈问题 ↗',feedbackLanguage:'zh',
   exit:'退出OpenCode',later:'稍后',laterExit:'稍后',details:'查看详情',noticeTitle:'防护已就绪，下次打开生效',noticeBody:'请先保存工作并退出应用，然后手动重新打开。',
   refresh:'重新读取状态',setupFailed:'组件安装失败，错误码',jobFailure:'会话进程管理未完成',jobFailureBody:'未能将OpenCode加入FinShield的会话进程组，授权进度与此错误分别显示',technicalDetails:'技术详情',afterExit:'开启后生效',
   marketUpdate:'更新到',marketInstalled:'已安装',marketNewer:'已安装较新版本',marketConfirm:'更新FinShield',marketFrom:'当前版本',marketSource:'下载源',marketStart:'开始更新',marketUpdating:'正在更新插件',marketDone:'插件包已更新。防护状态请查看防护页。',marketFailed:'插件更新未完成',marketClose:'关闭',marketCancel:'取消',
-  migrationNotice:'finshield 0.10.50 用户：在OpenCode中卸载旧插件 → 安装 finshield-opencode → 按提示重启。',
 };
 const en={
   title:'FinShield',loading:'Reading protection status',loadingFirst:'Connecting to FinShield',loadingSecond:'',loadingBody:'Please wait for the current session status',
@@ -39,13 +37,12 @@ const en={
   exiting:'Exiting OpenCode',exitingFirst:'Exiting OpenCode',exitingSecond:'Open the application manually after exit',exitingBody:'After exit, open the application manually from its normal entry.',
   failed:'Setup incomplete',failedFirst:'Protection setup is incomplete',failedSecond:'',failedBody:'You can keep using OpenCode. See the reason below or report the issue.',cancelled:'Authorization incomplete',cancelledFirst:'Authorization did not finish',cancelledSecond:'',cancelledBody:'You can keep using OpenCode',cancelledTitle:'Why preparation did not finish',cancelledExplanation:'This authorization attempt was cancelled',cancelledAction:'Complete authorization, then enable protection to apply the access boundaries.',
   privacy:'Privacy',privacyBody:'Limit recording & screenshots.',interaction:'Controls',interactionBody:'Limit window & mouse use.',system:'System',systemBody:'Limit processes & settings.',data:'Data',dataBody:'Protect sensitive files.',
-   about:'About FinShield',aboutUrl:'https://finaios.ai/en/products/finshield/',
-   arena:'See how FinShield protects you',arenaUrl:'https://safety.finaios.ai/',productLink:'Visit the FinShield website (opens in a new window)',work:'Continue working in OpenCode',startWork:'Start working in OpenCode',progress:'View setup steps',installed:'Plugin installed',nativePreparing:'Configuring security permissions',waiting:'When preparation finishes, exit and reopen manually',
+   documentation:'Documentation',documentationUrl:'https://finshield.finogeeks.club/en/agents/opencode.html',
+   arena:'See how FinShield protects you',arenaUrl:'https://safety.finaios.ai/',productLink:'Open FinShield documentation (opens in a new window)',work:'Continue working in OpenCode',startWork:'Start working in OpenCode',progress:'View setup steps',installed:'Plugin installed',nativePreparing:'Configuring security permissions',waiting:'When preparation finishes, exit and reopen manually',
   resume:'Keep working while preparation continues. Close and reopen manually when ready.',exitReminder:'Save your work first. This action exits the application and does not reopen it.',failureReason:'Why setup did not finish',updateFailure:'Update did not finish',feedback:'Report a problem ↗',feedbackLanguage:'en',
   exit:'Exit OpenCode',later:'Later',laterExit:'Later',details:'View details',noticeTitle:'Protection ready; applies on the next start',noticeBody:'Save your work, exit the application, then open it manually.',
   refresh:'Read status again',setupFailed:'Component installation failed with code',jobFailure:'Session process management is incomplete',jobFailureBody:'OpenCode could not join the FinShield session process group; authorization progress is shown separately',technicalDetails:'Technical details',afterExit:'Protection starts when enabled',
   marketUpdate:'Update to',marketInstalled:'Installed',marketNewer:'A newer version is installed',marketConfirm:'Update FinShield',marketFrom:'Current version',marketSource:'Download source',marketStart:'Start update',marketUpdating:'Updating plugin',marketDone:'The plugin package is updated. Check the protection page for its status.',marketFailed:'Plugin update did not finish',marketClose:'Close',marketCancel:'Cancel',
-  migrationNotice:'Using finshield 0.10.50? In OpenCode: uninstall the old plugin → install finshield-opencode → exit when prompted.',
 };
 const styles=`
 [data-plugin-detail="@finogeeks2026/finshield-opencode"],.finshield-page{--fs-line:#e5e7eb;--fs-paper:#fff;--fs-subtle:#f7f7f8;--fs-ink:#202020;--fs-muted:#646970;--fs-brand:#005fb8;--fs-green:#107c41;--fs-blue-bg:#edf5fc;--fs-warning:#925400;--fs-shadow:#20202014;font:14px/1.6 "Microsoft YaHei UI",sans-serif;color:var(--fs-ink)}
@@ -121,7 +118,6 @@ const styles=`
 .finshield-page progress{display:block;width:100%;height:7px;margin:10px 0;accent-color:var(--fs-brand)}
 .finshield-page .fs-footer{display:flex;align-items:center;gap:clamp(8px,2.5cqi,32px);flex-wrap:nowrap;margin-top:24px;font-size:clamp(11px,2.2cqi,14px)}
 .finshield-page .fs-footer a{white-space:nowrap}
-.finshield-page .fs-migration-note{border-top:1px solid var(--fs-line);padding-top:12px;margin-top:16px;color:var(--fs-muted);line-height:1.7;overflow-wrap:anywhere}
 .finshield-page a{color:var(--fs-brand);text-decoration:none}
 .finshield-page a:hover{text-decoration:underline}
 .finshield-page .fs-error{color:var(--fs-muted);white-space:pre-wrap;overflow-wrap:anywhere;margin-top:12px}
@@ -180,7 +176,7 @@ function ProductPage({t,store,work,updates=noPackageUpdates}){
   const start=()=>{void store.exit().catch(()=>{});};
   const status=h('div',{className:'fs-status',role:'status'},h('span',{className:'fs-dot','aria-hidden':true}),t(phase==='authorizing'?(preparingUpdate?'updating':'authorizing'):hero));
   const session=phase!=='protected'&&(typeof currentProtected==='boolean'||preparing||['ready','exiting'].includes(phase))?h('p',{className:'fs-preparing-session'},t(typeof currentProtected==='boolean'?currentProtected?'currentProtected':'notProtected':'loading'),currentProtected&&snapshot.status.currentRelease?' '+snapshot.status.currentRelease:null):null;
-  const art=h('a',{className:'fs-art',href:PRODUCT_URL,target:'_blank',rel:'noopener noreferrer','aria-label':t('productLink')},preparing?h('span',{className:'fs-moving','aria-hidden':true}):null,h('img',{src:BRAND_LOGO,alt:''}));
+  const art=h('a',{className:'fs-art',href:t('documentationUrl'),target:'_blank',rel:'noopener noreferrer','aria-label':t('productLink')},preparing?h('span',{className:'fs-moving','aria-hidden':true}):null,h('img',{src:BRAND_LOGO,alt:''}));
   const progressLabel=h('span',{role:'status'},t(operationLabel),typeof snapshot.status?.progress?.overall_percent==='number'?' '+snapshot.status.progress.overall_percent+'%':null);
   return h('section',{ref:pageRef,className:'finshield-page','data-phase':phase,'aria-label':t('title')},h('style',null,styles),h('div',{className:'fs-panel'},
     h('div',{className:'fs-hero','data-package-update':packageUpdate.target?'available':undefined},
@@ -207,9 +203,8 @@ function ProductPage({t,store,work,updates=noPackageUpdates}){
     jobError?h('div',{className:'fs-error',role:'alert'},h('p',null,t('jobFailure')),h('p',null,t('jobFailureBody')),h('details',null,h('summary',null,t('technicalDetails')),h('p',null,jobError))):null,
     phase==='protected'?h('div',{className:'fs-areas'},...['privacy','interaction','system','data'].map(area=>h('section',{className:'fs-area',key:area},h('h3',null,t(area)),h('p',null,t(area+'Body'))))):null,
     h('footer',{className:'fs-footer'},h('a',{href:t('arenaUrl'),target:'_blank',rel:'noopener noreferrer'},t('arena')+' ↗'),
-       h('a',{href:t('aboutUrl'),target:'_blank',rel:'noopener noreferrer'},t('about')+' ↗'),
-       h('a',{href:feedback,target:'_blank',rel:'noopener noreferrer'},t('feedback')+' ↗')),
-    h('p',{className:'fs-migration-note'},t('migrationNotice'))));
+       h('a',{href:t('documentationUrl'),target:'_blank',rel:'noopener noreferrer'},t('documentation')+' ↗'),
+       h('a',{href:feedback,target:'_blank',rel:'noopener noreferrer'},t('feedback')+' ↗'))));
 }
 
 function ExitNotice({t,store,details}){

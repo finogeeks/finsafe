@@ -22,8 +22,8 @@ for(const language of ['zh','en']) {
   const label=language==='zh'?'反馈问题 ↗':'Report a problem ↗';
   const link=`[${label}](${feedbackUrl({version,source:'discover',language})})`;
   const existing=/\[(?:反馈问题 ↗|Report a problem ↗)\]\(https:\/\/github\.com\/finogeeks\/finsafe\/issues\/new\?[^)]*\)/;
-  const product=language==='zh'?'[认识FinShield ↗](https://finaios.ai/zh-hans/products/finshield/)':'[Meet FinShield ↗](https://finaios.ai/zh-hans/products/finshield/)';
-  const updated=existing.test(text)?text.replace(existing,link):text.replace(product,product+'　'+link);
+  const documentation=language==='zh'?'[使用文档 ↗](https://finshield.finogeeks.club/zh-CN/agents/dsh.html)':'[Documentation ↗](https://finshield.finogeeks.club/en/agents/dsh.html)';
+  const updated=existing.test(text)?text.replace(existing,link):text.replace(documentation,documentation+'　'+link);
   if(!updated.includes(link))throw Error('Missing Discover footer: '+language);
   writeFileSync(document,updated);
   const draft=new URL(`../../../windows/prototypes/assets/finshield-discover.${language}.md`,import.meta.url);

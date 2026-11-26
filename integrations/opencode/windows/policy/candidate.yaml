@@ -44,12 +44,6 @@ policy:
     access: read_write
     lifecycle: prepare_created
     inheritance: descendants
-  - id: opencode-install
-    source: opencode_compatibility
-    path: '{opencode_install_dir}'
-    access: read_write
-    lifecycle: existing
-    inheritance: descendants
   - id: opencode-state
     source: opencode_compatibility
     path: '{opencode_state_dir}'

@@ -101,7 +101,7 @@ const h=React.createElement;
 const {projectStatus,createProtectionStore}=PROTECTION_MODEL;
 const {feedbackUrl}=FEEDBACK_MODEL;
 const NS='finshield.windows';
-const PRODUCT_URL='https://finaios.ai/zh-hans/products/finshield/';
+const DOCS_HOME='https://finshield.finogeeks.club/en/';
 const PACKAGE_NAME='@finogeeks2026/finshield-dsh';
 const zh={
   title:'FinShield',loading:'正在读取防护状态',loadingFirst:'正在连接FinShield',loadingSecond:'',loadingBody:'请稍候，防护状态以本次读取结果为准',
@@ -114,7 +114,7 @@ const zh={
   exiting:'正在退出DSH',exitingFirst:'正在退出DSH',exitingSecond:'请稍候',exitingBody:'退出后，请从原入口手动重新打开。',
   failed:'准备未完成',failedFirst:'防护准备未完成',failedSecond:'',failedBody:'DSH可以继续使用。请查看下方原因，或向我们反馈。',cancelled:'授权未完成',cancelledFirst:'这次授权未完成',cancelledSecond:'',cancelledBody:'DSH仍可继续使用',cancelledTitle:'为什么没有完成',cancelledExplanation:'这次授权操作已取消',cancelledAction:'需要完成授权并退出后手动重新打开DSH后，防护才会生效',
   privacy:'隐私别乱碰',privacyBody:'约束摄录和截屏操作',interaction:'电脑别乱控',interactionBody:'限制窗口和鼠标干扰',system:'系统别乱改',systemBody:'限制进程与系统改动',data:'数据别乱动',dataBody:'保护敏感目录和文件',
-  arena:'了解FinShield如何守护你',arenaUrl:'https://safety.finaios.ai/agents/dsh/zh-CN',productLink:'访问FinShield官网（新窗口打开）',work:'返回DSH，继续工作',startWork:'返回DSH，开始工作',progress:'查看准备步骤',installed:'插件安装完成',nativePreparing:'正在配置安全权限',waiting:'准备完成后，请退出并手动重新打开应用',
+  arena:'了解FinShield如何守护你',arenaUrl:'https://safety.finaios.ai/agents/dsh/zh-CN',documentation:'使用文档',documentationUrl:'https://finshield.finogeeks.club/zh-CN/agents/dsh.html',productLink:'打开FinShield使用文档（新窗口打开）',work:'返回DSH，继续工作',startWork:'返回DSH，开始工作',progress:'查看准备步骤',installed:'插件安装完成',nativePreparing:'正在配置安全权限',waiting:'准备完成后，请退出并手动重新打开应用',
   resume:'可以继续工作；准备完成后请退出并手动重新打开。',exitReminder:'请先保存工作。此操作将退出应用，不会自动重新打开。',failureReason:'未完成的原因',updateFailure:'本次更新未完成',feedback:'反馈问题 ↗',feedbackLanguage:'zh',
   exit:'退出DSH',later:'稍后',laterExit:'稍后',details:'查看详情',noticeTitle:'防护已就绪，下次打开生效',noticeBody:'请先保存工作并退出应用，然后手动重新打开。',
   refresh:'重新读取状态',setupFailed:'组件安装失败，错误码',jobFailure:'会话进程管理未完成',jobFailureBody:'未能将DSH加入FinShield的会话进程组，授权进度与此错误分别显示',technicalDetails:'技术详情',afterExit:'重新打开后开启防护',
@@ -130,7 +130,7 @@ const en={
   exiting:'Exiting DSH',exitingFirst:'Exiting DSH',exitingSecond:'Please wait',exitingBody:'After exit, open the application manually from its normal entry.',
   failed:'Setup incomplete',failedFirst:'Protection setup is incomplete',failedSecond:'',failedBody:'You can keep using DSH. See the reason below or report the issue.',cancelled:'Authorization incomplete',cancelledFirst:'Authorization did not finish',cancelledSecond:'',cancelledBody:'You can keep using DSH',cancelledTitle:'Why preparation did not finish',cancelledExplanation:'This authorization attempt was cancelled',cancelledAction:'Complete authorization and exit DSH to enable protection',
   privacy:'Privacy',privacyBody:'Limit recording & screenshots.',interaction:'Controls',interactionBody:'Limit window & mouse use.',system:'System',systemBody:'Limit processes & settings.',data:'Data',dataBody:'Protect sensitive files.',
-  arena:'See how FinShield protects you',arenaUrl:'https://safety.finaios.ai/agents/dsh/index.html',productLink:'Visit the FinShield website (opens in a new window)',work:'Continue working in DSH',startWork:'Start working in DSH',progress:'View setup steps',installed:'Plugin installed',nativePreparing:'Configuring security permissions',waiting:'When preparation finishes, exit and reopen manually',
+  arena:'See how FinShield protects you',arenaUrl:'https://safety.finaios.ai/agents/dsh/index.html',documentation:'Documentation',documentationUrl:'https://finshield.finogeeks.club/en/agents/dsh.html',productLink:'Open FinShield documentation (opens in a new window)',work:'Continue working in DSH',startWork:'Start working in DSH',progress:'View setup steps',installed:'Plugin installed',nativePreparing:'Configuring security permissions',waiting:'When preparation finishes, exit and reopen manually',
   resume:'Keep working while preparation continues. Close and reopen manually when ready.',exitReminder:'Save your work first. This action exits the application and does not reopen it.',failureReason:'Why setup did not finish',updateFailure:'Update did not finish',feedback:'Report a problem ↗',feedbackLanguage:'en',
   exit:'Exit DSH',later:'Later',laterExit:'Later',details:'View details',noticeTitle:'Protection ready; applies on the next start',noticeBody:'Save your work, exit the application, then open it manually.',
   refresh:'Read status again',setupFailed:'Component installation failed with code',jobFailure:'Session process management is incomplete',jobFailureBody:'DSH could not join the FinShield session process group; authorization progress is shown separately',technicalDetails:'Technical details',afterExit:'Protection starts after exit',
@@ -323,7 +323,7 @@ function scrollPageToTop(element){
   for(let parent=element;parent;parent=parent.parentElement)parent.scrollTop=0;
 }
 function safetyDestination(href){
-  if(href==='https://www.finogeeks.com/products/finshield'||href==='https://safety.finaios.ai/')return PRODUCT_URL;
+  if(href==='https://www.finogeeks.com/products/finshield'||href==='https://safety.finaios.ai/')return DOCS_HOME;
   const match=/^https:\/\/agent-safety-arena\.finogeeks\.club\/([^?#]+)/.exec(href);
   if(!match)return href;
   const category={'screen-capture':'privacy','window-flood':'interaction','process-terminate':'system','protected-directory-delete':'data'}[match[1].split('/')[0]];
@@ -382,7 +382,7 @@ function ProductPage({t,store,work}){
   const start=()=>{void store.exit().catch(()=>{});};
   const status=h('div',{className:'fs-status',role:'status'},h('span',{className:'fs-dot','aria-hidden':true}),t(phase==='authorizing'?(preparingUpdate?'updating':'authorizing'):hero));
   const session=phase!=='protected'&&(typeof currentProtected==='boolean'||preparing||['ready','exiting'].includes(phase))?h('p',{className:'fs-preparing-session'},t(typeof currentProtected==='boolean'?currentProtected?'currentProtected':'notProtected':'loading'),currentProtected&&snapshot.status.currentRelease?' '+snapshot.status.currentRelease:null):null;
-  const art=h('a',{className:'fs-art',href:PRODUCT_URL,target:'_blank',rel:'noopener noreferrer','aria-label':t('productLink')},preparing?h('span',{className:'fs-moving','aria-hidden':true}):null,h('img',{src:BRAND_LOGO,alt:''}));
+  const art=h('a',{className:'fs-art',href:t('documentationUrl'),target:'_blank',rel:'noopener noreferrer','aria-label':t('productLink')},preparing?h('span',{className:'fs-moving','aria-hidden':true}):null,h('img',{src:BRAND_LOGO,alt:''}));
   const progressLabel=h('span',{role:'status'},t(operationLabel),typeof snapshot.status?.progress?.overall_percent==='number'?' '+snapshot.status.progress.overall_percent+'%':null);
   return h('section',{ref:pageRef,className:'finshield-page','data-phase':phase,'aria-label':t('title')},h('style',null,styles),h('div',{className:'fs-panel'},
     h('div',{className:'fs-hero'},h('div',{className:'fs-protected-copy'},h('h2',null,t(hero+'First'),t(hero+'Second')?h(React.Fragment,null,h('br'),t(hero+'Second')):null),t(hero+'Body')?h('p',{className:'fs-description'},t(hero+'Body')):null,
@@ -404,7 +404,7 @@ function ProductPage({t,store,work}){
     jobError?h('div',{className:'fs-error',role:'alert'},h('p',null,t('jobFailure')),h('p',null,t('jobFailureBody')),h('details',null,h('summary',null,t('technicalDetails')),h('p',null,jobError))):null,
     snapshot.requestError?h('p',{className:'fs-error',role:'alert'},snapshot.requestError):null,
     phase==='protected'?h('div',{className:'fs-areas'},...['privacy','interaction','system','data'].map(area=>h('section',{className:'fs-area',key:area},h('h3',null,t(area)),h('p',null,t(area+'Body'))))):null,
-    h('footer',{className:'fs-footer'},h('a',{href:t('arenaUrl'),target:'_blank',rel:'noopener noreferrer'},t('arena')+' ↗'),h('a',{href:feedback,target:'_blank',rel:'noopener noreferrer'},t('feedback')))));
+    h('footer',{className:'fs-footer'},h('a',{href:t('arenaUrl'),target:'_blank',rel:'noopener noreferrer'},t('arena')+' ↗'),h('a',{href:t('documentationUrl'),target:'_blank',rel:'noopener noreferrer'},t('documentation')+' ↗'),h('a',{href:feedback,target:'_blank',rel:'noopener noreferrer'},t('feedback')))));
 }
 
 function ExitNotice({t,store,details}){
