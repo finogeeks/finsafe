@@ -7,8 +7,8 @@
     "dev": "node prepare.mjs && vitepress dev .generated --host 127.0.0.1",
     "build": "node prepare.mjs && vitepress build .generated",
     "preview": "vitepress preview .generated --host 127.0.0.1",
-    "test": "node --test prepare.test.mjs",
-    "check": "npm test && npm run build && node check.mjs"
+    "test": "node --test prepare.test.mjs intake.test.mjs",
+    "check": "npm test && npm run build && node check.mjs && node acceptance.mjs"
   },
   "devDependencies": {
     "mermaid": "^11.12.0",

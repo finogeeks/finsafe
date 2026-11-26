@@ -1,24 +1,24 @@
 # 参与贡献 finogeeks/finsafe
 
-> 本文件与首页、产品文档由私有上游 `docs/public/` 统一维护并自动发布。请修改上游源文件；没有上游访问权限时，可在本仓库提 Issue 或建议 PR，由维护者迁回上游。模板和技能继续遵循既有维护流程。
+> 网站、用户文档、首页和仓库维护指南由本公开仓库直接维护。文档 PR 在这里审阅和合并，无需迁回私有库或等待产品发布。
 
 **English:** [CONTRIBUTING.md](CONTRIBUTING.md)
 
-感谢帮助改进 FinSAFE。本仓库是**公开发布镜像**：预编译 CLI 二进制、安装脚本、示例与终端用户文档，**不包含** FinSAFE 引擎源代码。
+感谢帮助改进 FinSAFE。本仓库维护**公开发布、用户文档和文档网站**：预编译 CLI 二进制、安装脚本、示例与终端用户文档，**不包含** FinSAFE 引擎源代码。
 
 ## 变更落在哪里
 
 | 你想改什么 | 实际编写位置 | 如何贡献 |
 |------------|--------------|----------|
 | **`finsafe` 行为缺陷** | 私有上游 monorepo | 开 **[GitHub Issue](https://github.com/finogeeks/finsafe/issues/new)**，加 `bug` 标签并附复现步骤 |
-| **发布的产品文档**（`docs/`） | 上游 `docs/public/docs/` | 开 **issue** 说明修改，或在此开 **PR** 作为建议（见下文） |
+| **发布的产品文档**（`docs/`） | 本仓库 `docs/`（含 `docs/site/`） | 直接开 **PR** |
 | **issue 模板、skills** | 本仓库 | 直接开 **PR** |
-| **安装脚本**（如 `install.sh`） | 上游 + 发布同步 | 同文档 — 优先 issue |
+| **安装脚本**（如 `install.sh`） | 上游 + 发布同步 | 提交 issue，或提议由维护者在上游修改 |
 | **运行时 / Rust 代码** | 不在本仓库 | **仅 issue** — 本镜像无法合并代码 PR |
 
-发布流程将上游批准的产品文档同步到 `docs/`，并分别发布指定的接入与开发套件文件。
-产品文档修改需回到上游源文件，才能在下次发布后保留。
-首页、贡献指南和 AGENTS.md 也由上游源文件统一发布；issue 模板与 skills 保留既有维护流程。
+网站源文件、用户指南、插件使用说明、首页、贡献指南和 Agent 维护规则都在这里维护。
+私有库发布代码及必要交付文件，包括与版本匹配的许可声明，不覆盖公开 Markdown 或 HTML 使用文档。
+私有研发文档独立维护。网站检查与部署见[维护说明](docs/site/README-zh.md)。
 
 ## 推荐入口：Issue
 
@@ -39,7 +39,7 @@ FinSAFE / FinShield 的新问题统一在本仓库提交。原 `finogeeks/produc
 只要求准备草稿时不会发布；确认后说“发布这个 issue”。已经明确要求提报或迁移时，
 无需重复确认同一操作。
 
-缺陷与文档修正请用 **GitHub Issues**：
+行为缺陷请用 **GitHub Issues**；文档修正可以直接提交 PR：
 
 1. 尽量使用 bug 模板（`Steps to reproduce`、`Expected`、`Actual`）。
 2. 写明 **FinSAFE 版本**（`finsafe --version`）、**操作系统**、相关 **策略 YAML**。
@@ -51,15 +51,12 @@ FinSAFE / FinShield 的新问题统一在本仓库提交。原 `finogeeks/produc
 
 ## 在本仓库开 Pull Request
 
-欢迎把 PR 当作**建议**，尤其是 `docs/`、`examples/`、`packaging/`、`skills/` 下的文档。
+欢迎直接提交网站和文档 PR，并在本仓库合并。
 
-开 PR 后：
-
-1. 机器人会说明镜像工作流。
-2. 发布管理的产品文档和交付文件需移植到上游源文件；报障规范、模板、skills 和根目录说明可在本仓库直接 review 和合并。
-3. 纯文档 PR 可能打上 `triage:docs-only`；运行时或超出范围的 PR 会关闭并引导开 issue。
-
-移植时会尽量在上游提交信息中保留贡献者署名。
+1. 修改公开源文件，需要时同时更新中英文。
+2. 按[网站维护说明](docs/site/README-zh.md)运行检查。公开 Pages 工作流构建 PR，并在 `main` 构建通过后部署。
+3. 维护者在这里审阅并合并文档、首页和使用指南。纯文档 PR 可能标记 `triage:docs-only`。
+4. 运行代码、安装脚本和版本化交付文件需在所属上游修改；工作流修改由维护者审阅。
 
 ## 本仓库不接受的内容
 
@@ -69,4 +66,5 @@ FinSAFE / FinShield 的新问题统一在本仓库提交。原 `finogeeks/produc
 
 ## 发布
 
-公开 [GitHub Releases](https://github.com/finogeeks/finsafe/releases) 发布产品包。文档在相关上游修改合入 `main` 后自动同步，也支持维护者单独重跑同步。
+公开 [GitHub Releases](https://github.com/finogeeks/finsafe/releases) 发布版本化产品产物。
+网站和文档从本仓库发布，无需等待产品版本或私有库同步。
