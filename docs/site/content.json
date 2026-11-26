@@ -10,10 +10,11 @@
       "translationOf": "docs/site/README.md"
     },
     {
-      "source": "integrations/dsh/windows/README.md",
+      "source": "docs/site/guides/dsh/README.md",
       "destination": "en/agents/dsh.md",
       "title": "DSH Desktop (Windows)",
-      "lead": "Read [what FinShield protects by default, configuration effects, and network / PII limits](https://github.com/finogeeks/finsafe/blob/main/docs/en/protection/README.md) before choosing protection settings."
+      "lead": "Read [what FinShield protects by default, configuration effects, and network / PII limits](https://github.com/finogeeks/finsafe/blob/main/docs/en/protection/README.md) before choosing protection settings.",
+      "linkSource": "integrations/dsh/windows/README.md"
     },
     {
       "source": "integrations/dsh/windows/OPERATIONS.md",
@@ -32,10 +33,11 @@
       "destination": "en/development/pii-redactor.md"
     },
     {
-      "source": "integrations/dsh/windows/README-zh.md",
+      "source": "docs/site/guides/dsh/README-zh.md",
       "destination": "zh-CN/agents/dsh.md",
       "title": "DSH 桌面版（Windows）",
-      "lead": "先阅读[默认防护、配置项作用与网络／PII 范围](https://github.com/finogeeks/finsafe/blob/main/docs/zh-CN/protection/README.md)，确认当前接入方式实际保护什么。"
+      "lead": "先阅读[默认防护、配置项作用与网络／PII 范围](https://github.com/finogeeks/finsafe/blob/main/docs/zh-CN/protection/README.md)，确认当前接入方式实际保护什么。",
+      "linkSource": "integrations/dsh/windows/README-zh.md"
     },
     {
       "source": "integrations/dsh/windows/OPERATIONS-zh.md",
@@ -84,12 +86,13 @@
       "linkSource": "integrations/dsh/windows/bin/README-zh.md"
     },
     {
-      "source": "integrations/opencode/windows/README.md",
+      "source": "docs/site/guides/opencode/README.md",
       "destination": "en/agents/opencode.md",
-      "lead": "Read [what FinShield protects by default, configuration effects, and network / PII limits](https://github.com/finogeeks/finsafe/blob/main/docs/en/protection/README.md) before choosing protection settings."
+      "lead": "Read [what FinShield protects by default, configuration effects, and network / PII limits](https://github.com/finogeeks/finsafe/blob/main/docs/en/protection/README.md) before choosing protection settings.",
+      "linkSource": "integrations/opencode/windows/README.md"
     },
     {
-      "source": "docs/site/translations/opencode/README-zh.md",
+      "source": "docs/site/guides/opencode/README-zh.md",
       "destination": "zh-CN/agents/opencode.md",
       "translationOf": "integrations/opencode/windows/README.md",
       "linkSource": "integrations/opencode/windows/README-zh.md",

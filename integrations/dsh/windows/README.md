@@ -1,82 +1,32 @@
-# FinShield: protect your privacy, system and data
+# FinShield for DSH Desktop
 
-[简体中文](README-zh.md) · [FinShield website](https://finaios.ai/zh-hans/products/finshield/) · [npm package](https://www.npmjs.com/package/@finogeeks2026/finshield-dsh)
+**[Documentation](https://finshield.finogeeks.club/en/agents/dsh.html) · [What FinShield protects](https://finshield.finogeeks.club/en/protection/) · [简体中文](README-zh.md)**
 
-**Deleting files is dangerous, but agents can do much more. Your privacy, system and data need protection too. FinShield adds sandbox protection to DSH on Windows. Which security boundaries can agents cross, and which can FinShield defend? Let the test results speak.**
+FinShield adds Windows sandbox protection to DSH's Agent execution processes. Use the full guide for setup, configuration, updates and removal.
 
-| Privacy · Screen access | Interaction · Desktop interference | System · Process protection | Data · File protection |
-| :---: | :---: | :---: | :---: |
-| [![Screen capture comparison](detail/assessments/screen-capture.gif)](https://safety.finaios.ai/screen-capture/dsh/dsh-desktop-file-v3-20261109/index.html) | [![Desktop interference comparison](detail/assessments/window-flood.gif)](https://safety.finaios.ai/window-flood/dsh/dsh-finshield-pro-20261105/index.html) | [![Process protection comparison](detail/assessments/process-terminate.gif)](https://safety.finaios.ai/process-terminate/dsh/dsh-python-file-v2-20261111/index.html) | [![File protection comparison](detail/assessments/protected-directory-delete.gif)](https://safety.finaios.ai/protected-directory-delete/dsh/dsh-direct-v4-20261112/index.html) |
+## Requirements
 
-**38 public comparison scenarios, with evidence you can inspect.** Select a GIF for the case's full recordings, conditions and results. The GIFs compare excerpts from separate test runs.
+Windows x64; DSH Desktop `>=0.2.1-rc.5 <0.3.0`; Node `>=24.9.0` as required by the package. Other FinShield editions do not establish macOS/Linux support for this plugin.
 
-[Install](#install-in-dsh-desktop) · [Browse all evaluations](https://safety.finaios.ai/agents/dsh/)
+## Install
 
-## Four areas of protection
+1. Save active work. In DSH Desktop, open **Plugins → Add plugin**.
+2. Install and enable `@finogeeks2026/finshield-dsh`.
+3. Follow the native component setup and Windows authorization prompts.
+4. When prompted, exit DSH and open it manually. Open **Plugins → Installed → FinShield** and confirm actual protection.
 
-FinShield provides privacy, interaction, system and data protection for DSH Desktop on Windows. It fits into the existing DSH workflow and uses process-level sandbox isolation and permission controls to protect agent task execution.
+Use the desktop plugin manager; a separate CLI can target a different profile. See the [full installation guide](https://finshield.finogeeks.club/en/agents/dsh.html) for details and older-package migration.
 
-| Safety area | What it protects | Example scenarios |
-| --- | --- | --- |
-| **Privacy** | Camera, microphone and screen privacy | Audio/video capture, screenshots and screen recording |
-| **Interaction** | Desktop controls and input environment | Window manipulation, screen obstruction, mouse and input interference |
-| **System** | System settings, services and other processes | Process termination, service stops, registry, firewall or file-permission changes |
-| **Data** | Selected files and directories | Reading, overwriting, deleting, moving or renaming protected data |
+## Protection scope
 
-## Public evaluations: results across 38 scenarios
+The protected process has file, system, device-privacy and desktop-interaction boundaries. Access follows the effective configuration; writable files can still be changed or deleted. Network mode defaults to `host`: this plugin does not provide a FinShield website blacklist, proxy/TLS content inspection or PII redaction.
 
-The [DSH evaluation overview](https://safety.finaios.ai/agents/dsh/) reported these results as of 2026-11-14:
+[Default protection](https://finshield.finogeeks.club/en/protection/defaults.html) · [Configuration](https://finshield.finogeeks.club/en/protection/configuration.html) · [Network and PII](https://finshield.finogeeks.club/en/protection/network-pii.html).
 
-| Safety area | Published scenarios | FinShield prevention successes | Native DSH prevention successes |
-| --- | ---: | ---: | ---: |
-| Privacy | 4 | 4 | 0 |
-| Interaction | 13 | 13 | 0 |
-| System | 13 | 13 | 0 |
-| Data | 8 | 8 | 0 |
-| **Total** | **38** | **38** | **0** |
+## Update, disable and support
 
-Prevention success follows each case's target effect and decision criteria. These evaluations are published by Finogeeks. Some baseline operations followed user approval; configuration, version and permission differences are recorded per case. These published results are not a complete rerun against the current package, independent certification or a guarantee for every operation.
+Update through DSH and follow the native setup prompts. Exit and reopen DSH when requested. Disabling a plugin does not move an already running process out of its sandbox. Removing the plugin retains native components, configuration and logs; see the [operation guide](https://finshield.finogeeks.club/en/agents/dsh-operations.html) for complete removal steps.
 
-[All evaluations and methods](https://safety.finaios.ai/agents/dsh/) · [Evaluation source and reproduction materials](https://github.com/finogeeks/agent-safety-arena)
+[DSH evaluations](https://safety.finaios.ai/agents/dsh/) show scoped comparisons, not a guarantee for every operation. Use the plugin page's feedback link to include current version and status, or [report a problem](https://github.com/finogeeks/finsafe/issues/new?template=plugin_feedback_en.yml).
 
-## Install in DSH Desktop
-
-**Requirements: Windows x64, DSH `>=0.2.1-rc.5 <0.3.0`; the package requires Node `>=24.9.0`.** This plugin targets DSH Desktop.
-
-**Existing users:** The npm package name changed from `@finogeeks2026/finshield` to `@finogeeks2026/finshield-dsh`. The displayed name remains FinShield. Save your work, remove the old plugin through DSH, then install the new package below. There is no automatic migration; the old package's Update button does not switch to the new name. Plugin removal retains native components, configuration and authorization. Do not uninstall the native components for this rename, and do not enable both plugins together.
-
-1. Open DSH Desktop and go to **Plugins → Add plugin** in the application.
-2. Paste this npm package name and install it. For a version-pinned reproduction, use `@finogeeks2026/finshield-dsh@0.11.1`.
-
-   ```text
-   @finogeeks2026/finshield-dsh
-   ```
-
-3. Enable FinShield and follow the native setup and Windows authorization prompts. Save active tasks first.
-4. When prompted, choose **Exit DSH**, then open DSH manually. Open **Plugins → Installed → FinShield** and confirm the actual protection state.
-
-```mermaid
-flowchart LR
-    A[Install through the app] --> B[Complete native setup and authorization]
-    B --> C[Exit DSH and open it manually]
-    C --> D[Confirm actual protection]
-```
-
-Use DSH Desktop's plugin manager. The generic `dsh plugin --profile web add …` command targets a different profile; a separately installed CLI may also refuse to write to the application-managed `desktop` profile.
-
-The plugin is distributed through npm. If native components are missing, it prefers the configured public release storage for the matching installer, with GitHub assets of the same version as fallback and SHA256 verification. Native setup needs Windows consent; an updater process handles installation, authorization coordination and exit reminders. Installation alone does not establish protection: check the actual state on the plugin page.
-
-## Everyday use
-
-- **Check status**: open FinShield from DSH's installed plugins to see installation, authorization and actual protection status.
-- **Update**: update the plugin through DSH and follow the native component update prompts, then close DSH and open it manually. The next start loads the new plugin.
-- **Disable**: disable it in DSH, then exit and reopen the application. Disabling does not move a running process out of the sandbox.
-- **Uninstall**: removing the plugin retains native components, configuration and logs. Uninstall native components separately through their Windows Installed Apps entry; see [operation details](OPERATIONS.md#disable-and-remove).
-
-## Documentation and support
-
-- [Report a problem](https://github.com/finogeeks/finsafe/issues/new?template=plugin_feedback_en.yml): use the plugin page's feedback link to select the current UI language and fill the plugin name, version, system and protection details automatically. Add only the problem description and an optional screenshot.
-- [Operation and development](OPERATIONS.md): offline setup, directories, lifecycle, updates, removal, builds and verification.
-- [Design and operation contract](DESIGN.md) · [Third-party notices](THIRD-PARTY-NOTICES.md) · [Product license](LICENSE.rtf).
-
-This DSH plugin currently supports Windows only and does not provide proxy/TLS inspection or outbound-content filtering. Protection depends on actual launch state, configuration and version. Other FinShield editions do not establish macOS/Linux support for this plugin. Source is publicly readable; use remains subject to the product license.
+Use is governed by the [product license](LICENSE.rtf). See [third-party notices](THIRD-PARTY-NOTICES.md).
