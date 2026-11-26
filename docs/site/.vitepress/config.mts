@@ -69,9 +69,11 @@ export default defineConfig({
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/finsafe/favicon.svg' }],
     ['link', { rel: 'describedby', type: 'text/markdown', href: '/finsafe/llms.txt' }],
   ],
-  transformHead({ pageData }) {
-    if (!/^(en|zh-CN)\/.+\.md$/.test(pageData.relativePath)) return []
-    return [['link', { rel: 'alternate', type: 'text/markdown', href: '/finsafe/' + pageData.relativePath }]]
+  transformPageData(pageData) {
+    if (!/^(en|zh-CN)\/.+\.md$/.test(pageData.relativePath)) return
+    // Frontmatter metadata also updates when the client changes page or locale.
+    pageData.frontmatter.head ??= []
+    pageData.frontmatter.head.push(['link', { rel: 'alternate', type: 'text/markdown', href: '/finsafe/' + pageData.relativePath }])
   },
   sitemap: { hostname: 'https://finogeeks.github.io/finsafe/' },
   locales: {
