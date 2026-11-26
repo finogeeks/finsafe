@@ -1,6 +1,6 @@
 {
   "name": "@finogeeks2026/finshield-opencode",
-  "version": "0.11.55",
+  "version": "0.11.60",
   "type": "module",
   "license": "SEE LICENSE IN LICENSE.rtf",
   "description": "FinShield protection for the native OpenCode desktop backend",
@@ -46,7 +46,7 @@
     "prepack": "npm run build"
   },
   "dependencies": {
-    "@finogeeks2026/finsafe-sdk": "0.11.55"
+    "@finogeeks2026/finsafe-sdk": "0.11.60"
   },
   "devDependencies": {
     "@opencode/plugin": "2.3.0",
