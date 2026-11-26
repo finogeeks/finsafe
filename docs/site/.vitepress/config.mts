@@ -61,21 +61,21 @@ function sidebar(language: 'en' | 'zh-CN') {
 export default defineConfig({
   title: 'FinShield Documentation',
   description: 'FinShield protection defaults, configuration, network access, PII, Agent integrations and verification.',
-  base: '/finsafe/',
+  base: '/',
   srcExclude: ['public/**'],
   cleanUrls: false,
   lastUpdated: false,
   head: [
-    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/finsafe/favicon.svg' }],
-    ['link', { rel: 'describedby', type: 'text/markdown', href: '/finsafe/llms.txt' }],
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
+    ['link', { rel: 'describedby', type: 'text/markdown', href: '/llms.txt' }],
   ],
   transformPageData(pageData) {
     if (!/^(en|zh-CN)\/.+\.md$/.test(pageData.relativePath)) return
     // Frontmatter metadata also updates when the client changes page or locale.
     pageData.frontmatter.head ??= []
-    pageData.frontmatter.head.push(['link', { rel: 'alternate', type: 'text/markdown', href: '/finsafe/' + pageData.relativePath }])
+    pageData.frontmatter.head.push(['link', { rel: 'alternate', type: 'text/markdown', href: '/' + pageData.relativePath }])
   },
-  sitemap: { hostname: 'https://finogeeks.github.io/finsafe/' },
+  sitemap: { hostname: 'https://finshield.finogeeks.club/' },
   locales: {
     en: {
       label: 'English', lang: 'en', link: '/en/',

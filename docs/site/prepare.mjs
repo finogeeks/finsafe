@@ -73,7 +73,7 @@ async function writeLlmIndexes(output, pages) {
         || directory === 'overview' && page.route === locale + '/index.html')
       if (!group.length) continue
       body += `\n## ${zh ? cn : en}\n\n` + group.map((page) =>
-        `- [${page.title}](/finsafe/${page.route.replace(/\.html$/, '.md')})`).join('\n') + '\n'
+        `- [${page.title}](/${page.route.replace(/\.html$/, '.md')})`).join('\n') + '\n'
     }
     // The proposal permits a BOM; it also prevents legacy plain-text decoding.
     await writeFile(join(output, 'public', locale, 'llms.txt'), '\uFEFF' + body, 'utf8')
@@ -86,8 +86,8 @@ Choose a language. Start with protection defaults and compatibility before makin
 
 ## Documentation
 
-- [English documentation index](/finsafe/en/llms.txt): Protection, configuration, network and PII, integrations and references.
-- [Simplified Chinese documentation index](/finsafe/zh-CN/llms.txt): Chinese pages and translated public plugin documentation.
+- [English documentation index](/en/llms.txt): Protection, configuration, network and PII, integrations and references.
+- [Simplified Chinese documentation index](/zh-CN/llms.txt): Chinese pages and translated public plugin documentation.
 `, 'utf8')
 }
 
@@ -174,7 +174,7 @@ export async function prepareContent(docsRoot, output, options = {}) {
         if (/\.(?:png|jpe?g|gif|webp|svg|rtf|txt|yaml)$/i.test(target) && !target.startsWith('../')) {
           if (!publicAssets.has(target)) throw new Error(`Asset is not approved for public documentation: ${target}`)
           assets.add(target)
-          return (document.html ? '/finsafe' : '') + '/source-assets/' + target + suffix
+          return '/source-assets/' + target + suffix
         }
         if (target.endsWith('.md') && !target.startsWith('../')) throw new Error(`Documentation target is not on the site: ${document.source}: ${value}`)
         return github ? value : remoteRepository + target.replace(/^\.\.\//, '') + suffix
@@ -185,8 +185,7 @@ export async function prepareContent(docsRoot, output, options = {}) {
       if (!document.html) {
         const markdownPath = join(output, 'public', document.destination)
         await mkdir(dirname(markdownPath), { recursive: true })
-        // Raw Markdown does not pass through VitePress's automatic base prefix.
-        await writeFile(markdownPath, '\uFEFF' + transformLinks(content, (value) => value.startsWith('/source-assets/') ? '/finsafe' + value : value), 'utf8')
+        await writeFile(markdownPath, '\uFEFF' + content, 'utf8')
         const title = /^# (.+)$/m.exec(content)?.[1].replaceAll('`', '') ?? document.destination
         pages.push({ source: document.source, route: document.destination.replace(/\.md$/, '.html'), title })
       }

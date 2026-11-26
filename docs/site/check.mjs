@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 
 const siteRoot = dirname(fileURLToPath(import.meta.url))
 const dist = resolve(siteRoot, '.generated/.vitepress/dist')
-const base = '/finsafe/'
+const base = '/'
 const errors = []
 const pages = []
 
@@ -45,4 +45,4 @@ for (const path of pages) {
   }
 }
 if (errors.length) throw new Error(errors.join('\n'))
-console.log(`Checked ${pages.length} generated HTML pages: local links, anchors, assets and /finsafe/ base passed`)
+console.log(`Checked ${pages.length} generated HTML pages: local links, anchors, assets and / base passed`)
