@@ -64,7 +64,7 @@ test('component guides, cross-document links and diagrams remain on the document
     assert.match(guide, /^# DSH\n\nRead \[Operation\]/)
     assert.match(guide, /\(dsh-operations.md#setup\)/)
     assert.match(guide, /source-assets\/integrations\/dsh\/windows\/diagram.svg/)
-    assert.match(await readFile(join(output, 'public/en/agents/dsh.md'), 'utf8'), /\/source-assets\/integrations\/dsh\/windows\/diagram.svg/)
+    assert.match(await readFile(join(output, 'public/en/agents/dsh.md'), 'utf8'), /\(\/source-assets\/integrations\/dsh\/windows\/diagram.svg\)/)
     assert.match(guide, /\[LICENSE\]\(https:\/\/github.com\/finogeeks\/finsafe\/blob\/main\/integrations\/dsh\/windows\/LICENSE\)/)
     assert.match(await readFile(join(output, 'zh-CN/index.md'), 'utf8'), /\(agents\/dsh.md\)/)
     const chinese = await readFile(join(output, 'zh-CN/agents/dsh.md'), 'utf8')
