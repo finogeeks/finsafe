@@ -4,6 +4,20 @@ import { mkdtemp, mkdir, readFile, writeFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { prepareContent, rewriteLinks } from './prepare.mjs'
+import { pageHead, siteUrl } from './.vitepress/site.mjs'
+
+test('metadata uses reciprocal existing translations and canonical directory URLs', () => {
+  const routes = ['index.html', 'en/index.html', 'zh-CN/index.html', 'en/only.html']
+  assert.equal(siteUrl('zh-CN/protection/index.html'), 'https://finshield.finogeeks.club/zh-CN/protection/')
+  const english = pageHead('en/index.html', routes)
+  const chinese = pageHead('zh-CN/index.html', routes)
+  for (const head of [english, chinese]) {
+    assert.deepEqual(head.filter(([, attrs]) => attrs.hreflang).map(([, attrs]) => attrs.hreflang), ['en', 'zh-CN', 'x-default'])
+  }
+  assert.equal(pageHead('en/only.html', routes).length, 1, 'Do not advertise a missing translation')
+  assert.deepEqual(pageHead('404.html', routes), [['meta', { name: 'robots', content: 'noindex' }]])
+  assert.equal(pageHead('index.html', routes).at(-1)[1].href, 'https://finshield.finogeeks.club/')
+})
 
 test('Markdown links use site routes while commands and remote resources stay intact', () => {
   const input = '# Guide\n[Docs](../README.md) [安装](../../zh-CN/getting-started/install.md#验证授权范围)\n'
@@ -50,7 +64,7 @@ test('component guides, cross-document links and diagrams remain on the document
     assert.match(guide, /^# DSH\n\nRead \[Operation\]/)
     assert.match(guide, /\(dsh-operations.md#setup\)/)
     assert.match(guide, /source-assets\/integrations\/dsh\/windows\/diagram.svg/)
-    assert.match(await readFile(join(output, 'public/en/agents/dsh.md'), 'utf8'), /\/finsafe\/source-assets\/integrations\/dsh\/windows\/diagram.svg/)
+    assert.match(await readFile(join(output, 'public/en/agents/dsh.md'), 'utf8'), /\/source-assets\/integrations\/dsh\/windows\/diagram.svg/)
     assert.match(guide, /\[LICENSE\]\(https:\/\/github.com\/finogeeks\/finsafe\/blob\/main\/integrations\/dsh\/windows\/LICENSE\)/)
     assert.match(await readFile(join(output, 'zh-CN/index.md'), 'utf8'), /\(agents\/dsh.md\)/)
     const chinese = await readFile(join(output, 'zh-CN/agents/dsh.md'), 'utf8')
@@ -73,13 +87,17 @@ test('preparation publishes only canonical locales and keeps diagrams separate f
       await mkdir(join(source, language, 'overview'), { recursive: true })
       await writeFile(join(source, language, 'README.md'), '# Docs\n[Windows](overview/windows.md)\n')
       await writeFile(join(source, language, 'overview/windows.md'), '# Windows\n[图解](windows.html)\n')
-      await writeFile(join(source, language, 'overview/windows.html'), '<html><a href="../README.md">Docs</a></html>')
+      await writeFile(join(source, language, 'overview/windows.html'), '<html><head><title>Diagram</title></head><body><a href="../README.md">Docs</a></body></html>')
     }
     await writeFile(join(source, 'legacy.md'), 'Do not publish aliases twice')
     await prepareContent(source, output)
     assert.match(await readFile(join(output, 'en/index.md'), 'utf8'), /# Docs/)
     assert.match(await readFile(join(output, 'en/overview/windows.md'), 'utf8'), /windows-diagram.html/)
     assert.match(await readFile(join(output, 'public/en/overview/windows-diagram.html'), 'utf8'), /\.\.\/index.html/)
+    const diagram = await readFile(join(output, 'public/en/overview/windows-diagram.html'), 'utf8')
+    assert.ok(diagram.includes('rel="canonical" href="https://finshield.finogeeks.club/en/overview/windows-diagram.html"'))
+    assert.ok(diagram.includes('hreflang="zh-CN" href="https://finshield.finogeeks.club/zh-CN/overview/windows-diagram.html"'))
+    assert.match(await readFile(join(output, 'public/robots.txt'), 'utf8'), /Sitemap: https:\/\/finshield.finogeeks.club\/sitemap.xml/)
     await assert.rejects(readFile(join(output, 'legacy.md')))
     await assert.rejects(readFile(join(output, 'en/README.md')))
     await writeFile(join(output, 'stale.md'), 'old build')
@@ -104,13 +122,13 @@ test('LLM indexes expose localized Markdown from the same public pages', async (
     await writeFile(join(source, 'internal/private.md'), '# Unpublished internal material\n')
     await prepareContent(source, output)
     const rootIndex = await readFile(join(output, 'public/llms.txt'), 'utf8')
-    assert.match(rootIndex, /\/finsafe\/en\/llms\.txt/)
-    assert.match(rootIndex, /\/finsafe\/zh-CN\/llms\.txt/)
+    assert.match(rootIndex, /https:\/\/finshield.finogeeks.club\/en\/llms\.txt/)
+    assert.match(rootIndex, /https:\/\/finshield.finogeeks.club\/zh-CN\/llms\.txt/)
     const english = await readFile(join(output, 'public/en/llms.txt'), 'utf8')
     const chinese = await readFile(join(output, 'public/zh-CN/llms.txt'), 'utf8')
     assert.ok(chinese.startsWith('\uFEFF# FinShield 文档中心'), 'Serve an explicit UTF-8 marker for plain-text readers')
-    assert.match(english, /Protection defaults.*\/finsafe\/en\/protection\/index\.md/)
-    assert.match(chinese, /默认防护.*\/finsafe\/zh-CN\/protection\/index\.md/)
+    assert.match(english, /Protection defaults.*https:\/\/finshield.finogeeks.club\/en\/protection\/index\.md/)
+    assert.match(chinese, /默认防护.*https:\/\/finshield.finogeeks.club\/zh-CN\/protection\/index\.md/)
     assert.doesNotMatch(chinese, /Protection defaults|Unpublished internal material/)
     assert.doesNotMatch(english, /Unpublished internal material/)
     const markdown = await readFile(join(output, 'public/en/protection/index.md'), 'utf8')

@@ -8,4 +8,4 @@ The [public release history snapshot](changelog.md) preserves historical entries
 
 ## AI-readable documentation
 
-The [documentation index](https://finogeeks.github.io/finsafe/en/llms.txt) links to each page's Markdown by topic. Content uses the same public sources as the website, without separate capability claims. Start from [llms.txt](https://finogeeks.github.io/finsafe/llms.txt) to select a language. These files support on-demand reading, not guaranteed indexing or answers from a particular model.
+The [documentation index](https://finshield.finogeeks.club/en/llms.txt) links to each page's Markdown by topic. Content uses the same public sources as the website, without separate capability claims. Start from [llms.txt](https://finshield.finogeeks.club/llms.txt) to select a language. These files support on-demand reading, not guaranteed indexing or answers from a particular model.

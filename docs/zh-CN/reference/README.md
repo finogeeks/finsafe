@@ -8,4 +8,4 @@ CLI 参数以所安装版本的 `finsafe help` 为准，文档版本范围见[�
 
 ## AI 可读文档
 
-[文档索引](https://finogeeks.github.io/finsafe/zh-CN/llms.txt)按主题链接到本站各页的 Markdown 版本。内容与网页同源，不另设能力声明。入口索引也可从 [llms.txt](https://finogeeks.github.io/finsafe/llms.txt)读取。它便于按需读取，不保证搜索收录或某个模型的回答结果。
+[文档索引](https://finshield.finogeeks.club/zh-CN/llms.txt)按主题链接到本站各页的 Markdown 版本。内容与网页同源，不另设能力声明。入口索引也可从 [llms.txt](https://finshield.finogeeks.club/llms.txt)读取。它便于按需读取，不保证搜索收录或某个模型的回答结果。
