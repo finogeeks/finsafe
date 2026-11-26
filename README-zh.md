@@ -1,12 +1,10 @@
 # FinShield · 智安盾
 
-<!-- Generated for the public repository from upstream documentation sources. Edit the source, not the published copy. -->
-
 **让主流 Agent 在清晰的安全边界内工作。**
 
 FinShield（智安盾，原 FinSAFE）为 DSH、OpenCode、Hermes、Kilo、Codex、Claude Code、WorkBuddy 等 Agent 提供文件、系统与桌面的安全边界。优先使用已发布的 Agent 接入插件；没有插件时，也可以通过 `finsafe` 命令行接入。支持 Windows、macOS 和 Linux，各 Agent 的接入形态与验证范围见[兼容矩阵](docs/zh-CN/agents/compatibility.md)。
 
-[English](README.md) · [技术文档](https://finogeeks.github.io/finsafe/) · [FinShield 产品页（finaios.ai）](https://finaios.ai/zh-hans/products/finshield/)
+[English](README.md) · [技术文档](https://finshield.finogeeks.club/) · [FinShield 产品页（finaios.ai）](https://finaios.ai/zh-hans/products/finshield/)
 
 ## Agent 操作电脑的四大危险
 

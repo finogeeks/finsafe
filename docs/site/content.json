@@ -1,6 +1,15 @@
 {
   "documents": [
     {
+      "source": "docs/site/README.md",
+      "destination": "en/reference/site-maintenance.md"
+    },
+    {
+      "source": "docs/site/README-zh.md",
+      "destination": "zh-CN/reference/site-maintenance.md",
+      "translationOf": "docs/site/README.md"
+    },
+    {
       "source": "integrations/dsh/windows/README.md",
       "destination": "en/agents/dsh.md",
       "title": "DSH Desktop (Windows)",
@@ -52,7 +61,6 @@
       "source": "docs/site/translations/dsh/DESIGN-zh.md",
       "destination": "zh-CN/architecture/dsh.md",
       "translationOf": "integrations/dsh/windows/DESIGN.md",
-      "upstreamSource": "docs/public/site/translations/dsh/DESIGN-zh.md",
       "linkSource": "integrations/dsh/windows/DESIGN-zh.md"
     },
     {
@@ -63,7 +71,6 @@
       "source": "docs/site/translations/dsh/THIRD-PARTY-NOTICES-zh.md",
       "destination": "zh-CN/reference/dsh-notices.md",
       "translationOf": "integrations/dsh/windows/THIRD-PARTY-NOTICES.md",
-      "upstreamSource": "docs/public/site/translations/dsh/THIRD-PARTY-NOTICES-zh.md",
       "linkSource": "integrations/dsh/windows/THIRD-PARTY-NOTICES-zh.md"
     },
     {
@@ -74,7 +81,6 @@
       "source": "docs/site/translations/dsh/bin/README-zh.md",
       "destination": "zh-CN/reference/dsh-native-components.md",
       "translationOf": "integrations/dsh/windows/bin/README.md",
-      "upstreamSource": "docs/public/site/translations/dsh/bin/README-zh.md",
       "linkSource": "integrations/dsh/windows/bin/README-zh.md"
     },
     {
@@ -86,7 +92,6 @@
       "source": "docs/site/translations/opencode/README-zh.md",
       "destination": "zh-CN/agents/opencode.md",
       "translationOf": "integrations/opencode/windows/README.md",
-      "upstreamSource": "docs/public/site/translations/opencode/README-zh.md",
       "linkSource": "integrations/opencode/windows/README-zh.md",
       "lead": "先阅读[默认防护、配置项作用与网络／PII 范围](https://github.com/finogeeks/finsafe/blob/main/docs/zh-CN/protection/README.md)，确认当前接入方式实际保护什么。"
     },
@@ -98,7 +103,6 @@
       "source": "docs/site/translations/opencode/DESIGN-zh.md",
       "destination": "zh-CN/architecture/opencode.md",
       "translationOf": "integrations/opencode/windows/DESIGN.md",
-      "upstreamSource": "docs/public/site/translations/opencode/DESIGN-zh.md",
       "linkSource": "integrations/opencode/windows/DESIGN-zh.md"
     },
     {
@@ -109,7 +113,6 @@
       "source": "docs/site/translations/opencode/THIRD-PARTY-NOTICES-zh.md",
       "destination": "zh-CN/reference/opencode-notices.md",
       "translationOf": "integrations/opencode/windows/THIRD-PARTY-NOTICES.md",
-      "upstreamSource": "docs/public/site/translations/opencode/THIRD-PARTY-NOTICES-zh.md",
       "linkSource": "integrations/opencode/windows/THIRD-PARTY-NOTICES-zh.md"
     },
     {
@@ -120,7 +123,6 @@
       "source": "docs/site/translations/pii/protocol-zh.md",
       "destination": "zh-CN/development/pii-protocol.md",
       "translationOf": "pii-plugins/docs/protocol.md",
-      "upstreamSource": "docs/public/site/translations/pii/protocol-zh.md",
       "linkSource": "pii-plugins/docs/protocol-zh.md"
     },
     {
@@ -131,27 +133,23 @@
       "source": "docs/site/translations/pii/integration-zh.md",
       "destination": "zh-CN/development/pii-integration.md",
       "translationOf": "pii-plugins/docs/integration.md",
-      "upstreamSource": "docs/public/site/translations/pii/integration-zh.md",
       "linkSource": "pii-plugins/docs/integration-zh.md"
     },
     {
       "source": "docs/en/getting-started/install.md",
       "destination": "en/agents/hermes.md",
       "section": "Hermes Desktop",
-      "upstreamSource": "docs/public/docs/en/getting-started/install.md",
       "lead": "Before starting Hermes, complete [Windows installation and preparation](https://github.com/finogeeks/finsafe/blob/main/docs/en/getting-started/install.md#windows)."
     },
     {
       "source": "docs/en/getting-started/install.md",
       "destination": "en/agents/kilo.md",
-      "section": "Kilo CLI",
-      "upstreamSource": "docs/public/docs/en/getting-started/install.md"
+      "section": "Kilo CLI"
     },
     {
       "source": "docs/zh-CN/getting-started/install.md",
       "destination": "zh-CN/agents/hermes.md",
       "section": "Hermes Desktop",
-      "upstreamSource": "docs/public/docs/zh-CN/getting-started/install.md",
       "lead": "开始使用 Hermes 前，先完成 [Windows 安装与权限准备](https://github.com/finogeeks/finsafe/blob/main/docs/zh-CN/getting-started/install.md#windows)。",
       "title": "Hermes 桌面接入（Windows）"
     },
@@ -159,17 +157,14 @@
       "source": "docs/zh-CN/getting-started/install.md",
       "destination": "zh-CN/agents/kilo.md",
       "section": "Kilo CLI",
-      "upstreamSource": "docs/public/docs/zh-CN/getting-started/install.md",
       "title": "Kilo CLI 接入"
     },
     {
       "source": "CONTRIBUTING.md",
-      "upstreamSource": "docs/public/CONTRIBUTING.md",
       "destination": "en/reference/contributing.md"
     },
     {
       "source": "CONTRIBUTING-zh.md",
-      "upstreamSource": "docs/public/CONTRIBUTING-zh.md",
       "destination": "zh-CN/reference/contributing.md"
     }
   ],

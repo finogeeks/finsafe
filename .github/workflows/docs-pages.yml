@@ -3,9 +3,9 @@ name: FinShield documentation
 on:
   push:
     branches: [main]
-    paths: ['docs/**', 'integrations/dsh/windows/**', 'integrations/opencode/windows/**', 'pii-plugins/**', 'CHANGELOG.md', 'CONTRIBUTING*.md', '.github/workflows/docs-pages.yml']
+    paths: ['docs/**', 'integrations/dsh/windows/**', 'integrations/opencode/windows/**', 'pii-plugins/**', 'CHANGELOG.md', 'CONTRIBUTING*.md', 'README*.md', 'AGENTS.md', '.github/workflows/docs-pages.yml', '.github/workflows/pr-mirror-intake.yml']
   pull_request:
-    paths: ['docs/**', 'integrations/dsh/windows/**', 'integrations/opencode/windows/**', 'pii-plugins/**', 'CHANGELOG.md', 'CONTRIBUTING*.md', '.github/workflows/docs-pages.yml']
+    paths: ['docs/**', 'integrations/dsh/windows/**', 'integrations/opencode/windows/**', 'pii-plugins/**', 'CHANGELOG.md', 'CONTRIBUTING*.md', 'README*.md', 'AGENTS.md', '.github/workflows/docs-pages.yml', '.github/workflows/pr-mirror-intake.yml']
   workflow_dispatch:
 
 permissions:

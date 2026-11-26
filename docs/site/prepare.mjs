@@ -118,7 +118,7 @@ export async function prepareContent(docsRoot, output, options = {}) {
         || documents.some((document) => document.destination === entry.destination)) {
       throw new Error(`Invalid or duplicate site destination: ${entry.destination}`)
     }
-    const path = resolve(repositoryRoot, process.env.FINSHIELD_DOCS_REPO && entry.upstreamSource ? entry.upstreamSource : entry.source)
+    const path = resolve(repositoryRoot, entry.source)
     if (!path.startsWith(repositoryRoot + '/') && !path.startsWith(repositoryRoot + '\\')) throw new Error(`Source leaves repository: ${entry.source}`)
     documents.push({ ...entry, source: entry.linkSource ?? entry.source, path, html: false })
   }
@@ -213,7 +213,7 @@ async function main() {
   const output = resolve(siteRoot, '.generated')
   const imports = JSON.parse(await readFile(join(siteRoot, 'content.json'), 'utf8'))
   const pages = await prepareContent(resolve(siteRoot, '..'), output, {
-    ...imports, repositoryRoot: process.env.FINSHIELD_DOCS_REPO ?? resolve(siteRoot, '../..'),
+    ...imports, repositoryRoot: resolve(siteRoot, '../..'),
   })
   await cp(join(siteRoot, '.vitepress'), join(output, '.vitepress'), { recursive: true })
   await cp(join(siteRoot, 'public'), join(output, 'public'), { recursive: true })

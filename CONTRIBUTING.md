@@ -1,10 +1,10 @@
 # Contributing to finogeeks/finsafe
 
-> This file, the homepages and product documents are generated from the private upstream `docs/public/` source. Change that source; contributors without upstream access can file a public issue or suggestion PR for maintainers to port. Templates and skills keep their existing ownership.
+> Website, user documentation, homepages and repository guides are maintained directly in this public repository. Review and merge documentation PRs here; no private-source port or product release is required.
 
 **中文：** [CONTRIBUTING-zh.md](CONTRIBUTING-zh.md)
 
-Thank you for helping improve FinSAFE. This repository is a **public release mirror**:
+Thank you for helping improve FinSAFE. This repository hosts **public releases, user documentation and the documentation website**:
 prebuilt CLI binaries, install scripts, examples, and end-user documentation. It does
 **not** contain the FinSAFE engine source code.
 
@@ -13,18 +13,16 @@ prebuilt CLI binaries, install scripts, examples, and end-user documentation. It
 | What you want to change | Where it is authored | How to contribute |
 |-------------------------|----------------------|-------------------|
 | **Bug in `finsafe` behavior** | Private upstream monorepo | Open a **[GitHub Issue](https://github.com/finogeeks/finsafe/issues/new)** with the `bug` label and reproduction steps |
-| **Published product documentation** (`docs/`) | `docs/public/docs/` upstream | Open an **issue** describing the fix, or a **pull request here** as a suggestion (see below) |
+| **Published product documentation** (`docs/`) | This repository (`docs/`, including `docs/site/`) | Open a **pull request here** |
 | **Issue templates and skills** | This repository | Open a **pull request here** |
-| **Install scripts** (such as `install.sh`) | Upstream + release sync | Same as documentation — issue preferred |
+| **Install scripts** (such as `install.sh`) | Upstream + release sync | Report an issue or propose a change for maintainers to apply upstream |
 | **Runtime / Rust code** | Not in this repo | **Issues only** — we cannot merge code PRs on this mirror |
 
-Releases publish the approved product documents from upstream into `docs/`,
-and separately publish selected integration and developer-kit files. Product
-documentation fixes must reach the upstream source to survive publication.
-Homepages, contribution guides and AGENTS.md are also maintained in upstream
-`docs/public/` and automatically published. Issue templates and skills keep their
-existing ownership. The private source PR is the authoring change; no second
-manually edited public copy is required.
+Website source, user guides, plugin usage documentation, homepages,
+contribution guides and Agent instructions are maintained here. Private releases
+update code and required delivery assets, including version-matched license
+notices; they do not replace public Markdown or HTML guides. Private engineering
+documents are maintained separately. See [website maintenance](docs/site/README.md).
 
 ## Preferred intake: issues
 
@@ -47,7 +45,7 @@ checks duplicates before preparing an English issue. A request to prepare a
 draft does not publish it; say `Publish this issue` when ready. An explicit
 request to file or migrate a report already authorizes that action.
 
-For bugs and doc fixes, **GitHub Issues** are the supported intake path:
+For behavior defects, **GitHub Issues** are the supported intake path. Documentation fixes can use direct pull requests:
 
 1. Use the bug report template when possible (`Steps to reproduce`, `Expected`, `Actual`).
 2. Include **FinSAFE version** (`finsafe --version`), **OS**, and **policy YAML** if relevant.
@@ -61,20 +59,15 @@ to your issue with a **Resolved** comment when a release ships.
 
 ## Pull requests on this repository
 
-PRs are welcome as **suggestions**, especially for documentation under `docs/`, `examples/`,
-`packaging/`, and `skills/`.
+Documentation and website PRs are welcome and can be merged directly here.
 
-When you open a PR here:
-
-1. A bot will comment explaining the mirror workflow.
-2. Changes to published product documents or release-managed files must be ported
-   to their upstream source. Templates and skills retain their established review path. Generated homepages,
-   contribution instructions and product pages must be changed upstream; a public
-   suggestion is ported there before automatic publication.
-3. Doc-only PRs may be labeled `triage:docs-only`. Runtime or out-of-scope PRs will be closed
-   with guidance to open an issue instead.
-
-We preserve contributor credit in upstream commit messages when porting your work.
+1. Edit the relevant public sources and update both languages when needed.
+2. Run the checks in [website maintenance](docs/site/README.md). The public Pages
+   workflow builds PRs and deploys successful `main` builds.
+3. Maintainers review and merge documentation, homepages and usage guides here.
+   Documentation-only PRs may be labeled `triage:docs-only`.
+4. Runtime code, install scripts and versioned delivery files need the owning
+   upstream change. Workflow changes require maintainer review.
 
 ## What we do not accept on this repo
 
@@ -84,5 +77,6 @@ We preserve contributor credit in upstream commit messages when porting your wor
 
 ## Releases
 
-Public [GitHub Releases](https://github.com/finogeeks/finsafe/releases) ship CLI archives and
-synced documentation. Document fixes are published automatically after relevant upstream changes merge into `main`; maintainers can also rerun documentation publication.
+Public [GitHub Releases](https://github.com/finogeeks/finsafe/releases) ship
+versioned product artifacts. Website and documentation changes deploy from this
+repository without waiting for a product release or a private-repository sync.

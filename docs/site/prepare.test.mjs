@@ -6,6 +6,26 @@ import { join } from 'node:path'
 import { prepareContent, rewriteLinks } from './prepare.mjs'
 import { pageHead, siteUrl } from './.vitepress/site.mjs'
 
+test('legacy private-source overrides cannot change public build inputs', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'finshield-public-owner-'))
+  const previous = process.env.FINSHIELD_DOCS_REPO
+  try {
+    for (const locale of ['en', 'zh-CN']) {
+      await mkdir(join(root, 'docs', locale), { recursive: true })
+      await writeFile(join(root, 'docs', locale, 'README.md'), '# Public docs\n')
+    }
+    await writeFile(join(root, 'guide.md'), '# Public integration guide\n')
+    process.env.FINSHIELD_DOCS_REPO = '/private-source-must-not-be-used'
+    await prepareContent(join(root, 'docs'), join(root, 'out'), { repositoryRoot: root,
+      documents: [{ source: 'guide.md', upstreamSource: 'private/missing.md', destination: 'en/guide.md' }] })
+    assert.match(await readFile(join(root, 'out/en/guide.md'), 'utf8'), /Public integration guide/)
+  } finally {
+    if (previous === undefined) delete process.env.FINSHIELD_DOCS_REPO
+    else process.env.FINSHIELD_DOCS_REPO = previous
+    await rm(root, { recursive: true, force: true })
+  }
+})
+
 test('metadata uses reciprocal existing translations and canonical directory URLs', () => {
   const routes = ['index.html', 'en/index.html', 'zh-CN/index.html', 'en/only.html']
   assert.equal(siteUrl('zh-CN/protection/index.html'), 'https://finshield.finogeeks.club/zh-CN/protection/')

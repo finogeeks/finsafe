@@ -1,6 +1,6 @@
 # Agent instructions for finogeeks/finsafe
 
-> This file, the homepages and product documents are generated from the private upstream `docs/public/` source. Change that source; contributors without upstream access can file a public issue or suggestion PR for maintainers to port. Templates and skills keep their existing ownership.
+> This public repository owns its website, user documentation, homepages, contribution guides and Agent instructions. Edit and review them here. Private engineering documents are maintained separately and must not overwrite public documentation.
 
 This is the public FinSAFE / FinShield release and documentation repository.
 Report product bugs in **finogeeks/finsafe**. Runtime source and fixes belong
@@ -33,11 +33,14 @@ Use the [bug form](https://github.com/finogeeks/finsafe/blob/main/.github/ISSUE_
 ## Repository changes
 
 Read files before editing and inspect command results before claiming success.
-Validate changed YAML, local links, skill metadata, and whitespace. Release
-publication owns `docs/` and selected integration/developer-kit subtrees.
-Homepages, these agent instructions, contribution guides and product documents
-are generated from the private upstream docs/public source and its publication
-manifest. Do not independently edit generated copies here; propose the source
-change upstream, or open a public issue/suggestion for maintainers to port.
-Issue templates and skills retain their existing ownership and automation. Keep existing issue triage
-labels and automation intact.
+Validate changed YAML, local links, skill metadata, and whitespace. Website source
+and user guides are maintained here under `docs/site/`, `docs/en/` and `docs/zh-CN/`.
+Plugin and PII-kit Markdown/HTML usage guides are also maintained here. Run
+`npm ci` and `npm run check` from `docs/site/` for website changes; see its
+[maintenance guide](docs/site/README.md). Do not edit generated `.generated/` output.
+
+Product releases synchronize implementation files, runtime configuration, scripts,
+binaries, version metadata and required license notices. They must preserve the
+public website, repository guides and Markdown/HTML usage documentation. Runtime
+changes belong upstream; do not publish private engineering material as user docs.
+Issue templates and skills keep their established review and automation.
