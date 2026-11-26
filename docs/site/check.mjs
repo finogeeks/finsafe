@@ -9,6 +9,9 @@ const errors = []
 const pages = []
 const routes = JSON.parse(await readFile(join(siteRoot, '.generated/routes.json'), 'utf8'))
 const canonicalUrls = new Set()
+const googleVerification = 'googlea9662cdfe1496029.html'
+const verification = await readFile(join(dist, googleVerification), 'utf8')
+if (verification !== `google-site-verification: ${googleVerification}`) errors.push('Google verification: incorrect file content')
 
 function headLinks(html) {
   return [...html.split('</head>')[0].matchAll(/<link\b([^>]+)>/g)].map((match) =>
@@ -19,7 +22,8 @@ async function scan(directory) {
   for (const entry of await readdir(directory, { withFileTypes: true })) {
     const path = join(directory, entry.name)
     if (entry.isDirectory()) await scan(path)
-    else if (entry.name.endsWith('.html')) pages.push(path)
+    // Google requires the original plain verification file, without page metadata.
+    else if (entry.name.endsWith('.html') && path !== join(dist, googleVerification)) pages.push(path)
   }
 }
 
