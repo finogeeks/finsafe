@@ -75,7 +75,8 @@ async function writeLlmIndexes(output, pages) {
       body += `\n## ${zh ? cn : en}\n\n` + group.map((page) =>
         `- [${page.title}](/finsafe/${page.route.replace(/\.html$/, '.md')})`).join('\n') + '\n'
     }
-    await writeFile(join(output, 'public', locale, 'llms.txt'), body, 'utf8')
+    // The proposal permits a BOM; it also prevents legacy plain-text decoding.
+    await writeFile(join(output, 'public', locale, 'llms.txt'), '\uFEFF' + body, 'utf8')
   }
   await writeFile(join(output, 'public/llms.txt'), `# FinShield Documentation
 
@@ -185,7 +186,7 @@ export async function prepareContent(docsRoot, output, options = {}) {
         const markdownPath = join(output, 'public', document.destination)
         await mkdir(dirname(markdownPath), { recursive: true })
         // Raw Markdown does not pass through VitePress's automatic base prefix.
-        await writeFile(markdownPath, transformLinks(content, (value) => value.startsWith('/source-assets/') ? '/finsafe' + value : value), 'utf8')
+        await writeFile(markdownPath, '\uFEFF' + transformLinks(content, (value) => value.startsWith('/source-assets/') ? '/finsafe' + value : value), 'utf8')
         const title = /^# (.+)$/m.exec(content)?.[1].replaceAll('`', '') ?? document.destination
         pages.push({ source: document.source, route: document.destination.replace(/\.md$/, '.html'), title })
       }
