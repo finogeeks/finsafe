@@ -1,8 +1,8 @@
-# FinShield documentation
+# FinShield Documentation
 
 [简体中文](../zh-CN/README.md) · [Product home](https://github.com/finogeeks/finsafe) · [Latest download](https://github.com/finogeeks/finsafe/releases/latest)
 
-FinShield gives mainstream Agents a security boundary for files, system functions, and the desktop. Prefer a released Agent integration plugin, or connect through the `finsafe` CLI. PII plugins extend sensitive-information detection and redaction.
+FinShield gives mainstream Agents a security boundary for files, system functions, and the desktop. Prefer a released Agent integration plugin, or connect through the `finsafe` CLI. In supporting product configurations, PII plugins extend sensitive-information detection and redaction.
 
 ## Get started
 
@@ -25,6 +25,7 @@ FinShield gives mainstream Agents a security boundary for files, system function
 
 ## Understand FinShield and configure protection
 
+- [What FinShield protects](protection/README.md): defaults, allowed operations, configuration effects, website access and PII scope.
 - [FinShield product introduction](overview/product-introduction.md): cross-platform positioning, security, integration and Windows evaluation results.
 - [Overall illustrated introduction](overview/finshield.html): security controls, records, enterprise management, and scoped evaluations.
 - [Windows introduction](overview/windows.md) and [illustrated overview](overview/windows.html): permissions, system and desktop restrictions, and sensitive-information inspection.

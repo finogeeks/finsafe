@@ -9,8 +9,15 @@ function sidebar(language: 'en' | 'zh-CN') {
   return [
     { text: zh ? '开始使用' : 'Get started', items: [
       item('Documentation', '文档首页', ''),
+      item('What FinShield protects', 'FinShield 防护什么', 'protection/'),
       item('Install and verify', '安装与验证', 'getting-started/install'),
       item('Compatibility matrix', '兼容矩阵', 'agents/compatibility'),
+    ] },
+    { text: zh ? '默认防护与配置' : 'Protection and configuration', collapsed: false, items: [
+      item('Protection guide', '防护说明', 'protection/'),
+      item('Plugin defaults', '插件默认防护', 'protection/defaults'),
+      item('Configuration explained', '配置项作用与生效', 'protection/configuration'),
+      item('Network access and PII', '网络访问、外泄与 PII', 'protection/network-pii'),
     ] },
     { text: zh ? 'Agent 接入' : 'Agent integrations', collapsed: false, items:
       (zh ? ['workbuddy', 'dsh', 'codex', 'claude', 'opencode', 'hermes', 'kilo']
@@ -29,7 +36,6 @@ function sidebar(language: 'en' | 'zh-CN') {
       item('Overview', '概览', 'overview/'),
       item('Windows', 'Windows 能力', 'overview/windows'),
       item('Linux and macOS', 'Linux 与 macOS 能力', 'overview/linux-macos'),
-      item('Protection configuration', '配置与验证防护', 'protection/'),
     ] },
     { text: zh ? '开发与部署' : 'Development and deployment', collapsed: false, items: [
       item('PII developer kit', 'PII 插件开发包', 'development/pii'),
@@ -53,17 +59,29 @@ function sidebar(language: 'en' | 'zh-CN') {
 }
 
 export default defineConfig({
-  title: 'FinShield Docs',
-  description: 'FinShield installation, Agent integrations, protection boundaries and verification.',
+  title: 'FinShield Documentation',
+  description: 'FinShield protection defaults, configuration, network access, PII, Agent integrations and verification.',
   base: '/finsafe/',
+  srcExclude: ['public/**'],
   cleanUrls: false,
   lastUpdated: false,
-  head: [['link', { rel: 'icon', type: 'image/svg+xml', href: '/finsafe/favicon.svg' }]],
+  head: [
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/finsafe/favicon.svg' }],
+    ['link', { rel: 'describedby', type: 'text/markdown', href: '/finsafe/llms.txt' }],
+  ],
+  transformPageData(pageData) {
+    if (!/^(en|zh-CN)\/.+\.md$/.test(pageData.relativePath)) return
+    // Frontmatter metadata also updates when the client changes page or locale.
+    pageData.frontmatter.head ??= []
+    pageData.frontmatter.head.push(['link', { rel: 'alternate', type: 'text/markdown', href: '/finsafe/' + pageData.relativePath }])
+  },
   sitemap: { hostname: 'https://finogeeks.github.io/finsafe/' },
   locales: {
     en: {
       label: 'English', lang: 'en', link: '/en/',
+      title: 'FinShield Documentation',
       themeConfig: {
+        siteTitle: 'FinShield Documentation',
         nav: [{ text: 'Documentation', link: '/en/' }, { text: 'Download', link: `${repo}/releases/latest` }],
         sidebar: sidebar('en'),
         outline: { label: 'On this page', level: [2, 3] },
@@ -71,9 +89,10 @@ export default defineConfig({
     },
     'zh-CN': {
       label: '简体中文', lang: 'zh-CN', link: '/zh-CN/',
-      title: 'FinShield 技术文档',
-      description: 'FinShield 安装、Agent 接入、防护配置与验证指南。',
+      title: 'FinShield 文档中心',
+      description: 'FinShield 默认防护、配置项、网络访问、PII、Agent 接入与验证指南。',
       themeConfig: {
+        siteTitle: 'FinShield 文档中心',
         nav: [{ text: '技术文档', link: '/zh-CN/' }, { text: '下载', link: `${repo}/releases/latest` }],
         sidebar: sidebar('zh-CN'),
         outline: { label: '本页目录', level: [2, 3] },
@@ -86,7 +105,7 @@ export default defineConfig({
   },
   themeConfig: {
     logo: '/favicon.svg',
-    siteTitle: 'FinShield Docs',
+    siteTitle: 'FinShield Documentation',
     socialLinks: [{ icon: 'github', link: repo }],
     search: {
       provider: 'local',
