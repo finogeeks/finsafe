@@ -3,7 +3,8 @@
     {
       "source": "integrations/dsh/windows/README.md",
       "destination": "en/agents/dsh.md",
-      "title": "DSH Desktop (Windows)"
+      "title": "DSH Desktop (Windows)",
+      "lead": "Read [what FinShield protects by default, configuration effects, and network / PII limits](https://github.com/finogeeks/finsafe/blob/main/docs/en/protection/README.md) before choosing protection settings."
     },
     {
       "source": "integrations/dsh/windows/OPERATIONS.md",
@@ -24,7 +25,8 @@
     {
       "source": "integrations/dsh/windows/README-zh.md",
       "destination": "zh-CN/agents/dsh.md",
-      "title": "DSH 桌面版（Windows）"
+      "title": "DSH 桌面版（Windows）",
+      "lead": "先阅读[默认防护、配置项作用与网络／PII 范围](https://github.com/finogeeks/finsafe/blob/main/docs/zh-CN/protection/README.md)，确认当前接入方式实际保护什么。"
     },
     {
       "source": "integrations/dsh/windows/OPERATIONS-zh.md",
@@ -77,14 +79,16 @@
     },
     {
       "source": "integrations/opencode/windows/README.md",
-      "destination": "en/agents/opencode.md"
+      "destination": "en/agents/opencode.md",
+      "lead": "Read [what FinShield protects by default, configuration effects, and network / PII limits](https://github.com/finogeeks/finsafe/blob/main/docs/en/protection/README.md) before choosing protection settings."
     },
     {
       "source": "docs/site/translations/opencode/README-zh.md",
       "destination": "zh-CN/agents/opencode.md",
       "translationOf": "integrations/opencode/windows/README.md",
       "upstreamSource": "docs/public/site/translations/opencode/README-zh.md",
-      "linkSource": "integrations/opencode/windows/README-zh.md"
+      "linkSource": "integrations/opencode/windows/README-zh.md",
+      "lead": "先阅读[默认防护、配置项作用与网络／PII 范围](https://github.com/finogeeks/finsafe/blob/main/docs/zh-CN/protection/README.md)，确认当前接入方式实际保护什么。"
     },
     {
       "source": "integrations/opencode/windows/DESIGN.md",
@@ -188,6 +192,8 @@
     "integrations/dsh/windows/detail/assessments/process-terminate.gif",
     "integrations/dsh/windows/LICENSE.rtf",
     "integrations/opencode/windows/LICENSE.rtf",
-    "pii-plugins/examples/redactor/network-policy.example.yaml"
+    "pii-plugins/examples/redactor/network-policy.example.yaml",
+    "integrations/dsh/windows/policy/candidate.yaml",
+    "integrations/opencode/windows/policy/candidate.yaml"
   ]
 }

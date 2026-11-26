@@ -30,13 +30,13 @@ test('component guides, cross-document links and diagrams remain on the document
       await mkdir(join(source, locale), { recursive: true })
       await writeFile(join(source, locale, 'README.md'), '# Docs\n[DSH](https://github.com/finogeeks/finsafe/blob/main/integrations/dsh/windows/README.md)')
     }
-    await writeFile(join(component, 'README.md'), '# DSH\n[Operation](OPERATIONS.md#setup)\n![Diagram](diagram.svg)\n[LICENSE](LICENSE)\n[Unavailable reference](missing.png)\n')
+    await writeFile(join(component, 'README.md'), '# DSH\r\n[Operation](OPERATIONS.md#setup)\r\n![Diagram](diagram.svg)\r\n[LICENSE](LICENSE)\r\n[Unavailable reference](missing.png)\r\n')
     await writeFile(join(source, 'site/translations/README-zh.md'), '# DSH 中文\n[English](README.md)\n[运行说明](OPERATIONS.md#setup)\n[未公开参考](internal.md)\n')
     await writeFile(join(component, 'OPERATIONS.md'), '# Operation\n## Setup\n')
     await writeFile(join(component, 'OPERATIONS-zh.md'), '# 运行说明\n## 设置\n')
     await writeFile(join(component, 'diagram.svg'), '<svg xmlns="http://www.w3.org/2000/svg"/>')
     const imports = [
-      { source: 'integrations/dsh/windows/README.md', destination: 'en/agents/dsh.md' },
+      { source: 'integrations/dsh/windows/README.md', destination: 'en/agents/dsh.md', lead: 'Read [Operation](OPERATIONS.md#setup) first.' },
       { source: 'integrations/dsh/windows/OPERATIONS.md', destination: 'en/agents/dsh-operations.md' },
       { source: 'docs/site/translations/README-zh.md', linkSource: 'integrations/dsh/windows/README-zh.md', translationOf: 'integrations/dsh/windows/README.md', destination: 'zh-CN/agents/dsh.md' },
       { source: 'integrations/dsh/windows/OPERATIONS-zh.md', translationOf: 'integrations/dsh/windows/OPERATIONS.md', destination: 'zh-CN/agents/dsh-operations.md' },
@@ -47,8 +47,10 @@ test('component guides, cross-document links and diagrams remain on the document
       publicAssets: ['integrations/dsh/windows/diagram.svg'] })
     assert.match(await readFile(join(output, 'en/index.md'), 'utf8'), /\(agents\/dsh.md\)/)
     const guide = await readFile(join(output, 'en/agents/dsh.md'), 'utf8')
+    assert.match(guide, /^# DSH\n\nRead \[Operation\]/)
     assert.match(guide, /\(dsh-operations.md#setup\)/)
     assert.match(guide, /source-assets\/integrations\/dsh\/windows\/diagram.svg/)
+    assert.match(await readFile(join(output, 'public/en/agents/dsh.md'), 'utf8'), /\/finsafe\/source-assets\/integrations\/dsh\/windows\/diagram.svg/)
     assert.match(guide, /\[LICENSE\]\(https:\/\/github.com\/finogeeks\/finsafe\/blob\/main\/integrations\/dsh\/windows\/LICENSE\)/)
     assert.match(await readFile(join(output, 'zh-CN/index.md'), 'utf8'), /\(agents\/dsh.md\)/)
     const chinese = await readFile(join(output, 'zh-CN/agents/dsh.md'), 'utf8')
@@ -83,6 +85,37 @@ test('preparation publishes only canonical locales and keeps diagrams separate f
     await writeFile(join(output, 'stale.md'), 'old build')
     await prepareContent(source, output)
     await assert.rejects(readFile(join(output, 'stale.md')))
+  } finally {
+    await rm(root, { recursive: true, force: true })
+  }
+})
+
+test('LLM indexes expose localized Markdown from the same public pages', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'finshield-llms-'))
+  try {
+    const source = join(root, 'docs'), output = join(root, 'site')
+    for (const [locale, title] of [['en', 'Protection defaults'], ['zh-CN', '默认防护']]) {
+      await mkdir(join(source, locale, 'protection'), { recursive: true })
+      await writeFile(join(source, locale, 'README.md'), '# FinShield\n[Protection](protection/README.md)\n')
+      await writeFile(join(source, locale, 'protection/README.md'), '# ' + title + '\n[Details](defaults.md)\n```sh\ncat ../README.md\n```\n')
+      await writeFile(join(source, locale, 'protection/defaults.md'), '# ' + title + '\nHost network defaults do not enable PII.\n')
+    }
+    await mkdir(join(source, 'internal'), { recursive: true })
+    await writeFile(join(source, 'internal/private.md'), '# Unpublished internal material\n')
+    await prepareContent(source, output)
+    const rootIndex = await readFile(join(output, 'public/llms.txt'), 'utf8')
+    assert.match(rootIndex, /\/finsafe\/en\/llms\.txt/)
+    assert.match(rootIndex, /\/finsafe\/zh-CN\/llms\.txt/)
+    const english = await readFile(join(output, 'public/en/llms.txt'), 'utf8')
+    const chinese = await readFile(join(output, 'public/zh-CN/llms.txt'), 'utf8')
+    assert.match(english, /Protection defaults.*\/finsafe\/en\/protection\/index\.md/)
+    assert.match(chinese, /默认防护.*\/finsafe\/zh-CN\/protection\/index\.md/)
+    assert.doesNotMatch(chinese, /Protection defaults|Unpublished internal material/)
+    assert.doesNotMatch(english, /Unpublished internal material/)
+    const markdown = await readFile(join(output, 'public/en/protection/index.md'), 'utf8')
+    assert.match(markdown, /\[Details\]\(defaults.md\)/)
+    assert.match(markdown, /cat \.\.\/README.md/)
+    await assert.rejects(readFile(join(output, 'public/internal/private.md')))
   } finally {
     await rm(root, { recursive: true, force: true })
   }

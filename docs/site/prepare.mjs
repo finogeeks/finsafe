@@ -48,6 +48,48 @@ async function* files(root, prefix = '') {
   }
 }
 
+async function writeLlmIndexes(output, pages) {
+  const sections = [
+    ['protection', 'Protection and configuration', '默认防护与配置'],
+    ['getting-started', 'Getting started', '开始使用'],
+    ['agents', 'Agent integrations', 'Agent 接入'],
+    ['overview', 'Product and platform scope', '产品与平台范围'],
+    ['development', 'Plugin development', '插件开发'],
+    ['architecture', 'Public plugin designs', '公开插件设计'],
+    ['enterprise', 'Enterprise deployment', '企业部署'],
+    ['reference', 'Reference and support', '参考与支持'],
+  ]
+  for (const locale of locales) {
+    const zh = locale === 'zh-CN'
+    let body = `# ${zh ? 'FinShield 文档中心' : 'FinShield Documentation'}\n\n> ${zh
+      ? '默认防护、配置项、网络与 PII、Agent 接入及验证的公开文档索引。'
+      : 'Public documentation for protection defaults, configuration, network and PII, Agent integrations and verification.'}\n\n`
+    body += (zh ? '先阅读防护说明与兼容范围。安装状态、实际保护及内容检查覆盖不能互相替代。以下链接提供与网页同源的 Markdown。'
+      : 'Start with protection and compatibility. Installation status, actual protection and content-inspection coverage are different facts. Links below provide Markdown from the same sources as the website.') + '\n'
+    const entries = pages.filter((page) => page.route.startsWith(locale + '/'))
+      .sort((a, b) => Number(!a.route.endsWith('/index.html')) - Number(!b.route.endsWith('/index.html')) || a.route.localeCompare(b.route))
+    for (const [directory, en, cn] of sections) {
+      const group = entries.filter((page) => page.route.split('/')[1] === directory
+        || directory === 'overview' && page.route === locale + '/index.html')
+      if (!group.length) continue
+      body += `\n## ${zh ? cn : en}\n\n` + group.map((page) =>
+        `- [${page.title}](/finsafe/${page.route.replace(/\.html$/, '.md')})`).join('\n') + '\n'
+    }
+    await writeFile(join(output, 'public', locale, 'llms.txt'), body, 'utf8')
+  }
+  await writeFile(join(output, 'public/llms.txt'), `# FinShield Documentation
+
+> Public FinShield protection, configuration, integration and verification documentation.
+
+Choose a language. Start with protection defaults and compatibility before making claims about a particular integration. Each index links to clean Markdown generated from the same public sources as the website.
+
+## Documentation
+
+- [English documentation index](/finsafe/en/llms.txt): Protection, configuration, network and PII, integrations and references.
+- [Simplified Chinese documentation index](/finsafe/zh-CN/llms.txt): Chinese pages and translated public plugin documentation.
+`, 'utf8')
+}
+
 export async function prepareContent(docsRoot, output, options = {}) {
   // Only the caller-owned generated directory is replaced, never source docs.
   await rm(output, { recursive: true, force: true })
@@ -86,7 +128,7 @@ export async function prepareContent(docsRoot, output, options = {}) {
     .replace(/[^\p{L}\p{N}_ -]/gu, '').replaceAll(' ', '-')
   const headings = (body) => [...body.replace(/^```[^\n]*\n[\s\S]*?^```[^\n]*(?:\n|$)|^~~~[^\n]*\n[\s\S]*?^~~~[^\n]*(?:\n|$)/gm, '')
     .matchAll(/^#{1,6} (.+)\r?$/gm)].map((match) => slug(match[1]))
-  for (const document of documents) document.body = await readFile(document.path, 'utf8')
+  for (const document of documents) document.body = (await readFile(document.path, 'utf8')).replaceAll('\r\n', '\n')
   for (const document of documents.filter((entry) => entry.translationOf)) {
     const original = documents.find((entry) => entry.source === document.translationOf)
     if (!original) throw new Error(`Missing translation source: ${document.translationOf}`)
@@ -139,7 +181,14 @@ export async function prepareContent(docsRoot, output, options = {}) {
       const path = join(output, document.html ? 'public/' + document.destination : document.destination)
       await mkdir(dirname(path), { recursive: true })
       await writeFile(path, content, 'utf8')
-      if (!document.html) pages.push({ source: document.source, route: document.destination.replace(/\.md$/, '.html') })
+      if (!document.html) {
+        const markdownPath = join(output, 'public', document.destination)
+        await mkdir(dirname(markdownPath), { recursive: true })
+        // Raw Markdown does not pass through VitePress's automatic base prefix.
+        await writeFile(markdownPath, transformLinks(content, (value) => value.startsWith('/source-assets/') ? '/finsafe' + value : value), 'utf8')
+        const title = /^# (.+)$/m.exec(content)?.[1].replaceAll('`', '') ?? document.destination
+        pages.push({ source: document.source, route: document.destination.replace(/\.md$/, '.html'), title })
+      }
   }
   for (const asset of assets) {
     const path = join(output, 'public/source-assets', asset)
@@ -147,6 +196,7 @@ export async function prepareContent(docsRoot, output, options = {}) {
     await cp(join(repositoryRoot, asset), path)
   }
   await writeFile(join(output, 'pages.json'), JSON.stringify(pages, null, 2) + '\n')
+  await writeLlmIndexes(output, pages)
   return pages
 }
 
@@ -160,11 +210,11 @@ async function main() {
   await cp(join(siteRoot, 'public'), join(output, 'public'), { recursive: true })
   await writeFile(join(output, 'index.md'), `---
 layout: home
-title: FinShield documentation
+title: FinShield Documentation
 hero:
   name: FinShield
-  text: Technical documentation
-  tagline: Install, connect your Agent, and verify its permission scope.
+  text: Documentation
+  tagline: Understand protection defaults, configure supported controls, and verify your Agent.
   actions:
     - theme: brand
       text: English documentation
@@ -173,6 +223,9 @@ hero:
       text: 简体中文文档
       link: /zh-CN/
 features:
+  - title: What FinShield protects
+    details: Read defaults, configuration effects, network access and PII boundaries.
+    link: /en/protection/
   - title: Get started
     details: Choose an integration route and verify allowed and denied operations.
     link: /en/getting-started/install

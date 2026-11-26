@@ -1,8 +1,8 @@
-# FinShield 文档
+# FinShield 文档中心
 
 [English](../en/README.md) · [产品首页](https://github.com/finogeeks/finsafe) · [最新下载](https://github.com/finogeeks/finsafe/releases/latest)
 
-FinShield 为主流 Agent 提供文件、系统与桌面的安全边界。优先选择已发布的 Agent 接入插件；也可以通过 `finsafe` 命令行接入，并用 PII 插件扩展敏感信息检测与脱敏。
+FinShield 为主流 Agent 提供文件、系统与桌面的安全边界。优先选择已发布的 Agent 接入插件；也可以通过 `finsafe` 命令行接入。在支持的产品配置中，PII 插件可扩展敏感信息检测与脱敏。
 
 ## 快速开始
 
@@ -25,6 +25,7 @@ FinShield 为主流 Agent 提供文件、系统与桌面的安全边界。优先
 
 ## 认识 FinShield 与防护配置
 
+- [FinShield 到底防护什么](protection/README.md)：默认保护、仍允许的操作、配置作用、网站访问与 PII 范围。
 - [FinShield简版产品介绍](overview/product-introduction.md)：跨平台定位、安全防护、接入方式与Windows实测结果。
 - [整体图解介绍](overview/finshield.html)：安全管控、运行记录、企业管理与实测对照。
 - [Windows 产品介绍](overview/windows.md)与[图解介绍](overview/windows.html)：权限、系统与桌面限制，以及敏感信息检查。
