@@ -1,6 +1,6 @@
 {
   "name": "@finogeeks2026/finshield-dsh",
-  "version": "0.11.61",
+  "version": "0.11.62",
   "description": "Harness intelligence 路 Shield your world",
   "homepage": "https://finshield.finogeeks.club/en/agents/dsh.html",
   "icon": "./assets/finshield.png",
@@ -99,7 +99,7 @@
     "esbuild": "0.25.12"
   },
   "dependencies": {
-    "@finogeeks2026/finsafe-sdk": "0.11.61"
+    "@finogeeks2026/finsafe-sdk": "0.11.62"
   },
   "bundleDependencies": [
     "@finogeeks2026/finsafe-sdk"
