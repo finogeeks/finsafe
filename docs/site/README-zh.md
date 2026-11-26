@@ -6,7 +6,7 @@
 
 ## 源文件与检查
 
-在 `docs/en/` 和 `docs/zh-CN/` 修改对应语言的正式文档，保持翻译、防护边界和版本范围一致。`docs/site/content.json` 只引用本公开仓库中的文件，包括公开插件文档和网站维护的译文。`.generated/` 是可重新生成的构建产物，不在其中修改内容。
+在 `docs/en/` 和 `docs/zh-CN/` 修改对应语言的正式文档，保持翻译、防护边界和版本范围一致。`docs/site/content.json` 只引用本公开仓库中的文件。DSH 和 OpenCode 的完整中英文教程在 `docs/site/guides/` 维护；插件 README 只保留简要安装步骤和文档入口，精简 README 不能删减网站教程。清单中的 `linkSource` 保留原文档的相对链接上下文，不是第二个内容来源。`.generated/` 是可重新生成的构建产物，不在其中修改内容。
 
 使用 Node.js 22 或更新版本，在 `docs/site/` 执行：
 

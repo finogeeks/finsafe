@@ -6,7 +6,7 @@ This public repository owns the website, user guides, plugin usage documentation
 
 ## Sources and checks
 
-Edit canonical guides under `docs/en/` and `docs/zh-CN/`. Keep translations, protection limits and version scope consistent. `docs/site/content.json` imports only files from this public checkout, including public plugin guides and site-owned translations. The `.generated/` directory is disposable build output. Do not edit it.
+Edit canonical guides under `docs/en/` and `docs/zh-CN/`. Keep translations, protection limits and version scope consistent. `docs/site/content.json` imports only files from this public checkout. The complete DSH and OpenCode tutorials, in both languages, live under `docs/site/guides/`. Their package READMEs are short installation and documentation entry points; shortening a README must not remove website tutorial content. The manifest's `linkSource` preserves the original relative-link context, not a second content source. The `.generated/` directory is disposable build output. Do not edit it.
 
 From `docs/site/`, with Node.js 22 or later:
 

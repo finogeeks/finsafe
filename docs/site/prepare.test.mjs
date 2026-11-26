@@ -6,6 +6,17 @@ import { join } from 'node:path'
 import { prepareContent, rewriteLinks } from './prepare.mjs'
 import { pageHead, siteUrl } from './.vitepress/site.mjs'
 
+test('complete DSH and OpenCode tutorials have website-owned sources', async () => {
+  const manifest = JSON.parse(await readFile(new URL('./content.json', import.meta.url), 'utf8'))
+  for (const route of ['en/agents/dsh.md', 'zh-CN/agents/dsh.md', 'en/agents/opencode.md', 'zh-CN/agents/opencode.md']) {
+    const entry = manifest.documents.find((document) => document.destination === route)
+    assert.ok(entry?.source.startsWith('docs/site/guides/'), `${route} must not read the short plugin README`)
+    const body = await readFile(new URL('../../' + entry.source, import.meta.url), 'utf8')
+    assert.ok((body.match(/^## /gm) ?? []).length >= 5, `${route} must retain installation and operating guidance`)
+    assert.match(body, /```/)
+  }
+})
+
 test('legacy private-source overrides cannot change public build inputs', async () => {
   const root = await mkdtemp(join(tmpdir(), 'finshield-public-owner-'))
   const previous = process.env.FINSHIELD_DOCS_REPO

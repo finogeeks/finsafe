@@ -1,10 +1,32 @@
 # FinShield
 
-**Let mainstream Agents work within clear security boundaries.**
+**[Documentation](https://finshield.finogeeks.club/en/) · [What FinShield protects](https://finshield.finogeeks.club/en/protection/) · [Downloads](https://github.com/finogeeks/finsafe/releases/latest)**
 
-FinShield (formerly FinSAFE) gives DSH, OpenCode, Hermes, Kilo, Codex, Claude Code, WorkBuddy, and other Agents a security boundary for files, system functions, and the desktop. Prefer a released Agent integration plugin, or connect through the `finsafe` CLI when no plugin is available. The product supports Windows, macOS, and Linux; see the [compatibility matrix](docs/en/agents/compatibility.md) for each Agent form and verification scope.
+[简体中文](README-zh.md)
 
-[简体中文](README-zh.md) · [Technical documentation](https://finshield.finogeeks.club/) · [FinShield on finaios.ai](https://finaios.ai/en/products/finshield/)
+FinShield (formerly FinSAFE) gives Agent execution processes configurable boundaries for files, system functions and desktop operations. Start with your Agent's guide, then check the actual protection state. Integration support and protection scope depend on platform, version and configuration.
+
+## Choose your Agent
+
+| Agent | Usage guide | Integration |
+| --- | --- | --- |
+| Codex CLI | [CLI integration](https://finshield.finogeeks.club/en/agents/codex.html) | Windows CLI integration |
+| Claude Code CLI | [CLI integration](https://finshield.finogeeks.club/en/agents/claude.html) | Windows CLI integration |
+| OpenCode Desktop | [Install and use](https://finshield.finogeeks.club/en/agents/opencode.html) | Windows plugin: `@finogeeks2026/finshield-opencode` |
+| Hermes Desktop | [Install and launch](https://finshield.finogeeks.club/en/agents/hermes.html) | Windows desktop launcher |
+| Kilo CLI | [Test plugin guide](https://finshield.finogeeks.club/en/agents/kilo.html) | Windows local interactive TUI; test release |
+| DSH Desktop | [Install and use](https://finshield.finogeeks.club/en/agents/dsh.html) | Windows plugin: `@finogeeks2026/finshield-dsh` |
+| WorkBuddy | [Install and launch](https://finshield.finogeeks.club/en/agents/workbuddy.html) | Windows desktop launcher |
+
+For Linux, macOS and other Agent forms, check the [compatibility matrix](https://finshield.finogeeks.club/en/agents/compatibility.html). CLI support does not establish desktop-app or IDE-extension support.
+
+## Understand your protection
+
+- [Plugin defaults](https://finshield.finogeeks.club/en/protection/defaults.html): protected directories, writable paths and system / desktop restrictions.
+- [Configuration explained](https://finshield.finogeeks.club/en/protection/configuration.html): available settings and their effects.
+- [Network access and PII](https://finshield.finogeeks.club/en/protection/network-pii.html): website access, data exfiltration, detection and redaction limits.
+
+**The DSH and OpenCode Windows plugins default to host networking.** Their protected status does not enable a FinShield website blacklist, HTTPS content inspection or PII redaction. File protection follows effective path rules; it does not make all files outside the workspace read-only.
 
 ## Four risks when Agents operate your computer
 
@@ -17,78 +39,15 @@ Screenshots can expose private information, pop-ups can disrupt work, and proces
 
 Select a GIF for the full assessment. Previews are reused from the DSH plugin and excerpt separate test runs; see each assessment page for test conditions, configuration, and protection scope.
 
-## Choose your Agent
+## Get started and get help
 
-| Agent | Start here | Available integration |
-| --- | --- | --- |
-| DSH Desktop (Windows) | [Install the plugin](https://github.com/finogeeks/finsafe/blob/main/integrations/dsh/windows/README.md) | **Released**: `@finogeeks2026/finshield-dsh` |
-| OpenCode Desktop (Windows) | [Plugin installation and use](docs/en/getting-started/install.md#opencode-desktop) | **Released**: `@finogeeks2026/finshield-opencode`; also available through the FinShield desktop launcher |
-| Hermes Desktop (Windows) | [Desktop installation and launch](docs/en/getting-started/install.md#hermes-desktop) | FinShield desktop launcher |
-| Kilo CLI (Windows) | [Test plugin integration](docs/en/getting-started/install.md#kilo-cli) | `@finogeeks2026/finshield-kilo` (test release, local interactive TUI) |
-| Codex CLI (Windows) | [CLI integration guide](docs/en/agents/codex.md) | **CLI integration supported** |
-| Claude Code CLI (Windows) | [CLI integration guide](docs/en/agents/claude.md) | **CLI integration supported** |
-| WorkBuddy desktop (Windows) | [Desktop installation and launch](docs/en/getting-started/install.md#windows) | Desktop launcher |
-| Other Agents / Linux / macOS | [Compatibility and generic CLI examples](docs/en/agents/compatibility.md) | Check the specific Agent |
+- [Installation](https://finshield.finogeeks.club/en/getting-started/install.html) · [Latest downloads](https://github.com/finogeeks/finsafe/releases/latest).
+- [Documentation](https://finshield.finogeeks.club/en/) · [Public architecture](https://finshield.finogeeks.club/en/architecture/) · [Whitepaper](https://finshield.finogeeks.club/en/reference/whitepaper.html).
+- [Report a problem](https://github.com/finogeeks/finsafe/issues/new/choose) · [Contribute](CONTRIBUTING.md) · [Release history](CHANGELOG.md).
 
-CLI integration and plugin release are separate states. Codex / Claude CLI results do not establish desktop-app or IDE-extension integration. Platform support does not verify every feature of every Agent.
+## Develop a PII plugin
 
-## Prefer plugin integration
-
-In DSH Desktop Windows, open **Plugins → Add plugin**, install and enable [`@finogeeks2026/finshield-dsh`](https://www.npmjs.com/package/@finogeeks2026/finshield-dsh), then follow the prompts for native components, authorization, and required restarts. Confirm actual protection status. See the [plugin guide](https://github.com/finogeeks/finsafe/blob/main/integrations/dsh/windows/README.md) for version requirements, migration from the older package, and removal.
-
-For **OpenCode Desktop on Windows x64**, save your work and close OpenCode, then run this in PowerShell with the default per-user Desktop installation:
-
-```powershell
-$openCodeCli = "$env:LOCALAPPDATA\Programs\ai.opencode.desktop\resources\opencode-cli.exe"
-& $openCodeCli plugin add '@finogeeks2026/finshield-opencode'
-```
-
-For an all-users Desktop installation, use `$env:ProgramFiles\ai.opencode.desktop\resources\opencode-cli.exe`. For a custom installation, use its `resources\opencode-cli.exe`. If `opencode` is already on PATH, `opencode plugin add @finogeeks2026/finshield-opencode` is also available.
-
-Open OpenCode and go to **Settings → FinShield**. The plugin downloads and installs matching native FinShield components and requests Windows authorization. After preparation, save your work, exit, and reopen OpenCode manually, then confirm protection status. See [installation and directory locations](docs/en/getting-started/install.md#opencode-desktop) and the [published plugin guide](https://github.com/finogeeks/finsafe/blob/main/integrations/opencode/windows/README.md).
-
-For the Kilo CLI local interactive TUI test plugin and version scope, see [Kilo integration](docs/en/getting-started/install.md#kilo-cli).
-
-Hermes Desktop and OpenCode Desktop can also start through the FinShield desktop launcher. Codex and Claude already support CLI integration without a plugin; follow the guides above. Standalone plugin delivery is described separately from existing CLI support. Confirm effective protection after installation or launch.
-
-## Use the command line without a plugin
-
-After installing FinShield, use `finsafe` to start the process that executes Agent work. On Windows, the Codex guide wraps `app-server` and connects a terminal UI; the Claude guide wraps the CLI directly. Both include preparation checks and protection verification.
-
-[Install and choose a route](docs/en/getting-started/install.md) · [Codex CLI](docs/en/agents/codex.md) · [Claude Code CLI](docs/en/agents/claude.md)
-
-Windows users can [download the install assistant](https://github.com/finogeeks/finsafe/releases/latest/download/install-finshield.cmd). See the [latest Release](https://github.com/finogeeks/finsafe/releases/latest) for macOS, Linux, and offline packages. For policy examples for other Agents, see the [compatibility matrix](docs/en/agents/compatibility.md); adapt and verify them for current versions.
-
-## Protection and evaluations
-
-- **File and workspace permissions** control reads and modifications within authorized scope.
-- **System and desktop restrictions** constrain Agent operations on processes, the system, and desktop.
-- **Sensitive-information inspection** detects and handles content on integrated, inspectable request paths according to policy.
-- **Records and audit** retain inspectable execution records according to product configuration.
-
-[Agent Safety Arena](https://safety.finaios.ai/) provides comparisons for multiple Agents, with recordings, conditions, and results.
-
-## Enterprise deployment and further reading
-
-- [Install and get started](docs/en/getting-started/install.md): downloads, installation, first launch, and permission checks.
-- [Compatibility matrix](docs/en/agents/compatibility.md): Agent forms, platforms, plugin status, and verification evidence.
-- [Overall illustrated introduction](docs/en/overview/finshield.html): capabilities, enterprise management, and scoped evaluations.
-- [Documentation and whitepaper](docs/en/README.md): Windows, Linux/macOS, and the complete product approach.
-- [DSH Windows plugin](https://github.com/finogeeks/finsafe/blob/main/integrations/dsh/windows/README.md): installation, authorization, updates, and removal.
-- [Whitepaper](docs/en/reference/whitepaper.md): complete product approach, enterprise integration, and technical basis.
-- [Report a problem](https://github.com/finogeeks/finsafe/issues/new/choose) · [Report with your agent](https://github.com/finogeeks/finsafe/blob/main/CONTRIBUTING.md#preferred-intake-issues) · [Release history](https://github.com/finogeeks/finsafe/blob/main/CHANGELOG.md).
-
-Protection depends on the launch entry, effective permissions, and version. Content checks cover integrated, inspectable requests. Published by Finogeeks; use is subject to the supplied license terms.
-
-
-PII plugins extend sensitive-information detection and redaction. They serve a different purpose from the Agent integration plugins above.
-
-## Develop a PII plugin (Windows)
-
-The [PII plugin developer kit](https://github.com/finogeeks/finsafe/blob/main/pii-plugins/README.md) includes the SDK, protocol,
-examples, local workbench and integration instructions. Use a Windows FinShield
-release with external PII support. `pii-plugins/release.json` identifies the
-matching product release and source revision.
+The [Windows PII plugin developer guide](https://finshield.finogeeks.club/en/development/pii.html) covers the SDK, protocol, examples, local workbench and integration. These plugins extend sensitive-information detection and redaction; they differ from Agent integration plugins. Use a compatible Windows FinShield release; `pii-plugins/release.json` identifies the matching product and source revisions.
 
 FinShield Personal Edition is free to use under its product terms. Commercial
 use of plugins developed with this kit requires prior written permission from
