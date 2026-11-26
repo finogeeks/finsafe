@@ -1,7 +1,7 @@
 import { readFile, readdir, stat } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { siteBase as base, siteOrigin, siteUrl, pageHead } from './.vitepress/site.mjs'
+import { siteBase as base, siteOrigin, siteUrl, pageHead, publicLink } from './.vitepress/site.mjs'
 
 const siteRoot = dirname(fileURLToPath(import.meta.url))
 const dist = resolve(siteRoot, '.generated/.vitepress/dist')
@@ -54,8 +54,15 @@ for (const path of pages) {
   if (html.includes('href="/finsafe/') || html.includes('src="/finsafe/')) errors.push(`${route}: obsolete project base`)
   for (const match of html.matchAll(/<(?:a|img|script|link)\b[^>]*?\b(?:href|src)="([^"]+)"/g)) {
     const href = match[1].replaceAll('&amp;', '&')
+    if (publicLink(href) !== href) errors.push(`${route}: inaccessible public reference: ${href}`)
     const url = new URL(href, localUrl)
     if (url.origin !== localUrl.origin || !['http:', 'https:'].includes(url.protocol)) continue
+    if (!route.endsWith('-diagram.html') && match[0].startsWith('<a') && url.pathname.endsWith('-diagram.html')) {
+      const tag = html.slice(match.index, html.indexOf('>', match.index) + 1)
+      if (!/\btarget="[^"]+"/.test(tag) && !/\bdownload(?:[\s=>])/.test(tag)) {
+        errors.push(`${route}: standalone HTML must bypass client routing: ${href}`)
+      }
+    }
     if (!url.pathname.startsWith(base)) { errors.push(`${localUrl.pathname}: outside base: ${href}`); continue }
     const destination = await targetFile(join(dist, decodeURIComponent(url.pathname.slice(base.length))))
     if (!destination) { errors.push(`${localUrl.pathname}: missing target: ${href}`); continue }

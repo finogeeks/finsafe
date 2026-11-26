@@ -23,7 +23,7 @@ These examples require a FinShield protected launch and depend on the actual ver
 | --- | --- | --- |
 | Reading SSH, cloud-service or browser data | The bundled configurations explicitly deny listed sensitive directories, including `.ssh`, `.aws` and Chrome / Edge user profiles | Coverage is by path; custom locations and unlisted files do not automatically receive the same protection |
 | Overwriting or deleting important files | `deny` rejects access; `read_only` permits reads and restricts writes | Writable directories can still be changed or deleted; protection does not supply backups or undo |
-| Screen capture, recording or desktop interference | The Windows protected execution environment constrains the relevant device access and desktop interactions | It does not cover every application on the computer; check the integration and test conditions |
+| Recording or desktop interference | AppContainer and effective Job/UI limits constrain device and desktop operations | Does not block every capture method; see [Windows system and desktop protection](windows-security.md) for same-desktop screen-read limits |
 | Terminating other processes or changing system settings | Windows permission boundaries constrain the protected process | A successful evaluation scenario is not a guarantee for every system operation |
 | Visiting websites or sending text to a model | Default integration plugins retain host networking | Their default configuration enables neither a FinShield website blacklist nor PII inspection |
 
@@ -47,6 +47,7 @@ Content inspection must first cover the actual request. After a finding, `warnin
 
 - [Plugin defaults](defaults.md): directories, writable scope and protected processes.
 - [Configuration explained](configuration.md): path permissions, network, PII and resource fields, with the currently documented configuration entry points.
+- [Windows system and desktop protection](windows-security.md): Job/UI groups, low-level APIs, process and registry access, compatibility tradeoffs and verification limits.
 - [Network access, exfiltration and PII](network-pii.md): permitted destinations, inspection, warnings, blocking, approval and redaction.
 
 A field in a file, an editable control, and an effective setting are different facts. Configuration entry points that are not available are not presented as current user features.

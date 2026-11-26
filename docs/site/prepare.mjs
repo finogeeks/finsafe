@@ -1,7 +1,7 @@
 import { cp, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import { dirname, join, posix, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
-import { siteOrigin, pageHead } from './.vitepress/site.mjs'
+import { siteOrigin, pageHead, publicLink } from './.vitepress/site.mjs'
 
 const siteRoot = dirname(fileURLToPath(import.meta.url))
 const locales = ['en', 'zh-CN']
@@ -150,6 +150,8 @@ export async function prepareContent(docsRoot, output, options = {}) {
       if (document.lead) body = body.replace(/^(# .+\n)/, '$1\n' + document.lead + '\n')
       const locale = document.destination.startsWith('zh-CN/') ? 'zh-CN' : 'en'
       let content = transformLinks(body, (value, label) => {
+        value = publicLink(value)
+        if (value === null) return null
         if ((value.startsWith('#') && !document.section) || /^(?:data:|mailto:)/i.test(value)) return value
         let link = value
         const github = value.match(/^https:\/\/(?:github\.com\/finogeeks\/finsafe\/blob|raw\.githubusercontent\.com\/finogeeks\/finsafe)\/main\/(.*)$/)

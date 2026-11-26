@@ -4,7 +4,24 @@ import { mkdtemp, mkdir, readFile, writeFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { prepareContent, rewriteLinks } from './prepare.mjs'
-import { pageHead, siteUrl } from './.vitepress/site.mjs'
+import { pageHead, siteUrl, configurePublicLinks, publicLink } from './.vitepress/site.mjs'
+import { createMarkdownRenderer } from 'vitepress'
+
+test('standalone diagrams use native navigation while documentation keeps client routing', async () => {
+  const md = await createMarkdownRenderer(process.cwd(), { config: configurePublicLinks })
+  const html = md.render('[Diagram](../overview/windows-diagram.html#data)\n'
+    + '[Reference][figure]\n\n[figure]: /en/overview/linux-macos-diagram.html\n\n'
+    + '[Guide](../overview/windows.md) [Other](https://example.com/windows-diagram.html)')
+  assert.match(html, /<a[^>]*href="[^\"]*windows-diagram.html#data"[^>]*target="_self"/)
+  assert.match(html, /<a[^>]*href="\/en\/overview\/linux-macos-diagram.html"[^>]*target="_self"/)
+  assert.match(html, /<a href="[^\"]*windows.html">Guide<\/a>/)
+  assert.match(html, /https:\/\/example.com\/windows-diagram.html" target="_blank"/)
+  const license = md.render('https://github.com/rober42539/lao-dictionary/LICENSE.txt')
+  assert.match(license, /href="https:\/\/github.com\/rober42539\/lao-dictionary\/blob\/main\/LICENSE.txt"/)
+  assert.ok(license.includes('>https://github.com/rober42539/lao-dictionary/LICENSE.txt</a>'), 'Preserve quoted notice text')
+  assert.equal(publicLink('https://github.com/Geeksfino/finsafe/pull/409'), null)
+  assert.equal(publicLink('https://github.com/finogeeks/finsafe/issues/74'), 'https://github.com/finogeeks/finsafe/issues/74')
+})
 
 test('complete DSH and OpenCode tutorials have website-owned sources', async () => {
   const manifest = JSON.parse(await readFile(new URL('./content.json', import.meta.url), 'utf8'))
@@ -116,13 +133,15 @@ test('preparation publishes only canonical locales and keeps diagrams separate f
     const output = join(root, 'site')
     for (const language of ['en', 'zh-CN']) {
       await mkdir(join(source, language, 'overview'), { recursive: true })
-      await writeFile(join(source, language, 'README.md'), '# Docs\n[Windows](overview/windows.md)\n')
+      await writeFile(join(source, language, 'README.md'), '# Docs\n[Windows](overview/windows.md)\n[Source PR #409](https://github.com/Geeksfino/finsafe/pull/409)\n')
       await writeFile(join(source, language, 'overview/windows.md'), '# Windows\n[图解](windows.html)\n')
       await writeFile(join(source, language, 'overview/windows.html'), '<html><head><title>Diagram</title></head><body><a href="../README.md">Docs</a></body></html>')
     }
     await writeFile(join(source, 'legacy.md'), 'Do not publish aliases twice')
     await prepareContent(source, output)
     assert.match(await readFile(join(output, 'en/index.md'), 'utf8'), /# Docs/)
+    assert.match(await readFile(join(output, 'en/index.md'), 'utf8'), /\nSource PR #409\n/)
+    assert.doesNotMatch(await readFile(join(output, 'en/index.md'), 'utf8'), /github.com\/Geeksfino/)
     assert.match(await readFile(join(output, 'en/overview/windows.md'), 'utf8'), /windows-diagram.html/)
     assert.match(await readFile(join(output, 'public/en/overview/windows-diagram.html'), 'utf8'), /\.\.\/index.html/)
     const diagram = await readFile(join(output, 'public/en/overview/windows-diagram.html'), 'utf8')
