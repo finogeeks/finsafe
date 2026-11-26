@@ -26,6 +26,7 @@ FinShield gives mainstream Agents a security boundary for files, system function
 ## Understand FinShield and configure protection
 
 - [What FinShield protects](protection/README.md): defaults, allowed operations, configuration effects, website access and PII scope.
+- [Windows system and desktop protection](protection/windows-security.md): Job/UI, low-level API access, compatibility exceptions and verification.
 - [FinShield product introduction](overview/product-introduction.md): cross-platform positioning, security, integration and Windows evaluation results.
 - [Overall illustrated introduction](overview/finshield.html): security controls, records, enterprise management, and scoped evaluations.
 - [Windows introduction](overview/windows.md) and [illustrated overview](overview/windows.html): permissions, system and desktop restrictions, and sensitive-information inspection.

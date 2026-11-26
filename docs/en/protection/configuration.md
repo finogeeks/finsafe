@@ -18,6 +18,8 @@ Installed, authorized and protected statuses do not replace checking an individu
 
 ## File-permission fields
 
+Windows Job/UI and initial-desktop options are CLI launch arguments in supported versions, not Candidate file-permission fields. See [Windows system and desktop protection](windows-security.md) for values, defaults and low-level API boundaries.
+
 Paths below are relative to a Windows Candidate's `policy` section. See [Plugin defaults](defaults.md) for default scope.
 
 | Field / value | Effect | Practical boundary |

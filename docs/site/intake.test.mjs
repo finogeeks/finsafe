@@ -6,7 +6,7 @@ import { join } from 'node:path'
 import { spawnSync } from 'node:child_process'
 
 test('public PR intake accepts docs here and separates delivery and runtime changes', async () => {
-  const workflow = await readFile(new URL('../../.github/workflows/pr-mirror-intake.yml', import.meta.url), 'utf8')
+  const workflow = (await readFile(new URL('../../.github/workflows/pr-mirror-intake.yml', import.meta.url), 'utf8')).replaceAll('\r\n', '\n')
   assert.ok(!workflow.includes('actions/checkout'), 'Privileged intake must not execute PR code')
   const source = workflow.split("          node --input-type=module <<'JS' > /tmp/classify.txt\n")[1]
     .split('\n          JS')[0].split('\n').map((line) => line.slice(10)).join('\n')

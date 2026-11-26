@@ -28,6 +28,12 @@ for (const [locale, order] of Object.entries(orders)) {
   }
   assert.ok(await exists(`${locale}/architecture/dsh.html`))
   assert.ok(await exists(`${locale}/development/pii-protocol.html`))
+  assert.ok(await exists(`${locale}/protection/windows-security.html`))
+  assert.match(home, /<img[^>]*src="\/finshield-logo.webp"[^>]*alt="FinShield"/)
+  for (const topic of ['windows', 'linux-macos', 'finshield']) {
+    const overview = await read(`${locale}/overview/${topic === 'finshield' ? 'index' : topic}.html`)
+    assert.match(overview, new RegExp(`<a[^>]*href="[^\"]*${topic}-diagram\\.html[^\"]*"[^>]*target="_self"`))
+  }
   for (const match of (await read(`${locale}/llms.txt`)).matchAll(/\]\(https:\/\/finshield.finogeeks.club\/([^\s)]+)\)/g)) {
     assert.ok(await exists(match[1]), match[1])
   }
@@ -48,11 +54,15 @@ assert.ok((await read('zh-CN/agents/opencode.html')).includes('环境要求'))
 const article = 'en/protection/defaults.html'
 const html = await read(article)
 const sitemap = await read('sitemap.xml')
+const windows = 'zh-CN/overview/windows.html'
+const windowsHtml = await read(windows)
 for (const [name, damaged, message] of [
   ['googlea9662cdfe1496029.html', 'Invalid verification token', 'Google verification: incorrect file content'],
   [article, html.replace('rel="canonical"', 'rel="broken-canonical"'), 'incorrect canonical'],
   [article, html.replace('hreflang="zh-CN"', 'hreflang="xx"'), 'incorrect reciprocal hreflang'],
   ['sitemap.xml', sitemap.replaceAll('https://finshield.finogeeks.club/', 'https://wrong.example/'), 'sitemap:'],
+  [windows, windowsHtml.replaceAll('target="_self"', ''), 'standalone HTML must bypass client routing'],
+  [article, html.replace('</body>', '<a href="https://github.com/Geeksfino/finsafe/pull/409">Private PR</a></body>'), 'inaccessible public reference'],
 ]) {
   const original = await read(name)
   try {

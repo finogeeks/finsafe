@@ -1,5 +1,5 @@
 import { defineConfig } from 'vitepress'
-import { siteBase, siteOrigin, siteUrl, canonicalPath, pageHead } from './site.mjs'
+import { siteBase, siteOrigin, siteUrl, canonicalPath, pageHead, configurePublicLinks } from './site.mjs'
 import routes from '../routes.json'
 
 const repo = 'https://github.com/finogeeks/finsafe'
@@ -19,6 +19,7 @@ function sidebar(language: 'en' | 'zh-CN') {
       item('Protection guide', '防护说明', 'protection/'),
       item('Plugin defaults', '插件默认防护', 'protection/defaults'),
       item('Configuration explained', '配置项作用与生效', 'protection/configuration'),
+      item('Windows system and desktop', 'Windows 系统与桌面防护', 'protection/windows-security'),
       item('Network access and PII', '网络访问、外泄与 PII', 'protection/network-pii'),
     ] },
     { text: zh ? 'Agent 接入' : 'Agent integrations', collapsed: false, items:
@@ -118,7 +119,7 @@ export default defineConfig({
     },
   },
   themeConfig: {
-    logo: '/favicon.svg',
+    logo: { src: '/finshield-logo.webp', alt: 'FinShield' },
     siteTitle: 'FinShield Documentation',
     socialLinks: [{ icon: 'github', link: repo }],
     search: {
@@ -143,6 +144,7 @@ export default defineConfig({
   markdown: {
     lineNumbers: false,
     config(md) {
+      configurePublicLinks(md)
       const fence = md.renderer.rules.fence!
       md.renderer.rules.fence = (tokens, index, options, env, self) =>
         tokens[index].info.trim() === 'mermaid'

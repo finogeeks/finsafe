@@ -18,6 +18,8 @@
 
 ## 文件权限字段
 
+Windows 的 Job/UI 与初始桌面使用受支持版本的 CLI 启动参数，不是本页 Candidate 的文件权限字段。各组取值、默认行为和底层 API 边界见 [Windows 系统与桌面防护](windows-security.md)。
+
 以下路径相对于 Windows Candidate 的 `policy` 部分。默认范围见[插件默认防护](defaults.md)。
 
 | 字段／取值 | 作用 | 使用时注意 |
