@@ -1,4 +1,6 @@
 import { defineConfig } from 'vitepress'
+import { siteBase, siteOrigin, siteUrl, canonicalPath, pageHead } from './site.mjs'
+import routes from '../routes.json'
 
 const repo = 'https://github.com/finogeeks/finsafe'
 
@@ -61,7 +63,7 @@ function sidebar(language: 'en' | 'zh-CN') {
 export default defineConfig({
   title: 'FinShield Documentation',
   description: 'FinShield protection defaults, configuration, network access, PII, Agent integrations and verification.',
-  base: '/',
+  base: siteBase,
   srcExclude: ['public/**'],
   cleanUrls: false,
   lastUpdated: false,
@@ -70,12 +72,24 @@ export default defineConfig({
     ['link', { rel: 'describedby', type: 'text/markdown', href: '/llms.txt' }],
   ],
   transformPageData(pageData) {
-    if (!/^(en|zh-CN)\/.+\.md$/.test(pageData.relativePath)) return
     // Frontmatter metadata also updates when the client changes page or locale.
     pageData.frontmatter.head ??= []
-    pageData.frontmatter.head.push(['link', { rel: 'alternate', type: 'text/markdown', href: '/' + pageData.relativePath }])
+    pageData.frontmatter.head.push(...pageHead(pageData.relativePath.replace(/\.md$/, '.html'), routes))
+    if (/^(en|zh-CN)\/.+\.md$/.test(pageData.relativePath)) {
+      pageData.frontmatter.head.push(['link', { rel: 'alternate', type: 'text/markdown', href: '/' + pageData.relativePath }])
+    }
   },
-  sitemap: { hostname: 'https://finshield.finogeeks.club/' },
+  // VitePress creates its built-in 404 without transformPageData.
+  transformHead({ pageData }) {
+    return pageData.relativePath === '404.md' ? pageHead('404.html', routes) : []
+  },
+  sitemap: {
+    hostname: siteOrigin,
+    transformItems: (items) => [
+      ...items.filter((item) => item.url !== '404.html').map((item) => ({ ...item, url: canonicalPath(item.url) })),
+      ...routes.filter((route) => route.endsWith('-diagram.html')).map((route) => ({ url: siteUrl(route) })),
+    ],
+  },
   locales: {
     en: {
       label: 'English', lang: 'en', link: '/en/',

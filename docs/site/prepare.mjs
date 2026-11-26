@@ -1,6 +1,7 @@
 import { cp, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import { dirname, join, posix, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { siteOrigin, pageHead } from './.vitepress/site.mjs'
 
 const siteRoot = dirname(fileURLToPath(import.meta.url))
 const locales = ['en', 'zh-CN']
@@ -73,7 +74,7 @@ async function writeLlmIndexes(output, pages) {
         || directory === 'overview' && page.route === locale + '/index.html')
       if (!group.length) continue
       body += `\n## ${zh ? cn : en}\n\n` + group.map((page) =>
-        `- [${page.title}](/${page.route.replace(/\.html$/, '.md')})`).join('\n') + '\n'
+        `- [${page.title}](${siteOrigin}/${page.route.replace(/\.html$/, '.md')})`).join('\n') + '\n'
     }
     // The proposal permits a BOM; it also prevents legacy plain-text decoding.
     await writeFile(join(output, 'public', locale, 'llms.txt'), '\uFEFF' + body, 'utf8')
@@ -86,8 +87,8 @@ Choose a language. Start with protection defaults and compatibility before makin
 
 ## Documentation
 
-- [English documentation index](/en/llms.txt): Protection, configuration, network and PII, integrations and references.
-- [Simplified Chinese documentation index](/zh-CN/llms.txt): Chinese pages and translated public plugin documentation.
+- [English documentation index](${siteOrigin}/en/llms.txt): Protection, configuration, network and PII, integrations and references.
+- [Simplified Chinese documentation index](${siteOrigin}/zh-CN/llms.txt): Chinese pages and translated public plugin documentation.
 `, 'utf8')
 }
 
@@ -122,6 +123,7 @@ export async function prepareContent(docsRoot, output, options = {}) {
     documents.push({ ...entry, source: entry.linkSource ?? entry.source, path, html: false })
   }
   const assets = new Set()
+  const routes = ['index.html', ...documents.map((document) => document.destination.replace(/\.md$/, '.html'))]
   const aliases = options.aliases ?? {}
   const excluded = new Set(options.unpublishedReferences ?? [])
   const publicAssets = new Set(options.publicAssets ?? [])
@@ -147,7 +149,7 @@ export async function prepareContent(docsRoot, output, options = {}) {
       if (document.title) body = body.replace(/^# .+$/m, '# ' + document.title)
       if (document.lead) body = body.replace(/^(# .+\n)/, '$1\n' + document.lead + '\n')
       const locale = document.destination.startsWith('zh-CN/') ? 'zh-CN' : 'en'
-      const content = transformLinks(body, (value, label) => {
+      let content = transformLinks(body, (value, label) => {
         if ((value.startsWith('#') && !document.section) || /^(?:data:|mailto:)/i.test(value)) return value
         let link = value
         const github = value.match(/^https:\/\/(?:github\.com\/finogeeks\/finsafe\/blob|raw\.githubusercontent\.com\/finogeeks\/finsafe)\/main\/(.*)$/)
@@ -179,6 +181,11 @@ export async function prepareContent(docsRoot, output, options = {}) {
         if (target.endsWith('.md') && !target.startsWith('../')) throw new Error(`Documentation target is not on the site: ${document.source}: ${value}`)
         return github ? value : remoteRepository + target.replace(/^\.\.\//, '') + suffix
       }, document.html)
+      if (document.html) {
+        const metadata = pageHead(document.destination, routes).map(([tag, attributes]) =>
+          `<${tag} ${Object.entries(attributes).map(([name, value]) => `${name}="${value}"`).join(' ')}>`).join('\n')
+        content = content.replace(/<\/head>/i, metadata + '\n</head>')
+      }
       const path = join(output, document.html ? 'public/' + document.destination : document.destination)
       await mkdir(dirname(path), { recursive: true })
       await writeFile(path, content, 'utf8')
@@ -196,6 +203,8 @@ export async function prepareContent(docsRoot, output, options = {}) {
     await cp(join(repositoryRoot, asset), path)
   }
   await writeFile(join(output, 'pages.json'), JSON.stringify(pages, null, 2) + '\n')
+  await writeFile(join(output, 'routes.json'), JSON.stringify(routes, null, 2) + '\n')
+  await writeFile(join(output, 'public/robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${siteOrigin}/sitemap.xml\n`, 'utf8')
   await writeLlmIndexes(output, pages)
   return pages
 }
