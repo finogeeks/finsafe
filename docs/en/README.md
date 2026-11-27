@@ -6,6 +6,10 @@ FinShield (智安盾) is an operating-system sandbox for AI agent execution proc
 
 Choose your [Agent integration](agents/README.md), then check [what FinShield protects by default](protection/README.md). PII detection and redaction require a supported content-inspection configuration.
 
+## Enterprise AI security governance whitepaper
+
+[Read the enterprise governance whitepaper](resources/agent-security-governance.md) on enterprise AI risks, layered security architecture, implementation planning and FinShield practice. The November 2026 edition includes English and Chinese PDF viewing, download and HTML full text.
+
 ## Start with your goal
 
 | What you want to do | Start here |
@@ -61,7 +65,7 @@ PII plugins extend sensitive-information processing and serve a different purpos
 
 [Enterprise solutions](enterprise/README.md) explains assessment, pilots and engagement. [Contact Finogeeks](mailto:contact@finogeeks.com) to discuss your environment and delivery scope.
 
-The [FinShield whitepaper](reference/whitepaper.md) covers product capabilities, integration, implementation and current Safety Arena Windows results, including the 38-scenario matrix and scoring methods. Product introductions and the whitepaper provide further reading; start installation with the relevant Agent guide.
+The [mechanisms and evaluation archive](reference/whitepaper.md) covers product capabilities, integration, implementation and the edition’s Safety Arena Windows results, including the 38-scenario matrix and scoring methods. Use the enterprise governance whitepaper above for the formal publication; start installation with the relevant Agent guide.
 
 ## Reference and support
 

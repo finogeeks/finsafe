@@ -1,6 +1,7 @@
 import { readFile, readdir, stat } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { createHash } from 'node:crypto'
 import { siteBase as base, siteOrigin, siteUrl, pageHead, publicLink } from './.vitepress/site.mjs'
 
 const siteRoot = dirname(fileURLToPath(import.meta.url))
@@ -9,6 +10,7 @@ const errors = []
 const pages = []
 const routes = JSON.parse(await readFile(join(siteRoot, '.generated/routes.json'), 'utf8'))
 const metadata = JSON.parse(await readFile(join(siteRoot, '.generated/metadata.json'), 'utf8'))
+const whitepapers = JSON.parse(await readFile(join(siteRoot, 'whitepapers.json'), 'utf8'))
 const canonicalUrls = new Set()
 const googleVerification = 'googlea9662cdfe1496029.html'
 const verification = await readFile(join(dist, googleVerification), 'utf8')
@@ -39,13 +41,14 @@ function checkPageMetadata(route, html) {
     if (matches.length !== 1 || matches[0].content !== value) errors.push(`${route}: incorrect ${key}`)
   }
   expect('name', 'description', page.description)
-  const image = siteOrigin + '/finshield-logo.webp'
+  const image = siteOrigin + (page.publication?.coverPath ?? '/finshield-logo.webp')
+  const imageAlt = page.publication ? page.publication.title + (page.language === 'zh-CN' ? ' · 封面' : ' · cover') : 'FinShield'
   for (const [key, value] of Object.entries({ type: 'website', site_name: 'FinShield', title: page.title,
-    description: page.description, url: page.url, image, 'image:alt': 'FinShield' })) {
+    description: page.description, url: page.url, image, 'image:alt': imageAlt })) {
     expect('property', 'og:' + key, value)
   }
   for (const [key, value] of Object.entries({ card: 'summary', title: page.title,
-    description: page.description, image, 'image:alt': 'FinShield' })) {
+    description: page.description, image, 'image:alt': imageAlt })) {
     expect('name', 'twitter:' + key, value)
   }
   const scripts = [...html.split('</head>')[0].matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi)]
@@ -65,6 +68,9 @@ function checkPageMetadata(route, html) {
         || webpage.name !== page.title || webpage.description !== page.description
         || JSON.stringify(webpage.inLanguage) !== JSON.stringify(page.language ?? ['en', 'zh-CN'])
         || webpage.isPartOf?.['@id'] !== website['@id']) throw new Error('page facts do not match')
+    if (page.publication && (webpage.version !== page.publication.edition
+        || webpage.publisher?.['@type'] !== 'Organization' || webpage.publisher.name !== page.publication.publisher
+        || webpage.isBasedOn !== siteOrigin + page.publication.pdfPath)) throw new Error('publication facts do not match')
     const unsupported = /^(?:author|datePublished|dateModified|aggregateRating|ratingValue|review)$/
     const hasUnsupported = (value) => value && typeof value === 'object'
       && Object.entries(value).some(([key, child]) => unsupported.test(key) || hasUnsupported(child))
@@ -119,7 +125,7 @@ function markdownLinks(text) {
     ...[...content.matchAll(/!?\[[^\]\n]*\]\(\s*<?([^<>\s)]+)/g)].map((match) => match[1]),
     ...[...content.matchAll(/^ {0,3}\[[^\]\n]+\]:\s*<?([^>\s]+)/gm)].map((match) => match[1]),
     ...[...content.matchAll(/\b(?:href|src)=["']([^"']+)["']/gi)].map((match) => decodeAttribute(match[1])),
-    ...[...content.matchAll(/^(?:Source|Markdown): (https?:\/\/\S+)/gm)].map((match) => match[1]),
+    ...[...content.matchAll(/^(?:Source|Markdown|Original PDF): (https?:\/\/\S+)/gm)].map((match) => match[1]),
   ]
 }
 
@@ -163,7 +169,7 @@ async function checkDiscovery() {
     for (const page of entries) {
       if (!index.includes(`- [${page.title}](${page.markdownUrl}): ${page.description}`)) errors.push(`${name}: missing page summary: ${page.route}`)
     }
-    for (const directory of ['protection', 'getting-started', 'agents', 'overview', 'development', 'architecture', 'enterprise', 'reference']) {
+    for (const directory of ['protection', 'getting-started', 'agents', 'overview', 'development', 'architecture', 'enterprise', 'reference', 'resources']) {
       const group = entries.filter((page) => page.kind !== 'historical-reference'
         && (page.route.split('/')[1] === directory || directory === 'overview' && page.route === language + '/index.html'))
       if (!group.length) continue
@@ -195,6 +201,89 @@ async function checkDiscovery() {
         const warning = language === 'zh-CN' ? '历史参考：请访问来源；当前用法见安装指南与发行说明。'
           : 'Historical reference: follow the source link; use installation guides and releases for current operations.'
         if (chunk.body !== warning) errors.push(`${fullName}: historical body must remain link-only: ${page.route}`)
+      }
+      if (page.publication && !chunk.body.startsWith(`Publication edition: ${page.publication.edition}\nOriginal PDF: ${siteOrigin}${page.publication.pdfPath}\n`)) {
+        errors.push(`${fullName}: missing publication edition and original PDF: ${page.route}`)
+      }
+    }
+  }
+}
+
+function articleContent(html) {
+  return /<main\b[^>]*>([\s\S]*?)<\/main>/i.exec(html)?.[1] ?? ''
+}
+
+function textContent(html) {
+  return decodeAttribute(html.replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/<(script|style|template|iframe)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, '')
+    .replace(/<[^>]+>/g, '')).replaceAll('\u200b', '').replace(/\s+/g, ' ').trim()
+}
+
+async function checkWhitepapers() {
+  if (!Array.isArray(whitepapers)) { errors.push('whitepapers.json: expected publication array'); return }
+  for (const publication of whitepapers) {
+    const label = `Whitepaper ${publication.edition}`
+    const pdfPath = publication.pdfPath.replace(/^\//, '')
+    const source = await readFile(join(siteRoot, 'public', pdfPath))
+    const output = await readFile(join(dist, pdfPath))
+    const sha256 = createHash('sha256').update(source).digest('hex')
+    if (source.length !== publication.bytes || sha256 !== publication.sha256
+        || source.subarray(0, 5).toString() !== '%PDF-') errors.push(`${label}: source PDF does not match approved manifest`)
+    if (!source.equals(output)) errors.push(`${label}: output PDF bytes differ from source`)
+    await checkPublicUrl(siteOrigin + publication.coverPath, label)
+    for (const route of [publication.landingRoute, publication.fullTextRoute]) {
+      const page = metadata[route]
+      if (!page || page.kind !== 'publication' || JSON.stringify(page.publication) !== JSON.stringify(publication)) {
+        errors.push(`${label}: missing publication metadata: ${route}`)
+      }
+    }
+    const landing = articleContent(await readFile(join(dist, publication.landingRoute), 'utf8'))
+    const pdfUrl = new URL(publication.pdfPath, siteOrigin)
+    const samePdf = (value) => {
+      if (!value) return false
+      const url = new URL(value, siteUrl(publication.landingRoute))
+      return url.origin === pdfUrl.origin && url.pathname === pdfUrl.pathname && !url.search
+    }
+    const frames = [...landing.matchAll(/<iframe\b([^>]*)>/gi)].map((match) => attributes(match[1]))
+    if (frames.length !== 1 || !samePdf(frames[0].src)
+        || !frames[0].title?.includes(publication.title)) errors.push(`${label}: missing accessible inline PDF preview`)
+    // These anchors must remain outside the iframe so browsers without a PDF viewer can use them.
+    const fallback = landing.replace(/<iframe\b[^>]*>[\s\S]*?<\/iframe\s*>/gi, '')
+    const links = [...fallback.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)]
+      .map((match) => ({ ...attributes(match[1]), download: /\bdownload(?:\s|=|$)/i.test(match[1]), text: textContent(match[2]) }))
+    if (!links.some((link) => samePdf(link.href) && link.download && link.text)) errors.push(`${label}: missing native PDF download`)
+    if (!links.some((link) => samePdf(link.href) && link.target === '_blank'
+        && link.rel?.split(/\s+/).includes('noopener') && link.text)) errors.push(`${label}: missing external PDF reading fallback`)
+    if (!links.some((link) => link.href && new URL(link.href, siteUrl(publication.landingRoute)).href === siteUrl(publication.fullTextRoute)
+        && link.text)) errors.push(`${label}: missing visible HTML full-text link`)
+    if (!textContent(fallback).includes(publication.edition)
+        || !textContent(fallback).includes(String(publication.pages))) errors.push(`${label}: missing visible edition or page count`)
+    if (/^(en|zh-CN)\/resources\/agent-security-governance-full\.html$/.test(publication.fullTextRoute)) {
+      const zh = publication.fullTextRoute.startsWith('zh-CN/')
+      const full = articleContent(await readFile(join(dist, publication.fullTextRoute), 'utf8'))
+      const headings = [...full.matchAll(/<h2\b[^>]*>([\s\S]*?)<\/h2>/gi)]
+        .map((match) => ({ title: textContent(match[1]), start: match.index, end: match.index + match[0].length }))
+      const chapters = zh ? ['AI正在改变企业安全风险结构', '企业AI安全风险全景', '企业AI安全体系架构', '企业AI安全建设路径',
+        'FinShield智安盾：产品架构与核心能力', 'FinShield智安盾：应用场景实测与企业部署']
+        : ['AI Is Changing the Structure of Enterprise Security Risks', 'The Enterprise AI Security Risk Landscape',
+          'Enterprise AI Security Architecture', 'A Roadmap for Building Enterprise AI Security',
+          'FinShield: Product Architecture and Core Capabilities', 'FinShield: Application Scenario Tests and Enterprise Deployment']
+      const positions = chapters.map((title) => headings.findIndex((heading) => heading.title.replace(/\s/g, '') === title.replace(/\s/g, '')))
+      if (positions.some((position) => position < 0) || new Set(positions).size !== chapters.length
+          || positions.some((position, index) => index && position <= positions[index - 1])) errors.push(`${label}: full text must retain six ordered chapters`)
+      for (const position of positions.filter((position) => position >= 0)) {
+        const section = full.slice(headings[position].end, headings[position + 1]?.start)
+        if (![...section.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)].some((match) => textContent(match[1]))) {
+          errors.push(`${label}: missing readable chapter body: ${headings[position].title}`)
+        }
+      }
+      const references = headings.findIndex((heading) => heading.title === (zh ? '参考资料' : 'References'))
+      const referenceBody = references < 0 ? '' : full.slice(headings[references].end, headings[references + 1]?.start)
+      const items = [...referenceBody.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/gi)]
+      const numbers = items.map((match) => Number(/^\[(\d+)\]/.exec(textContent(match[1]))?.[1]))
+      if (numbers.length !== 29 || numbers.some((number, index) => number !== index + 1)
+          || items.some((match) => !/<a\b[^>]*href="https?:\/\/[^\"]+"[^>]*>[\s\S]*?<\/a>/i.test(match[1]))) {
+        errors.push(`${label}: full text must retain 29 numbered references with source links`)
       }
     }
   }
@@ -252,5 +341,6 @@ const robots = await readFile(join(dist, 'robots.txt'), 'utf8')
 if (!['sitemap.xml', 'sitemap.txt'].every((name) => robots.includes(`Sitemap: ${siteOrigin}/${name}`))
     || /Disallow:\s*\//.test(robots)) errors.push('robots.txt: incorrect discovery or access rules')
 await checkDiscovery()
+await checkWhitepapers()
 if (errors.length) throw new Error(errors.join('\n'))
 console.log(`Checked ${pages.length} generated HTML pages: links, metadata, JSON-LD, canonical, hreflang, sitemap, robots and AI catalogs passed for ${siteOrigin}`)

@@ -42,4 +42,4 @@ FinShield collects and retains supported business records so enterprises can bui
 
 - [Linux/macOS illustrated overview](linux-macos.html): security, data value, architecture, integration, and enterprise deployment.
 - [Privacy inspection scope](linux-macos.html#data): platform differences and coverage limits.
-- [Enterprise integration and validation](../reference/whitepaper.md#6-enterprise-integration-and-validation): business needs, deployment considerations, and acceptance.
+- [Enterprise integration and validation (historical reference)](../reference/whitepaper.md#6-enterprise-integration-and-validation): business needs, deployment considerations, and acceptance.

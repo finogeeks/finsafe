@@ -31,6 +31,8 @@ flowchart LR
     C --> D[部署 GitHub Pages]
 ```
 
+每种语言的文档页面使用同一棵侧边栏目录。正式白皮书及网页全文放在最前，不随当前页面重排分组；其他分组可以折叠，客户端换页时保留其状态。原技术白皮书保留旧 URL，作为历史机制与测评资料，与正式出版物区分；AI 全文包只保留历史链接，不重复收录旧版正文。
+
 ## 产品发布时的维护边界
 
 私有研发文档与公开用户文档分开维护。产品发布更新实现代码、运行配置、脚本、二进制、版本元数据及必要的许可声明，保留公开的 Markdown 和 HTML 指南，包括插件和 PII 开发套件的 README。发布行为变化时，审阅并修改公开使用文档，不从私有快照恢复或覆盖。不能为修复链接而引入私有 Core、Windows 或桌面核心架构。
@@ -39,7 +41,7 @@ flowchart LR
 
 ### 页面摘要与机器可读来源
 
-`page-descriptions.json` 为每个公开 HTML 路由维护一条经过审核的独立摘要，覆盖语言入口和独立图解页。键必须与生成路由清单完全一致。新增页面时补齐两种语言的摘要。标题来自正文可见标题；导入页的标题覆盖由 `content.json` 维护。摘要说明该页的具体任务、平台和限制，不使用重复泛述或关键词堆叠。
+`page-descriptions.json` 为每个公开 HTML 路由维护一条经过审核的独立摘要，覆盖语言入口和独立图解页。键必须与生成路由清单完全一致。新增页面时为已发布的语言补齐摘要；实际存在译文后才添加语言关联。标题来自正文可见标题；导入页的标题覆盖由 `content.json` 维护。摘要说明该页的具体任务、平台和限制，不使用重复泛述或关键词堆叠。
 
 准备步骤生成 `metadata.json`，供逐页 description、Open Graph、摘要分享卡片及 `WebPage`/`WebSite` JSON-LD 使用。客户端换页更新同一份元数据，独立 HTML 在准备阶段接收经过转义的标签。结构化数据不虚构作者、日期、评分、客户或产品保证。404 保持 `noindex`，Google 验证文件保持不变。
 
@@ -54,6 +56,26 @@ flowchart LR
 这些资源只使用公开网站输入。代码示例保持原文；图片和外部资源保留链接，不承诺离线可用。语言入口及独立图解没有 Markdown 时对应字段为 `null`。不将内部运维材料加入索引或全文包。关键答案直接放在可见正文中，证据链接注明平台和版本范围。[使用 AI 完成集成](../zh-CN/development/ai-integration.md)提供可复用的任务提示。
 
 `npm run check` 还会拒绝缺失或重复摘要、不一致的分享元数据或 JSON-LD、损坏的机器目录及不可用的 AI 资源链接。它验证生成产物，不验证搜索排名或外站账户状态。
+
+### 白皮书出版物
+
+治理白皮书在 `docs/<locale>/resources/` 下提供专题页与连续全文页。中文 PDF 是用户提供的原版，原样保存在 `public/whitepapers/`；英文译本保留原版 37 页、矢量图形、图像位置、配色和链接，只替换文字，在审阅过的区域内安排英文换行。出版物不代替当前安装与集成指南，页面保留出版版本及平台、测试范围。
+
+`whitepapers.json` 记录各版 PDF 的版本、出版机构、字节数、页数、SHA-256、封面与页面路由。准备步骤将同一出版范围写入 `docs.json`、`resources/llms.txt` 主题和全文包。各网页使用自己的 canonical，实际存在译文才建立语言关联。保留 PDF 的抓取权限，不把 PDF 的 canonical 指向内容不等价的专题摘要页。
+
+更新时保留原有版本化 PDF，审阅新原稿与译文，再更新对应网页、封面和清单。产物检查核对源 PDF 与发布文件的字节，验证可见预览、直接打开、下载、全文和引用入口。提 PR 前检查 PDF 版式与手机、浏览器行为；HTTP 成功不能证明浏览器支持内嵌 PDF。
+
+`whitepapers/english-layout.json` 保存经过审校的译文、原文坐标和英文文字区域；译文应与英文 Markdown 一致。在 Python 环境安装 `pymupdf==2.2`、`fonttools` 和 `pypdf`，然后从本目录执行以下命令，生成英文 PDF、封面和 HTML 使用的 26 幅图：
+
+```sh
+python3 whitepapers/render-english.py \
+  public/whitepapers/agent-security-governance-2026-11.pdf \
+  public/whitepapers/agent-security-governance-2026-11-en.pdf \
+  --assets-dir public/whitepapers/agent-security-governance-2026-11-en \
+  --audit /tmp/finshield-english-layout-audit.json
+```
+
+脚本核对原版哈希，从原嵌入字体恢复 Unicode 映射，透明删除旧文字，并使用原字体替换英文。它拒绝小于 7pt 的字号、缺字、漏字、残留中文、原图形变化、图像位置变化和链接动作变化，同时翻译原目录书签。仍须渲染并逐页检查全部 37 页，确认无文字碰撞且清晰可读；坐标与文字检查不能代替视觉检查。核对网页的 26 幅英文图，必要时更新其尺寸，最后更新 `whitepapers.json`。中文原版保持不变。旧修订保留在 Git 历史中，公开 URL 标识 11 月版本。
 
 ### 部署后检查
 

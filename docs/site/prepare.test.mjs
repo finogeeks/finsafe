@@ -7,6 +7,67 @@ import { prepareContent, rewriteLinks } from './prepare.mjs'
 import { pageHead, siteUrl, configurePublicLinks, publicLink } from './.vitepress/site.mjs'
 import { createMarkdownRenderer } from 'vitepress'
 
+test('the former technical whitepaper retains its URL without entering current AI instructions', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'finshield-paper-archive-'))
+  try {
+    for (const locale of ['en', 'zh-CN']) {
+      await mkdir(join(root, 'docs', locale, 'reference'), { recursive: true })
+      await writeFile(join(root, 'docs', locale, 'README.md'), '# Documentation\n')
+      await writeFile(join(root, 'docs', locale, 'reference/whitepaper.md'), '# Evaluation archive\nARCHIVED_BODY_ONLY\n')
+    }
+    const output = join(root, 'out')
+    await prepareContent(join(root, 'docs'), output)
+    const catalog = JSON.parse(await readFile(join(output, 'public/docs.json'), 'utf8'))
+    for (const locale of ['en', 'zh-CN']) {
+      assert.equal(catalog.pages.find((page) => page.route === `${locale}/reference/whitepaper.html`).kind, 'historical-reference')
+      assert.ok((await readFile(join(output, `public/${locale}/reference/whitepaper.md`), 'utf8')).includes('ARCHIVED_BODY_ONLY'))
+      const bundle = await readFile(join(output, `public/${locale}/llms-full.txt`), 'utf8')
+      assert.ok(bundle.includes(`${locale}/reference/whitepaper.html`))
+      assert.ok(!bundle.includes('ARCHIVED_BODY_ONLY'), 'Superseded technical claims must stay out of current instruction bodies')
+    }
+  } finally { await rm(root, { recursive: true, force: true }) }
+})
+
+test('published whitepapers retain site assets and edition scope in AI resources', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'finshield-publication-'))
+  try {
+    for (const locale of ['en', 'zh-CN']) {
+      await mkdir(join(root, 'docs', locale), { recursive: true })
+      await writeFile(join(root, 'docs', locale, 'README.md'), '# Documentation\n')
+    }
+    await mkdir(join(root, 'docs/zh-CN/resources'), { recursive: true })
+    await writeFile(join(root, 'docs/zh-CN/resources/paper.md'), '# 治理白皮书\n[PDF](/whitepapers/paper.pdf)\n[全文](/zh-CN/resources/paper-full.html)\n<img src="/whitepapers/cover.webp" alt="封面">\n')
+    await writeFile(join(root, 'docs/zh-CN/resources/paper-full.md'), '# 治理白皮书全文\n2026-11版；出版物，不是当前操作指南。\n')
+    const publication = { title: '治理白皮书', edition: '2026-11', publisher: '出版机构',
+      landingRoute: 'zh-CN/resources/paper.html', fullTextRoute: 'zh-CN/resources/paper-full.html',
+      pdfPath: '/whitepapers/paper.pdf', coverPath: '/whitepapers/cover.webp' }
+    const output = join(root, 'out')
+    await prepareContent(join(root, 'docs'), output, { publications: [publication] })
+    const body = await readFile(join(output, 'zh-CN/resources/paper.md'), 'utf8')
+    assert.ok(body.includes('[PDF](/whitepapers/paper.pdf)'), 'PDF stays on the documentation origin')
+    assert.ok(body.includes('[全文](/zh-CN/resources/paper-full.html)'), 'Root-relative website routes stay local')
+    assert.ok(body.includes('src="/whitepapers/cover.webp"'), 'The original cover remains a site asset')
+    const catalog = JSON.parse(await readFile(join(output, 'public/docs.json'), 'utf8'))
+    const page = catalog.pages.find((entry) => entry.route === publication.fullTextRoute)
+    assert.equal(page.kind, 'publication')
+    assert.equal(page.publication.edition, '2026-11')
+    const topic = await readFile(join(output, 'public/zh-CN/resources/llms.txt'), 'utf8')
+    assert.ok(topic.includes('paper-full.md'))
+    const full = await readFile(join(output, 'public/zh-CN/llms-full.txt'), 'utf8')
+    assert.ok(full.includes('Publication edition: 2026-11'))
+    const { contentHead } = await import('./.vitepress/site.mjs')
+    const head = contentHead(page)
+    assert.equal(head.find(([, a]) => a.property === 'og:image')[1].content,
+      'https://finshield.finogeeks.club/whitepapers/cover.webp')
+    const graph = JSON.parse(head.find(([, a]) => a.type === 'application/ld+json')[2])['@graph']
+    const data = graph.find((entry) => entry['@type'] === 'WebPage')
+    assert.equal(data.publisher.name, publication.publisher)
+    assert.equal(data.isBasedOn, 'https://finshield.finogeeks.club/whitepapers/paper.pdf')
+    assert.ok(!data.datePublished, 'A publication month does not invent an exact publication day')
+    assert.equal(pageHead(publication.landingRoute, catalog.pages.map((entry) => entry.route)).length, 1)
+  } finally { await rm(root, { recursive: true, force: true }) }
+})
+
 test('page discovery metadata describes the current page and safely serializes structured data', async () => {
   const { contentHead, renderHead } = await import('./.vitepress/site.mjs')
   const page = { route: 'zh-CN/architecture/inspector.html', title: 'Inspector <request>',

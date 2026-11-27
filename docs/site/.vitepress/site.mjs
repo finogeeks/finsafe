@@ -51,7 +51,8 @@ export function pageHead(route, routes) {
 export function contentHead(page) {
   const url = siteUrl(page.route)
   const language = page.route.startsWith('zh-CN/') ? 'zh-CN' : 'en'
-  const image = siteOrigin + '/finshield-logo.webp'
+  const image = siteOrigin + (page.publication?.coverPath ?? '/finshield-logo.webp')
+  const imageAlt = page.publication ? page.publication.title + (language === 'zh-CN' ? ' · 封面' : ' · cover') : 'FinShield'
   const graph = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -62,6 +63,11 @@ export function contentHead(page) {
         isPartOf: { '@id': siteOrigin + '/#website' } },
     ],
   }
+  if (page.publication) Object.assign(graph['@graph'][1], {
+    publisher: { '@type': 'Organization', name: page.publication.publisher },
+    version: page.publication.edition,
+    isBasedOn: siteOrigin + page.publication.pdfPath,
+  })
   return [
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:site_name', content: 'FinShield' }],
@@ -69,12 +75,12 @@ export function contentHead(page) {
     ['meta', { property: 'og:description', content: page.description }],
     ['meta', { property: 'og:url', content: url }],
     ['meta', { property: 'og:image', content: image }],
-    ['meta', { property: 'og:image:alt', content: 'FinShield' }],
+    ['meta', { property: 'og:image:alt', content: imageAlt }],
     ['meta', { name: 'twitter:card', content: 'summary' }],
     ['meta', { name: 'twitter:title', content: page.title }],
     ['meta', { name: 'twitter:description', content: page.description }],
     ['meta', { name: 'twitter:image', content: image }],
-    ['meta', { name: 'twitter:image:alt', content: 'FinShield' }],
+    ['meta', { name: 'twitter:image:alt', content: imageAlt }],
     ['script', { type: 'application/ld+json' }, JSON.stringify(graph).replaceAll('<', '\\u003c')],
   ]
 }

@@ -44,7 +44,7 @@
   "en/reference/cli-configuration.html": "Check supported CLI and configuration entries, argument placement, Job UI options and activation evidence. An accepted value alone does not prove the current process changed.",
   "en/reference/changelog.html": "Read the historical public FinSAFE release-log snapshot through version 0.9.47. Use the linked releases page for current downloads and subsequent release information.",
   "en/reference/history.html": "Find archived whitepapers and experiment records with their original versions and conditions. Historical identifiers and results stay separate from current evaluation scoring.",
-  "en/reference/whitepaper.html": "Read the FinShield whitepaper on Agent security, data retention and platform mechanisms, including scoped Windows Safety Arena results, scenarios and counting methods.",
+  "en/reference/whitepaper.html": "Historical reference retaining the November 25, 2026 v0.6 technical paper’s mechanisms, 38 evaluation scenarios and counting methods. Use the enterprise governance whitepaper for the formal publication and current guides for operations.",
   "en/reference/site-maintenance.html": "Maintain FinShield's bilingual documentation sources, run website checks and preserve release ownership boundaries. Review domain, crawler-discovery and search-verification setup.",
   "en/reference/dsh-notices.html": "Read third-party copyright and license notices for the FinShield DSH Windows plugin, including the integration interfaces and bundled metadata-reader dependencies.",
   "en/reference/dsh-native-components.html": "Understand the DSH plugin resource retained for updates from versions 0.11.6 and 0.11.8. The directory has no native binary; the declared Node SDK supplies the common library.",
@@ -94,10 +94,14 @@
   "zh-CN/reference/cli-configuration.html": "核对 FinShield 公开 CLI 与配置入口、参数位置、Job UI 选项和生效证据；命令接受某个值，不代表当前进程已采用该配置。",
   "zh-CN/reference/changelog.html": "查阅截至 0.9.47 的 FinSAFE 公开发布历史快照；当前安装包及后续版本说明以链接的正式发布页为准。",
   "zh-CN/reference/history.html": "查找保留原始版本与实验条件的历史白皮书和实验记录，历史编号与结果独立保存，不与当前测评合并计分。",
-  "zh-CN/reference/whitepaper.html": "阅读 FinShield 智安盾白皮书，了解智能体安全、数据留存和平台机制，并查阅有范围的 Windows Safety Arena 结果、场景及统计方法。",
+  "zh-CN/reference/whitepaper.html": "历史技术参考：保留2026年11月25日v0.6技术白皮书中的产品机制、38项测评场景和统计方法，供旧引用核对；正式出版物请阅读企业信息安全治理白皮书。",
   "zh-CN/reference/site-maintenance.html": "维护 FinShield 中英文文档源，运行网站检查，保留产品发布与文档所有权边界，并核对域名、抓取入口和搜索平台验证设置。",
   "zh-CN/reference/dsh-notices.html": "阅读 FinShield DSH Windows 插件的第三方版权与许可说明，核对集成接口及元数据读取器依赖，并保留英文原文要求的完整声明。",
   "zh-CN/reference/dsh-native-components.html": "了解为 DSH 插件 0.11.6 和 0.11.8 更新交接保留的目录资源；该目录不含原生二进制，个人版共用库由声明的 Node SDK 提供。",
   "zh-CN/reference/opencode-notices.html": "查阅 FinShield OpenCode Windows 集成的第三方组件及许可证中文说明，重新分发时保留英文完整版权声明并遵守各随附组件条款。",
-  "zh-CN/reference/contributing.html": "参与 FinShield 公开文档与网站维护，提交可复现的产品问题并保留证据，了解本仓库接受的变更及产品发布保留用户指南的规则。"
+  "zh-CN/reference/contributing.html": "参与 FinShield 公开文档与网站维护，提交可复现的产品问题并保留证据，了解本仓库接受的变更及产品发布保留用户指南的规则。",
+  "zh-CN/resources/agent-security-governance.html": "凡泰极客《Agent时代 企业信息安全治理白皮书》2026年11月版：查看六章目录，在线浏览或下载原版PDF，阅读企业AI风险、分层架构、建设路径与FinShield实践。",
+  "zh-CN/resources/agent-security-governance-full.html": "《Agent时代 企业信息安全治理白皮书》2026年11月版HTML全文，保留六章正文、图表和29条参考资料；产品与自测结论限于书中所列平台、版本和场景。",
+  "en/resources/agent-security-governance.html": "View or download the English translation of Finogeeks’ November 2026 enterprise AI security governance whitepaper, with chapter links covering risks, layered architecture, implementation planning and FinShield practice.",
+  "en/resources/agent-security-governance-full.html": "English full-text translation of the November 2026 Agent-era enterprise information security governance whitepaper, preserving six chapters, tables, diagram labels, 29 references and stated test boundaries."
 }

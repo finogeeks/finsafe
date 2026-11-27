@@ -1,0 +1,26 @@
+[
+  {
+    "title": "Agent时代 企业信息安全治理白皮书",
+    "edition": "2026-11",
+    "publisher": "深圳凡泰极客科技有限责任公司",
+    "pdfPath": "/whitepapers/agent-security-governance-2026-11.pdf",
+    "sha256": "ce38a964ad90d0810bd35d87723ef8f43c9617d86f4d12cc9bb50dd45170b412",
+    "bytes": 2901634,
+    "pages": 37,
+    "coverPath": "/whitepapers/agent-security-governance-2026-11/cover.webp",
+    "landingRoute": "zh-CN/resources/agent-security-governance.html",
+    "fullTextRoute": "zh-CN/resources/agent-security-governance-full.html"
+  },
+  {
+    "title": "Agent-Era Enterprise Information Security Governance Whitepaper",
+    "edition": "2026-11",
+    "publisher": "Shenzhen Finogeeks Technology Co., Ltd.",
+    "pdfPath": "/whitepapers/agent-security-governance-2026-11-en.pdf",
+    "sha256": "823f4a46cf0bf985ef6ba9cf9a43f808cbcf2880bf3f2a31e7e9975758965caa",
+    "bytes": 3541232,
+    "pages": 37,
+    "coverPath": "/whitepapers/agent-security-governance-2026-11-en/cover.webp",
+    "landingRoute": "en/resources/agent-security-governance.html",
+    "fullTextRoute": "en/resources/agent-security-governance-full.html"
+  }
+]

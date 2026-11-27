@@ -67,7 +67,7 @@ These examples explain resource access; they are not individual API switches exp
 | Named pipes, shared memory, events and COM | Object ACLs, namespaces, AppContainer identity, capabilities and service authorization | A USER-handle limit is not a ban on all IPC; authorized communication can remain available |
 | Sockets, HTTP and model requests | Effective network mode and applicable system networking policy; content inspection must separately cover the request | Default `network.mode: host` supplies neither destination allowlisting nor automatic PII blocking |
 
-See Microsoft's [AppContainer isolation overview](https://learn.microsoft.com/en-us/windows/win32/secauthz/appcontainer-isolation) for platform background. FinShield's public process-termination, memory, handle and registry cases, with version scope, are in the [whitepaper](../reference/whitepaper.md). A platform mechanism, a passing case and effective protection on the current machine are different evidence.
+See Microsoft's [AppContainer isolation overview](https://learn.microsoft.com/en-us/windows/win32/secauthz/appcontainer-isolation) for platform background. FinShield's public process-termination, memory, handle and registry cases, with version scope, are in the [mechanisms and evaluation archive](../reference/whitepaper.md). A platform mechanism, a passing case and effective protection on the current machine are different evidence.
 
 ## Limits to keep explicit
 

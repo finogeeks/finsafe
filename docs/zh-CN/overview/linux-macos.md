@@ -42,4 +42,4 @@
 
 - [Linux/macOS图解介绍](linux-macos.html)：安全保障、数据价值、技术架构、应用接入与企业部署。
 - [隐私防护说明](linux-macos.html#data)：平台差异与检测范围。
-- [企业接入与验证](../reference/whitepaper.md#六企业接入与验证)：单机与集中管理的部署选择。
+- [企业接入与验证（历史参考）](../reference/whitepaper.md#六企业接入与验证)：单机与集中管理的部署选择。

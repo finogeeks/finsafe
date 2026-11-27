@@ -16,11 +16,15 @@ Teams using Agents for development and office work need clear boundaries for dat
 
 These are questions for a solution discussion. Supported platforms, features, deployment options, licensing and services need confirmation for the customer environment and delivered release. Personal-edition capabilities or one plugin's test results do not establish the full enterprise delivery commitment.
 
+## Enterprise AI governance reference
+
+The [enterprise information security governance whitepaper](../resources/agent-security-governance.md) covers risk identification, layered architecture, implementation planning and FinShield practice. Read online or download the November 2026 PDF. Product and test descriptions retain their stated version and environment scope; delivery follows the agreed solution.
+
 ## Understand the product and evidence
 
 - [Product introduction](../overview/product-introduction.md): positioning, integration routes and platform scope.
 - [Protection guide](../protection/README.md): protected objects, effective defaults and limits.
-- [Whitepaper](../reference/whitepaper.md): technical context and scoped evaluation results.
+- [mechanisms and evaluation archive](../reference/whitepaper.md): technical context and scoped evaluation results.
 - [Agent Safety Arena](https://safety.finaios.ai/): public recordings, conditions and results. A test record describes its own environment and does not replace acceptance in your environment.
 
 ## Engagement process
