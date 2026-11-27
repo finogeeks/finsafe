@@ -30,10 +30,11 @@ outline: [2, 2]
 | Publisher | Shenzhen Finogeeks Technology Co., Ltd. |
 | Publication month / edition | November 2026 / 2026-11 |
 | Language | English translation of the Chinese original |
-| Length | 36 pages; 196,362 bytes (approximately 196 KB) |
+| Length | 37 pages, including 31 body pages |
+| File size | 3,541,232 bytes |
 | Source scope | Research accessed through November 26, 2026; product information follows the versions cited in the whitepaper |
 
-This English edition translates the [Chinese original](../../zh-CN/resources/agent-security-governance.md). The text, tables, diagram labels and references retain the source meaning; layout and pagination are adapted for English. If a translation or presentation differs, consult the Chinese PDF. Product and test descriptions apply to the stated platforms, versions and scenarios. Use the current [user guides](../getting-started/README.md) and [development and integration guides](../development/README.md) for installation and integration.
+This English edition translates the [Chinese original](../../zh-CN/resources/agent-security-governance.md) and preserves its 37-page layout. Figures retain the original graphics, backgrounds and connections; only their text is translated. The text, tables, diagram labels and references retain the source meaning. If a translation or presentation differs, consult the Chinese PDF. Product and test descriptions apply to the stated platforms, versions and scenarios. Use the current [user guides](../getting-started/README.md) and [development and integration guides](../development/README.md) for installation and integration.
 
 ## Contents and reading links
 

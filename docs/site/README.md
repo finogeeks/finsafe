@@ -59,13 +59,23 @@ These files use only public website inputs. Code examples retain their original 
 
 ### Published whitepapers
 
-The governance publication has a landing page and one continuous full-text page per language under `docs/<locale>/resources/`. The Chinese PDF is the supplied publication, copied unchanged into `public/whitepapers/`. The English PDF is a reviewed translation with adapted layout. Neither publication replaces current installation or integration guides. Keep the dated edition and platform/test limits visible.
+The governance publication has a landing page and one continuous full-text page per language under `docs/<locale>/resources/`. The Chinese PDF is the supplied publication, copied unchanged into `public/whitepapers/`. The reviewed English translation retains the original 37 pages, vector figures, image placements, colors and links. Only text is replaced; English wraps within reviewed regions. Neither publication replaces current installation or integration guides. Keep the dated edition and platform/test limits visible.
 
 `whitepapers.json` records each PDF's edition, publisher, byte count, page count, SHA-256, cover and page routes. Preparation adds the same publication scope to `docs.json`, the `resources/llms.txt` topic and text bundles. Each web page uses its own canonical URL; language alternatives exist only for real translations. PDF indexing remains allowed. Do not point a PDF canonical at the short landing-page summary.
 
 To update a publication, retain its prior versioned PDF, review the new source and translation, then update the matching pages, cover and manifest. The checker compares source and built PDF bytes and checks the visible preview, direct-open fallback, download, full text and references. Inspect PDF rendering and mobile/browser behavior before the PR; an HTTP response alone does not prove inline PDF support.
 
-The English PDF uses the reviewed English Markdown as its content source. To regenerate it, install `reportlab` and `lxml` in a Python environment, render the Markdown to HTML with the site's `createMarkdownRenderer` from `vitepress`, then run `python3 whitepapers/render-english.py <rendered.html> public/whitepapers/agent-security-governance-2026-11-en.pdf` from this directory. Review every rendered page and update the manifest only after checking the output. The renderer embeds ReportLab's bundled Vera fonts and retains the publication title and publisher in PDF metadata; it changes layout, not translation. Extract the English cover from the rendered first page. Never apply this renderer to rewrite the supplied Chinese PDF.
+`whitepapers/english-layout.json` stores the reviewed translation, source text geometry and English placement regions. Keep its wording consistent with the English Markdown. To regenerate the PDF and its 26 illustrated HTML figures, install `pymupdf==2.2`, `fonttools` and `pypdf` in a Python environment, then run from this directory:
+
+```sh
+python3 whitepapers/render-english.py \
+  public/whitepapers/agent-security-governance-2026-11.pdf \
+  public/whitepapers/agent-security-governance-2026-11-en.pdf \
+  --assets-dir public/whitepapers/agent-security-governance-2026-11-en \
+  --audit /tmp/finshield-english-layout-audit.json
+```
+
+The renderer verifies the original source hash, restores Unicode maps from its embedded font subsets, replaces text with transparent redactions, and uses the original font families. It rejects text below 7pt, missing text/glyphs, untranslated text, altered artwork, changed image placements or changed link actions. It also translates the original outline. Review all 37 rendered pages for text collisions and legibility; geometry and text checks alone do not prove visual quality. Inspect the 26 English HTML figures, update their dimensions if needed, and update `whitepapers.json` only after checking the final output. Keep the supplied Chinese PDF unchanged. Previous publication revisions remain available in Git history; the public URL identifies the November edition.
 
 ### After deployment
 

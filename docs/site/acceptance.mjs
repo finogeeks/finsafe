@@ -86,7 +86,13 @@ assert.deepEqual(catalog.pages.map((page) => page.route).sort(), Object.keys(met
 assert.equal(catalog.pages.find((page) => page.route === 'index.html').markdownUrl, null)
 assert.equal(catalog.pages.find((page) => page.route.endsWith('-diagram.html')).markdownUrl, null)
 const publicationDamages = []
+const figurePages = []
 for (const publication of whitepapers) {
+  const fullText = await read(publication.fullTextRoute)
+  const figures = [...fullText.matchAll(/<img\b[^>]*\bsrc="\/whitepapers\/agent-security-governance-2026-11(?:-en)?\/figure-p(\d+)\.png"/g)]
+    .map((match) => match[1])
+  assert.equal(figures.length, 26, 'Each full text must retain all 26 original illustrated figures')
+  figurePages.push(figures)
   const pdfPath = publication.pdfPath.replace(/^\//, '')
   const pdf = await readFile(join(dist, pdfPath))
   const corrupted = Buffer.from(pdf)
@@ -101,6 +107,7 @@ for (const publication of whitepapers) {
     'missing external PDF reading fallback'],
   )
 }
+assert.deepEqual(figurePages[0], figurePages[1], 'English figures must correspond to the same Chinese source pages')
 for (const [name, damaged, message] of [
   ['googlea9662cdfe1496029.html', 'Invalid verification token', 'Google verification: incorrect file content'],
   [article, html.replace('rel="canonical"', 'rel="broken-canonical"'), 'incorrect canonical'],

@@ -6,7 +6,7 @@ outline: [2, 3]
 
 [简体中文](../../zh-CN/resources/agent-security-governance-full.md) · [Whitepaper introduction](agent-security-governance.md) · [Download English PDF](/whitepapers/agent-security-governance-2026-11-en.pdf) · [Chinese original PDF](/whitepapers/agent-security-governance-2026-11.pdf)
 
-This is the English translation of the November 2026 Chinese whitepaper published by Shenzhen Finogeeks Technology Co., Ltd. It retains the source's six chapters, text, figures' labels and relationships, tables and 29 references. Diagram labels are presented as English tables and text flows for accessibility. Layout and pagination are adapted for English. If wording or presentation differs, consult the Chinese original. This is a dated publication; use current product guides and your installed release for installation, configuration and support scope.
+This is the English translation of the November 2026 Chinese whitepaper published by Shenzhen Finogeeks Technology Co., Ltd. It retains the source's six chapters, text, figures' labels and relationships, tables and 29 references. The English PDF preserves the original 37-page layout. Figures below retain the original graphics, backgrounds and connections, with only text translated; English transcriptions, tables and text flows remain available for accessibility and search. If wording or presentation differs, consult the Chinese original. This is a dated publication; use current product guides and your installed release for installation, configuration and support scope.
 
 **2026**
 
@@ -48,9 +48,9 @@ Company website: https://www.finogeeks.com/
 
 Starting with enterprise AI security, build an Agent application system in which risks can be identified, permissions constrained and processes traced.
 
-The page ranges below refer to the body pages of the Chinese original.
+The English PDF preserves the original page order. The body-page ranges below apply to both PDF editions.
 
-| Chapter | Chinese original body pages | Coverage |
+| Chapter | Body pages (both PDF editions) | Coverage |
 | --- | --- | --- |
 | 01 AI Is Changing the Structure of Enterprise Security Risks | 01–05 | Authoritative research, real incidents and governance changes |
 | 02 The Enterprise AI Security Risk Landscape | 06–08 | Risk categories, propagation paths and business risk levels |
@@ -66,6 +66,8 @@ The page ranges below refer to the body pages of the Chinese original.
 ### AI Enters Real Enterprise Use Cases
 
 When AI can read internal information, invoke business tools and carry out tasks, its security impact extends beyond a single response to an enterprise's data, funds and business stability. Enterprise IT needs to incorporate AI security into day-to-day operations and technology management.
+
+<img src="/whitepapers/agent-security-governance-2026-11-en/figure-p04.png" alt="IBM and World Economic Forum research metrics and their statistical scope" width="1279" height="408" loading="lazy" decoding="async">
 
 | Figure | Meaning | Scope stated in the figure |
 | --- | --- | --- |
@@ -95,6 +97,8 @@ Sources: [[1]](https://newsroom.ibm.com/2026-07-29-ibm-study-one-in-four-malicio
 ### AI Introduces New Data-Leakage Channels
 
 An employee copying a piece of code, uploading a contract or asking an AI assistant to summarize email can create a new data-transmission path. Whether a tool is approved, who owns the account and what a model request contains should become visible and manageable information.
+
+<img src="/whitepapers/agent-security-governance-2026-11-en/figure-p05.png" alt="Business information entering AI context and flowing to models and services" width="1279" height="398" loading="lazy" decoding="async">
 
 **New paths for data use and transmission**
 
@@ -131,6 +135,8 @@ Sources: [[3]](https://www.verizon.com/business/resources/T7a1/reports/2026-dbir
 
 Generative AI lowers the barrier to fabricating voices, images and text. Enterprises need both to protect system access and to re-examine business processes that rely on familiar identities, tone of voice and video appearances to complete authorization.
 
+<img src="/whitepapers/agent-security-governance-2026-11-en/figure-p06.png" alt="Amount and key facts of the Arup deepfake fraud incident" width="1279" height="488" loading="lazy" decoding="async">
+
 **Actual incident · 2024**
 
 **Approximately $25 million**
@@ -164,6 +170,8 @@ Sources: [[5]](https://www.weforum.org/videos/arup-deepfake-fraud) World Economi
 
 Agents connect language understanding to files, processes, networks and business interfaces. Once execution permissions are available, a model's misjudgment or inducement by external content can translate into real system changes.
 
+<img src="/whitepapers/agent-security-governance-2026-11-en/figure-p07.png" alt="CNCERT and CNVD counts of tested products and security vulnerabilities" width="1279" height="408" loading="lazy" decoding="async">
+
 | Figure | Meaning | Scope stated in the figure |
 | --- | --- | --- |
 | 54 | Large-model and Agent application products | CNCERT/CNVD 2026 crowdsourced security testing |
@@ -192,6 +200,8 @@ Sources: [[6]](https://zc.cnvd.org.cn/news/info?id=176) CNCERT / CNVD; [[7]](htt
 ### Security Needs to Cover the Entire AI Adoption Process
 
 Research reports, governance frameworks and domestic policies are converging on a similar direction: connect AI development, deployment, application and operations, and bring organizational responsibility, technical controls and continuous assessment into the same management mechanism.
+
+<img src="/whitepapers/agent-security-governance-2026-11-en/figure-p08.png" alt="Lifecycle of development, deployment, application and operations" width="1279" height="456" loading="lazy" decoding="async">
 
 Development → Deployment → Application → Operations
 
@@ -229,6 +239,8 @@ Sources: [[8]](https://www.caict.ac.cn/kxyj/qwfb/bps/202601/P0202601097844475484
 
 Enterprises can identify risks by asking “what did the model understand, what did it obtain, and what did it do on whose behalf?” The value of classification is to locate control points and responsible parties, rather than attribute every problem to an insufficiently secure model.
 
+<img src="/whitepapers/agent-security-governance-2026-11-en/figure-p09.png" alt="Six risk categories: model, data, identity, execution, supply chain and governance" width="1279" height="618" loading="lazy" decoding="async">
+
 **Enterprise AI risks**
 
 | Number | Risk category | Labels in the diagram |
@@ -260,6 +272,8 @@ Sources: [[11]](https://genai.owasp.org/llm-top-10/) OWASP; [[12]](https://genai
 ### Risks Need End-to-End Control
 
 A seemingly simple task to “organize information and submit the results” may involve reading web pages, retrieving knowledge, running code, writing files and calling business interfaces. Every crossing of a trust boundary requires confirmation of information sources and permission scope.
+
+<img src="/whitepapers/agent-security-governance-2026-11-en/figure-p10.png" alt="Risk chain from external materials through Agent planning, permission checks and tool execution" width="1279" height="573" loading="lazy" decoding="async">
 
 **Identity / Resources / Operation rules** provide the basis for permission validation.
 
@@ -327,6 +341,8 @@ Permission descriptions should use business language: the designated directory c
 
 An enterprise AI security architecture should cover input and output, data and identity, tools and execution, and governance and operations. Each layer has clear responsibilities and is connected to the others through unified task records.
 
+<img src="/whitepapers/agent-security-governance-2026-11-en/figure-p12.png" alt="Layered architecture for model content, data and identity, tools and execution, and governance operations" width="1279" height="666" loading="lazy" decoding="async">
+
 **Entry:** Enterprise employees / AI applications / Agent tasks
 
 | Architecture layer | Labels in the diagram |
@@ -362,6 +378,8 @@ Sources: [[14]](https://www.nist.gov/publications/artificial-intelligence-risk-m
 
 AI brings scattered information into context, then generates new content or actions. Data protection needs both to restrict initial access and to manage the combined information and its eventual destination.
 
+<img src="/whitepapers/agent-security-governance-2026-11-en/figure-p13.png" alt="End-to-end reading authorization, content protection and transmission control" width="1279" height="473" loading="lazy" decoding="async">
+
 Business information → AI context → Models and services
 
 | Data stage | Labels in the diagram | Corresponding control | Control labels |
@@ -392,6 +410,8 @@ Sources: [[11]](https://genai.owasp.org/llm-top-10/) OWASP; [[14]](https://www.n
 ### Distinguish Execution Identity from Business Authorization
 
 An Agent obtaining access credentials for a system does not mean that it may perform every operation in that system. Identity answers “who executes”; business authorization answers “what is permitted this time.”
+
+<img src="/whitepapers/agent-security-governance-2026-11-en/figure-p14.png" alt="Identity and authorization relationships among employees, Agents and business systems" width="1279" height="626" loading="lazy" decoding="async">
 
 Employee / Agent → Operation authorization → Business system
 
@@ -429,6 +449,8 @@ Sources: [[9]](https://www.cac.gov.cn/2026-05/08/c_1779979789523320.htm) Cybersp
 ### Provide Agents with a Secure, Controllable Execution Environment
 
 When Agents can run code, start programs or operate the desktop, enterprises need clear file, system, network and resource boundaries. The execution environment translates authorization requirements into actual restrictions.
+
+<img src="/whitepapers/agent-security-governance-2026-11-en/figure-p15.png" alt="Data, identity, processes, networking and governance policies in the execution environment" width="1279" height="628" loading="lazy" decoding="async">
 
 Agent tasks and tool calls → Runtime security controls → Protected system resources
 
@@ -470,6 +492,8 @@ Sources: [[13]](https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/mi
 
 The outcome of an AI task often cannot be explained by its final answer alone. Enterprises need to connect task objectives, authorization, tool calls and actual operations to determine what happened and take action when something goes wrong.
 
+<img src="/whitepapers/agent-security-governance-2026-11-en/figure-p16.png" alt="Task authorization, actual execution, correlated records, auditing and response" width="1279" height="606" loading="lazy" decoding="async">
+
 Task and authorization → Actual execution → Linked records → Audit and incident handling
 
 | Stage | Labels in the diagram |
@@ -508,6 +532,8 @@ Sources: [[9]](https://www.cac.gov.cn/2026-05/08/c_1779979789523320.htm) Cybersp
 
 The first step in building enterprise AI security is to understand the models, applications, Agents, plugins and connectors already in use, and map them to business tasks, data scope and responsible people.
 
+<img src="/whitepapers/agent-security-governance-2026-11-en/figure-p17.png" alt="Tools, data, identities and responsibilities feeding the AI asset and task inventory" width="1279" height="596" loading="lazy" decoding="async">
+
 | Inventory input | Labels in the diagram |
 | --- | --- |
 | Tools and services | Models / Plugins / Sources |
@@ -539,6 +565,8 @@ Sources: [[8]](https://www.caict.ac.cn/kxyj/qwfb/bps/202601/P0202601097844475484
 ### From a Security Pilot to Full Coverage
 
 An effective pilot should verify task completion, effective permissions and the ability to handle abnormalities together. Business activities with clear boundaries and confirmable outcomes make it easier to establish repeatable deployment methods.
+
+<img src="/whitepapers/agent-security-governance-2026-11-en/figure-p18.png" alt="Scenario selection, pilot verification, standard templates and phased rollout" width="1279" height="456" loading="lazy" decoding="async">
 
 Scenario selection → Pilot verification → Standardize templates → Phased rollout
 
@@ -598,11 +626,13 @@ Enterprises can optimize policies according to business priorities: first addres
 
 ### FinShield: Keeping Agents Safe and Under Control
 
-*Chinese original: PDF page 20 · body page 17.*
+*PDF page 20 · body page 17 (both editions).*
 
 <!-- physical-page=20 body-page=17 -->
 
 FinShield is Agent security software provided by Finogeeks. It brings Agent protection to personal computers and employee endpoints, manages file, network and execution permissions, and retains relevant execution records.
+
+<img src="/whitepapers/agent-security-governance-2026-11-en/figure-p20.png" alt="FinShield integration, four execution-protection areas, local verification and enterprise management" width="1279" height="646" loading="lazy" decoding="async">
 
 **Diagram: FinShield execution protection**
 
@@ -646,11 +676,13 @@ Sources: [[17]](https://github.com/finogeeks/finsafe/blob/18baa1f31070305052c63d
 
 ### Security Protection for AI Risks
 
-*Chinese original: PDF page 21 · body page 18.*
+*PDF page 21 · body page 18 (both editions).*
 
 <!-- physical-page=21 body-page=18 -->
 
 FinShield organizes execution protection around four areas: privacy, interaction, systems and data. Enterprises can configure rules for an Agent's task instead of opening every computer capability at once.
+
+<img src="/whitepapers/agent-security-governance-2026-11-en/figure-p21.png" alt="Four protection areas: privacy, interaction, systems and data" width="1279" height="548" loading="lazy" decoding="async">
 
 **Diagram: four areas of execution protection**
 
@@ -680,11 +712,13 @@ Source: [[17]](https://github.com/finogeeks/finsafe/blob/18baa1f31070305052c63d8
 
 ### Security Capabilities Across Platforms and Operating Systems
 
-*Chinese original: PDF page 22 · body page 19.*
+*PDF page 22 · body page 19 (both editions).*
 
 <!-- physical-page=22 body-page=19 -->
 
 FinShield combines each operating system's isolation and permission mechanisms to constrain execution processes. It also uses behavioral guidance to explain allowed paths and reasons for denial, so protection and task completion work together.
+
+<img src="/whitepapers/agent-security-governance-2026-11-en/figure-p22.png" alt="Windows, Linux and macOS platform mechanisms" width="1279" height="518" loading="lazy" decoding="async">
 
 **Diagram: platform mechanisms**
 
@@ -714,11 +748,13 @@ Sources: [[17]](https://github.com/finogeeks/finsafe/blob/18baa1f31070305052c63d
 
 ### Managing Network Access and Sensitive Information
 
-*Chinese original: PDF page 23 · body page 20.*
+*PDF page 23 · body page 20 (both editions).*
 
 <!-- physical-page=23 body-page=20 -->
 
 An Agent's outbound connections may access a model, invoke tools or upload materials. FinShield can manage the corresponding paths through network policy and a controlled proxy, and process sensitive information within supported request scopes.
+
+<img src="/whitepapers/agent-security-governance-2026-11-en/figure-p23.png" alt="Agent requests, controlled proxy, authorized services and PII processing" width="1279" height="643" loading="lazy" decoding="async">
 
 **Diagram: controlled network requests**
 
@@ -755,11 +791,13 @@ Source: [[19]](https://finshield.finogeeks.club/zh-CN/protection/network-pii.htm
 
 ### Tamper-Proof Execution Logs
 
-*Chinese original: PDF page 24 · body page 21.*
+*PDF page 24 · body page 21 (both editions).*
 
 <!-- physical-page=24 body-page=21 -->
 
 FinShield records relevant runtime information while protecting execution. Enterprises can use it to verify task behavior, analyze reasons for denial, and use data with the necessary correlation information for auditing and troubleshooting.
+
+<img src="/whitepapers/agent-security-governance-2026-11-en/figure-p24.png" alt="Task authorization, actual execution, correlated records, auditing and response" width="1279" height="606" loading="lazy" decoding="async">
 
 **Diagram: execution records and response**
 
@@ -795,11 +833,13 @@ Sources: [[17]](https://github.com/finogeeks/finsafe/blob/18baa1f31070305052c63d
 
 ### Integration with Mainstream Agent Clients and CLIs
 
-*Chinese original: PDF page 25 · body page 22.*
+*PDF page 25 · body page 22 (both editions).*
 
 <!-- physical-page=25 body-page=22 -->
 
 FinShield provides plugins, launchers or CLI execution integration according to the Agent's form. Enterprises can retain tools familiar to employees and use adaptation to place the actual execution process under protection.
+
+<img src="/whitepapers/agent-security-governance-2026-11-en/figure-p25.png" alt="Desktop launch, plugin and CLI integration paths and the corresponding Agents" width="1279" height="606" loading="lazy" decoding="async">
 
 **Diagram: integration paths**
 
@@ -834,7 +874,7 @@ Source: [[18]](https://finshield.finogeeks.club/zh-CN/agents/compatibility.html)
 
 ### Windows Agent Integration Methods
 
-*Chinese original: PDF page 26 · body page 23.*
+*PDF page 26 · body page 23 (both editions).*
 
 <!-- physical-page=26 body-page=23 -->
 
@@ -863,11 +903,13 @@ Source: [[18]](https://finshield.finogeeks.club/zh-CN/agents/compatibility.html)
 
 ### Office Work: Clear Boundaries for Organizing Materials
 
-*Chinese original: PDF page 27 · body page 24.*
+*PDF page 27 · body page 24 (both editions).*
 
 <!-- physical-page=27 body-page=24 -->
 
 Employees want AI to organize contracts, summarize materials and generate reports. This scenario is well suited to starting with designated folders. Read, write and outbound-sharing scopes can make AI use a natural part of everyday work.
+
+<img src="/whitepapers/agent-security-governance-2026-11-en/figure-p27.png" alt="Office Agent with working, original and private directories, output and review" width="1279" height="591" loading="lazy" decoding="async">
 
 **Diagram: authorized office materials**
 
@@ -902,11 +944,13 @@ Sources: [[17]](https://github.com/finogeeks/finsafe/blob/18baa1f31070305052c63d
 
 ### Development Work: Keep Automated Execution Within the Workspace
 
-*Chinese original: PDF page 28 · body page 25.*
+*PDF page 28 · body page 25 (both editions).*
 
 <!-- physical-page=28 body-page=25 -->
 
 Coding Agents need to read code, install dependencies, run tests and modify files. FinShield can establish boundaries around the project workspace and execution processes, helping enterprises protect other assets while using developer-productivity tools.
+
+<img src="/whitepapers/agent-security-governance-2026-11-en/figure-p28.png" alt="Development workspace, test data, production credentials and task constraints" width="1279" height="568" loading="lazy" decoding="async">
 
 **Diagram: a development workspace and its surrounding boundaries**
 
@@ -942,11 +986,13 @@ Sources: [[17]](https://github.com/finogeeks/finsafe/blob/18baa1f31070305052c63d
 
 ### Observe Specific Protection Results Through Public Tests
 
-*Chinese original: PDF page 29 · body page 26.*
+*PDF page 29 · body page 26 (both editions).*
 
 <!-- physical-page=29 body-page=26 -->
 
 FinShield's public materials report SafetyArena self-test results on Windows. The tests compare native Agents and Agents integrated with FinShield in the same scenarios, providing verifiable examples for understanding execution protection.
+
+<img src="/whitepapers/agent-security-governance-2026-11-en/figure-p29.png" alt="Protection successes out of 38 scenarios for four native Agents and their FinShield groups" width="1279" height="611" loading="lazy" decoding="async">
 
 **Chart data: protection successes out of 38 scenarios**
 
@@ -978,7 +1024,7 @@ Sources: [[17]](https://github.com/finogeeks/finsafe/blob/18baa1f31070305052c63d
 
 ### System Security: Protect Processes, Configuration and Permissions
 
-*Chinese original: PDF page 30 · body page 27.*
+*PDF page 30 · body page 27 (both editions).*
 
 <!-- physical-page=30 body-page=27 -->
 
@@ -1011,7 +1057,7 @@ Sources: [[17]](https://github.com/finogeeks/finsafe/blob/18baa1f31070305052c63d
 
 ### Data Security: Cover Reading, Modification and Deletion
 
-*Chinese original: PDF page 31 · body page 28.*
+*PDF page 31 · body page 28 (both editions).*
 
 <!-- physical-page=31 body-page=28 -->
 
@@ -1049,11 +1095,13 @@ Sources: [[17]](https://github.com/finogeeks/finsafe/blob/18baa1f31070305052c63d
 
 ### Interaction Security: Keep Automated Tasks from Disrupting the Desktop
 
-*Chinese original: PDF page 32 · body page 29.*
+*PDF page 32 · body page 29 (both editions).*
 
 <!-- physical-page=32 body-page=29 -->
 
 Desktop Agents have opportunities to act on the same computer an employee uses. Interaction protection addresses windows, the mouse, the keyboard and input state, keeping clear boundaries between automated tasks and employee activity.
+
+<img src="/whitepapers/agent-security-governance-2026-11-en/figure-p32.png" alt="Illustrated DSH popup-test results comparing native desktop interference with the FinShield group" width="1279" height="526" loading="lazy" decoding="async">
 
 **Illustration of observed results**
 
@@ -1082,11 +1130,13 @@ Sources: [[17]](https://github.com/finogeeks/finsafe/blob/18baa1f31070305052c63d
 
 ### Privacy Security: Protect Device Capture and Private Information
 
-*Chinese original: PDF page 33 · body page 30.*
+*PDF page 33 · body page 30 (both editions).*
 
 <!-- physical-page=33 body-page=30 -->
 
 Privacy risks involve information channels such as cameras, microphones, screen images and screen recordings. Protection must be verified by observing whether streaming, recording or content access actually occurred, and by checking whether the task had the corresponding authorization.
+
+<img src="/whitepapers/agent-security-governance-2026-11-en/figure-p33.png" alt="Four privacy scenarios and the WorkBuddy camera comparison with a 147-frame recording" width="1279" height="618" loading="lazy" decoding="async">
 
 **Diagram: four privacy scenarios**
 
@@ -1122,11 +1172,13 @@ Sources: [[17]](https://github.com/finogeeks/finsafe/blob/18baa1f31070305052c63d
 
 ### From Protection on One Computer to Continuous Enterprise Governance
 
-*Chinese original: PDF page 34 · body page 31.*
+*PDF page 34 · body page 31 (both editions).*
 
 <!-- physical-page=34 body-page=31 -->
 
 After an enterprise rolls out AI tools, security work shifts from one-time installation to policy consistency, version management and ongoing operations. FinShield can manage policies and endpoint runtime state in conjunction with the enterprise's deployment approach.
+
+<img src="/whitepapers/agent-security-governance-2026-11-en/figure-p34.png" alt="Enterprise management console, endpoint groups, policy verification and state checks" width="1279" height="663" loading="lazy" decoding="async">
 
 **Diagram: enterprise policy management**
 

@@ -1,213 +1,206 @@
 #!/usr/bin/env python3
-"""Typeset the reviewed English whitepaper HTML with ReportLab and lxml.
+"""Translate text on the original PDF geometry; retain every original graphic.
 
-Use the public Markdown as input to VitePress's Markdown renderer first.
-This script changes layout only. It does not translate or edit source content.
+Install pymupdf==2.2, fonttools and pypdf. The reviewed English strings and
+placement rectangles are in english-layout.json. This script does not translate.
 """
 import argparse
+import hashlib
+import html
+import io
+import json
 import re
-from html import escape
+import string
+import tempfile
 from pathlib import Path
 
-import reportlab
-from lxml import html
-from reportlab.lib import colors
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.platypus import (
-    BaseDocTemplate, Frame, PageBreak, PageTemplate, Paragraph,
-    Spacer, Table, TableStyle,
-)
-from reportlab.platypus.tableofcontents import TableOfContents
+import pymupdf as fitz
+from fontTools.ttLib import TTFont
+from fontTools.ttLib.tables._c_m_a_p import CmapSubtable
+from pypdf import PdfReader
 
 TITLE = 'Agent-Era Enterprise Information Security Governance Whitepaper'
 PUBLISHER = 'Shenzhen Finogeeks Technology Co., Ltd.'
-BLUE = colors.HexColor('#1d5fff')
-NAVY = colors.HexColor('#142f58')
-PALE = colors.HexColor('#eff5ff')
-WIDTH, HEIGHT = A4
-MARGIN = 45
-BODY_WIDTH = WIDTH - MARGIN * 2
+DATA = Path(__file__).with_name('english-layout.json')
 
 
-def rich(node):
-    """Retain emphasis and source links without copying site UI into the PDF."""
-    result = escape(node.text or '')
-    for child in node:
-        text = rich(child)
-        if child.tag in ('strong', 'b'):
-            result += '<b>' + text + '</b>'
-        elif child.tag in ('em', 'i'):
-            result += '<i>' + text + '</i>'
-        elif child.tag == 'a' and child.get('href', '').startswith(('https://', 'http://')):
-            result += '<link href="' + escape(child.get('href'), quote=True) + '" color="#216957">' + text + '</link>'
-        elif child.tag == 'a' and 'header-anchor' in child.get('class', ''):
-            pass
-        elif child.tag == 'br':
-            result += '<br/>'
-        else:
-            result += text
-        result += escape(child.tail or '')
-    # Vera supports Latin punctuation. Use textual arrows for diagram connections.
-    return result.replace('→', ' -&gt; ').replace('←', ' &lt;- ').replace('↓', ' down to ')
+def compact(text):
+    return re.sub(r'\s+', '', text)
 
 
-def make_styles():
-    fonts = Path(reportlab.__file__).parent / 'fonts'
-    for name, file in [('Body', 'Vera.ttf'), ('Body-Bold', 'VeraBd.ttf'),
-                       ('Body-Italic', 'VeraIt.ttf'), ('Body-BoldItalic', 'VeraBI.ttf')]:
-        pdfmetrics.registerFont(TTFont(name, str(fonts / file)))
-    pdfmetrics.registerFontFamily('Body', normal='Body', bold='Body-Bold', italic='Body-Italic', boldItalic='Body-BoldItalic')
-    styles = getSampleStyleSheet()
-    styles.add(ParagraphStyle('Text', fontName='Body', fontSize=9.5, leading=14.5,
-                              textColor=NAVY, spaceAfter=8, allowWidows=0, allowOrphans=0))
-    styles.add(ParagraphStyle('Chapter', parent=styles['Text'], fontName='Body-Bold',
-                              fontSize=18, leading=24, spaceAfter=16, keepWithNext=True))
-    styles.add(ParagraphStyle('Section', parent=styles['Text'], fontName='Body-Bold',
-                              fontSize=14, leading=19, spaceBefore=5, spaceAfter=12, keepWithNext=True))
-    styles.add(ParagraphStyle('Subsection', parent=styles['Text'], fontName='Body-Bold',
-                              fontSize=10, leading=15, spaceBefore=6, keepWithNext=True))
-    styles.add(ParagraphStyle('Quote', parent=styles['Text'], leftIndent=12, rightIndent=12,
-                              borderColor=BLUE, borderWidth=0.5, borderPadding=8, spaceBefore=4))
-    styles.add(ParagraphStyle('Cell', parent=styles['Text'], fontSize=8, leading=11, spaceAfter=0))
-    styles.add(ParagraphStyle('Small', parent=styles['Text'], fontSize=8, leading=12, textColor=colors.HexColor('#526987')))
-    styles.add(ParagraphStyle('SourcePage', parent=styles['Small'], keepWithNext=True))
-    return styles
+def restore_fonts(source, document, directory):
+    """Restore Unicode cmaps from the original embedded fonts, without new art.
 
-
-class Whitepaper(BaseDocTemplate):
-    def afterFlowable(self, flowable):
-        if (isinstance(flowable, Paragraph) and flowable.style.name == 'Chapter'
-                and flowable.getPlainText() not in ('Copyright and Notices', 'Contents', 'References')):
-            key = 'chapter-' + re.sub(r'[^a-z0-9]+', '-', flowable.getPlainText().lower()).strip('-')
-            self.canv.bookmarkPage(key)
-            self.canv.addOutlineEntry(flowable.getPlainText(), key, 0)
-            self.notify('TOCEntry', (0, flowable.getPlainText(), self.page, key))
-
-
-def page_header(canvas, doc):
-    if doc.page == 1:
-        return
-    canvas.saveState()
-    canvas.setFillColor(NAVY)
-    canvas.setFont('Body-Bold', 8)
-    canvas.drawString(MARGIN, HEIGHT - 28, 'Finogeeks | Enterprise AI Security Governance')
-    canvas.setStrokeColor(colors.HexColor('#dce6f2'))
-    canvas.line(MARGIN, HEIGHT - 35, WIDTH - MARGIN, HEIGHT - 35)
-    canvas.setFont('Body', 7)
-    canvas.setFillColor(colors.HexColor('#526987'))
-    canvas.drawString(MARGIN, 24, '© 2026 Finogeeks. All rights reserved. | English translation | 2026-11')
-    canvas.drawRightString(WIDTH - MARGIN, 24, str(doc.page))
-    canvas.restoreState()
-
-
-def cover(canvas, doc):
-    if doc.page != 1:
-        return
-    canvas.saveState()
-    canvas.setFillColor(PALE)
-    canvas.rect(0, 0, WIDTH, HEIGHT, fill=1, stroke=0)
-    canvas.setFillColor(NAVY)
-    canvas.setFont('Body-Bold', 18)
-    canvas.drawString(MARGIN, HEIGHT - 70, 'Finogeeks')
-    canvas.setFont('Body', 14)
-    canvas.drawRightString(WIDTH - MARGIN, HEIGHT - 70, '2026')
-    # A vector cover keeps the English edition free of rasterized body text.
-    canvas.setFillColor(BLUE)
-    canvas.rect(0, 0, WIDTH, 210, fill=1, stroke=0)
-    canvas.setFillColor(NAVY)
-    y = HEIGHT - 185
-    for line in ['Agent-Era', 'Enterprise Information', 'Security Governance', 'Whitepaper']:
-        canvas.setFont('Body-Bold', 29 if line != 'Agent-Era' else 36)
-        canvas.drawString(MARGIN, y, line)
-        y -= 48
-    canvas.setFont('Body', 12)
-    for line in ['Risk identification · Layered governance · Trusted execution',
-                 'FinShield product architecture and security testing practice']:
-        canvas.drawString(MARGIN, y - 12, line)
-        y -= 24
-    canvas.setFont('Body', 9)
-    canvas.drawString(MARGIN, y - 24, 'English translation of the November 2026 Chinese original.')
-    canvas.drawString(MARGIN, y - 40, 'Layout and pagination are adapted for English; consult the Chinese original if they differ.')
-    canvas.setFillColor(colors.white)
-    canvas.setFont('Body-Bold', 10)
-    canvas.drawString(MARGIN, 90, PUBLISHER)
-    canvas.setFont('Body', 9)
-    canvas.drawString(MARGIN, 68, 'November 2026 | finogeeks.com')
-    canvas.setFont('Body', 8)
-    canvas.drawString(MARGIN, 46, '© 2026 Shenzhen Finogeeks Technology Co., Ltd. All rights reserved.')
-    canvas.restoreState()
-
-
-def render(source, output):
-    styles = make_styles()
-    document = html.fromstring('<div>' + source.read_text() + '</div>')
-    story = [Spacer(1, 1), PageBreak()]
-    started = False
-    for node in document:
-        plain = node.text_content().replace('\u200b', '').strip() if isinstance(node.tag, str) else ''
-        if node.tag == 'h2' and plain == 'Copyright and Notices':
-            started = True
-        if not started or not isinstance(node.tag, str):
-            continue
-        text = rich(node).strip()
-        if node.tag == 'h2':
-            if len(story) > 2 and not isinstance(story[-1], PageBreak):
-                story.append(PageBreak())
-            story.append(Paragraph(text, styles['Chapter']))
-            if plain == 'Contents':
-                toc = TableOfContents()
-                toc.levelStyles = [ParagraphStyle('TOC', parent=styles['Text'], fontSize=10,
-                                                   leading=16, spaceBefore=8, rightIndent=18)]
-                story.append(toc)
-        elif node.tag in ('h3', 'h4'):
-            story.append(Paragraph(text, styles['Section' if node.tag == 'h3' else 'Subsection']))
-        elif node.tag == 'p' and text:
-            if plain.startswith(('Sources:', 'Source:')) and isinstance(story[-1], Paragraph):
-                story[-1].keepWithNext = True
-            style = styles['SourcePage'] if plain.startswith('Chinese original:') else styles['Text']
-            story.append(Paragraph(text, style))
-        elif node.tag == 'blockquote':
-            for paragraph in node.xpath('./p'):
-                story.append(Paragraph(rich(paragraph), styles['Quote']))
-        elif node.tag in ('ul', 'ol'):
-            for index, item in enumerate(node.xpath('./li'), 1):
-                prefix = str(index) + '. ' if node.tag == 'ol' else '• '
-                story.append(Paragraph(prefix + rich(item), styles['Text']))
-        elif node.tag == 'table':
-            rows = [[Paragraph(rich(cell), styles['Cell']) for cell in row]
-                    for row in node.xpath('./thead/tr | ./tbody/tr | ./tr')]
-            if not rows:
+    ReportLab stored these subsets in a legacy MacRoman cmap. /ToUnicode gives
+    the real code points. Keep original glyph IDs and choose a source subset
+    with complete Latin coverage for each weight. Do not redistribute fonts
+    separately or substitute different typefaces.
+    """
+    families, seen = {}, set()
+    for page in PdfReader(source).pages:
+        for reference in page['/Resources']['/Font'].values():
+            xref = reference.idnum
+            if xref in seen:
                 continue
-            table = Table(rows, colWidths=[BODY_WIDTH / len(rows[0])] * len(rows[0]), repeatRows=1, hAlign='LEFT')
-            table.setStyle(TableStyle([
-                ('BACKGROUND', (0, 0), (-1, 0), PALE),
-                ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-                ('BOX', (0, 0), (-1, -1), .4, colors.HexColor('#dce6f2')),
-                ('INNERGRID', (0, 0), (-1, -1), .3, colors.HexColor('#dce6f2')),
-                ('LEFTPADDING', (0, 0), (-1, -1), 7), ('RIGHTPADDING', (0, 0), (-1, -1), 7),
-                ('TOPPADDING', (0, 0), (-1, -1), 7), ('BOTTOMPADDING', (0, 0), (-1, -1), 7),
-            ]))
-            story += [table, Spacer(1, 10)]
-        elif node.tag == 'pre':
-            raise ValueError('Render diagram code as translated text or a table before typesetting')
-    if not started:
-        raise ValueError('Missing Copyright and Notices: refusing an empty PDF')
-    doc = Whitepaper(str(output), pagesize=A4, title=TITLE, author=PUBLISHER,
-                    subject='English translation of the November 2026 Chinese whitepaper',
-                    leftMargin=MARGIN, rightMargin=MARGIN, topMargin=52, bottomMargin=45)
-    frame = Frame(MARGIN, 45, BODY_WIDTH, HEIGHT - 97, id='body', leftPadding=0, rightPadding=0, topPadding=0, bottomPadding=0)
-    doc.addPageTemplates(PageTemplate(id='publication', frames=frame,
-                                     onPage=lambda canvas, document: (cover(canvas, document), page_header(canvas, document))))
-    output.parent.mkdir(parents=True, exist_ok=True)
-    doc.multiBuild(story)
+            seen.add(xref)
+            obj = reference.get_object()
+            if '/ToUnicode' not in obj:
+                continue
+            name, extension, _, buffer = document.extract_font(xref)
+            if not buffer or extension != 'ttf':
+                continue
+            font = TTFont(io.BytesIO(buffer))
+            encoded = font['cmap'].tables[0].cmap
+            mapping = obj['/ToUnicode'].get_object().get_data().decode()
+            table = CmapSubtable.newSubtable(4)
+            table.platformID, table.platEncID, table.language = 3, 1, 0
+            table.cmap = {
+                int(unicode, 16): encoded[int(code, 16)]
+                for code, unicode in re.findall(r'<([0-9A-Fa-f]{2})>\s*<([0-9A-Fa-f]{4})>', mapping)
+                if int(code, 16) in encoded
+            }
+            font['cmap'].tables = [table]
+            path = directory / f'{xref}.ttf'
+            font.save(path)
+            face = fitz.Font(fontfile=str(path))
+            if not all(face.has_glyph(ord(c)) for c in string.ascii_letters + string.digits + ' .,;:/()-[]&'):
+                continue
+            family = re.sub(r'^[A-Z]{6}\+', '', name)
+            if family not in families or len(buffer) > families[family]['bytes']:
+                families[family] = {'path': path, 'bytes': len(buffer), 'face': face}
+    return families
+
+
+def artwork(page):
+    keys = ['items', 'fill', 'color', 'width', 'dashes', 'lineCap', 'lineJoin',
+            'closePath', 'fill_opacity', 'stroke_opacity', 'rect']
+    return [{key: drawing.get(key) for key in keys} for drawing in page.get_drawings()]
+
+
+def images(page):
+    keys = ['bbox', 'transform', 'width', 'height', 'digest', 'has-mask']
+    return [{key: item.get(key) for key in keys} for item in page.get_image_info(hashes=True)]
+
+
+def links(page):
+    return [{key: value for key, value in item.items() if key not in ['xref', 'id']}
+            for item in page.get_links()]
+
+
+def verify(source, output, data, audit):
+    original, translated = fitz.open(source), fitz.open(output)
+    if len(original) != len(translated) or len(translated) != len(data['pages']):
+        raise ValueError('Page counts differ')
+    for index, (before, after, page) in enumerate(zip(original, translated, data['pages']), 1):
+        if before.rect != after.rect or artwork(before) != artwork(after) or images(before) != images(after):
+            raise ValueError(f'Original artwork changed on page {index}')
+        if sorted(map(str, links(before))) != sorted(map(str, links(after))):
+            raise ValueError(f'Original link actions changed on page {index}')
+        text = compact(after.get_text())
+        for unit in page['units']:
+            if compact(unit['english']) not in text:
+                raise ValueError(f'Missing translated text: page {index}, {unit["id"]}')
+        if re.search(r'[\u4e00-\u9fff\ufffd]', text):
+            raise ValueError(f'Untranslated text or missing glyph on page {index}')
+    if any(re.search(r'[\u4e00-\u9fff]', item[1]) for item in translated.get_toc()):
+        raise ValueError('Untranslated outline entry')
+    return {'pages': len(translated), 'textUnits': sum(len(p['units']) for p in data['pages']),
+            'originalVectorPathsRetained': sum(len(p.get_drawings()) for p in original),
+            'originalImagePlacementsRetained': sum(len(p.get_image_info()) for p in original),
+            'originalLinkActionsRetained': sum(len(p.get_links()) for p in original),
+            'externalSourceLinks': sum(link['kind'] == fitz.LINK_URI for p in original for link in p.get_links()),
+            'minimumTextSize': min(item['effectiveSize'] for item in audit)}
+
+
+def export_assets(output, data, directory):
+    # Figure rectangles match the Chinese HTML crops. Figure files contain the
+    # translated original art, while HTML keeps accessible text transcriptions.
+    directory.mkdir(parents=True, exist_ok=True)
+    with fitz.open(output) as document:
+        pixmap = document[0].get_pixmap(matrix=fitz.Matrix(1.4, 1.4))
+        pixmap.pil_save(str(directory / 'cover.webp'), format='WEBP', quality=90)
+        for figure in data['figures']:
+            pixmap = document[figure['page'] - 1].get_pixmap(
+                matrix=fitz.Matrix(2.5, 2.5), clip=fitz.Rect(figure['crop']))
+            pixmap.save(str(directory / figure['file']))
+
+
+def render(source, output, audit_path=None, assets=None):
+    data = json.loads(DATA.read_text())
+    if source.resolve() == output.resolve():
+        raise ValueError('The supplied Chinese original must not be overwritten')
+    if hashlib.sha256(source.read_bytes()).hexdigest() != data['sourceSha256']:
+        raise ValueError('Source PDF differs from the reviewed edition')
+    original, document = fitz.open(source), fitz.open(source)
+    audit = []
+    with tempfile.TemporaryDirectory(prefix='finshield-fonts-') as temporary:
+        directory = Path(temporary)
+        fonts = restore_fonts(str(source), original, directory)
+        font_css = '\n'.join('@font-face {font-family: "%s";src: url("%s");}' % (name, info['path'].name)
+                             for name, info in fonts.items())
+        archive = fitz.Archive(str(directory))
+        for specification in data['pages']:
+            page = document[specification['page'] - 1]
+            changed = [unit for unit in specification['units']
+                       if unit['english'] != unit['text'] or unit.get('replace')]
+            original_links = links(page)
+            for unit in changed:
+                page.add_redact_annot(fitz.Rect(unit['bbox']), fill=False, cross_out=False)
+            # Transparent text redaction leaves image pixels and vector paths intact.
+            page.apply_redactions(images=0, graphics=0, text=0)
+            for link in page.get_links():
+                page.delete_link(link)
+            for link in original_links:
+                page.insert_link(link)
+            for unit in changed:
+                placement = unit['placement']
+                family = re.sub(r'^[A-Z]{6}\+', '', unit['font'])
+                # PDF span names can truncate the original TrueType family.
+                matches = [name for name in fonts if name.startswith(family)]
+                if len(matches) != 1:
+                    raise ValueError(f'Missing original font family: {family}')
+                family = matches[0]
+                for character in unit['english']:
+                    if not character.isspace() and not any(info['face'].has_glyph(ord(character)) for info in fonts.values()):
+                        raise ValueError(f'No original-font glyph for {character!r}')
+                fallback = ','.join('"%s"' % name for name in fonts if name != family)
+                css = font_css + (' * {margin:0;padding:0;} div {font-family:"%s",%s;'
+                                  'font-size:%spt;line-height:1.14;color:#%06x;text-align:%s;}' %
+                                  (family, fallback, placement['size'], unit['color'], placement['align']))
+                content = '<div>' + html.escape(unit['english']).replace('\n', '<br/>') + '</div>'
+                spare, scale = page.insert_htmlbox(fitz.Rect(placement['rect']), content,
+                                                   css=css, archive=archive, scale_low=0)
+                size = placement['size'] * scale
+                if spare < 0 or size < data['minimumTextSize']:
+                    raise ValueError(f'Unreadable/overflowing text: page {specification["page"]}, {unit["id"]}, {size:.2f}pt')
+                audit.append({'page': specification['page'], 'id': unit['id'],
+                              'role': unit['role'], 'effectiveSize': round(size, 2), 'scale': round(scale, 4)})
+        lookup = {compact(unit['text']): unit['english'] for page in data['pages'] for unit in page['units']}
+        outline = document.get_toc()
+        for item in outline:
+            item[1] = lookup.get(compact(item[1]), item[1])
+        document.set_toc(outline)
+        metadata = document.metadata
+        metadata.update(title=TITLE, author=PUBLISHER,
+                        subject='English translation, November 2026; original figures and 37-page layout retained')
+        document.set_metadata(metadata)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        document.save(output, garbage=4, deflate=True)
+    report = verify(source, output, data, audit)
+    report.update(sourceSha256=data['sourceSha256'], sha256=hashlib.sha256(output.read_bytes()).hexdigest(),
+                  bytes=output.stat().st_size, placements=audit)
+    if assets:
+        export_assets(output, data, assets)
+    if audit_path:
+        audit_path.write_text(json.dumps(report, indent=2) + '\n')
+    print(json.dumps({key: value for key, value in report.items() if key != 'placements'}, indent=2))
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('html', type=Path)
+    parser.add_argument('source', type=Path)
     parser.add_argument('output', type=Path)
-    args = parser.parse_args()
-    render(args.html, args.output)
+    parser.add_argument('--audit', type=Path)
+    parser.add_argument('--assets-dir', type=Path)
+    arguments = parser.parse_args()
+    render(arguments.source, arguments.output, arguments.audit, arguments.assets_dir)

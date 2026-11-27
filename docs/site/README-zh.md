@@ -59,13 +59,23 @@ flowchart LR
 
 ### 白皮书出版物
 
-治理白皮书在 `docs/<locale>/resources/` 下提供专题页与连续全文页。中文 PDF 是用户提供的原版，原样保存在 `public/whitepapers/`；英文 PDF 为经过审校的译本，版式按英文调整。出版物不代替当前安装与集成指南，页面保留出版版本及平台、测试范围。
+治理白皮书在 `docs/<locale>/resources/` 下提供专题页与连续全文页。中文 PDF 是用户提供的原版，原样保存在 `public/whitepapers/`；英文译本保留原版 37 页、矢量图形、图像位置、配色和链接，只替换文字，在审阅过的区域内安排英文换行。出版物不代替当前安装与集成指南，页面保留出版版本及平台、测试范围。
 
 `whitepapers.json` 记录各版 PDF 的版本、出版机构、字节数、页数、SHA-256、封面与页面路由。准备步骤将同一出版范围写入 `docs.json`、`resources/llms.txt` 主题和全文包。各网页使用自己的 canonical，实际存在译文才建立语言关联。保留 PDF 的抓取权限，不把 PDF 的 canonical 指向内容不等价的专题摘要页。
 
 更新时保留原有版本化 PDF，审阅新原稿与译文，再更新对应网页、封面和清单。产物检查核对源 PDF 与发布文件的字节，验证可见预览、直接打开、下载、全文和引用入口。提 PR 前检查 PDF 版式与手机、浏览器行为；HTTP 成功不能证明浏览器支持内嵌 PDF。
 
-英文 PDF 的内容源为经过审校的英文 Markdown。重新排版时，在 Python 环境安装 `reportlab` 和 `lxml`，先用本站 `vitepress` 的 `createMarkdownRenderer` 将 Markdown 渲染为 HTML，再从本目录执行 `python3 whitepapers/render-english.py <rendered.html> public/whitepapers/agent-security-governance-2026-11-en.pdf`。逐页检查后更新清单，并从第一页提取英文封面。脚本内嵌 ReportLab 随附的 Vera 字体，在 PDF 元数据中保留出版标题和机构；它只调整版式，不处理翻译。不要用此脚本重写中文原版 PDF。
+`whitepapers/english-layout.json` 保存经过审校的译文、原文坐标和英文文字区域；译文应与英文 Markdown 一致。在 Python 环境安装 `pymupdf==2.2`、`fonttools` 和 `pypdf`，然后从本目录执行以下命令，生成英文 PDF、封面和 HTML 使用的 26 幅图：
+
+```sh
+python3 whitepapers/render-english.py \
+  public/whitepapers/agent-security-governance-2026-11.pdf \
+  public/whitepapers/agent-security-governance-2026-11-en.pdf \
+  --assets-dir public/whitepapers/agent-security-governance-2026-11-en \
+  --audit /tmp/finshield-english-layout-audit.json
+```
+
+脚本核对原版哈希，从原嵌入字体恢复 Unicode 映射，透明删除旧文字，并使用原字体替换英文。它拒绝小于 7pt 的字号、缺字、漏字、残留中文、原图形变化、图像位置变化和链接动作变化，同时翻译原目录书签。仍须渲染并逐页检查全部 37 页，确认无文字碰撞且清晰可读；坐标与文字检查不能代替视觉检查。核对网页的 26 幅英文图，必要时更新其尺寸，最后更新 `whitepapers.json`。中文原版保持不变。旧修订保留在 Git 历史中，公开 URL 标识 11 月版本。
 
 ### 部署后检查
 
