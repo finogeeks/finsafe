@@ -8,6 +8,24 @@
 
 智能体的操作不止是删除文件：它们还可能访问私人信息、干扰桌面和更改系统设置。FinShield 为 OpenCode Desktop 的执行后端增加 Windows 沙箱防护，帮助将智能体操作限制在配置的访问边界内，同时保留你原有的编码工作流程。
 
+## 在 Windows 上保护私人文件
+
+### 给 OpenCode Desktop 加沙箱需要 WSL 吗？
+
+不需要。此插件使用原生 Windows FinShield 组件保护 OpenCode Desktop 的执行 Host；桌面 Main 保留在沙箱之外。你可以继续使用 Windows 桌面应用，按下方步骤[安装](#安装)。
+
+### 默认保护哪些 SSH 密钥和浏览器资料目录？
+
+随包配置拒绝访问已列出的凭据与浏览器资料目录，包括 `%USERPROFILE%\.ssh`、`.aws` 和 Chrome／Edge 用户资料目录。另存到其他目录的私钥需要单独覆盖，具体路径与验证方法见[插件默认防护](https://github.com/finogeeks/finsafe/blob/main/docs/zh-CN/protection/defaults.md)。
+
+默认配置不是“只允许工作区”的隔离：其他获准位置仍可能可读或可写，也没有通用的 `.env` 文件名拒绝规则。可写文件仍可能被修改或删除。
+
+### 文件保护也会阻止网络上传或自动脱敏模型请求吗？
+
+不会。已发布的 OpenCode Windows 插件默认使用宿主网络；“已受保护”不表示启用目标网站过滤、HTTPS 内容检查或 PII 脱敏。需要外发内容保护时，先查看[网络与 PII 范围](https://github.com/finogeeks/finsafe/blob/main/docs/zh-CN/protection/network-pii.md)。
+
+## 已发布的防护示例
+
 以下示例展示这些边界在实际场景中的作用：
 
 | 隐私 | 桌面 | 系统 | 数据 |

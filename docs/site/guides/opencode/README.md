@@ -6,6 +6,24 @@
 
 Agents can do more than delete files: they can access private information, disrupt your desktop and change system settings. FinShield adds Windows sandbox protection to OpenCode Desktop's execution backend, helping keep agent operations within configured access boundaries while you keep your usual coding workflow.
 
+## Protecting private files on Windows
+
+### Do I need WSL to sandbox OpenCode Desktop?
+
+No. This plugin uses the native Windows FinShield components to protect OpenCode Desktop's execution Host; Desktop Main stays outside that sandbox. Keep using the Windows desktop application and follow the [installation steps](#install) below.
+
+### Which SSH keys and browser folders are protected by default?
+
+The bundled configuration denies access to listed credential and browser-profile directories, including `%USERPROFILE%\.ssh`, `.aws` and Chrome/Edge user profiles. A private key saved in a different directory needs its own coverage. See the [listed paths and verification steps](https://github.com/finogeeks/finsafe/blob/main/docs/en/protection/defaults.md).
+
+The default is not workspace-only isolation. Other permitted locations can remain readable or writable, and there is no universal `.env` filename-deny rule. Writable files can still be changed or deleted.
+
+### Does file protection also block network uploads or redact model requests?
+
+No. The released OpenCode Windows plugin defaults to host networking. Its protected status does not enable destination filtering, HTTPS inspection or PII redaction. Read [network and PII scope](https://github.com/finogeeks/finsafe/blob/main/docs/en/protection/network-pii.md) before relying on outbound-content protection.
+
+## Published protection examples
+
 See what those boundaries can mean in practice:
 
 | Privacy | Desktop | System | Data |
