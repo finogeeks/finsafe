@@ -4,6 +4,22 @@
 
 FinShield 为主流 Agent 提供文件、系统与桌面的安全边界。优先选择已发布的 Agent 接入插件；也可以通过 `finsafe` 命令行接入。在支持的产品配置中，PII 插件可扩展敏感信息检测与脱敏。
 
+## 从你的目标开始
+
+| 你想完成什么 | 阅读入口 |
+| --- | --- |
+| 了解产品、安装并使用现有 Agent | [产品介绍](overview/product-introduction.md)、[安装与验证](getting-started/install.md)、[兼容矩阵](agents/compatibility.md) |
+| 为自己的应用接入保护，或扩展 PII | [开发与集成](development/README.md)、[接入方式与最小示例](development/integration-guide.md) |
+| 了解企业方案并讨论试点 | [企业方案与联系入口](enterprise/README.md) |
+
+## 深入了解安全机制
+
+想知道“保护在哪里执行”，可以从[安全原理目录](architecture/README.md)进入。理解机制后，再按[高级配置与 CLI 参考](reference/cli-configuration.md)核对所安装版本支持的入口。
+
+- [Windows 网络隔离与 WFP](architecture/windows-network.md)：网络限制对象、代理分工和覆盖边界。
+- [Windows 桌面交互与 Job UI](architecture/windows-job-ui.md)：限制作用、兼容性选择和验证方法。
+- [Inspector 网络与内容检查](architecture/inspector.md)：流量路径、TLS 信任、PII、留存和失败行为。
+
 ## 快速开始
 
 1. [查看兼容矩阵](agents/compatibility.md)，确认 Agent 形态、平台、插件状态与验证范围。
@@ -39,7 +55,9 @@ FinShield 为主流 Agent 提供文件、系统与桌面的安全边界。优先
 
 PII 插件扩展敏感信息处理规则，与 Agent 接入插件用途不同。正式接入需匹配产品版本及可检查的请求路径；商用须事先取得书面许可，见[开发包许可](https://github.com/finogeeks/finsafe/blob/main/pii-plugins/LICENSE)。
 
-## 企业部署与深入阅读
+## 企业方案与深入阅读
+
+[企业方案](enterprise/README.md)介绍需求评估、试点与合作方式。[联系 Finogeeks](mailto:contact@finogeeks.com)讨论具体环境和交付范围。
 
 [智安盾白皮书](reference/whitepaper.md)：产品能力、接入方式、技术实现与Safety Arena当前Windows测评，附38项场景清单和统计方法。产品介绍与白皮书作为深入阅读材料，实际安装先从对应 Agent 指南开始。
 
@@ -56,8 +74,8 @@ PII 插件扩展敏感信息处理规则，与 Agent 接入插件用途不同。
 - [安装与验证](getting-started/README.md).
 - [Agent 接入](agents/README.md).
 - [配置与验证防护](protection/README.md).
-- [PII 插件与扩展开发](development/README.md).
-- [企业部署](enterprise/README.md).
+- [开发与集成](development/README.md).
+- [企业方案](enterprise/README.md).
 - [参考资料与支持](reference/README.md).
 
 ## 架构与图示

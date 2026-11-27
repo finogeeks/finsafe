@@ -55,9 +55,9 @@ async function writeLlmIndexes(output, pages) {
     ['getting-started', 'Getting started', '开始使用'],
     ['agents', 'Agent integrations', 'Agent 接入'],
     ['overview', 'Product and platform scope', '产品与平台范围'],
-    ['development', 'Plugin development', '插件开发'],
-    ['architecture', 'Public plugin designs', '公开插件设计'],
-    ['enterprise', 'Enterprise deployment', '企业部署'],
+    ['development', 'Development and integration', '开发与集成'],
+    ['architecture', 'Security mechanisms and architecture', '安全原理与架构'],
+    ['enterprise', 'Enterprise solutions', '企业方案'],
     ['reference', 'Reference and support', '参考与支持'],
   ]
   for (const locale of locales) {

@@ -6,6 +6,10 @@ CLI 参数以所安装版本的 `finsafe help` 为准，文档版本范围见[�
 
 [公开版本历史快照](changelog.md)保留已公开的旧版变更；最新安装包以发布页为准。
 
+## 高级配置与命令行
+
+[高级配置与 CLI 参考](cli-configuration.md)解释正式、实验性与内部参数的区别，以及适用入口、默认值和配置生效规则。界面没有设置项时，先确认当前版本是否提供受支持的 CLI 操作；不要只凭字段名或参数能被解析就认定功能有效。
+
 ## AI 可读文档
 
 [文档索引](https://finshield.finogeeks.club/zh-CN/llms.txt)按主题链接到本站各页的 Markdown 版本。内容与网页同源，不另设能力声明。入口索引也可从 [llms.txt](https://finshield.finogeeks.club/llms.txt)读取。它便于按需读取，不保证搜索收录或某个模型的回答结果。
