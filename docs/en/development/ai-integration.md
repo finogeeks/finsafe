@@ -1,6 +1,6 @@
 # Integrate FinShield with an AI coding agent
 
-[简体中文](../../zh-CN/development/ai-integration.md) · [Development and integration](README.md)
+[中文](../../zh-CN/development/ai-integration.md) · [Development and integration](README.md)
 
 Ask your AI coding agent to read public documentation matching your environment, propose a minimal integration, and verify it with actual operations. Web pages, single-page Markdown and AI indexes share the same content. Generated commands still need checks against the version, configuration target and execution results.
 

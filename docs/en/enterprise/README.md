@@ -1,6 +1,6 @@
 # Enterprise solutions
 
-[简体中文](../../zh-CN/enterprise/README.md) · [Documentation](../README.md)
+[中文](../../zh-CN/enterprise/README.md) · [Documentation](../README.md)
 
 Teams using Agents for development and office work need clear boundaries for data access and operations, and evidence that protection is active. FinShield enterprise discussions use those needs to define an environment assessment, pilot and delivery scope.
 
@@ -22,7 +22,7 @@ The [enterprise information security governance whitepaper](../resources/agent-s
 
 ## Understand the product and evidence
 
-- [Product introduction](../overview/product-introduction.md): positioning, integration routes and platform scope.
+- [Product introduction](../overview/README.md): positioning, integration routes and platform scope.
 - [Protection guide](../protection/README.md): protected objects, effective defaults and limits.
 - [mechanisms and evaluation archive](../reference/whitepaper.md): technical context and scoped evaluation results.
 - [Agent Safety Arena](https://safety.finaios.ai/): public recordings, conditions and results. A test record describes its own environment and does not replace acceptance in your environment.

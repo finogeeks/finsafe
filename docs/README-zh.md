@@ -6,6 +6,8 @@ FinShield 为主流 Agent 提供文件、系统与桌面的安全边界。优先
 
 ## 快速开始
 
+初次了解？先看[常见问题](zh-CN/reference/faq.md)：32 问讲清 AI safety、Agent safety、沙箱边界，以及为什么需要 FinShield。
+
 1. [查看兼容矩阵](zh-CN/agents/compatibility.md)，确认 Agent 形态、平台、插件状态与验证范围。
 2. [选择接入方式并安装](zh-CN/getting-started/install.md)：DSH／OpenCode Windows 按插件指南接入；Hermes Desktop 可从 FinShield 桌面启动，Kilo CLI 使用测试插件；Codex／Claude CLI 按各自指南接入。
 3. [验证保护生效](zh-CN/getting-started/install.md#验证授权范围)，检查允许与拒绝两种操作。
@@ -26,7 +28,7 @@ FinShield 为主流 Agent 提供文件、系统与桌面的安全边界。优先
 ## 认识 FinShield 与防护配置
 
 - [FinShield 到底防护什么](zh-CN/protection/README.md)：默认保护、仍允许的操作、配置作用、网站访问与 PII 范围。
-- [FinShield简版产品介绍](zh-CN/overview/product-introduction.md)：跨平台定位、安全防护、接入方式与Windows实测结果。
+- [FinShield简版产品介绍](zh-CN/overview/README.md)：跨平台定位、安全防护、接入方式与Windows实测结果。
 - [整体图解介绍](zh-CN/overview/finshield.html)：安全管控、运行记录、企业管理与实测对照。
 - [Windows 产品介绍](zh-CN/overview/windows.md)与[图解介绍](zh-CN/overview/windows.html)：权限、系统与桌面限制，以及敏感信息检查。
 - [Linux/macOS 产品介绍](zh-CN/overview/linux-macos.md)与[图解介绍](zh-CN/overview/linux-macos.html)：平台能力、接入方式与限制。
@@ -51,8 +53,8 @@ PII 插件扩展敏感信息处理规则，与 Agent 接入插件用途不同。
 
 ## 按主题浏览
 
-- [产品与保护边界](zh-CN/overview/README.md).
-- [安装与验证](zh-CN/getting-started/README.md).
+- [产品概览](zh-CN/overview/README.md).
+- [安装与验证](zh-CN/getting-started/install.md).
 - [Agent 接入](zh-CN/agents/README.md).
 - [配置与验证防护](zh-CN/protection/README.md).
 - [PII 插件与扩展开发](zh-CN/development/README.md).

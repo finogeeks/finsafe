@@ -2,7 +2,7 @@
 
 # FinShield whitepaper: Agent security and data value
 
-[简体中文](../finsafe-whitepaper-zh.md) · [Documentation](../README.md) · [Agent Safety Evaluation](https://agent-safety-arena.finogeeks.club/index.html) ([中文](https://agent-safety-arena.finogeeks.club/zh-CN.html))
+[中文](../finsafe-whitepaper-zh.md) · [Documentation](../README.md) · [Agent Safety Evaluation](https://agent-safety-arena.finogeeks.club/index.html) ([中文](https://agent-safety-arena.finogeeks.club/zh-CN.html))
 
 **Work within authorization boundaries and build data assets during business operations**
 

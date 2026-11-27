@@ -1,6 +1,6 @@
 # Development and integration
 
-[简体中文](../../zh-CN/development/README.md) · [Documentation](../README.md)
+[中文](../../zh-CN/development/README.md) · [Documentation](../README.md)
 
 Choose an entry by the task you need to complete. Using an existing plugin, launching a command through the CLI, integrating a host and extending PII processing have different platform, version and support requirements.
 

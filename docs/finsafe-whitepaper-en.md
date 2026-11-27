@@ -1,6 +1,6 @@
 # FinShield whitepaper: Agent security and data collection
 
-[简体中文](zh-CN/reference/whitepaper.md) · [Documentation](en/README.md) · [Safety Arena evaluations](https://safety.finaios.ai/)
+[中文](zh-CN/reference/whitepaper.md) · [Documentation](en/README.md) · [Safety Arena evaluations](https://safety.finaios.ai/)
 
 | Document information | Value |
 | --- | --- |

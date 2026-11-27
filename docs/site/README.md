@@ -1,6 +1,6 @@
 # Maintain the FinShield documentation website
 
-[简体中文](README-zh.md)
+[中文](README-zh.md)
 
 This public repository owns the website, user guides, plugin usage documentation, homepages, contribution guides and `AGENTS.md`. Edit and review them here. No private checkout, private-source synchronization or product release is required.
 
@@ -32,6 +32,8 @@ flowchart LR
 ```
 
 Each language uses one stable sidebar tree across documentation routes. Keep the formal whitepaper and its web full text first; do not reorder groups when readers change pages. Other groups stay collapsible and retain their state during client navigation. The former technical whitepaper keeps its URL as a historical mechanisms/evaluation reference, separate from the formal publication; AI bundles link to it without reproducing superseded body text.
+
+Top navigation and the sidebar share six primary sections from `sections()` in `.vitepress/config.mts`: Whitepaper, Product, User guides, Developers, Enterprise and Resources. Download and Contact remain top-navigation shortcuts. Product contains only the overview, common questions and security mechanisms. Platform details are linked from the substantive overview; the former short product and installation landing pages are consolidated into the overview and installation guide. Individual Agent guides are reached through the integration index in User guides. Protection settings and PII development are nested within their relevant sections.
 
 ## Ownership during product releases
 

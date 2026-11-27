@@ -1,6 +1,6 @@
 # Windows network isolation and WFP
 
-[简体中文](../../zh-CN/architecture/windows-network.md) · [Security principles](README.md) · [Network and PII](../protection/network-pii.md)
+[中文](../../zh-CN/architecture/windows-network.md) · [Security principles](README.md) · [Network and PII](../protection/network-pii.md)
 
 An Agent that can connect to the network does not necessarily have its requests inspected. Windows network protection has two separate responsibilities: **network boundaries constrain which connections are permitted; the connected proxy and Inspector determine how supported request content is processed.**
 

@@ -1,6 +1,6 @@
 # Windows system and desktop protection
 
-[简体中文](../../zh-CN/protection/windows-security.md) · [Protection guide](README.md) · [Plugin defaults](defaults.md)
+[中文](../../zh-CN/protection/windows-security.md) · [Protection guide](README.md) · [Plugin defaults](defaults.md)
 
 Agents can call Windows APIs through Python, Node.js, native executables and extensions. This page explains the system restrictions on protected execution processes, the role of Job/UI limits, and what still needs verification for a particular integration.
 

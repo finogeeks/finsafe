@@ -34,7 +34,7 @@ outline: [2, 2]
 | 文件 | PDF，2.8 MB（2,901,634字节） |
 | 资料范围 | 资料检索截至2026年11月26日；产品资料以书中所列版本为依据 |
 
-本页提供原版 PDF 在线浏览和下载。[HTML 全文](agent-security-governance-full.md)是同版内容的网页呈现，便于阅读、搜索和引用；如呈现存在差异，以 PDF 为准。书中的产品与测试说明对应所列平台、版本和场景；当前安装与集成请查阅[使用指南](../getting-started/README.md)和[开发与集成](../development/README.md)。
+本页提供原版 PDF 在线浏览和下载。[HTML 全文](agent-security-governance-full.md)是同版内容的网页呈现，便于阅读、搜索和引用；如呈现存在差异，以 PDF 为准。书中的产品与测试说明对应所列平台、版本和场景；当前安装与集成请查阅[使用指南](../getting-started/install.md)和[开发与集成](../development/README.md)。
 
 ## 目录与阅读入口
 

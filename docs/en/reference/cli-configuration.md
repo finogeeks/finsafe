@@ -1,6 +1,6 @@
 # Advanced CLI and configuration
 
-[简体中文](../../zh-CN/reference/cli-configuration.md) · [Reference](README.md) · [Configuration effects](../protection/configuration.md)
+[中文](../../zh-CN/reference/cli-configuration.md) · [Reference](README.md) · [Configuration effects](../protection/configuration.md)
 
 A setting absent from the interface may still have a supported CLI entry. An accepted CLI value does not prove that the current process changed. This page explains how to choose public entries, place arguments and verify activation. It is an entry to existing public commands and fields, not an exhaustive option list for every platform and subcommand.
 

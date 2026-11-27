@@ -1,6 +1,6 @@
 # Choose a FinShield integration
 
-[简体中文](../../zh-CN/development/integration-guide.md) · [Development and integration](README.md) · [Compatibility](../agents/compatibility.md)
+[中文](../../zh-CN/development/integration-guide.md) · [Development and integration](README.md) · [Compatibility](../agents/compatibility.md)
 
 Start by identifying the process that executes the task. Installing a desktop plugin, launching a protected service and extending content detection solve different problems. This page helps you choose an existing public entry and verify a command process before adapting your application.
 

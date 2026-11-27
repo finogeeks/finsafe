@@ -1,6 +1,6 @@
 # Security mechanisms and architecture
 
-[简体中文](../../zh-CN/architecture/README.md) · [Documentation](../README.md)
+[中文](../../zh-CN/architecture/README.md) · [Documentation](../README.md)
 
 Start with a concrete security question, then return to configuration and task guides. A mechanism, a released interface and one observed test result each have their own scope. Check your platform, release and integration route.
 

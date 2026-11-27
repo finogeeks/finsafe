@@ -1,6 +1,6 @@
 # Historical whitepapers and experiment records
 
-[简体中文](../../zh-CN/reference/history.md) · [Formal whitepaper](../resources/agent-security-governance.md) · [Documentation](../README.md)
+[中文](../../zh-CN/reference/history.md) · [Formal whitepaper](../resources/agent-security-governance.md) · [Documentation](../README.md)
 
 These links pin the original text, experiment conditions and UI/SYS/H/J identifiers to the public commit that merged PR#70. The Chinese and English historical snapshots have different versions and are not combined with the current 38-scenario scores.
 
