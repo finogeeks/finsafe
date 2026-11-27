@@ -1,6 +1,6 @@
 # Changelog
 
-[简体中文](../../zh-CN/reference/changelog.md)
+[中文](../../zh-CN/reference/changelog.md)
 
 > Public release history snapshot from `finogeeks/finsafe` commit `d068728f78ba67380713512399516f0cc8481742`, through 0.9.47. See [releases](https://github.com/finogeeks/finsafe/releases) for current downloads.
 

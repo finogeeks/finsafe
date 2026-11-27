@@ -119,9 +119,9 @@ Machine-readable catalog: ${siteOrigin}/docs.json
 ## Documentation
 
 - [English documentation index](${siteOrigin}/en/llms.txt): Protection, configuration, network and PII, integrations and references.
-- [Simplified Chinese documentation index](${siteOrigin}/zh-CN/llms.txt): Chinese pages and translated public plugin documentation.
+- [Chinese documentation index](${siteOrigin}/zh-CN/llms.txt): Chinese pages and translated public plugin documentation.
 - [English current-documentation text](${siteOrigin}/en/llms-full.txt): Current Markdown bodies with absolute source links; historical references are linked separately.
-- [Simplified Chinese current-documentation text](${siteOrigin}/zh-CN/llms-full.txt): Current Chinese Markdown bodies with the same scope and limits.
+- [Chinese current-documentation text](${siteOrigin}/zh-CN/llms-full.txt): Current Chinese Markdown bodies with the same scope and limits.
 `, 'utf8')
 }
 
@@ -297,7 +297,7 @@ hero:
       text: English documentation
       link: /en/
     - theme: alt
-      text: 简体中文文档
+      text: 中文文档
       link: /zh-CN/
 features:
   - title: What FinShield protects

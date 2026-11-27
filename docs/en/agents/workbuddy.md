@@ -1,6 +1,6 @@
 # WorkBuddy desktop integration (Windows)
 
-[简体中文](../../zh-CN/agents/workbuddy.md) · [Agent integrations](README.md)
+[中文](../../zh-CN/agents/workbuddy.md) · [Agent integrations](README.md)
 
 FinShield provides a protected desktop launch entry for WorkBuddy on Windows x64. WorkBuddy keeps its own account, models and task interface. FinShield constrains the execution path according to the selected authorization and configuration.
 

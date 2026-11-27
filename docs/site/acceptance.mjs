@@ -12,12 +12,12 @@ const exists = async (name) => { try { await access(join(dist, name)); return tr
 const catalog = JSON.parse(await read('docs.json'))
 const metadata = JSON.parse(await readFile(join(site, '.generated/metadata.json'), 'utf8'))
 const whitepapers = JSON.parse(await readFile(join(site, 'whitepapers.json'), 'utf8'))
-const orders = { 'zh-CN': ['workbuddy', 'dsh', 'codex', 'claude', 'opencode', 'hermes', 'kilo'],
-  en: ['codex', 'claude', 'opencode', 'hermes', 'kilo', 'dsh', 'workbuddy'] }
+const locales = ['zh-CN', 'en']
+const agents = ['workbuddy', 'dsh', 'codex', 'claude', 'opencode', 'hermes', 'kilo']
 
 function sidebarStructure(html) {
   const sidebar = /<aside\b[^>]*>[\s\S]*?<\/aside>/.exec(html)?.[0] ?? ''
-  return [...sidebar.matchAll(/<(h2|a)\b([^>]*)>([\s\S]*?)<\/\1>/g)]
+  return [...sidebar.matchAll(/<(h2|h3|a)\b([^>]*)>([\s\S]*?)<\/\1>/g)]
     .map(([, tag, attributes, content]) => ({ tag,
       href: /\bhref="([^"]*)"/.exec(attributes)?.[1] ?? null,
       text: content.replace(/<[^>]+>/g, '').trim() }))
@@ -26,25 +26,34 @@ function sidebarStructure(html) {
 assert.equal((await read('CNAME')).trim(), 'finshield.finogeeks.club')
 assert.equal(await read('googlea9662cdfe1496029.html'), 'google-site-verification: googlea9662cdfe1496029.html')
 assert.ok(!(await read('sitemap.xml')).includes('googlea9662cdfe1496029.html'))
-for (const [locale, order] of Object.entries(orders)) {
+for (const locale of locales) {
   const home = await read(locale + '/index.html')
   assert.equal(sidebarStructure(home)[0].text, locale === 'zh-CN' ? '白皮书' : 'Whitepaper',
     'The formal whitepaper must be the first sidebar group')
+  const topNavigation = /<nav\b(?=[^>]*\bclass="[^"]*VPNavBarMenu\b)[^>]*>([\s\S]*?)<\/nav>/.exec(home)?.[1] ?? ''
+  const topLabels = [...topNavigation.matchAll(/<a\b[^>]*>([\s\S]*?)<\/a>/g)]
+    .map(([, content]) => content.replace(/<[^>]+>/g, '').trim())
+  const groups = sidebarStructure(home).filter((item) => item.tag === 'h2').map((item) => item.text)
+  assert.equal(groups.length, 6, 'Use six primary sections instead of separate Agent and technical groups')
+  assert.deepEqual(topLabels.slice(0, 6), groups, 'Top navigation and sidebar must share section names and order')
+  const questions = sidebarStructure(home).find((item) => item.href === `/${locale}/reference/faq.html`)
+  assert.equal(questions?.text, locale === 'zh-CN' ? '常见问题' : 'Common questions')
   const landing = await read(`${locale}/resources/agent-security-governance.html`)
   const primaryAction = /<a\b(?=[^>]*\bclass="whitepaper-primary")[^>]*>/.exec(landing)?.[0]
   assert.ok(primaryAction?.includes(`href="/${locale}/resources/agent-security-governance-full.html"`),
     'The primary whitepaper action must open the readable HTML full text')
   for (const route of ['resources/agent-security-governance', 'reference/whitepaper',
     'resources/agent-security-governance-full', 'reference/index', 'enterprise/index',
-    'development/index', 'architecture/index', 'overview/windows', 'getting-started/install']) {
+    'development/index', 'architecture/index', 'overview/windows', 'getting-started/install', 'reference/faq']) {
     assert.deepEqual(sidebarStructure(await read(`${locale}/${route}.html`)), sidebarStructure(home),
       `Sidebar navigation must keep its structure: ${locale}/${route}.html`)
   }
   const sidebar = home.split('<aside')[1].split('</aside>')[0]
-  const positions = order.map((agent) => sidebar.indexOf(`/${locale}/agents/${agent}.html`))
-  assert.ok(positions.every((position) => position >= 0))
-  assert.deepEqual(positions, [...positions].sort((a, b) => a - b))
-  for (const agent of order) assert.ok(await exists(`${locale}/agents/${agent}.html`))
+  assert.ok(sidebar.includes(`href="/${locale}/agents/"`), 'Keep one Agent integration entry in user guides')
+  for (const agent of agents) {
+    assert.ok(!sidebar.includes(`/${locale}/agents/${agent}.html`), 'Individual Agents belong in the integration index')
+    assert.ok(await exists(`${locale}/agents/${agent}.html`), 'Keep individual guides available')
+  }
   for (const topic of ['core', 'windows', 'desktop', 'plugin-startup', 'plugin-updater',
     'opencode-integration', 'opencode-handoff', 'opencode-verification', 'opencode-development']) {
     assert.ok(!await exists(`${locale}/architecture/${topic}.html`), 'Do not publish private architecture')

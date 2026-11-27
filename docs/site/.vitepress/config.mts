@@ -5,93 +5,82 @@ import metadata from '../metadata.json'
 
 const repo = 'https://github.com/finogeeks/finsafe'
 
-function navigation(language: 'en' | 'zh-CN') {
+function sections(language: 'en' | 'zh-CN') {
   const zh = language === 'zh-CN'
   const prefix = `/${language}/`
+  const item = (en: string, cn: string, path: string) => ({ text: zh ? cn : en, link: prefix + path })
   return [
-    { text: zh ? '白皮书' : 'Whitepaper', link: prefix + 'resources/agent-security-governance' },
-    { text: zh ? '产品介绍' : 'Product', link: prefix + 'overview/' },
-    { text: zh ? '使用指南' : 'User guides', link: prefix + 'getting-started/' },
-    { text: zh ? '开发与集成' : 'Developers', link: prefix + 'development/' },
-    { text: zh ? '企业方案' : 'Enterprise', link: prefix + 'enterprise/' },
-    { text: zh ? '资源与支持' : 'Resources', link: prefix + 'reference/' },
+    { ...item('Whitepaper', '白皮书', 'resources/agent-security-governance'),
+      activeMatch: `^${prefix}resources/agent-security-governance(?:-full)?(?:\\.html)?$`, items: [
+      item('Overview & PDF', '白皮书介绍与 PDF 下载', 'resources/agent-security-governance'),
+      item('Read online', '在线阅读全文（HTML）', 'resources/agent-security-governance-full'),
+    ] },
+    { ...item('Product', '产品介绍', 'overview/'),
+      activeMatch: `^${prefix}(?:$|index\\.html$|overview/|architecture/|reference/faq(?:\\.html)?$)`, items: [
+      item('Product overview', '产品概览', 'overview/'),
+      item('Common questions', '常见问题', 'reference/faq'),
+      item('Security mechanisms', '安全原理', 'architecture/'),
+    ] },
+    { ...item('User guides', '使用指南', 'getting-started/install'),
+      activeMatch: `^${prefix}(?:getting-started/|agents/|protection/)`, items: [
+      item('Install & verify', '安装与验证', 'getting-started/install'),
+      item('Agent integration', 'Agent 接入', 'agents/'),
+      item('Compatibility', '兼容范围', 'agents/compatibility'),
+      { text: zh ? '防护与配置' : 'Protection settings', collapsed: true, items: [
+        item('Protection guide', 'FinShield 防护什么', 'protection/'),
+        item('Plugin defaults', '插件默认防护', 'protection/defaults'),
+        item('Configuration', '配置项作用与生效', 'protection/configuration'),
+        item('Windows protection', 'Windows 系统与桌面防护', 'protection/windows-security'),
+        item('Network & PII', '网络访问、外泄与 PII', 'protection/network-pii'),
+      ] },
+      item('DSH operations', 'DSH 运行说明', 'agents/dsh-operations'),
+    ] },
+    { ...item('Developers', '开发与集成', 'development/'),
+      activeMatch: `^${prefix}(?:development/|reference/cli-configuration(?:\\.html)?$)`, items: [
+      item('Integration overview', '集成概览', 'development/'),
+      item('Integration examples', '接入方式与最小示例', 'development/integration-guide'),
+      item('Integrate with AI', '使用 AI 完成集成', 'development/ai-integration'),
+      item('CLI reference', '高级配置与 CLI 参考', 'reference/cli-configuration'),
+      { text: zh ? 'PII 插件开发' : 'PII plugin development', collapsed: true, items: [
+        item('PII developer kit', '开发包', 'development/pii'),
+        item('PII protocol', '插件协议', 'development/pii-protocol'),
+        item('PII integration', '产品接入', 'development/pii-integration'),
+        item('Debugging', '调试指南', 'development/pii-debugging'),
+        item('Redactor example', '脱敏插件示例', 'development/pii-redactor'),
+      ] },
+    ] },
+    { ...item('Enterprise', '企业方案', 'enterprise/'),
+      activeMatch: `^${prefix}enterprise/`, items: [
+      item('Solutions & pilots', '方案介绍与试点', 'enterprise/'),
+      item('Contact us', '联系我们', `enterprise/#${zh ? '联系我们' : 'contact-us'}`),
+    ] },
+    { ...item('Resources', '资源与支持', 'reference/'),
+      activeMatch: `^${prefix}reference/(?!faq(?:\\.html)?$|cli-configuration(?:\\.html)?$)`, items: [
+      item('Reference', '参考资料', 'reference/'),
+      item('Release history', '版本记录', 'reference/changelog'),
+      item('Technical archive', '产品机制与测评资料（历史）', 'reference/whitepaper'),
+      item('Contributing', '参与贡献', 'reference/contributing'),
+      item('Get help', '获取帮助', `getting-started/install#${zh ? '获取帮助' : 'get-help'}`),
+      { text: zh ? '版本与下载' : 'Downloads', link: `${repo}/releases` },
+      { text: zh ? '问题反馈' : 'Report a problem', link: `${repo}/issues/new/choose` },
+    ] },
+  ]
+}
+
+function navigation(language: 'en' | 'zh-CN') {
+  const zh = language === 'zh-CN'
+  return [
+    ...sections(language).map(({ text, link, activeMatch }) => ({ text, link, activeMatch })),
     { text: zh ? '下载' : 'Download', link: `${repo}/releases/latest` },
-    { text: zh ? '联系我们' : 'Contact', link: prefix + `enterprise/#${zh ? '联系我们' : 'contact-us'}` },
+    { text: zh ? '联系我们' : 'Contact', link: `/${language}/enterprise/#${zh ? '联系我们' : 'contact-us'}` },
   ]
 }
 
 function sidebar(language: 'en' | 'zh-CN') {
-  const zh = language === 'zh-CN'
-  const prefix = `/${language}/`
-  const item = (en: string, cn: string, path: string) => ({ text: zh ? cn : en, link: prefix + path })
-  const whitepaper = { text: zh ? '白皮书' : 'Whitepaper', items: [
-    item('Overview & PDF', '白皮书介绍与 PDF 下载', 'resources/agent-security-governance'),
-    item('Read online', '在线阅读全文（HTML）', 'resources/agent-security-governance-full'),
-  ] }
-  const start = { text: zh ? '开始使用' : 'Get started', items: [
-    item('Documentation', '文档首页', ''),
-    item('Install & verify', '安装与验证', 'getting-started/install'),
-    item('Compatibility', '兼容矩阵', 'agents/compatibility'),
-  ] }
-  const product = { text: zh ? '产品介绍' : 'Product', items: [
-    item('Product overview', '产品概览', 'overview/product-introduction'),
-    item('Scope & limits', '概览与防护边界', 'overview/'),
-    item('Windows', 'Windows 能力', 'overview/windows'),
-    item('Linux & macOS', 'Linux 与 macOS 能力', 'overview/linux-macos'),
-  ] }
-  const protection = { text: zh ? '防护与配置' : 'Protection', items: [
-    item('Protection guide', 'FinShield 防护什么', 'protection/'),
-    item('Plugin defaults', '插件默认防护', 'protection/defaults'),
-    item('Configuration', '配置项作用与生效', 'protection/configuration'),
-    item('Windows protection', 'Windows 系统与桌面防护', 'protection/windows-security'),
-    item('Network & PII', '网络访问、外泄与 PII', 'protection/network-pii'),
-  ] }
-  const agents = { text: zh ? '支持的 Agent 与使用指南' : 'Agent guides', items:
-    (zh ? ['workbuddy', 'dsh', 'codex', 'claude', 'opencode', 'hermes', 'kilo']
-        : ['codex', 'claude', 'opencode', 'hermes', 'kilo', 'dsh', 'workbuddy']).map((agent) => ({
-      text: ({ workbuddy: 'WorkBuddy', dsh: 'DSH Desktop', codex: 'Codex CLI', claude: 'Claude Code CLI',
-        opencode: 'OpenCode Desktop', hermes: 'Hermes Desktop', kilo: 'Kilo CLI' })[agent],
-      link: prefix + 'agents/' + agent,
-    })),
-  }
-  const development = { text: zh ? '开发与集成' : 'Developers', items: [
-    item('Integration overview', '集成概览', 'development/'),
-    item('Integration examples', '接入方式与最小示例', 'development/integration-guide'),
-    item('Integrate with AI', '使用 AI 完成集成', 'development/ai-integration'),
-    item('CLI reference', '高级配置与 CLI 参考', 'reference/cli-configuration'),
-    item('PII developer kit', 'PII 插件开发包', 'development/pii'),
-    item('PII protocol', 'PII 插件协议', 'development/pii-protocol'),
-    item('PII integration', 'PII 产品接入', 'development/pii-integration'),
-    item('Debugging', '调试指南', 'development/pii-debugging'),
-    item('Redactor example', '脱敏插件示例', 'development/pii-redactor'),
-  ] }
-  const architecture = { text: zh ? '安全原理与架构' : 'Security internals', items: [
-    item('Architecture overview', '安全原理目录', 'architecture/'),
-    item('Networking & WFP', 'Windows 网络隔离与 WFP', 'architecture/windows-network'),
-    item('Desktop & Job UI', 'Windows 桌面交互与 Job UI', 'architecture/windows-job-ui'),
-    item('Inspector', 'Inspector 网络与内容检查', 'architecture/inspector'),
-    item('DSH plugin', 'DSH 插件架构', 'architecture/dsh'),
-    item('OpenCode plugin', 'OpenCode 插件架构', 'architecture/opencode'),
-    item('Technical archive', '产品机制与测评资料（历史）', 'reference/whitepaper'),
-  ] }
-  const enterprise = { text: zh ? '企业方案' : 'Enterprise', items: [
-    item('Solutions & pilots', '方案介绍与试点', 'enterprise/'),
-    item('Contact us', '联系我们', `enterprise/#${zh ? '联系我们' : 'contact-us'}`),
-  ] }
-  const reference = { text: zh ? '资源与支持' : 'Resources', items: [
-    item('Reference', '参考资料', 'reference/'),
-    item('DSH operations', 'DSH 运行说明', 'agents/dsh-operations'),
-    item('Release history', '版本记录', 'reference/changelog'),
-    item('Contributing', '参与贡献', 'reference/contributing'),
-    item('Get help', '获取帮助', `getting-started/install#${zh ? '获取帮助' : 'get-help'}`),
-    { text: zh ? '版本与下载' : 'Downloads', link: `${repo}/releases` },
-    { text: zh ? '问题反馈' : 'Report a problem', link: `${repo}/issues/new/choose` },
-  ] }
   // A single tree keeps group positions, expansion and scroll stable on navigation.
-  return { [prefix]: [whitepaper, start,
-    ...[product, protection, agents, development, architecture, enterprise, reference]
-      .map((group) => ({ ...group, collapsed: true })),
-  ] }
+  return { [`/${language}/`]: sections(language).map(({ text, items }, index) => ({
+    text, items, collapsed: index > 1,
+  })) }
 }
 
 export default defineConfig({
@@ -144,7 +133,7 @@ export default defineConfig({
       },
     },
     'zh-CN': {
-      label: '简体中文', lang: 'zh-CN', link: '/zh-CN/',
+      label: '中文', lang: 'zh-CN', link: '/zh-CN/',
       title: 'FinShield 文档中心',
       description: 'FinShield 默认防护、配置项、网络访问、PII、Agent 接入与验证指南。',
       themeConfig: {

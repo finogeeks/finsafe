@@ -1,6 +1,6 @@
 # What does FinShield protect?
 
-[简体中文](../../zh-CN/protection/README.md) · [Documentation](../README.md)
+[中文](../../zh-CN/protection/README.md) · [Documentation](../README.md)
 
 FinShield adds file, system, device-privacy and desktop-interaction boundaries to protected Agent execution processes. This guide explains **what is protected by default, what remains allowed, what configuration changes, and how to check the result**. Installation is covered by each [Agent integration guide](../agents/README.md).
 

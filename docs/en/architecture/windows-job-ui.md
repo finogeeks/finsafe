@@ -1,6 +1,6 @@
 # Windows desktop interaction and Job UI
 
-[简体中文](../../zh-CN/architecture/windows-job-ui.md) · [Security principles](README.md) · [Windows protection](../protection/windows-security.md)
+[中文](../../zh-CN/architecture/windows-job-ui.md) · [Security principles](README.md) · [Windows protection](../protection/windows-security.md)
 
 Running a program for an Agent does not necessarily require letting it read the clipboard, change display settings or operate another application's windows. Job UI supplies restrictions on these interactions. File permissions, networking and initial desktop placement remain separate controls.
 

@@ -1,10 +1,12 @@
 # FinShield Documentation
 
-[简体中文](zh-CN/README.md) · [Product home](https://github.com/finogeeks/finsafe) · [Latest download](https://github.com/finogeeks/finsafe/releases/latest)
+[中文](zh-CN/README.md) · [Product home](https://github.com/finogeeks/finsafe) · [Latest download](https://github.com/finogeeks/finsafe/releases/latest)
 
 FinShield gives mainstream Agents a security boundary for files, system functions, and the desktop. Prefer a released Agent integration plugin, or connect through the `finsafe` CLI. In supporting product configurations, PII plugins extend sensitive-information detection and redaction.
 
 ## Get started
+
+New to FinShield? Read [common questions](en/reference/faq.md): 32 questions about AI safety, Agent safety, sandbox boundaries and why FinShield exists.
 
 1. [Check compatibility](en/agents/compatibility.md): Agent form, platform, plugin status, and verification scope.
 2. [Choose an integration route and install](en/getting-started/install.md): follow the DSH / OpenCode Windows plugin guides, use the FinShield launcher for Hermes Desktop or the test plugin for Kilo CLI, and follow the individual CLI guides for Codex and Claude.
@@ -26,7 +28,7 @@ FinShield gives mainstream Agents a security boundary for files, system function
 ## Understand FinShield and configure protection
 
 - [What FinShield protects](en/protection/README.md): defaults, allowed operations, configuration effects, website access and PII scope.
-- [FinShield product introduction](en/overview/product-introduction.md): cross-platform positioning, security, integration and Windows evaluation results.
+- [FinShield product introduction](en/overview/README.md): cross-platform positioning, security, integration and Windows evaluation results.
 - [Overall illustrated introduction](en/overview/finshield.html): security controls, records, enterprise management, and scoped evaluations.
 - [Windows introduction](en/overview/windows.md) and [illustrated overview](en/overview/windows.html): permissions, system and desktop restrictions, and sensitive-information inspection.
 - [Linux/macOS introduction](en/overview/linux-macos.md) and [illustrated overview](en/overview/linux-macos.html): platform capabilities, integration routes, and limits.
@@ -51,8 +53,8 @@ The [FinShield whitepaper](en/reference/whitepaper.md) covers product capabiliti
 
 ## Browse by topic
 
-- [Product and protection boundaries](en/overview/README.md).
-- [Install and verify](en/getting-started/README.md).
+- [Product overview](en/overview/README.md).
+- [Install and verify](en/getting-started/install.md).
 - [Agent integration](en/agents/README.md).
 - [Configure and verify protection](en/protection/README.md).
 - [PII plugins and extensions](en/development/README.md).

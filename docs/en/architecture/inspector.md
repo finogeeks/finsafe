@@ -1,6 +1,6 @@
 # Inspector: how network requests reach content inspection
 
-[简体中文](../../zh-CN/architecture/inspector.md) · [Architecture and diagrams](README.md) · [Network access, exfiltration, and PII](../protection/network-pii.md)
+[中文](../../zh-CN/architecture/inspector.md) · [Architecture and diagrams](README.md) · [Network access, exfiltration, and PII](../protection/network-pii.md)
 
 **Inspector provides proxying and content inspection for requests routed through a supported integration. Whether it sees a particular transmission depends on the actual traffic path, TLS settings, request format, and effective configuration.** A running Inspector process or a protected status alone does not confirm that the request was redacted.
 

@@ -4,7 +4,7 @@ outline: [2, 2]
 
 # Agent-Era Enterprise Information Security Governance Whitepaper
 
-[简体中文](../../zh-CN/resources/agent-security-governance.md)
+[中文](../../zh-CN/resources/agent-security-governance.md)
 
 <div class="whitepaper-hero">
   <img class="whitepaper-cover" src="/whitepapers/agent-security-governance-2026-11-en/cover.webp" alt="Cover of the Agent-Era Enterprise Information Security Governance Whitepaper, English translation, November 2026" width="990" height="1400">
@@ -34,7 +34,7 @@ outline: [2, 2]
 | File size | 3,541,232 bytes |
 | Source scope | Research accessed through November 26, 2026; product information follows the versions cited in the whitepaper |
 
-This English edition translates the [Chinese original](../../zh-CN/resources/agent-security-governance.md) and preserves its 37-page layout. Figures retain the original graphics, backgrounds and connections; only their text is translated. The text, tables, diagram labels and references retain the source meaning. If a translation or presentation differs, consult the Chinese PDF. Product and test descriptions apply to the stated platforms, versions and scenarios. Use the current [user guides](../getting-started/README.md) and [development and integration guides](../development/README.md) for installation and integration.
+This English edition translates the [Chinese original](../../zh-CN/resources/agent-security-governance.md) and preserves its 37-page layout. Figures retain the original graphics, backgrounds and connections; only their text is translated. The text, tables, diagram labels and references retain the source meaning. If a translation or presentation differs, consult the Chinese PDF. Product and test descriptions apply to the stated platforms, versions and scenarios. Use the current [user guides](../getting-started/install.md) and [development and integration guides](../development/README.md) for installation and integration.
 
 ## Contents and reading links
 

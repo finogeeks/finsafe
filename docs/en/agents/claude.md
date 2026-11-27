@@ -1,6 +1,6 @@
 # Connect Claude Code through the command line (Windows)
 
-[简体中文](../../zh-CN/agents/claude.md) · [Documentation](../README.md) · [Compatibility matrix](compatibility.md)
+[中文](../../zh-CN/agents/claude.md) · [Documentation](../README.md) · [Compatibility matrix](compatibility.md)
 
 This guide uses Safety Arena's Windows route: start Claude Code CLI with FinShield `self-confine`, keeping the interactive UI in an ordinary terminal. **Claude CLI integration is supported now and requires no plugin.** It does not cover Claude Desktop or Agent verification on Linux/macOS.
 

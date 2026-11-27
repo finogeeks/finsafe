@@ -14,7 +14,7 @@ FinShield（智安盾）是面向 AI 智能体执行进程的操作系统级沙�
 
 | 你想完成什么 | 阅读入口 |
 | --- | --- |
-| 了解产品、安装并使用现有 Agent | [产品介绍](overview/product-introduction.md)、[安装与验证](getting-started/install.md)、[兼容矩阵](agents/compatibility.md) |
+| 了解产品、安装并使用现有 Agent | [产品介绍](overview/README.md)、[安装与验证](getting-started/install.md)、[兼容矩阵](agents/compatibility.md) |
 | 为自己的应用接入保护，或扩展 PII | [开发与集成](development/README.md)、[接入方式与最小示例](development/integration-guide.md) |
 | 了解企业方案并讨论试点 | [企业方案与联系入口](enterprise/README.md) |
 
@@ -27,6 +27,8 @@ FinShield（智安盾）是面向 AI 智能体执行进程的操作系统级沙�
 - [Inspector 网络与内容检查](architecture/inspector.md)：流量路径、TLS 信任、PII、留存和失败行为。
 
 ## 快速开始
+
+初次了解？先看[常见问题](reference/faq.md)：32 问讲清 AI safety、Agent safety、沙箱边界，以及为什么需要 FinShield。
 
 1. [查看兼容矩阵](agents/compatibility.md)，确认 Agent 形态、平台、插件状态与验证范围。
 2. [选择接入方式并安装](getting-started/install.md)：DSH／OpenCode Windows 按插件指南接入；Hermes Desktop 可从 FinShield 桌面启动，Kilo CLI 使用测试插件；Codex／Claude CLI 按各自指南接入。
@@ -49,7 +51,7 @@ FinShield（智安盾）是面向 AI 智能体执行进程的操作系统级沙�
 
 - [FinShield 到底防护什么](protection/README.md)：默认保护、仍允许的操作、配置作用、网站访问与 PII 范围。
 - [Windows 系统与桌面防护](protection/windows-security.md)：Job/UI 限制、底层 API 权限、兼容性例外与验证方法。
-- [FinShield简版产品介绍](overview/product-introduction.md)：跨平台定位、安全防护、接入方式与Windows实测结果。
+- [FinShield简版产品介绍](overview/README.md)：跨平台定位、安全防护、接入方式与Windows实测结果。
 - [整体图解介绍](overview/finshield.html)：安全管控、运行记录、企业管理与实测对照。
 - [Windows 产品介绍](overview/windows.md)与[图解介绍](overview/windows.html)：权限、系统与桌面限制，以及敏感信息检查。
 - [Linux/macOS 产品介绍](overview/linux-macos.md)与[图解介绍](overview/linux-macos.html)：平台能力、接入方式与限制。
@@ -76,8 +78,8 @@ PII 插件扩展敏感信息处理规则，与 Agent 接入插件用途不同。
 
 ## 按主题浏览
 
-- [产品与保护边界](overview/README.md).
-- [安装与验证](getting-started/README.md).
+- [产品概览](overview/README.md).
+- [安装与验证](getting-started/install.md).
 - [Agent 接入](agents/README.md).
 - [配置与验证防护](protection/README.md).
 - [开发与集成](development/README.md).

@@ -2,6 +2,8 @@
 
 [English](../../en/reference/README.md) · [Documentation](../README.md)
 
+[常见问题](faq.md)逐一回答 AI safety、Agent safety、沙箱与 FinShield 的 32 个问题，涵盖任务授权、执行边界、测评证据、产品差异及适用条件。
+
 CLI 参数以所安装版本的 `finsafe help` 为准，文档版本范围见[兼容矩阵](../agents/compatibility.md)，技术背景见[产品机制与测评资料（历史）](whitepaper.md)。排障步骤见[Codex](../agents/codex.md#常见问题)、[Claude](../agents/claude.md#常见问题)和[安装指南](../getting-started/install.md#获取帮助)。[问题反馈](https://github.com/finogeeks/finsafe/issues/new/choose)请附脱敏证据。产品问题走公开反馈入口，敏感报告使用支持渠道。
 
 [公开版本历史快照](changelog.md)保留已公开的旧版变更；最新安装包以发布页为准。

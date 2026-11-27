@@ -2,7 +2,7 @@
 
 **[Documentation](https://finshield.finogeeks.club/en/) · [What FinShield protects](https://finshield.finogeeks.club/en/protection/) · [Downloads](https://github.com/finogeeks/finsafe/releases/latest)**
 
-[简体中文](README-zh.md)
+[中文](README-zh.md)
 
 FinShield (formerly FinSAFE) gives Agent execution processes configurable boundaries for files, system functions and desktop operations. Start with your Agent's guide, then check the actual protection state. Integration support and protection scope depend on platform, version and configuration.
 

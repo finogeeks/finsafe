@@ -1,6 +1,6 @@
 # FinShield: protect your privacy, system and data
 
-[简体中文](README-zh.md) · [Documentation](https://finshield.finogeeks.club/en/) · [npm package](https://www.npmjs.com/package/@finogeeks2026/finshield-dsh)
+[中文](README-zh.md) · [Documentation](https://finshield.finogeeks.club/en/) · [npm package](https://www.npmjs.com/package/@finogeeks2026/finshield-dsh)
 
 **Deleting files is dangerous, but agents can do much more. Your privacy, system and data need protection too. FinShield adds sandbox protection to DSH on Windows. Which security boundaries can agents cross, and which can FinShield defend? Let the test results speak.**
 

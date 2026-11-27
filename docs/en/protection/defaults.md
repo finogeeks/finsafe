@@ -1,6 +1,6 @@
 # Plugin defaults
 
-[简体中文](../../zh-CN/protection/defaults.md) · [Protection guide](README.md)
+[中文](../../zh-CN/protection/defaults.md) · [Protection guide](README.md)
 
 This page explains DSH and OpenCode Windows plugin defaults from the public FinSAFE configurations checked on 2026-11-26. It describes bundled configuration, not a substitute for your installed version's effective settings and actual authorization.
 

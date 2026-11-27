@@ -1,6 +1,6 @@
 # Configuration explained
 
-[简体中文](../../zh-CN/protection/configuration.md) · [Protection guide](README.md)
+[中文](../../zh-CN/protection/configuration.md) · [Protection guide](README.md)
 
 Identify your integration first. Bundled DSH / OpenCode settings, the Windows PII integration example and Linux / macOS CLI policies are not interchangeable configurations.
 

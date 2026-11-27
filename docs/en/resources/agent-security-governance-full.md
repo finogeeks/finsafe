@@ -4,7 +4,7 @@ outline: [2, 3]
 
 # Agent-Era Enterprise Information Security Governance Whitepaper — HTML Full Text
 
-[简体中文](../../zh-CN/resources/agent-security-governance-full.md) · [Whitepaper introduction](agent-security-governance.md) · [Download English PDF](/whitepapers/agent-security-governance-2026-11-en.pdf) · [Chinese original PDF](/whitepapers/agent-security-governance-2026-11.pdf)
+[中文](../../zh-CN/resources/agent-security-governance-full.md) · [Whitepaper introduction](agent-security-governance.md) · [Download English PDF](/whitepapers/agent-security-governance-2026-11-en.pdf) · [Chinese original PDF](/whitepapers/agent-security-governance-2026-11.pdf)
 
 This is the English translation of the November 2026 Chinese whitepaper published by Shenzhen Finogeeks Technology Co., Ltd. It retains the source's six chapters, text, figures' labels and relationships, tables and 29 references. The English PDF preserves the original 37-page layout. Figures below retain the original graphics, backgrounds and connections, with only text translated; English transcriptions, tables and text flows remain available for accessibility and search. If wording or presentation differs, consult the Chinese original. This is a dated publication; use current product guides and your installed release for installation, configuration and support scope.
 

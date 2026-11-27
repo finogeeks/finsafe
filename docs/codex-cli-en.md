@@ -1,6 +1,6 @@
 # Connect Codex CLI through the command line (Windows)
 
-[简体中文](zh-CN/agents/codex.md) · [Documentation](en/README.md) · [Compatibility matrix](en/agents/compatibility.md)
+[中文](zh-CN/agents/codex.md) · [Documentation](en/README.md) · [Compatibility matrix](en/agents/compatibility.md)
 
 This guide uses Safety Arena's Windows route: start Codex `app-server` through FinShield, then connect from an ordinary terminal. **Codex CLI integration is supported now and requires no plugin.** It does not cover the Codex desktop app, IDE extension, or Agent verification on Linux/macOS.
 

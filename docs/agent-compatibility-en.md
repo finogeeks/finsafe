@@ -1,6 +1,6 @@
 # Agent compatibility matrix
 
-[简体中文](zh-CN/agents/compatibility.md) · [Documentation](en/README.md) · [Get started](en/getting-started/install.md)
+[中文](zh-CN/agents/compatibility.md) · [Documentation](en/README.md) · [Get started](en/getting-started/install.md)
 
 FinShield provides a security boundary for mainstream Agents. Prefer a released Agent integration plugin; use the `finsafe` CLI when no plugin is available. The product supports Windows, macOS, and Linux, but each Agent form, integration route, and verification scope must be checked separately.
 

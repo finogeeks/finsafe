@@ -1,6 +1,6 @@
 # Network access, exfiltration and PII
 
-[简体中文](../../zh-CN/protection/network-pii.md) · [Protection guide](README.md)
+[中文](../../zh-CN/protection/network-pii.md) · [Protection guide](README.md)
 
 Exfiltration controls address three questions: **what the Agent can read, where it can connect, and how outbound content is handled**. File protection does not establish blocking of sensitive text entered by the user. Destination restrictions do not establish redaction of content sent to an approved model.
 

@@ -1,6 +1,6 @@
 # FinShield Documentation
 
-[简体中文](../zh-CN/README.md) · [Product home](https://github.com/finogeeks/finsafe) · [Latest download](https://github.com/finogeeks/finsafe/releases/latest)
+[中文](../zh-CN/README.md) · [Product home](https://github.com/finogeeks/finsafe) · [Latest download](https://github.com/finogeeks/finsafe/releases/latest)
 
 FinShield (智安盾) is an operating-system sandbox for AI agent execution processes. Its Windows integrations add file, system and desktop controls to supported Agents such as OpenCode Desktop and WorkBuddy. macOS and Linux use their own integration routes; `finsafe` is the command-line tool.
 
@@ -14,7 +14,7 @@ Choose your [Agent integration](agents/README.md), then check [what FinShield pr
 
 | What you want to do | Start here |
 | --- | --- |
-| Understand the product and use an existing Agent | [Product introduction](overview/product-introduction.md), [install and verify](getting-started/install.md), [compatibility](agents/compatibility.md) |
+| Understand the product and use an existing Agent | [Product introduction](overview/README.md), [install and verify](getting-started/install.md), [compatibility](agents/compatibility.md) |
 | Protect your own application or extend PII processing | [Development and integration](development/README.md), [integration routes and a minimal example](development/integration-guide.md) |
 | Discuss an enterprise solution and a pilot | [Enterprise solutions and contact](enterprise/README.md) |
 
@@ -27,6 +27,8 @@ Use the [security architecture index](architecture/README.md) to find where prot
 - [Inspector network and content inspection](architecture/inspector.md): traffic paths, TLS trust, PII, retention and failure behavior.
 
 ## Get started
+
+New to FinShield? Read [common questions](reference/faq.md): 32 questions about AI safety, Agent safety, sandbox boundaries and why FinShield exists.
 
 1. [Check compatibility](agents/compatibility.md): Agent form, platform, plugin status, and verification scope.
 2. [Choose an integration route and install](getting-started/install.md): follow the DSH / OpenCode Windows plugin guides, use the FinShield launcher for Hermes Desktop or the test plugin for Kilo CLI, and follow the individual CLI guides for Codex and Claude.
@@ -49,7 +51,7 @@ Use the [security architecture index](architecture/README.md) to find where prot
 
 - [What FinShield protects](protection/README.md): defaults, allowed operations, configuration effects, website access and PII scope.
 - [Windows system and desktop protection](protection/windows-security.md): Job/UI, low-level API access, compatibility exceptions and verification.
-- [FinShield product introduction](overview/product-introduction.md): cross-platform positioning, security, integration and Windows evaluation results.
+- [FinShield product introduction](overview/README.md): cross-platform positioning, security, integration and Windows evaluation results.
 - [Overall illustrated introduction](overview/finshield.html): security controls, records, enterprise management, and scoped evaluations.
 - [Windows introduction](overview/windows.md) and [illustrated overview](overview/windows.html): permissions, system and desktop restrictions, and sensitive-information inspection.
 - [Linux/macOS introduction](overview/linux-macos.md) and [illustrated overview](overview/linux-macos.html): platform capabilities, integration routes, and limits.
@@ -76,8 +78,8 @@ The [mechanisms and evaluation archive](reference/whitepaper.md) covers product 
 
 ## Browse by topic
 
-- [Product and protection boundaries](overview/README.md).
-- [Install and verify](getting-started/README.md).
+- [Product overview](overview/README.md).
+- [Install and verify](getting-started/install.md).
 - [Agent integration](agents/README.md).
 - [Configure and verify protection](protection/README.md).
 - [Development and integration](development/README.md).
