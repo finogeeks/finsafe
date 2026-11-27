@@ -46,3 +46,45 @@ export function pageHead(route, routes) {
   }
   return head
 }
+
+// Discovery metadata uses authored summaries and the visible source title.
+export function contentHead(page) {
+  const url = siteUrl(page.route)
+  const language = page.route.startsWith('zh-CN/') ? 'zh-CN' : 'en'
+  const image = siteOrigin + '/finshield-logo.webp'
+  const graph = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      { '@type': 'WebSite', '@id': siteOrigin + '/#website', url: siteOrigin + '/',
+        name: 'FinShield Documentation', inLanguage: ['en', 'zh-CN'] },
+      { '@type': 'WebPage', '@id': url + '#webpage', url, name: page.title,
+        description: page.description, inLanguage: page.route === 'index.html' ? ['en', 'zh-CN'] : language,
+        isPartOf: { '@id': siteOrigin + '/#website' } },
+    ],
+  }
+  return [
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:site_name', content: 'FinShield' }],
+    ['meta', { property: 'og:title', content: page.title }],
+    ['meta', { property: 'og:description', content: page.description }],
+    ['meta', { property: 'og:url', content: url }],
+    ['meta', { property: 'og:image', content: image }],
+    ['meta', { property: 'og:image:alt', content: 'FinShield' }],
+    ['meta', { name: 'twitter:card', content: 'summary' }],
+    ['meta', { name: 'twitter:title', content: page.title }],
+    ['meta', { name: 'twitter:description', content: page.description }],
+    ['meta', { name: 'twitter:image', content: image }],
+    ['meta', { name: 'twitter:image:alt', content: 'FinShield' }],
+    ['script', { type: 'application/ld+json' }, JSON.stringify(graph).replaceAll('<', '\\u003c')],
+  ]
+}
+
+// Standalone diagrams bypass VitePress's head renderer.
+export function renderHead(entries) {
+  const escape = (value) => String(value).replaceAll('&', '&amp;').replaceAll('"', '&quot;')
+    .replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+  return entries.map(([tag, attributes, body]) => {
+    const start = `<${tag} ${Object.entries(attributes).map(([name, value]) => `${name}="${escape(value)}"`).join(' ')}>`
+    return tag === 'script' ? start + body + '</script>' : start
+  }).join('\n')
+}

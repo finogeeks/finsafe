@@ -4,6 +4,22 @@
 
 FinShield gives mainstream Agents a security boundary for files, system functions, and the desktop. Prefer a released Agent integration plugin, or connect through the `finsafe` CLI. In supporting product configurations, PII plugins extend sensitive-information detection and redaction.
 
+## Start with your goal
+
+| What you want to do | Start here |
+| --- | --- |
+| Understand the product and use an existing Agent | [Product introduction](overview/product-introduction.md), [install and verify](getting-started/install.md), [compatibility](agents/compatibility.md) |
+| Protect your own application or extend PII processing | [Development and integration](development/README.md), [integration routes and a minimal example](development/integration-guide.md) |
+| Discuss an enterprise solution and a pilot | [Enterprise solutions and contact](enterprise/README.md) |
+
+## Understand the security mechanisms
+
+Use the [security architecture index](architecture/README.md) to find where protection is enforced. Then check [advanced configuration and CLI reference](reference/cli-configuration.md) against the interfaces supported by your installed release.
+
+- [Windows network isolation and WFP](architecture/windows-network.md): enforcement targets, proxy responsibilities and coverage limits.
+- [Windows desktop interaction and Job UI](architecture/windows-job-ui.md): restrictions, compatibility choices and verification.
+- [Inspector network and content inspection](architecture/inspector.md): traffic paths, TLS trust, PII, retention and failure behavior.
+
 ## Get started
 
 1. [Check compatibility](agents/compatibility.md): Agent form, platform, plugin status, and verification scope.
@@ -39,7 +55,9 @@ The [Windows PII developer kit](https://github.com/finogeeks/finsafe/blob/main/p
 
 PII plugins extend sensitive-information processing and serve a different purpose from Agent integration plugins. Product integration needs matching versions and inspectable request paths. Commercial use requires prior written permission; see the [kit license](https://github.com/finogeeks/finsafe/blob/main/pii-plugins/LICENSE).
 
-## Enterprise deployment and further reading
+## Enterprise solutions and further reading
+
+[Enterprise solutions](enterprise/README.md) explains assessment, pilots and engagement. [Contact Finogeeks](mailto:contact@finogeeks.com) to discuss your environment and delivery scope.
 
 The [FinShield whitepaper](reference/whitepaper.md) covers product capabilities, integration, implementation and current Safety Arena Windows results, including the 38-scenario matrix and scoring methods. Product introductions and the whitepaper provide further reading; start installation with the relevant Agent guide.
 
@@ -56,10 +74,10 @@ The [FinShield whitepaper](reference/whitepaper.md) covers product capabilities,
 - [Install and verify](getting-started/README.md).
 - [Agent integration](agents/README.md).
 - [Configure and verify protection](protection/README.md).
-- [PII plugins and extensions](development/README.md).
-- [Enterprise deployment](enterprise/README.md).
+- [Development and integration](development/README.md).
+- [Enterprise solutions](enterprise/README.md).
 - [Reference and support](reference/README.md).
 
 ## Architecture and diagrams
 
-[Browse architecture diagrams and technical designs](architecture/README.md)。
+[Browse architecture diagrams and technical designs](architecture/README.md).

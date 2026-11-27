@@ -7,6 +7,76 @@ import { prepareContent, rewriteLinks } from './prepare.mjs'
 import { pageHead, siteUrl, configurePublicLinks, publicLink } from './.vitepress/site.mjs'
 import { createMarkdownRenderer } from 'vitepress'
 
+test('page discovery metadata describes the current page and safely serializes structured data', async () => {
+  const { contentHead, renderHead } = await import('./.vitepress/site.mjs')
+  const page = { route: 'zh-CN/architecture/inspector.html', title: 'Inspector <request>',
+    description: '检查 "当前" 请求与证书 & PII；示例 </script><script>alert(1)</script>。' }
+  const head = contentHead(page)
+  const meta = (key) => head.find(([tag, attrs]) => tag === 'meta' && (attrs.name === key || attrs.property === key))?.[1].content
+  assert.equal(meta('og:url'), 'https://finshield.finogeeks.club/zh-CN/architecture/inspector.html')
+  assert.equal(meta('og:description'), page.description)
+  assert.equal(meta('twitter:title'), page.title)
+  const structured = head.find(([tag, attrs]) => tag === 'script' && attrs.type === 'application/ld+json')[2]
+  const graph = JSON.parse(structured)['@graph']
+  assert.equal(graph.find((entry) => entry['@type'] === 'WebPage').description, page.description)
+  assert.equal(graph.find((entry) => entry['@type'] === 'WebPage').inLanguage, 'zh-CN')
+  assert.ok(!structured.includes('<'), 'Source text cannot close the structured-data script')
+  assert.ok(!graph.some((entry) => entry.aggregateRating || entry.datePublished || entry.author))
+  const html = renderHead([['meta', { name: 'description', content: page.description }], ...head])
+  assert.ok(html.includes('&quot;当前&quot;') && html.includes('&amp; PII'))
+  assert.equal((html.match(/<script\b/g) ?? []).length, 1)
+  assert.ok(html.includes('</script>'))
+})
+
+test('page descriptions must cover exactly the public routes with distinct summaries', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'finshield-descriptions-'))
+  try {
+    for (const locale of ['en', 'zh-CN']) {
+      await mkdir(join(root, 'docs', locale), { recursive: true })
+      await writeFile(join(root, 'docs', locale, 'README.md'), '# Documentation\n')
+    }
+    const descriptions = { 'index.html': 'Choose a documentation language.',
+      'en/index.html': 'Find English installation and protection guides.',
+      'zh-CN/index.html': '查找中文安装、防护与开发集成说明。' }
+    for (const [invalid, message] of [
+      [{ ...descriptions, 'en/index.html': '' }, /Missing page description/],
+      [{ ...descriptions, 'private.html': 'Not a published page.' }, /Unknown description route/],
+      [{ ...descriptions, 'en/index.html': descriptions['index.html'] }, /Duplicate page description/],
+    ]) await assert.rejects(prepareContent(join(root, 'docs'), join(root, 'out'), { descriptions: invalid }), message)
+  } finally { await rm(root, { recursive: true, force: true }) }
+})
+
+test('AI bundles preserve source content and resolve links from each original page', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'finshield-ai-bundle-'))
+  try {
+    for (const locale of ['en', 'zh-CN']) {
+      await mkdir(join(root, 'docs', locale, 'development'), { recursive: true })
+      await writeFile(join(root, 'docs', locale, 'README.md'), '# Documentation\n[Guide](development/guide.md#scope)\n')
+      await writeFile(join(root, 'docs', locale, 'development/guide.md'), '# Integration guide\n\n## Scope\n[Home](../README.md)\n\n```sh\ncat ../README.md\n```\n')
+    }
+    const descriptions = { 'index.html': 'Choose a documentation language.',
+      'en/index.html': 'Find English installation and protection guides.',
+      'zh-CN/index.html': '查找中文安装、防护与开发集成说明。',
+      'en/development/guide.html': 'Integrate a command with explicit scope and verification.',
+      'zh-CN/development/guide.html': '按明确范围接入命令，并验证实际权限。' }
+    const output = join(root, 'out')
+    await prepareContent(join(root, 'docs'), output, { descriptions })
+    const catalog = JSON.parse(await readFile(join(output, 'public/docs.json'), 'utf8'))
+    const guide = catalog.pages.find((page) => page.url === 'https://finshield.finogeeks.club/en/development/guide.html')
+    assert.equal(guide.description, descriptions['en/development/guide.html'])
+    assert.equal(guide.markdownUrl, 'https://finshield.finogeeks.club/en/development/guide.md')
+    assert.equal(guide.language, 'en')
+    assert.ok((await readFile(join(output, 'public/en/development/llms.txt'), 'utf8')).includes(guide.description))
+    const full = await readFile(join(output, 'public/en/llms-full.txt'), 'utf8')
+    assert.ok(full.includes('[Home](https://finshield.finogeeks.club/en/index.md)'))
+    assert.ok(full.includes('[Guide](https://finshield.finogeeks.club/en/development/guide.md#scope)'))
+    assert.ok(full.includes('cat ../README.md'), 'Code is not rewritten as navigation')
+    assert.ok(full.includes('## Scope'))
+    const metadata = JSON.parse(await readFile(join(output, 'metadata.json'), 'utf8'))
+    assert.equal(metadata['en/development/guide.html'].description, guide.description)
+  } finally { await rm(root, { recursive: true, force: true }) }
+})
+
 test('standalone diagrams use native navigation while documentation keeps client routing', async () => {
   const md = await createMarkdownRenderer(process.cwd(), { config: configurePublicLinks })
   const html = md.render('[Diagram](../overview/windows-diagram.html#data)\n'

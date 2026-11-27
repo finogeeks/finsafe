@@ -1,7 +1,7 @@
 import { cp, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import { dirname, join, posix, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
-import { siteOrigin, pageHead, publicLink } from './.vitepress/site.mjs'
+import { siteOrigin, siteUrl, pageHead, contentHead, renderHead, publicLink } from './.vitepress/site.mjs'
 
 const siteRoot = dirname(fileURLToPath(import.meta.url))
 const locales = ['en', 'zh-CN']
@@ -49,15 +49,15 @@ async function* files(root, prefix = '') {
   }
 }
 
-async function writeLlmIndexes(output, pages) {
+async function writeLlmIndexes(output, pages, metadata) {
   const sections = [
     ['protection', 'Protection and configuration', '默认防护与配置'],
     ['getting-started', 'Getting started', '开始使用'],
     ['agents', 'Agent integrations', 'Agent 接入'],
     ['overview', 'Product and platform scope', '产品与平台范围'],
-    ['development', 'Plugin development', '插件开发'],
-    ['architecture', 'Public plugin designs', '公开插件设计'],
-    ['enterprise', 'Enterprise deployment', '企业部署'],
+    ['development', 'Development and integration', '开发与集成'],
+    ['architecture', 'Security mechanisms and architecture', '安全原理与架构'],
+    ['enterprise', 'Enterprise solutions', '企业方案'],
     ['reference', 'Reference and support', '参考与支持'],
   ]
   for (const locale of locales) {
@@ -69,26 +69,56 @@ async function writeLlmIndexes(output, pages) {
       : 'Start with protection and compatibility. Installation status, actual protection and content-inspection coverage are different facts. Links below provide Markdown from the same sources as the website.') + '\n'
     const entries = pages.filter((page) => page.route.startsWith(locale + '/'))
       .sort((a, b) => Number(!a.route.endsWith('/index.html')) - Number(!b.route.endsWith('/index.html')) || a.route.localeCompare(b.route))
+    const line = (page) => `- [${page.title}](${page.markdownUrl}): ${page.description}`
+    body += `\n\n${zh ? '工具目录' : 'Machine-readable catalog'}: ${siteOrigin}/docs.json\n`
+    body += `${zh ? '当前文档全文包' : 'Current documentation text bundle'}: ${siteOrigin}/${locale}/llms-full.txt\n`
+    const aiGuide = entries.find((page) => page.route === `${locale}/development/ai-integration.html`)
+    if (aiGuide) body += '\n' + line(aiGuide) + '\n'
     for (const [directory, en, cn] of sections) {
-      const group = entries.filter((page) => page.route.split('/')[1] === directory
-        || directory === 'overview' && page.route === locale + '/index.html')
+      const group = entries.filter((page) => page.kind !== 'historical-reference' && (page.route.split('/')[1] === directory
+        || directory === 'overview' && page.route === locale + '/index.html'))
       if (!group.length) continue
-      body += `\n## ${zh ? cn : en}\n\n` + group.map((page) =>
-        `- [${page.title}](${siteOrigin}/${page.route.replace(/\.html$/, '.md')})`).join('\n') + '\n'
+      body += `\n## ${zh ? cn : en}\n\n` + group.map(line).join('\n') + '\n'
+      const topicRoot = join(output, 'public', locale, directory)
+      await mkdir(topicRoot, { recursive: true })
+      await writeFile(join(topicRoot, 'llms.txt'), `# ${zh ? cn : en}\n\n` + group.map(line).join('\n') + '\n', 'utf8')
     }
+    const history = entries.filter((page) => page.kind === 'historical-reference')
+    if (history.length) body += `\n## ${zh ? '历史参考，不作为当前操作指引' : 'Historical references, not current operating instructions'}\n\n` + history.map(line).join('\n') + '\n'
     // The proposal permits a BOM; it also prevents legacy plain-text decoding.
     await writeFile(join(output, 'public', locale, 'llms.txt'), '\uFEFF' + body, 'utf8')
+    let full = `# ${zh ? 'FinShield 当前文档全文' : 'FinShield current documentation text'}\n\n${zh
+      ? '来自同一公开网页与 Markdown 源。历史快照仅列链接，不并入当前操作正文。图片和外链仍需联网访问；请按平台、版本与入口选择内容。'
+      : 'Uses the same public web and Markdown sources. Historical snapshots are linked, not included as current instructions. Images and external links still need network access. Select content by platform, version and entry.'}\n`
+    for (const page of entries) {
+      full += `\n---\n\nSource: ${page.url}\nMarkdown: ${page.markdownUrl}\nSummary: ${page.description}\n\n`
+      if (page.kind === 'historical-reference') {
+        full += (zh ? '历史参考：请访问来源；当前用法见安装指南与发行说明。' : 'Historical reference: follow the source link; use installation guides and releases for current operations.') + '\n'
+        continue
+      }
+      const markdown = await readFile(join(output, 'public', page.route.replace(/\.html$/, '.md')), 'utf8')
+      full += transformLinks(markdown.replace(/^\uFEFF/, ''), (value) => new URL(value, page.markdownUrl).href) + '\n'
+    }
+    await writeFile(join(output, 'public', locale, 'llms-full.txt'), '\uFEFF' + full, 'utf8')
   }
+  await writeFile(join(output, 'public/docs.json'), JSON.stringify({ schemaVersion: 1, site: siteOrigin,
+    pages: Object.values(metadata) }, null, 2) + '\n', 'utf8')
   await writeFile(join(output, 'public/llms.txt'), `# FinShield Documentation
 
 > Public FinShield protection, configuration, integration and verification documentation.
 
 Choose a language. Start with protection defaults and compatibility before making claims about a particular integration. Each index links to clean Markdown generated from the same public sources as the website.
 
+FinShield is the product name; finsafe is its command-line entry. Package delivery, active process protection and inspection coverage are separate facts. Historical snapshots are identified separately, and text bundles link to them rather than reproducing old operating instructions. These resources do not guarantee indexing, citations or correct model output.
+
+Machine-readable catalog: ${siteOrigin}/docs.json
+
 ## Documentation
 
 - [English documentation index](${siteOrigin}/en/llms.txt): Protection, configuration, network and PII, integrations and references.
 - [Simplified Chinese documentation index](${siteOrigin}/zh-CN/llms.txt): Chinese pages and translated public plugin documentation.
+- [English current-documentation text](${siteOrigin}/en/llms-full.txt): Current Markdown bodies with absolute source links; historical references are linked separately.
+- [Simplified Chinese current-documentation text](${siteOrigin}/zh-CN/llms-full.txt): Current Chinese Markdown bodies with the same scope and limits.
 `, 'utf8')
 }
 
@@ -124,6 +154,29 @@ export async function prepareContent(docsRoot, output, options = {}) {
   }
   const assets = new Set()
   const routes = ['index.html', ...documents.map((document) => document.destination.replace(/\.md$/, '.html'))]
+  if (options.descriptions) {
+    const seen = new Set()
+    for (const route of routes) {
+      const description = options.descriptions[route]
+      if (typeof description !== 'string' || !description.trim()) throw new Error(`Missing page description: ${route}`)
+      if (seen.has(description.trim())) throw new Error(`Duplicate page description: ${route}`)
+      seen.add(description.trim())
+    }
+    for (const route of Object.keys(options.descriptions)) {
+      if (!routes.includes(route)) throw new Error(`Unknown description route: ${route}`)
+    }
+  }
+  const metadata = {}
+  const describe = (route, title, markdown) => {
+    const page = { route, title, description: options.descriptions?.[route] ?? title,
+      language: route.startsWith('zh-CN/') ? 'zh-CN' : route === 'index.html' ? null : 'en',
+      kind: /\/reference\/(?:changelog|history)\.html$/.test(route) ? 'historical-reference'
+        : route.endsWith('-diagram.html') ? 'diagram' : route === 'index.html' ? 'language-selector' : 'documentation',
+      url: siteUrl(route), markdownUrl: markdown ? siteOrigin + '/' + route.replace(/\.html$/, '.md') : null }
+    metadata[route] = page
+    return page
+  }
+  describe('index.html', 'FinShield documentation — choose your language', false)
   const aliases = options.aliases ?? {}
   const excluded = new Set(options.unpublishedReferences ?? [])
   const publicAssets = new Set(options.publicAssets ?? [])
@@ -148,6 +201,9 @@ export async function prepareContent(docsRoot, output, options = {}) {
       }
       if (document.title) body = body.replace(/^# .+$/m, '# ' + document.title)
       if (document.lead) body = body.replace(/^(# .+\n)/, '$1\n' + document.lead + '\n')
+      const title = (document.html ? /<title[^>]*>([\s\S]*?)<\/title>/i.exec(body)?.[1]
+        : /^# (.+)$/m.exec(body)?.[1])?.replaceAll('`', '').trim() ?? document.destination
+      const page = describe(document.destination.replace(/\.md$/, '.html'), title, !document.html)
       const locale = document.destination.startsWith('zh-CN/') ? 'zh-CN' : 'en'
       let content = transformLinks(body, (value, label) => {
         value = publicLink(value)
@@ -184,9 +240,9 @@ export async function prepareContent(docsRoot, output, options = {}) {
         return github ? value : remoteRepository + target.replace(/^\.\.\//, '') + suffix
       }, document.html)
       if (document.html) {
-        const metadata = pageHead(document.destination, routes).map(([tag, attributes]) =>
-          `<${tag} ${Object.entries(attributes).map(([name, value]) => `${name}="${value}"`).join(' ')}>`).join('\n')
-        content = content.replace(/<\/head>/i, metadata + '\n</head>')
+        const head = renderHead([['meta', { name: 'description', content: page.description }],
+          ...pageHead(document.destination, routes), ...contentHead(page)])
+        content = content.replace(/<\/head>/i, head + '\n</head>')
       }
       const path = join(output, document.html ? 'public/' + document.destination : document.destination)
       await mkdir(dirname(path), { recursive: true })
@@ -195,8 +251,7 @@ export async function prepareContent(docsRoot, output, options = {}) {
         const markdownPath = join(output, 'public', document.destination)
         await mkdir(dirname(markdownPath), { recursive: true })
         await writeFile(markdownPath, '\uFEFF' + content, 'utf8')
-        const title = /^# (.+)$/m.exec(content)?.[1].replaceAll('`', '') ?? document.destination
-        pages.push({ source: document.source, route: document.destination.replace(/\.md$/, '.html'), title })
+        pages.push({ source: document.source, ...page })
       }
   }
   for (const asset of assets) {
@@ -206,22 +261,24 @@ export async function prepareContent(docsRoot, output, options = {}) {
   }
   await writeFile(join(output, 'pages.json'), JSON.stringify(pages, null, 2) + '\n')
   await writeFile(join(output, 'routes.json'), JSON.stringify(routes, null, 2) + '\n')
+  await writeFile(join(output, 'metadata.json'), JSON.stringify(metadata, null, 2) + '\n')
   await writeFile(join(output, 'public/robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${siteOrigin}/sitemap.xml\n`, 'utf8')
-  await writeLlmIndexes(output, pages)
+  await writeLlmIndexes(output, pages, metadata)
   return pages
 }
 
 async function main() {
   const output = resolve(siteRoot, '.generated')
   const imports = JSON.parse(await readFile(join(siteRoot, 'content.json'), 'utf8'))
+  const descriptions = JSON.parse(await readFile(join(siteRoot, 'page-descriptions.json'), 'utf8'))
   const pages = await prepareContent(resolve(siteRoot, '..'), output, {
-    ...imports, repositoryRoot: resolve(siteRoot, '../..'),
+    ...imports, descriptions, repositoryRoot: resolve(siteRoot, '../..'),
   })
   await cp(join(siteRoot, '.vitepress'), join(output, '.vitepress'), { recursive: true })
   await cp(join(siteRoot, 'public'), join(output, 'public'), { recursive: true })
   await writeFile(join(output, 'index.md'), `---
 layout: home
-title: FinShield Documentation
+title: FinShield documentation — choose your language
 hero:
   name: FinShield
   text: Documentation

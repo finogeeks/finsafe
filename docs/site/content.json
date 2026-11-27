@@ -67,21 +67,25 @@
     },
     {
       "source": "integrations/dsh/windows/THIRD-PARTY-NOTICES.md",
-      "destination": "en/reference/dsh-notices.md"
+      "destination": "en/reference/dsh-notices.md",
+      "title": "DSH Windows plugin third-party notices"
     },
     {
       "source": "docs/site/translations/dsh/THIRD-PARTY-NOTICES-zh.md",
       "destination": "zh-CN/reference/dsh-notices.md",
+      "title": "DSH Windows 插件第三方声明",
       "translationOf": "integrations/dsh/windows/THIRD-PARTY-NOTICES.md",
       "linkSource": "integrations/dsh/windows/THIRD-PARTY-NOTICES-zh.md"
     },
     {
       "source": "integrations/dsh/windows/bin/README.md",
-      "destination": "en/reference/dsh-native-components.md"
+      "destination": "en/reference/dsh-native-components.md",
+      "title": "DSH native component update compatibility"
     },
     {
       "source": "docs/site/translations/dsh/bin/README-zh.md",
       "destination": "zh-CN/reference/dsh-native-components.md",
+      "title": "DSH 原生组件更新兼容性",
       "translationOf": "integrations/dsh/windows/bin/README.md",
       "linkSource": "integrations/dsh/windows/bin/README-zh.md"
     },
@@ -110,11 +114,13 @@
     },
     {
       "source": "integrations/opencode/windows/THIRD-PARTY-NOTICES.md",
-      "destination": "en/reference/opencode-notices.md"
+      "destination": "en/reference/opencode-notices.md",
+      "title": "OpenCode Windows plugin third-party notices"
     },
     {
       "source": "docs/site/translations/opencode/THIRD-PARTY-NOTICES-zh.md",
       "destination": "zh-CN/reference/opencode-notices.md",
+      "title": "OpenCode Windows 插件第三方声明",
       "translationOf": "integrations/opencode/windows/THIRD-PARTY-NOTICES.md",
       "linkSource": "integrations/opencode/windows/THIRD-PARTY-NOTICES-zh.md"
     },
