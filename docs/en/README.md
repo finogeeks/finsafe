@@ -2,7 +2,9 @@
 
 [简体中文](../zh-CN/README.md) · [Product home](https://github.com/finogeeks/finsafe) · [Latest download](https://github.com/finogeeks/finsafe/releases/latest)
 
-FinShield gives mainstream Agents a security boundary for files, system functions, and the desktop. Prefer a released Agent integration plugin, or connect through the `finsafe` CLI. In supporting product configurations, PII plugins extend sensitive-information detection and redaction.
+FinShield (智安盾) is an operating-system sandbox for AI agent execution processes. Its Windows integrations add file, system and desktop controls to supported Agents such as OpenCode Desktop and WorkBuddy. macOS and Linux use their own integration routes; `finsafe` is the command-line tool.
+
+Choose your [Agent integration](agents/README.md), then check [what FinShield protects by default](protection/README.md). PII detection and redaction require a supported content-inspection configuration.
 
 ## Start with your goal
 

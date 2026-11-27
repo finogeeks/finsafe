@@ -2,7 +2,9 @@
 
 [English](../en/README.md) · [产品首页](https://github.com/finogeeks/finsafe) · [最新下载](https://github.com/finogeeks/finsafe/releases/latest)
 
-FinShield 为主流 Agent 提供文件、系统与桌面的安全边界。优先选择已发布的 Agent 接入插件；也可以通过 `finsafe` 命令行接入。在支持的产品配置中，PII 插件可扩展敏感信息检测与脱敏。
+FinShield（智安盾）是面向 AI 智能体执行进程的操作系统级沙箱。Windows 接入可为 OpenCode Desktop、WorkBuddy 等受支持的 Agent 增加文件、系统与桌面操作控制；macOS 和 Linux 使用各自的接入方式。`finsafe` 是命令行工具的名称。
+
+先选择对应的 [Agent 接入指南](agents/README.md)，再查看[默认保护范围](protection/README.md)。PII 检测与脱敏需要支持内容检查的配置。
 
 ## 从你的目标开始
 
