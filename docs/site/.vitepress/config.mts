@@ -1,6 +1,7 @@
 import { defineConfig } from 'vitepress'
-import { siteBase, siteOrigin, siteUrl, canonicalPath, pageHead, configurePublicLinks } from './site.mjs'
+import { siteBase, siteOrigin, siteUrl, canonicalPath, pageHead, contentHead, configurePublicLinks } from './site.mjs'
 import routes from '../routes.json'
+import metadata from '../metadata.json'
 
 const repo = 'https://github.com/finogeeks/finsafe'
 
@@ -51,6 +52,7 @@ function sidebar(language: 'en' | 'zh-CN') {
   const development = { text: zh ? '开发与集成' : 'Development and integration', collapsed: false, items: [
     item('Developer overview', '集成概览', 'development/'),
     item('Integration routes and example', '接入方式与最小示例', 'development/integration-guide'),
+    item('Integrate with an AI coding agent', '使用 AI 完成集成', 'development/ai-integration'),
     item('Advanced configuration and CLI', '高级配置与 CLI 参考', 'reference/cli-configuration'),
     item('PII developer kit', 'PII 插件开发包', 'development/pii'),
     item('Protocol', 'PII 插件协议', 'development/pii-protocol'),
@@ -100,11 +102,19 @@ export default defineConfig({
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
     ['link', { rel: 'describedby', type: 'text/markdown', href: '/llms.txt' }],
+    ['link', { rel: 'describedby', type: 'application/json', href: '/docs.json' }],
   ],
   transformPageData(pageData) {
     // Frontmatter metadata also updates when the client changes page or locale.
     pageData.frontmatter.head ??= []
-    pageData.frontmatter.head.push(...pageHead(pageData.relativePath.replace(/\.md$/, '.html'), routes))
+    const route = pageData.relativePath.replace(/\.md$/, '.html')
+    pageData.frontmatter.head.push(...pageHead(route, routes))
+    const page = metadata[route as keyof typeof metadata]
+    if (page) {
+      pageData.description = page.description
+      pageData.frontmatter.description = page.description
+      pageData.frontmatter.head.push(...contentHead(page))
+    }
     if (/^(en|zh-CN)\/.+\.md$/.test(pageData.relativePath)) {
       pageData.frontmatter.head.push(['link', { rel: 'alternate', type: 'text/markdown', href: '/' + pageData.relativePath }])
     }

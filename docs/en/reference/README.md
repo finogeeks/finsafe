@@ -13,3 +13,5 @@ The [public release history snapshot](changelog.md) preserves historical entries
 ## AI-readable documentation
 
 The [documentation index](https://finshield.finogeeks.club/en/llms.txt) links to each page's Markdown by topic. Content uses the same public sources as the website, without separate capability claims. Start from [llms.txt](https://finshield.finogeeks.club/llms.txt) to select a language. These files support on-demand reading, not guaranteed indexing or answers from a particular model.
+
+[Integrate with an AI coding agent](../development/ai-integration.md) provides a task prompt and verification steps. Tools can select pages from the [machine catalog](https://finshield.finogeeks.club/docs.json), then read the [developer topic index](https://finshield.finogeeks.club/en/development/llms.txt). Use the [current documentation text bundle](https://finshield.finogeeks.club/en/llms-full.txt) for bulk processing. Historical snapshots are linked separately rather than included as current operating instructions.

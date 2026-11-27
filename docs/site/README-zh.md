@@ -37,8 +37,34 @@ flowchart LR
 
 ## 域名与搜索平台
 
+### 页面摘要与机器可读来源
+
+`page-descriptions.json` 为每个公开 HTML 路由维护一条经过审核的独立摘要，覆盖语言入口和独立图解页。键必须与生成路由清单完全一致。新增页面时补齐两种语言的摘要。标题来自正文可见标题；导入页的标题覆盖由 `content.json` 维护。摘要说明该页的具体任务、平台和限制，不使用重复泛述或关键词堆叠。
+
+准备步骤生成 `metadata.json`，供逐页 description、Open Graph、摘要分享卡片及 `WebPage`/`WebSite` JSON-LD 使用。客户端换页更新同一份元数据，独立 HTML 在准备阶段接收经过转义的标签。结构化数据不虚构作者、日期、评分、客户或产品保证。404 保持 `noindex`，Google 验证文件保持不变。
+
+| 资源 | 内容范围 |
+| --- | --- |
+| `/llms.txt` | 语言选择与机器入口 |
+| `/<locale>/llms.txt` | 按主题组织的标题与摘要，历史参考单列 |
+| `/<locale>/<topic>/llms.txt` | 专题选页，如 `development`、`architecture` |
+| `/<locale>/llms-full.txt` | 当前 Markdown 正文、绝对链接与来源；历史快照只列链接 |
+| `/docs.json` | 各页路由、标题、摘要、语言、内容类别、规范网页与 Markdown URL |
+
+这些资源只使用公开网站输入。代码示例保持原文；图片和外部资源保留链接，不承诺离线可用。语言入口及独立图解没有 Markdown 时对应字段为 `null`。不将内部运维材料加入索引或全文包。关键答案直接放在可见正文中，证据链接注明平台和版本范围。[使用 AI 完成集成](../zh-CN/development/ai-integration.md)提供可复用的任务提示。
+
+`npm run check` 还会拒绝缺失或重复摘要、不一致的分享元数据或 JSON-LD、损坏的机器目录及不可用的 AI 资源链接。它验证生成产物，不验证搜索排名或外站账户状态。
+
+### 部署后检查
+
 `.vitepress/site.mjs` 定义正式地址 `https://finshield.finogeeks.club` 和根路径 `/`。Pages 自定义域名和 DNS 应与此地址一致，`public/CNAME` 记录域名。更换地址时，一起更新页面元信息、原始 Markdown、图解页、LLM 索引、sitemap 和 robots 抓取入口。
 
 `public/googlea9662cdfe1496029.html` 是 Google 原始所有权验证文件。保持内容不变，在站点根路径发布，验证成功后也要保留。它不属于文档页面，也不进入 sitemap。部署后先确认文件可访问，再在 Search Console 验证网址前缀资源 `https://finshield.finogeeks.club/`，并提交 `https://finshield.finogeeks.club/sitemap.xml`。网站发布成功不代表账号验证或收录完成，见 [Google 所有权验证说明](https://support.google.com/webmasters/answer/9008080)。
 
 Bing 使用平台签发的验证方式，或导入已验证的 Search Console 资源。不添加占位验证令牌或统计 ID。比较相同时长的完整统计周期，按语言、查询和落地页查看曝光、点击、CTR、排名和已收录页面。AI 回答及引用检查单独记录，`llms.txt` 不保证平台收录或回答准确。
+
+部署后在搜索平台中检查产品、安装、WFP、Inspector、集成与企业入口，核对抓取权限、选定 canonical、语言对应、摘要和结构化数据。浏览器连续切换主题与语言，确认元数据没有停留在上一页。记录站点版本及收录错误，提交当前 sitemap，不提交废弃副本。
+
+AI 可见性使用一组有记录的实际问题，覆盖 Agent 安装、Windows 网络／桌面限制、PII 集成和企业联系。记录引擎、日期、原始问题、回答、引用 URL，以及回答是否保留文档边界。未引用与事实错误分别处理，重复提问不等于排名趋势。站点构建不执行搜索或 AI 账户操作。
+
+参考：[Google 摘要说明](https://developers.google.com/search/docs/appearance/snippet)、[Google AI 搜索指南](https://developers.google.com/search/docs/appearance/ai-features)、[结构化数据政策](https://developers.google.com/search/docs/appearance/structured-data/sd-policies)及 [Cloudflare AI 文档实践](https://developers.cloudflare.com/style-guide/how-we-docs/ai-consumability/)。Google 没有额外的 AI 专用 schema 或文本文件准入要求；机器导出用于直接读取文档，不保证发现或引用。

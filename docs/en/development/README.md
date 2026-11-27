@@ -7,6 +7,7 @@ Choose an entry by the task you need to complete. Using an existing plugin, laun
 ## Start integrating
 
 - [Integration routes and a minimal example](integration-guide.md): choose an existing Agent, CLI, host SDK or PII extension route, run a public example and verify permissions.
+- [Integrate with an AI coding agent](ai-integration.md): supply the right documents, environment and task, then review generated steps and record actual results.
 - [Advanced configuration and CLI reference](../reference/cli-configuration.md): distinguish supported, experimental and internal options, then check defaults, precedence and activation.
 - [Compatibility matrix](../agents/compatibility.md): check Agent form, operating system and version scope.
 

@@ -8,8 +8,11 @@ x64, stable Rust and the MSVC build tools. Use any editor to change the code.
 The workflow is: edit code, build the EXE, test text in the local HTML page,
 compare the result, then edit and rebuild. The kit supplies the protocol, SDK,
 developer host, examples and fixtures in this one directory. No private
-FinSAFE source or running product is needed. The directory has not yet been
-uploaded to a public repository or published as an SDK package.
+FinSAFE source or running product is needed. The source directory is available
+in the public repository; [release.json](../release.json) records the matching
+FinShield product version and source revision. This guide uses the bundled SDK
+through local path dependencies. It does not require a separately published SDK
+crate or a prebuilt developer-tool EXE.
 
 ## Build and open the page
 

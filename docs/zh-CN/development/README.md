@@ -7,6 +7,7 @@
 ## 开始接入
 
 - [接入方式与最小示例](integration-guide.md)：选择现有 Agent、CLI、宿主 SDK 或 PII 扩展路径，运行公开示例并验证权限。
+- [使用 AI 完成集成](ai-integration.md)：给编码 Agent 正确的文档、环境与任务输入，核对生成步骤并记录实际结果。
 - [高级配置与 CLI 参考](../reference/cli-configuration.md)：区分正式、实验性和内部选项，核对默认值、覆盖关系与生效方式。
 - [兼容矩阵](../agents/compatibility.md)：核对 Agent 形态、操作系统和版本范围。
 
