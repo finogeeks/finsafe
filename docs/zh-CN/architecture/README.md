@@ -26,7 +26,7 @@
 - [Windows](../overview/windows.html)
 - [Linux / macOS](../overview/linux-macos.html)
 - [FinShield](../overview/finshield.html)
-- [技术白皮书](../reference/whitepaper.md)
+- [产品机制与测评资料（历史）](../reference/whitepaper.md)
 
 ## 插件协议与集成
 

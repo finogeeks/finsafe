@@ -43,4 +43,4 @@
 - [Windows 系统与桌面防护](../protection/windows-security.md)：Job/UI、剪贴板与窗口限制、底层 API、进程／注册表访问及实际防护边界。
 - [Windows图解介绍](windows.html)：安全保障、数据价值、技术架构与产品对比。
 - [敏感信息处理说明](windows.html#data)：告警、阻断与审批。
-- [企业接入与验证](../reference/whitepaper.md#六企业接入与验证)：单机与集中管理的部署选择。
+- [企业接入与验证（历史参考）](../reference/whitepaper.md#六企业接入与验证)：单机与集中管理的部署选择。

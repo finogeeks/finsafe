@@ -31,6 +31,8 @@ flowchart LR
     C --> D[Deploy GitHub Pages]
 ```
 
+Each language uses one stable sidebar tree across documentation routes. Keep the formal whitepaper and its web full text first; do not reorder groups when readers change pages. Other groups stay collapsible and retain their state during client navigation. The former technical whitepaper keeps its URL as a historical mechanisms/evaluation reference, separate from the formal publication; AI bundles link to it without reproducing superseded body text.
+
 ## Ownership during product releases
 
 Private engineering documentation and public user documentation have separate owners. Product releases update implementation files, runtime configuration, scripts, binaries, version metadata and required license notices. They preserve public Markdown and HTML guides, including plugin and PII-kit READMEs. Review public usage documentation when released behavior changes; do not restore it from a private snapshot. Do not import private Core, Windows or desktop architecture to repair a link.

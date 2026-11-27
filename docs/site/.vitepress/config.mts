@@ -9,6 +9,7 @@ function navigation(language: 'en' | 'zh-CN') {
   const zh = language === 'zh-CN'
   const prefix = `/${language}/`
   return [
+    { text: zh ? '白皮书' : 'Whitepaper', link: prefix + 'resources/agent-security-governance' },
     { text: zh ? '产品介绍' : 'Product', link: prefix + 'overview/' },
     { text: zh ? '使用指南' : 'User guides', link: prefix + 'getting-started/' },
     { text: zh ? '开发与集成' : 'Developers', link: prefix + 'development/' },
@@ -23,25 +24,29 @@ function sidebar(language: 'en' | 'zh-CN') {
   const zh = language === 'zh-CN'
   const prefix = `/${language}/`
   const item = (en: string, cn: string, path: string) => ({ text: zh ? cn : en, link: prefix + path })
+  const whitepaper = { text: zh ? '白皮书' : 'Whitepaper', items: [
+    item('Overview and PDF download', '白皮书介绍与 PDF 下载', 'resources/agent-security-governance'),
+    item('Read the full text online', '在线阅读全文（HTML）', 'resources/agent-security-governance-full'),
+  ] }
   const start = { text: zh ? '开始使用' : 'Get started', items: [
     item('Documentation', '文档首页', ''),
     item('Install and verify', '安装与验证', 'getting-started/install'),
     item('Compatibility matrix', '兼容矩阵', 'agents/compatibility'),
   ] }
-  const product = { text: zh ? '产品介绍' : 'Product', collapsed: false, items: [
+  const product = { text: zh ? '产品介绍' : 'Product', items: [
     item('Product introduction', '产品概览', 'overview/product-introduction'),
     item('Overview and boundaries', '概览与防护边界', 'overview/'),
     item('Windows', 'Windows 能力', 'overview/windows'),
     item('Linux and macOS', 'Linux 与 macOS 能力', 'overview/linux-macos'),
   ] }
-  const protection = { text: zh ? '防护与配置' : 'Protection and configuration', collapsed: false, items: [
+  const protection = { text: zh ? '防护与配置' : 'Protection and configuration', items: [
     item('Protection guide', 'FinShield 防护什么', 'protection/'),
     item('Plugin defaults', '插件默认防护', 'protection/defaults'),
     item('Configuration explained', '配置项作用与生效', 'protection/configuration'),
     item('Windows system and desktop', 'Windows 系统与桌面防护', 'protection/windows-security'),
     item('Network access and PII', '网络访问、外泄与 PII', 'protection/network-pii'),
   ] }
-  const agents = { text: zh ? '支持的 Agent 与使用指南' : 'Supported Agents and guides', collapsed: false, items:
+  const agents = { text: zh ? '支持的 Agent 与使用指南' : 'Supported Agents and guides', items:
     (zh ? ['workbuddy', 'dsh', 'codex', 'claude', 'opencode', 'hermes', 'kilo']
         : ['codex', 'claude', 'opencode', 'hermes', 'kilo', 'dsh', 'workbuddy']).map((agent) => ({
       text: ({ workbuddy: 'WorkBuddy', dsh: 'DSH Desktop', codex: 'Codex CLI', claude: 'Claude Code CLI',
@@ -49,7 +54,7 @@ function sidebar(language: 'en' | 'zh-CN') {
       link: prefix + 'agents/' + agent,
     })),
   }
-  const development = { text: zh ? '开发与集成' : 'Development and integration', collapsed: false, items: [
+  const development = { text: zh ? '开发与集成' : 'Development and integration', items: [
     item('Developer overview', '集成概览', 'development/'),
     item('Integration routes and example', '接入方式与最小示例', 'development/integration-guide'),
     item('Integrate with an AI coding agent', '使用 AI 完成集成', 'development/ai-integration'),
@@ -60,22 +65,21 @@ function sidebar(language: 'en' | 'zh-CN') {
     item('Debugging', '调试指南', 'development/pii-debugging'),
     item('Redactor example', '脱敏插件示例', 'development/pii-redactor'),
   ] }
-  const architecture = { text: zh ? '安全原理与架构' : 'Security mechanisms and architecture', collapsed: false, items: [
+  const architecture = { text: zh ? '安全原理与架构' : 'Security mechanisms and architecture', items: [
     item('Security architecture index', '安全原理目录', 'architecture/'),
     item('Windows network isolation and WFP', 'Windows 网络隔离与 WFP', 'architecture/windows-network'),
     item('Windows desktop interaction and Job UI', 'Windows 桌面交互与 Job UI', 'architecture/windows-job-ui'),
     item('Inspector network and content inspection', 'Inspector 网络与内容检查', 'architecture/inspector'),
     item('DSH plugin architecture', 'DSH 插件架构', 'architecture/dsh'),
     item('OpenCode plugin architecture', 'OpenCode 插件架构', 'architecture/opencode'),
+    item('Mechanisms and evaluation archive', '产品机制与测评资料（历史）', 'reference/whitepaper'),
   ] }
-  const enterprise = { text: zh ? '企业方案' : 'Enterprise solutions', collapsed: false, items: [
+  const enterprise = { text: zh ? '企业方案' : 'Enterprise solutions', items: [
     item('Solutions and pilots', '方案介绍与试点', 'enterprise/'),
     item('Contact us', '联系我们', `enterprise/#${zh ? '联系我们' : 'contact-us'}`),
   ] }
-  const reference = { text: zh ? '资源与支持' : 'Resources and support', collapsed: false, items: [
+  const reference = { text: zh ? '资源与支持' : 'Resources and support', items: [
     item('Reference', '参考资料', 'reference/'),
-    item('Enterprise AI governance whitepaper', '企业 AI 安全治理白皮书', 'resources/agent-security-governance'),
-    item('Whitepaper', '技术白皮书', 'reference/whitepaper'),
     item('DSH operations', 'DSH 运行说明', 'agents/dsh-operations'),
     item('Release history', '版本记录', 'reference/changelog'),
     item('Contributing', '参与贡献', 'reference/contributing'),
@@ -83,15 +87,11 @@ function sidebar(language: 'en' | 'zh-CN') {
     { text: zh ? '版本与下载' : 'Releases and downloads', link: `${repo}/releases` },
     { text: zh ? '问题反馈' : 'Report a problem', link: `${repo}/issues/new/choose` },
   ] }
-  const developer = [start, development, architecture, { ...protection, collapsed: true }, enterprise, reference]
-  return {
-    [prefix + 'development/']: developer,
-    [prefix + 'architecture/']: developer,
-    [prefix + 'reference/']: developer,
-    [prefix + 'enterprise/']: [start, enterprise, reference],
-    [prefix + 'resources/']: [start, reference, enterprise],
-    [prefix]: [start, product, protection, agents, { ...development, collapsed: true }, enterprise, reference],
-  }
+  // A single tree keeps group positions, expansion and scroll stable on navigation.
+  return { [prefix]: [whitepaper, start,
+    ...[product, protection, agents, development, architecture, enterprise, reference]
+      .map((group) => ({ ...group, collapsed: true })),
+  ] }
 }
 
 export default defineConfig({

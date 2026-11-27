@@ -1,6 +1,6 @@
 # 历史白皮书与实验记录
 
-[English](../../en/reference/history.md) · [当前白皮书](whitepaper.md) · [文档目录](../README.md)
+[English](../../en/reference/history.md) · [正式白皮书](../resources/agent-security-governance.md) · [文档目录](../README.md)
 
 以下链接固定到公开仓库已合并PR#70的提交，保留当时的原文、实验条件与UI、SYS、H、J编号。中英文历史快照的版本不同，不与当前38项测评合并计分。
 

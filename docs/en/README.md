@@ -65,7 +65,7 @@ PII plugins extend sensitive-information processing and serve a different purpos
 
 [Enterprise solutions](enterprise/README.md) explains assessment, pilots and engagement. [Contact Finogeeks](mailto:contact@finogeeks.com) to discuss your environment and delivery scope.
 
-The [FinShield whitepaper](reference/whitepaper.md) covers product capabilities, integration, implementation and current Safety Arena Windows results, including the 38-scenario matrix and scoring methods. Product introductions and the whitepaper provide further reading; start installation with the relevant Agent guide.
+The [mechanisms and evaluation archive](reference/whitepaper.md) covers product capabilities, integration, implementation and the edition’s Safety Arena Windows results, including the 38-scenario matrix and scoring methods. Use the enterprise governance whitepaper above for the formal publication; start installation with the relevant Agent guide.
 
 ## Reference and support
 

@@ -26,7 +26,7 @@ These designs come from public integration packages and retain their documented 
 - [Windows](../overview/windows.html)
 - [Linux / macOS](../overview/linux-macos.html)
 - [FinShield](../overview/finshield.html)
-- [Whitepaper](../reference/whitepaper.md)
+- [mechanisms and evaluation archive](../reference/whitepaper.md)
 
 ## Plugin protocol and integration
 

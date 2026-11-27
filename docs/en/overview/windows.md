@@ -43,4 +43,4 @@ FinShield collects and retains supported business records so enterprises can bui
 - [Windows system and desktop protection](../protection/windows-security.md): Job/UI, clipboard and window limits, low-level APIs, process / registry access and practical boundaries.
 - [Windows illustrated overview](windows.html): security, data value, architecture, and comparisons.
 - [Sensitive information handling](windows.html#data): findings, blocking, and approval.
-- [Enterprise integration and validation](../reference/whitepaper.md#6-enterprise-integration-and-validation): business needs, deployment considerations, and acceptance.
+- [Enterprise integration and validation (historical reference)](../reference/whitepaper.md#6-enterprise-integration-and-validation): business needs, deployment considerations, and acceptance.

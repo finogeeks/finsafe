@@ -67,7 +67,7 @@ GUI 接入可能为了显示窗口、复制粘贴或应用兼容性采用不同�
 | 命名管道、共享内存、事件与 COM | 对象 ACL、命名空间、AppContainer 身份、能力与服务自身的授权 | Job 的 USER 句柄限制不是“禁止全部 IPC”；合法进程通信仍可能被允许 |
 | Socket、HTTP 与模型请求 | 实际网络模式及适用的系统网络策略；内容检查另需覆盖真实请求 | 默认 `network.mode: host` 不提供目标白名单或自动 PII 阻断 |
 
-操作系统机制背景见 Microsoft 的 [AppContainer 隔离说明](https://learn.microsoft.com/en-us/windows/win32/secauthz/appcontainer-isolation)。FinShield 公开测评中的进程终止、内存修改、句柄复制、注册表等案例及其版本范围见[白皮书](../reference/whitepaper.md)。平台机制、一个案例成功和本机当前配置生效，是不同层次的证据。
+操作系统机制背景见 Microsoft 的 [AppContainer 隔离说明](https://learn.microsoft.com/en-us/windows/win32/secauthz/appcontainer-isolation)。FinShield 公开测评中的进程终止、内存修改、句柄复制、注册表等案例及其版本范围见[产品机制与测评资料（历史）](../reference/whitepaper.md)。平台机制、一个案例成功和本机当前配置生效，是不同层次的证据。
 
 ## 必须明确的限制
 

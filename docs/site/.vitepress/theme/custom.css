@@ -38,7 +38,17 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
 }
 .whitepaper-eyebrow { color: var(--vp-c-text-2); font-size: 14px; }
+.whitepaper-reading-note { color: var(--vp-c-text-2); font-size: 14px; }
 .whitepaper-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; }
+.vp-doc .whitepaper-actions a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  text-decoration: none;
+}
 .vp-doc .whitepaper-primary {
   display: inline-block;
   padding: 8px 16px;

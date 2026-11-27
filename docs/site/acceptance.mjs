@@ -15,11 +15,31 @@ const whitepapers = JSON.parse(await readFile(join(site, 'whitepapers.json'), 'u
 const orders = { 'zh-CN': ['workbuddy', 'dsh', 'codex', 'claude', 'opencode', 'hermes', 'kilo'],
   en: ['codex', 'claude', 'opencode', 'hermes', 'kilo', 'dsh', 'workbuddy'] }
 
+function sidebarStructure(html) {
+  const sidebar = /<aside\b[^>]*>[\s\S]*?<\/aside>/.exec(html)?.[0] ?? ''
+  return [...sidebar.matchAll(/<(h2|a)\b([^>]*)>([\s\S]*?)<\/\1>/g)]
+    .map(([, tag, attributes, content]) => ({ tag,
+      href: /\bhref="([^"]*)"/.exec(attributes)?.[1] ?? null,
+      text: content.replace(/<[^>]+>/g, '').trim() }))
+}
+
 assert.equal((await read('CNAME')).trim(), 'finshield.finogeeks.club')
 assert.equal(await read('googlea9662cdfe1496029.html'), 'google-site-verification: googlea9662cdfe1496029.html')
 assert.ok(!(await read('sitemap.xml')).includes('googlea9662cdfe1496029.html'))
 for (const [locale, order] of Object.entries(orders)) {
   const home = await read(locale + '/index.html')
+  assert.equal(sidebarStructure(home)[0].text, locale === 'zh-CN' ? '白皮书' : 'Whitepaper',
+    'The formal whitepaper must be the first sidebar group')
+  const landing = await read(`${locale}/resources/agent-security-governance.html`)
+  const primaryAction = /<a\b(?=[^>]*\bclass="whitepaper-primary")[^>]*>/.exec(landing)?.[0]
+  assert.ok(primaryAction?.includes(`href="/${locale}/resources/agent-security-governance-full.html"`),
+    'The primary whitepaper action must open the readable HTML full text')
+  for (const route of ['resources/agent-security-governance', 'reference/whitepaper',
+    'resources/agent-security-governance-full', 'reference/index', 'enterprise/index',
+    'development/index', 'architecture/index', 'overview/windows', 'getting-started/install']) {
+    assert.deepEqual(sidebarStructure(await read(`${locale}/${route}.html`)), sidebarStructure(home),
+      `Sidebar navigation must keep its structure: ${locale}/${route}.html`)
+  }
   const sidebar = home.split('<aside')[1].split('</aside>')[0]
   const positions = order.map((agent) => sidebar.indexOf(`/${locale}/agents/${agent}.html`))
   assert.ok(positions.every((position) => position >= 0))

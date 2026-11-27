@@ -1,6 +1,8 @@
-# FinShield whitepaper: Agent security and data collection
+# Mechanisms and Evaluation Archive
 
 [简体中文](../../zh-CN/reference/whitepaper.md) · [Documentation](../README.md) · [Safety Arena evaluations](https://safety.finaios.ai/)
+
+> This page retains the mechanisms, evaluation scenarios and counting methods from the former technical whitepaper v0.6 (November 25, 2026) for existing citations and historical comparison. For the formal publication, see the [Agent-Era Enterprise Information Security Governance Whitepaper](../resources/agent-security-governance.md) or [read its full text online](../resources/agent-security-governance-full.md). Use current product guides and your installed release for operating instructions and capability scope.
 
 | Document information | Value |
 | --- | --- |

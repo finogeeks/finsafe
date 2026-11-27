@@ -65,7 +65,7 @@ PII 插件扩展敏感信息处理规则，与 Agent 接入插件用途不同。
 
 [企业方案](enterprise/README.md)介绍需求评估、试点与合作方式。[联系 Finogeeks](mailto:contact@finogeeks.com)讨论具体环境和交付范围。
 
-[智安盾白皮书](reference/whitepaper.md)：产品能力、接入方式、技术实现与Safety Arena当前Windows测评，附38项场景清单和统计方法。产品介绍与白皮书作为深入阅读材料，实际安装先从对应 Agent 指南开始。
+[产品机制与测评资料（历史）](reference/whitepaper.md)：产品能力、接入方式、技术实现与该版Safety Arena Windows测评，附38项场景清单和统计方法。正式出版物请阅读前面的企业治理白皮书，实际安装先从对应 Agent 指南开始。
 
 ## 参考与支持
 

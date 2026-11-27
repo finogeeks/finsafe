@@ -24,7 +24,7 @@
 
 - [产品介绍](../overview/product-introduction.md)：产品定位、接入方式和平台范围。
 - [防护说明](../protection/README.md)：实际保护对象、默认配置及限制。
-- [技术白皮书](../reference/whitepaper.md)：技术背景和有范围的测评结果。
+- [产品机制与测评资料（历史）](../reference/whitepaper.md)：技术背景和有范围的测评结果。
 - [Agent Safety Arena](https://safety.finaios.ai/)：公开录像、测试条件和结果。测试记录说明对应环境中的表现，不代替客户环境验收。
 
 ## 怎样开展合作

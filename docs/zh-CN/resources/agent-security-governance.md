@@ -11,13 +11,15 @@ outline: [2, 2]
   <div>
     <p class="whitepaper-eyebrow">2026年11月 · 企业 AI 安全治理</p>
     <p><strong>风险识别 · 分层治理 · 可信执行</strong></p>
+    <div class="whitepaper-actions">
+      <a class="whitepaper-primary" href="/zh-CN/resources/agent-security-governance-full.html">阅读网页版全文</a>
+      <a href="#在线浏览-pdf">浏览 PDF</a>
+      <a href="/whitepapers/agent-security-governance-2026-11.pdf" download="Agent时代_企业信息安全治理白皮书_202611.pdf">下载 PDF（2.8 MB）</a>
+    </div>
+    <p class="whitepaper-reading-note">网页版支持手机阅读、章节导航和小节链接分享。</p>
     <p>当 Agent 能够读取企业资料、调用工具并执行任务，企业需要同时管理数据、身份、执行权限与业务后果。本白皮书从风险识别、分层架构和建设路径出发，结合 FinShield 智安盾的产品架构与安全测试实践，讨论如何将治理要求落实到实际操作。</p>
     <p>适合企业 IT 与安全负责人、架构师，以及负责 AI 应用建设和评估的团队阅读。</p>
-    <div class="whitepaper-actions">
-      <a class="whitepaper-primary" href="#在线浏览-pdf">在线浏览 PDF</a>
-      <a href="/whitepapers/agent-security-governance-2026-11.pdf" download="Agent时代_企业信息安全治理白皮书_202611.pdf">下载 PDF（2.8 MB）</a>
-      <a href="/zh-CN/resources/agent-security-governance-full.html">阅读 HTML 全文</a>
-    </div>
+
   </div>
 </div>
 
@@ -56,7 +58,7 @@ outline: [2, 2]
 
 ## 延伸阅读与企业交流
 
-- [FinShield 技术白皮书](../reference/whitepaper.md)：产品能力、技术实现与有范围的测评结果。
+- [产品机制与测评资料（历史）](../reference/whitepaper.md)：原技术白皮书保留的机制说明、场景清单与统计方法。
 - [企业方案](../enterprise/README.md)：需求评估、试点与合作方式。
 - [联系 Finogeeks](mailto:contact@finogeeks.com)：讨论企业 AI 使用场景与试点需求。
 

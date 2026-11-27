@@ -24,7 +24,7 @@ The [enterprise information security governance whitepaper](../resources/agent-s
 
 - [Product introduction](../overview/product-introduction.md): positioning, integration routes and platform scope.
 - [Protection guide](../protection/README.md): protected objects, effective defaults and limits.
-- [Whitepaper](../reference/whitepaper.md): technical context and scoped evaluation results.
+- [mechanisms and evaluation archive](../reference/whitepaper.md): technical context and scoped evaluation results.
 - [Agent Safety Arena](https://safety.finaios.ai/): public recordings, conditions and results. A test record describes its own environment and does not replace acceptance in your environment.
 
 ## Engagement process

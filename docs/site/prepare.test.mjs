@@ -7,6 +7,27 @@ import { prepareContent, rewriteLinks } from './prepare.mjs'
 import { pageHead, siteUrl, configurePublicLinks, publicLink } from './.vitepress/site.mjs'
 import { createMarkdownRenderer } from 'vitepress'
 
+test('the former technical whitepaper retains its URL without entering current AI instructions', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'finshield-paper-archive-'))
+  try {
+    for (const locale of ['en', 'zh-CN']) {
+      await mkdir(join(root, 'docs', locale, 'reference'), { recursive: true })
+      await writeFile(join(root, 'docs', locale, 'README.md'), '# Documentation\n')
+      await writeFile(join(root, 'docs', locale, 'reference/whitepaper.md'), '# Evaluation archive\nARCHIVED_BODY_ONLY\n')
+    }
+    const output = join(root, 'out')
+    await prepareContent(join(root, 'docs'), output)
+    const catalog = JSON.parse(await readFile(join(output, 'public/docs.json'), 'utf8'))
+    for (const locale of ['en', 'zh-CN']) {
+      assert.equal(catalog.pages.find((page) => page.route === `${locale}/reference/whitepaper.html`).kind, 'historical-reference')
+      assert.ok((await readFile(join(output, `public/${locale}/reference/whitepaper.md`), 'utf8')).includes('ARCHIVED_BODY_ONLY'))
+      const bundle = await readFile(join(output, `public/${locale}/llms-full.txt`), 'utf8')
+      assert.ok(bundle.includes(`${locale}/reference/whitepaper.html`))
+      assert.ok(!bundle.includes('ARCHIVED_BODY_ONLY'), 'Superseded technical claims must stay out of current instruction bodies')
+    }
+  } finally { await rm(root, { recursive: true, force: true }) }
+})
+
 test('published whitepapers retain site assets and edition scope in AI resources', async () => {
   const root = await mkdtemp(join(tmpdir(), 'finshield-publication-'))
   try {

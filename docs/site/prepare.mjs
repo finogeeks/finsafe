@@ -174,7 +174,7 @@ export async function prepareContent(docsRoot, output, options = {}) {
     const publication = options.publications?.find((entry) => [entry.landingRoute, entry.fullTextRoute].includes(route))
     const page = { route, title, description: options.descriptions?.[route] ?? title,
       language: route.startsWith('zh-CN/') ? 'zh-CN' : route === 'index.html' ? null : 'en',
-      kind: publication ? 'publication' : /\/reference\/(?:changelog|history)\.html$/.test(route) ? 'historical-reference'
+      kind: publication ? 'publication' : /\/reference\/(?:changelog|history|whitepaper)\.html$/.test(route) ? 'historical-reference'
         : route.endsWith('-diagram.html') ? 'diagram' : route === 'index.html' ? 'language-selector' : 'documentation',
       url: siteUrl(route), markdownUrl: markdown ? siteOrigin + '/' + route.replace(/\.html$/, '.md') : null }
     if (publication) page.publication = publication

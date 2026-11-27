@@ -11,13 +11,15 @@ outline: [2, 2]
   <div>
     <p class="whitepaper-eyebrow">November 2026 · Enterprise AI security governance</p>
     <p><strong>Risk identification · Layered governance · Trusted execution</strong></p>
+    <div class="whitepaper-actions">
+      <a class="whitepaper-primary" href="/en/resources/agent-security-governance-full.html">Read online</a>
+      <a href="#view-the-pdf">View PDF</a>
+      <a href="/whitepapers/agent-security-governance-2026-11-en.pdf" download="Agent-Era_Enterprise_Information_Security_Governance_Whitepaper_202611_EN.pdf">Download English PDF</a>
+    </div>
+    <p class="whitepaper-reading-note">Web edition with chapter navigation and shareable section links.</p>
     <p>When Agents can read enterprise information, call tools and execute tasks, enterprises need to manage data, identities, execution permissions and business consequences together. This whitepaper discusses risk identification, layered architecture and implementation planning, with FinShield product architecture and security testing practice.</p>
     <p>For enterprise IT and security leaders, architects, and teams building or assessing AI applications.</p>
-    <div class="whitepaper-actions">
-      <a class="whitepaper-primary" href="#view-the-pdf">View PDF online</a>
-      <a href="/whitepapers/agent-security-governance-2026-11-en.pdf" download="Agent-Era_Enterprise_Information_Security_Governance_Whitepaper_202611_EN.pdf">Download English PDF</a>
-      <a href="/en/resources/agent-security-governance-full.html">Read HTML full text</a>
-    </div>
+
   </div>
 </div>
 
@@ -55,7 +57,7 @@ If your phone or browser does not show the preview, use the direct open or downl
 
 ## Further reading and enterprise enquiries
 
-- [FinShield technical whitepaper](../reference/whitepaper.md): product capabilities, implementation and scoped evaluations.
+- [Mechanisms and evaluation archive](../reference/whitepaper.md): mechanism descriptions, scenario lists and counting methods retained from the former technical whitepaper.
 - [Enterprise solutions](../enterprise/README.md): assessment, pilots and engagement.
 - [Contact Finogeeks](mailto:contact@finogeeks.com): discuss enterprise AI use cases and pilot requirements.
 

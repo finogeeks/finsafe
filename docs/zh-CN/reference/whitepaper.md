@@ -1,6 +1,8 @@
-# 智安盾白皮书：AI智能体安全防护与数据收集
+# 产品机制与测评资料（历史）
 
 [English](../../en/reference/whitepaper.md) · [文档目录](../README.md) · [Safety Arena公开测评](https://safety.finaios.ai/zh-cn/)
+
+> 本页保留原技术白皮书 v0.6（2026年11月25日）的产品机制、测评场景与统计方法，供已有引用和历史核对使用。正式出版物请阅读[《Agent时代 企业信息安全治理白皮书》](../resources/agent-security-governance.md)，或直接[在线阅读全文](../resources/agent-security-governance-full.md)。当前安装与能力范围以现行产品指南和所安装版本为准。
 
 | 文档信息 | 内容 |
 | --- | --- |

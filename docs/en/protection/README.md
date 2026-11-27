@@ -27,7 +27,7 @@ These examples require a FinShield protected launch and depend on the actual ver
 | Terminating other processes or changing system settings | Windows permission boundaries constrain the protected process | A successful evaluation scenario is not a guarantee for every system operation |
 | Visiting websites or sending text to a model | Default integration plugins retain host networking | Their default configuration enables neither a FinShield website blacklist nor PII inspection |
 
-See [Plugin defaults](defaults.md) for directory coverage, compatibility exceptions and allowed operations. The [whitepaper](../reference/whitepaper.md) records public evaluation versions and conditions; scenario counts do not establish PII detection accuracy.
+See [Plugin defaults](defaults.md) for directory coverage, compatibility exceptions and allowed operations. The [mechanisms and evaluation archive](../reference/whitepaper.md) records public evaluation versions and conditions; scenario counts do not establish PII detection accuracy.
 
 ## Three common questions
 
