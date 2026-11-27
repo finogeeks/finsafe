@@ -262,7 +262,8 @@ export async function prepareContent(docsRoot, output, options = {}) {
   await writeFile(join(output, 'pages.json'), JSON.stringify(pages, null, 2) + '\n')
   await writeFile(join(output, 'routes.json'), JSON.stringify(routes, null, 2) + '\n')
   await writeFile(join(output, 'metadata.json'), JSON.stringify(metadata, null, 2) + '\n')
-  await writeFile(join(output, 'public/robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${siteOrigin}/sitemap.xml\n`, 'utf8')
+  await writeFile(join(output, 'public/sitemap.txt'), routes.map(siteUrl).join('\n') + '\n', 'utf8')
+  await writeFile(join(output, 'public/robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${siteOrigin}/sitemap.xml\nSitemap: ${siteOrigin}/sitemap.txt\n`, 'utf8')
   await writeLlmIndexes(output, pages, metadata)
   return pages
 }

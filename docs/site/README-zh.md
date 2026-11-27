@@ -61,6 +61,8 @@ flowchart LR
 
 `public/googlea9662cdfe1496029.html` 是 Google 原始所有权验证文件。保持内容不变，在站点根路径发布，验证成功后也要保留。它不属于文档页面，也不进入 sitemap。部署后先确认文件可访问，再在 Search Console 验证网址前缀资源 `https://finshield.finogeeks.club/`，并提交 `https://finshield.finogeeks.club/sitemap.xml`。网站发布成功不代表账号验证或收录完成，见 [Google 所有权验证说明](https://support.google.com/webmasters/answer/9008080)。
 
+构建还会从同一份路由清单生成 `/sitemap.txt`，每行一个绝对规范网址，包含独立图解页。两种格式都在 `robots.txt` 中列出，并与构建页面核对。搜索平台无法处理 XML 时，可提交文本版，再检查读取状态和发现网址数。实际抓取成功或收到提交回执，不代表 sitemap 处理或网页收录已完成。见 [Google 支持的 sitemap 格式](https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap#text)。
+
 Bing 使用平台签发的验证方式，或导入已验证的 Search Console 资源。不添加占位验证令牌或统计 ID。比较相同时长的完整统计周期，按语言、查询和落地页查看曝光、点击、CTR、排名和已收录页面。AI 回答及引用检查单独记录，`llms.txt` 不保证平台收录或回答准确。
 
 部署后在搜索平台中检查产品、安装、WFP、Inspector、集成与企业入口，核对抓取权限、选定 canonical、语言对应、摘要和结构化数据。浏览器连续切换主题与语言，确认元数据没有停留在上一页。记录站点版本及收录错误，提交当前 sitemap，不提交废弃副本。
