@@ -39,7 +39,7 @@ flowchart LR
 
 ### 页面摘要与机器可读来源
 
-`page-descriptions.json` 为每个公开 HTML 路由维护一条经过审核的独立摘要，覆盖语言入口和独立图解页。键必须与生成路由清单完全一致。新增页面时补齐两种语言的摘要。标题来自正文可见标题；导入页的标题覆盖由 `content.json` 维护。摘要说明该页的具体任务、平台和限制，不使用重复泛述或关键词堆叠。
+`page-descriptions.json` 为每个公开 HTML 路由维护一条经过审核的独立摘要，覆盖语言入口和独立图解页。键必须与生成路由清单完全一致。新增页面时为已发布的语言补齐摘要；实际存在译文后才添加语言关联。标题来自正文可见标题；导入页的标题覆盖由 `content.json` 维护。摘要说明该页的具体任务、平台和限制，不使用重复泛述或关键词堆叠。
 
 准备步骤生成 `metadata.json`，供逐页 description、Open Graph、摘要分享卡片及 `WebPage`/`WebSite` JSON-LD 使用。客户端换页更新同一份元数据，独立 HTML 在准备阶段接收经过转义的标签。结构化数据不虚构作者、日期、评分、客户或产品保证。404 保持 `noindex`，Google 验证文件保持不变。
 
@@ -54,6 +54,16 @@ flowchart LR
 这些资源只使用公开网站输入。代码示例保持原文；图片和外部资源保留链接，不承诺离线可用。语言入口及独立图解没有 Markdown 时对应字段为 `null`。不将内部运维材料加入索引或全文包。关键答案直接放在可见正文中，证据链接注明平台和版本范围。[使用 AI 完成集成](../zh-CN/development/ai-integration.md)提供可复用的任务提示。
 
 `npm run check` 还会拒绝缺失或重复摘要、不一致的分享元数据或 JSON-LD、损坏的机器目录及不可用的 AI 资源链接。它验证生成产物，不验证搜索排名或外站账户状态。
+
+### 白皮书出版物
+
+治理白皮书在 `docs/<locale>/resources/` 下提供专题页与连续全文页。中文 PDF 是用户提供的原版，原样保存在 `public/whitepapers/`；英文 PDF 为经过审校的译本，版式按英文调整。出版物不代替当前安装与集成指南，页面保留出版版本及平台、测试范围。
+
+`whitepapers.json` 记录各版 PDF 的版本、出版机构、字节数、页数、SHA-256、封面与页面路由。准备步骤将同一出版范围写入 `docs.json`、`resources/llms.txt` 主题和全文包。各网页使用自己的 canonical，实际存在译文才建立语言关联。保留 PDF 的抓取权限，不把 PDF 的 canonical 指向内容不等价的专题摘要页。
+
+更新时保留原有版本化 PDF，审阅新原稿与译文，再更新对应网页、封面和清单。产物检查核对源 PDF 与发布文件的字节，验证可见预览、直接打开、下载、全文和引用入口。提 PR 前检查 PDF 版式与手机、浏览器行为；HTTP 成功不能证明浏览器支持内嵌 PDF。
+
+英文 PDF 的内容源为经过审校的英文 Markdown。重新排版时，在 Python 环境安装 `reportlab` 和 `lxml`，先用本站 `vitepress` 的 `createMarkdownRenderer` 将 Markdown 渲染为 HTML，再从本目录执行 `python3 whitepapers/render-english.py <rendered.html> public/whitepapers/agent-security-governance-2026-11-en.pdf`。逐页检查后更新清单，并从第一页提取英文封面。脚本内嵌 ReportLab 随附的 Vera 字体，在 PDF 元数据中保留出版标题和机构；它只调整版式，不处理翻译。不要用此脚本重写中文原版 PDF。
 
 ### 部署后检查
 

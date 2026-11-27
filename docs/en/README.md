@@ -6,6 +6,10 @@ FinShield (智安盾) is an operating-system sandbox for AI agent execution proc
 
 Choose your [Agent integration](agents/README.md), then check [what FinShield protects by default](protection/README.md). PII detection and redaction require a supported content-inspection configuration.
 
+## Enterprise AI security governance whitepaper
+
+[Read the enterprise governance whitepaper](resources/agent-security-governance.md) on enterprise AI risks, layered security architecture, implementation planning and FinShield practice. The November 2026 edition includes English and Chinese PDF viewing, download and HTML full text.
+
 ## Start with your goal
 
 | What you want to do | Start here |

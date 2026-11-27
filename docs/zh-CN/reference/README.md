@@ -6,6 +6,10 @@ CLI 参数以所安装版本的 `finsafe help` 为准，文档版本范围见[�
 
 [公开版本历史快照](changelog.md)保留已公开的旧版变更；最新安装包以发布页为准。
 
+## 企业治理白皮书
+
+[《Agent时代 企业信息安全治理白皮书》](../resources/agent-security-governance.md)提供2026年11月版原版 PDF 在线浏览、下载和 HTML 全文，面向企业 AI 安全规划与评估。产品技术背景另见[FinShield 技术白皮书](whitepaper.md)。
+
 ## 高级配置与命令行
 
 [高级配置与 CLI 参考](cli-configuration.md)解释正式、实验性与内部参数的区别，以及适用入口、默认值和配置生效规则。界面没有设置项时，先确认当前版本是否提供受支持的 CLI 操作；不要只凭字段名或参数能被解析就认定功能有效。

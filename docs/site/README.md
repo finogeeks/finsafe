@@ -39,7 +39,7 @@ Private engineering documentation and public user documentation have separate ow
 
 ### Page summaries and machine-readable sources
 
-`page-descriptions.json` owns one reviewed summary for every public HTML route, including the root language page and standalone diagrams. The route keys must match the generated route inventory exactly. Add both language summaries when adding a page. Page titles come from the visible source heading or title, with imported-page title overrides in `content.json`. Avoid generic repeated summaries and keyword lists; describe the page's actual task, platform and limits.
+`page-descriptions.json` owns one reviewed summary for every public HTML route, including the root language page and standalone diagrams. The route keys must match the generated route inventory exactly. Add summaries for each published language; advertise a translation only after it exists. Page titles come from the visible source heading or title, with imported-page title overrides in `content.json`. Avoid generic repeated summaries and keyword lists; describe the page's actual task, platform and limits.
 
 Preparation generates `metadata.json` from those sources. The site uses it for each page's description, Open Graph, summary sharing card and `WebPage`/`WebSite` JSON-LD. Client navigation updates the same metadata; standalone HTML receives escaped metadata during preparation. Do not invent authors, dates, ratings, customer references or product guarantees for structured data. The 404 page remains `noindex`, and Google's verification file remains unchanged.
 
@@ -54,6 +54,16 @@ Preparation generates `metadata.json` from those sources. The site uses it for e
 These files use only public website inputs. Code examples retain their original text. Images and external resources are linked, not included for offline use. Root and standalone diagram records have a `null` Markdown URL. Do not add private operations material to an index or bundle. Keep each page's key answer in its visible main text and link to evidence with its platform/version scope. The [AI integration guide](../en/development/ai-integration.md) provides a reusable task prompt.
 
 `npm run check` also rejects missing or duplicate descriptions, inconsistent social metadata or JSON-LD, damaged machine catalogs and broken AI-resource links. This verifies generated files, not search ranking or external account state.
+
+### Published whitepapers
+
+The governance publication has a landing page and one continuous full-text page per language under `docs/<locale>/resources/`. The Chinese PDF is the supplied publication, copied unchanged into `public/whitepapers/`. The English PDF is a reviewed translation with adapted layout. Neither publication replaces current installation or integration guides. Keep the dated edition and platform/test limits visible.
+
+`whitepapers.json` records each PDF's edition, publisher, byte count, page count, SHA-256, cover and page routes. Preparation adds the same publication scope to `docs.json`, the `resources/llms.txt` topic and text bundles. Each web page uses its own canonical URL; language alternatives exist only for real translations. PDF indexing remains allowed. Do not point a PDF canonical at the short landing-page summary.
+
+To update a publication, retain its prior versioned PDF, review the new source and translation, then update the matching pages, cover and manifest. The checker compares source and built PDF bytes and checks the visible preview, direct-open fallback, download, full text and references. Inspect PDF rendering and mobile/browser behavior before the PR; an HTTP response alone does not prove inline PDF support.
+
+The English PDF uses the reviewed English Markdown as its content source. To regenerate it, install `reportlab` and `lxml` in a Python environment, render the Markdown to HTML with the site's `createMarkdownRenderer` from `vitepress`, then run `python3 whitepapers/render-english.py <rendered.html> public/whitepapers/agent-security-governance-2026-11-en.pdf` from this directory. Review every rendered page and update the manifest only after checking the output. The renderer embeds ReportLab's bundled Vera fonts and retains the publication title and publisher in PDF metadata; it changes layout, not translation. Extract the English cover from the rendered first page. Never apply this renderer to rewrite the supplied Chinese PDF.
 
 ### After deployment
 

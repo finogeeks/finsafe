@@ -99,5 +99,9 @@
   "zh-CN/reference/dsh-notices.html": "阅读 FinShield DSH Windows 插件的第三方版权与许可说明，核对集成接口及元数据读取器依赖，并保留英文原文要求的完整声明。",
   "zh-CN/reference/dsh-native-components.html": "了解为 DSH 插件 0.11.6 和 0.11.8 更新交接保留的目录资源；该目录不含原生二进制，个人版共用库由声明的 Node SDK 提供。",
   "zh-CN/reference/opencode-notices.html": "查阅 FinShield OpenCode Windows 集成的第三方组件及许可证中文说明，重新分发时保留英文完整版权声明并遵守各随附组件条款。",
-  "zh-CN/reference/contributing.html": "参与 FinShield 公开文档与网站维护，提交可复现的产品问题并保留证据，了解本仓库接受的变更及产品发布保留用户指南的规则。"
+  "zh-CN/reference/contributing.html": "参与 FinShield 公开文档与网站维护，提交可复现的产品问题并保留证据，了解本仓库接受的变更及产品发布保留用户指南的规则。",
+  "zh-CN/resources/agent-security-governance.html": "凡泰极客《Agent时代 企业信息安全治理白皮书》2026年11月版：查看六章目录，在线浏览或下载原版PDF，阅读企业AI风险、分层架构、建设路径与FinShield实践。",
+  "zh-CN/resources/agent-security-governance-full.html": "《Agent时代 企业信息安全治理白皮书》2026年11月版HTML全文，保留六章正文、图表和29条参考资料；产品与自测结论限于书中所列平台、版本和场景。",
+  "en/resources/agent-security-governance.html": "View or download the English translation of Finogeeks’ November 2026 enterprise AI security governance whitepaper, with chapter links covering risks, layered architecture, implementation planning and FinShield practice.",
+  "en/resources/agent-security-governance-full.html": "English full-text translation of the November 2026 Agent-era enterprise information security governance whitepaper, preserving six chapters, tables, diagram labels, 29 references and stated test boundaries."
 }

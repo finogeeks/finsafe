@@ -6,6 +6,10 @@ FinShield（智安盾）是面向 AI 智能体执行进程的操作系统级沙�
 
 先选择对应的 [Agent 接入指南](agents/README.md)，再查看[默认保护范围](protection/README.md)。PII 检测与脱敏需要支持内容检查的配置。
 
+## 企业 AI 安全治理白皮书
+
+[阅读《Agent时代 企业信息安全治理白皮书》](resources/agent-security-governance.md)：从企业 AI 风险、分层安全架构到建设路径与 FinShield 实践。2026年11月版，提供原版 PDF 在线浏览、下载和 HTML 全文。
+
 ## 从你的目标开始
 
 | 你想完成什么 | 阅读入口 |

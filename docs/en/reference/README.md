@@ -6,6 +6,10 @@ Use the installed version's `finsafe help` for CLI options, the [compatibility m
 
 The [public release history snapshot](changelog.md) preserves historical entries. Use the releases page for current downloads.
 
+## Enterprise governance whitepaper
+
+[Agent-era enterprise information security governance whitepaper](../resources/agent-security-governance.md) provides the November 2026 edition in English and Chinese, with PDF viewing, download and HTML full text. For product mechanisms and scoped evaluations, use the [FinShield technical whitepaper](whitepaper.md).
+
 ## Advanced configuration and CLI
 
 [Advanced configuration and CLI reference](cli-configuration.md) explains supported, experimental and internal parameters, their applicable routes, defaults and activation rules. If the interface has no setting, first confirm that your release offers a supported CLI operation. A field name or accepted argument alone does not prove that a feature is active.

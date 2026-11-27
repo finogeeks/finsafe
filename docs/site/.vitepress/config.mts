@@ -74,6 +74,7 @@ function sidebar(language: 'en' | 'zh-CN') {
   ] }
   const reference = { text: zh ? '资源与支持' : 'Resources and support', collapsed: false, items: [
     item('Reference', '参考资料', 'reference/'),
+    item('Enterprise AI governance whitepaper', '企业 AI 安全治理白皮书', 'resources/agent-security-governance'),
     item('Whitepaper', '技术白皮书', 'reference/whitepaper'),
     item('DSH operations', 'DSH 运行说明', 'agents/dsh-operations'),
     item('Release history', '版本记录', 'reference/changelog'),
@@ -88,6 +89,7 @@ function sidebar(language: 'en' | 'zh-CN') {
     [prefix + 'architecture/']: developer,
     [prefix + 'reference/']: developer,
     [prefix + 'enterprise/']: [start, enterprise, reference],
+    [prefix + 'resources/']: [start, reference, enterprise],
     [prefix]: [start, product, protection, agents, { ...development, collapsed: true }, enterprise, reference],
   }
 }

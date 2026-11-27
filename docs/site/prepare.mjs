@@ -58,6 +58,7 @@ async function writeLlmIndexes(output, pages, metadata) {
     ['development', 'Development and integration', '开发与集成'],
     ['architecture', 'Security mechanisms and architecture', '安全原理与架构'],
     ['enterprise', 'Enterprise solutions', '企业方案'],
+    ['resources', 'Whitepapers and research', '白皮书与研究'],
     ['reference', 'Reference and support', '参考与支持'],
   ]
   for (const locale of locales) {
@@ -92,6 +93,8 @@ async function writeLlmIndexes(output, pages, metadata) {
       : 'Uses the same public web and Markdown sources. Historical snapshots are linked, not included as current instructions. Images and external links still need network access. Select content by platform, version and entry.'}\n`
     for (const page of entries) {
       full += `\n---\n\nSource: ${page.url}\nMarkdown: ${page.markdownUrl}\nSummary: ${page.description}\n\n`
+      if (page.publication) full += `Publication edition: ${page.publication.edition}\nOriginal PDF: ${siteOrigin}${page.publication.pdfPath}\n`
+        + (zh ? '有日期的出版物；产品用法和支持范围以当前指南及安装版本为准。' : 'Dated publication; use current guides and the installed release for operating instructions and support scope.') + '\n\n'
       if (page.kind === 'historical-reference') {
         full += (zh ? '历史参考：请访问来源；当前用法见安装指南与发行说明。' : 'Historical reference: follow the source link; use installation guides and releases for current operations.') + '\n'
         continue
@@ -168,11 +171,13 @@ export async function prepareContent(docsRoot, output, options = {}) {
   }
   const metadata = {}
   const describe = (route, title, markdown) => {
+    const publication = options.publications?.find((entry) => [entry.landingRoute, entry.fullTextRoute].includes(route))
     const page = { route, title, description: options.descriptions?.[route] ?? title,
       language: route.startsWith('zh-CN/') ? 'zh-CN' : route === 'index.html' ? null : 'en',
-      kind: /\/reference\/(?:changelog|history)\.html$/.test(route) ? 'historical-reference'
+      kind: publication ? 'publication' : /\/reference\/(?:changelog|history)\.html$/.test(route) ? 'historical-reference'
         : route.endsWith('-diagram.html') ? 'diagram' : route === 'index.html' ? 'language-selector' : 'documentation',
       url: siteUrl(route), markdownUrl: markdown ? siteOrigin + '/' + route.replace(/\.html$/, '.md') : null }
+    if (publication) page.publication = publication
     metadata[route] = page
     return page
   }
@@ -208,6 +213,8 @@ export async function prepareContent(docsRoot, output, options = {}) {
       let content = transformLinks(body, (value, label) => {
         value = publicLink(value)
         if (value === null) return null
+        // These addresses already refer to the website, including public PDFs.
+        if (value.startsWith('/') && !value.startsWith('//')) return value
         if ((value.startsWith('#') && !document.section) || /^(?:data:|mailto:)/i.test(value)) return value
         let link = value
         const github = value.match(/^https:\/\/(?:github\.com\/finogeeks\/finsafe\/blob|raw\.githubusercontent\.com\/finogeeks\/finsafe)\/main\/(.*)$/)
@@ -272,8 +279,9 @@ async function main() {
   const output = resolve(siteRoot, '.generated')
   const imports = JSON.parse(await readFile(join(siteRoot, 'content.json'), 'utf8'))
   const descriptions = JSON.parse(await readFile(join(siteRoot, 'page-descriptions.json'), 'utf8'))
+  const publications = JSON.parse(await readFile(join(siteRoot, 'whitepapers.json'), 'utf8'))
   const pages = await prepareContent(resolve(siteRoot, '..'), output, {
-    ...imports, descriptions, repositoryRoot: resolve(siteRoot, '../..'),
+    ...imports, descriptions, publications, repositoryRoot: resolve(siteRoot, '../..'),
   })
   await cp(join(siteRoot, '.vitepress'), join(output, '.vitepress'), { recursive: true })
   await cp(join(siteRoot, 'public'), join(output, 'public'), { recursive: true })
