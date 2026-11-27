@@ -245,8 +245,12 @@ const sitemap = await readFile(join(dist, 'sitemap.xml'), 'utf8')
 const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1])
 if (locations.length !== canonicalUrls.size || new Set(locations).size !== locations.length
     || locations.some((url) => !canonicalUrls.has(url))) errors.push('sitemap: URLs must match every indexable canonical exactly once')
+const textLocations = (await readFile(join(dist, 'sitemap.txt'), 'utf8')).trimEnd().split('\n')
+if (textLocations.length !== canonicalUrls.size || new Set(textLocations).size !== textLocations.length
+    || textLocations.some((url) => !canonicalUrls.has(url))) errors.push('sitemap.txt: URLs must match every indexable canonical exactly once')
 const robots = await readFile(join(dist, 'robots.txt'), 'utf8')
-if (!robots.includes(`Sitemap: ${siteOrigin}/sitemap.xml`) || /Disallow:\s*\//.test(robots)) errors.push('robots.txt: incorrect discovery or access rules')
+if (!['sitemap.xml', 'sitemap.txt'].every((name) => robots.includes(`Sitemap: ${siteOrigin}/${name}`))
+    || /Disallow:\s*\//.test(robots)) errors.push('robots.txt: incorrect discovery or access rules')
 await checkDiscovery()
 if (errors.length) throw new Error(errors.join('\n'))
 console.log(`Checked ${pages.length} generated HTML pages: links, metadata, JSON-LD, canonical, hreflang, sitemap, robots and AI catalogs passed for ${siteOrigin}`)

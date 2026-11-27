@@ -218,6 +218,15 @@ test('preparation publishes only canonical locales and keeps diagrams separate f
     assert.ok(diagram.includes('rel="canonical" href="https://finshield.finogeeks.club/en/overview/windows-diagram.html"'))
     assert.ok(diagram.includes('hreflang="zh-CN" href="https://finshield.finogeeks.club/zh-CN/overview/windows-diagram.html"'))
     assert.match(await readFile(join(output, 'public/robots.txt'), 'utf8'), /Sitemap: https:\/\/finshield.finogeeks.club\/sitemap.xml/)
+    assert.deepEqual((await readFile(join(output, 'public/sitemap.txt'), 'utf8')).trimEnd().split('\n').sort(), [
+      'https://finshield.finogeeks.club/',
+      ...['en', 'zh-CN'].flatMap((locale) => [
+        `https://finshield.finogeeks.club/${locale}/`,
+        `https://finshield.finogeeks.club/${locale}/overview/windows.html`,
+        `https://finshield.finogeeks.club/${locale}/overview/windows-diagram.html`,
+      ]),
+    ].sort())
+    assert.match(await readFile(join(output, 'public/robots.txt'), 'utf8'), /Sitemap: https:\/\/finshield.finogeeks.club\/sitemap.txt/)
     await assert.rejects(readFile(join(output, 'legacy.md')))
     await assert.rejects(readFile(join(output, 'en/README.md')))
     await writeFile(join(output, 'stale.md'), 'old build')
