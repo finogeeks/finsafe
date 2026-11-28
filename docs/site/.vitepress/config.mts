@@ -52,9 +52,7 @@ function sections(language: 'en' | 'zh-CN') {
     { ...item('Technical blog', '技术博客', 'blog/'),
       activeMatch: `^${prefix}blog/`, items: [
       item('All articles', '全部文章', 'blog/'),
-      item('Execution isolation', '执行隔离', `blog/#${zh ? '执行隔离' : 'execution-isolation'}`),
-      item('Network & content security', '网络与内容安全', `blog/#${zh ? '网络与内容安全' : 'network-and-content-security'}`),
-      item('Evaluation & verification', '测评与验证', `blog/#${zh ? '测评与验证' : 'evaluation-and-verification'}`),
+      item('Child-process compatibility outline', '子进程兼容大纲', 'blog/appcontainer-child-processes'),
     ] },
     { ...item('Enterprise', '企业方案', 'enterprise/'),
       activeMatch: `^${prefix}enterprise/`, items: [

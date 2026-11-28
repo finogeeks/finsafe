@@ -48,20 +48,22 @@ for (const locale of locales) {
   for (const route of ['resources/agent-security-governance', 'reference/whitepaper',
     'resources/agent-security-governance-full', 'reference/index', 'enterprise/index',
     'development/index', 'architecture/index', 'overview/windows', 'getting-started/install', 'reference/faq',
-    'blog/index', 'blog/appcontainer-child-processes', 'blog/windows-network-boundaries', 'blog/pii-inspection-failure-semantics',
-    'blog/windows-desktop-isolation', 'blog/security-evaluation-evidence']) {
+    'blog/index', 'blog/appcontainer-child-processes']) {
     assert.deepEqual(sidebarStructure(await read(`${locale}/${route}.html`)), sidebarStructure(home),
       `Sidebar navigation must keep its structure: ${locale}/${route}.html`)
   }
   const sidebar = home.split('<aside')[1].split('</aside>')[0]
   const content = home.split('<main')[1].split('</main>')[0]
   assert.ok(content.includes(`href="/${locale}/blog/"`), 'The home page must link to the blog index')
-  for (const slug of ['appcontainer-child-processes', 'windows-network-boundaries', 'pii-inspection-failure-semantics']) {
+  for (const slug of ['appcontainer-child-processes']) {
     assert.ok(content.includes(`href="/${locale}/blog/${slug}.html"`), 'Featured articles must open real blog routes')
   }
   assert.ok(sidebar.includes(`href="/${locale}/blog/"`), 'The blog has an independent sidebar entry')
   const blogIndex = await read(`${locale}/blog/index.html`)
-  for (const slug of ['appcontainer-child-processes', 'windows-network-boundaries', 'pii-inspection-failure-semantics', 'windows-desktop-isolation', 'security-evaluation-evidence']) {
+  assert.deepEqual(catalog.pages.filter((page) => page.route.startsWith(`${locale}/blog/`)).map((page) => page.route).sort(),
+    [`${locale}/blog/appcontainer-child-processes.html`, `${locale}/blog/index.html`],
+    'Keep exactly the approved child-process outline and its blog index in each language')
+  for (const slug of ['appcontainer-child-processes']) {
     assert.ok(blogIndex.includes(`href="/${locale}/blog/${slug}.html"`), 'The blog index must link to every article outline')
     assert.ok((await read(`${locale}/blog/llms.txt`)).includes(`/blog/${slug}.md`), 'Blog outlines must appear in the machine-readable topic')
     const outline = await read(`${locale}/blog/${slug}.html`)

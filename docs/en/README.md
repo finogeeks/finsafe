@@ -24,26 +24,13 @@ Choose your [Agent integration](agents/README.md), then check [what FinShield pr
 
 ## Technical blog
 
-<div class="blog-section-lead"><p>Engineering topics and outlines; full articles and experiments will follow.</p><a href="/en/blog/">All outlines</a></div>
+<div class="blog-section-lead"><p>An outline on Python and Node.js child-process compatibility in AppContainer.</p><a href="/en/blog/">Blog index</a></div>
 
 <div class="blog-feature-wrap">
 <a class="blog-feature" href="/en/blog/appcontainer-child-processes.html">
   <div class="blog-feature-copy"><p class="blog-meta">Article outline · Execution isolation</p><h3>How FinShield addresses Python and Node.js child-process compatibility in AppContainer</h3><p>AgentScope, Hermes, DSH and OpenCode examples, with a plan for native AC, MXC and FinShield comparisons.</p><span class="blog-read">View outline</span></div>
   <div class="blog-path" aria-hidden="true"><span class="blog-path-label">PROCESS &amp; CHANNELS</span><span class="blog-path-node">Protected Agent</span><span>↓</span><span class="blog-path-node blog-path-boundary">Python / Node.js</span><span>↓</span><span class="blog-path-node">Tool children</span><span class="blog-path-caption">PIPE / IPC / stdio</span></div>
 </a>
-</div>
-
-<div class="blog-secondary-grid">
-<div class="blog-secondary-wrap">
-<a class="blog-secondary" href="/en/blog/windows-network-boundaries.html">
-  <div class="blog-feature-copy"><p class="blog-meta">Article outline · Network and content security</p><h3>Trust boundaries in Windows Agent network isolation</h3><p>Planned analysis and verification of WFP, proxies, local intermediaries and upstream payloads.</p><span class="blog-read">View outline</span></div>
-</a>
-</div>
-<div class="blog-secondary-wrap">
-<a class="blog-secondary" href="/en/blog/pii-inspection-failure-semantics.html">
-  <div class="blog-feature-copy"><p class="blog-meta">Article outline · Network and content security</p><h3>PII inspection coverage, rewriting and failure semantics</h3><p>Planned coverage of TLS, text selection, finding actions, failures and receiver-based verification.</p><span class="blog-read">View outline</span></div>
-</a>
-</div>
 </div>
 
 ## Understand the security mechanisms

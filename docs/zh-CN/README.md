@@ -24,26 +24,13 @@ FinShield（智安盾）是面向 AI 智能体执行进程的操作系统级沙�
 
 ## 技术博客
 
-<div class="blog-section-lead"><p>技术选题与文章大纲，正文及实测将后续补齐。</p><a href="/zh-CN/blog/">全部大纲</a></div>
+<div class="blog-section-lead"><p>Python、Node.js 在 AppContainer 中的子进程兼容大纲。</p><a href="/zh-CN/blog/">博客目录</a></div>
 
 <div class="blog-feature-wrap">
 <a class="blog-feature" href="/zh-CN/blog/appcontainer-child-processes.html">
   <div class="blog-feature-copy"><p class="blog-meta">文章大纲 · 执行隔离</p><h3>FinShield 如何解决 AppContainer 中 Python 和 Node.js 的子进程兼容性问题</h3><p>AgentScope、Hermes、DSH、OpenCode 调用案例，以及原生 AC、MXC 与 FinShield 的对照验证规划。</p><span class="blog-read">查看大纲</span></div>
   <div class="blog-path" aria-hidden="true"><span class="blog-path-label">PROCESS &amp; CHANNELS</span><span class="blog-path-node">受保护 Agent</span><span>↓</span><span class="blog-path-node blog-path-boundary">Python / Node.js</span><span>↓</span><span class="blog-path-node">工具子进程</span><span class="blog-path-caption">PIPE / IPC / stdio</span></div>
 </a>
-</div>
-
-<div class="blog-secondary-grid">
-<div class="blog-secondary-wrap">
-<a class="blog-secondary" href="/zh-CN/blog/windows-network-boundaries.html">
-  <div class="blog-feature-copy"><p class="blog-meta">文章大纲 · 网络与内容安全</p><h3>Windows Agent 网络隔离的信任边界</h3><p>WFP、代理、本机中介与上游载荷的分析和验证计划。</p><span class="blog-read">查看大纲</span></div>
-</a>
-</div>
-<div class="blog-secondary-wrap">
-<a class="blog-secondary" href="/zh-CN/blog/pii-inspection-failure-semantics.html">
-  <div class="blog-feature-copy"><p class="blog-meta">文章大纲 · 网络与内容安全</p><h3>PII 检查链路的覆盖、改写与失败语义</h3><p>TLS、文本选择、命中动作、异常处理与接收端验证提纲。</p><span class="blog-read">查看大纲</span></div>
-</a>
-</div>
 </div>
 
 ## 深入了解安全机制
