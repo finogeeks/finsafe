@@ -1,3 +1,7 @@
+---
+aside: false
+---
+
 # FinShield 文档中心
 
 [English](../en/README.md) · [产品首页](https://github.com/finogeeks/finsafe) · [最新下载](https://github.com/finogeeks/finsafe/releases/latest)
@@ -17,6 +21,17 @@ FinShield（智安盾）是面向 AI 智能体执行进程的操作系统级沙�
 | 了解产品、安装并使用现有 Agent | [产品介绍](overview/README.md)、[安装与验证](getting-started/install.md)、[兼容矩阵](agents/compatibility.md) |
 | 为自己的应用接入保护，或扩展 PII | [开发与集成](development/README.md)、[接入方式与最小示例](development/integration-guide.md) |
 | 了解企业方案并讨论试点 | [企业方案与联系入口](enterprise/README.md) |
+
+## 技术博客
+
+<div class="blog-section-lead"><p>Python、Node.js 在 AppContainer 中的子进程兼容大纲。</p><a href="/zh-CN/blog/">博客目录</a></div>
+
+<div class="blog-feature-wrap">
+<a class="blog-feature" href="/zh-CN/blog/appcontainer-child-processes.html">
+  <div class="blog-feature-copy"><p class="blog-meta">文章大纲 · 执行隔离</p><h3>FinShield 如何解决 AppContainer 中 Python 和 Node.js 的子进程兼容性问题</h3><p>AgentScope、Hermes、DSH、OpenCode 调用案例，以及原生 AC、MXC 与 FinShield 的对照验证规划。</p><span class="blog-read">查看大纲</span></div>
+  <div class="blog-path" aria-hidden="true"><span class="blog-path-label">PROCESS &amp; CHANNELS</span><span class="blog-path-node">受保护 Agent</span><span>↓</span><span class="blog-path-node blog-path-boundary">Python / Node.js</span><span>↓</span><span class="blog-path-node">工具子进程</span><span class="blog-path-caption">PIPE / IPC / stdio</span></div>
+</a>
+</div>
 
 ## 深入了解安全机制
 
@@ -83,6 +98,7 @@ PII 插件扩展敏感信息处理规则，与 Agent 接入插件用途不同。
 - [Agent 接入](agents/README.md).
 - [配置与验证防护](protection/README.md).
 - [开发与集成](development/README.md).
+- [技术博客](blog/README.md).
 - [企业方案](enterprise/README.md).
 - [参考资料与支持](reference/README.md).
 

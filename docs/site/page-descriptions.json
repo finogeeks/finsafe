@@ -1,4 +1,6 @@
 {
+  "en/blog/index.html": "FinShield technical blog index, currently containing one outline on AppContainer child-process compatibility for Python and Node.js, with Agent examples and a comparison plan.",
+  "zh-CN/blog/index.html": "FinShield 技术博客目录，当前仅收录 AppContainer 中 Python 和 Node.js 子进程兼容的一篇文章大纲，附实际 Agent 调用案例与对照验证规划。",
   "index.html": "Choose English or Simplified Chinese FinShield documentation for Agent installation, protection defaults, integration guides and verification of effective permissions.",
   "en/index.html": "FinShield (智安盾) sandbox documentation: Windows setup for OpenCode and WorkBuddy, macOS and Linux integration routes, file protection, CLI and PII scope.",
   "en/agents/index.html": "Choose a FinShield Agent entry: Windows desktop plugins, protected launchers or CLI guides. Check platform, delivery status and verification scope for each route.",
@@ -101,5 +103,7 @@
   "zh-CN/resources/agent-security-governance.html": "凡泰极客《Agent时代 企业信息安全治理白皮书》2026年11月版：查看六章目录，在线浏览或下载原版PDF，阅读企业AI风险、分层架构、建设路径与FinShield实践。",
   "zh-CN/resources/agent-security-governance-full.html": "《Agent时代 企业信息安全治理白皮书》2026年11月版HTML全文，保留六章正文、图表和29条参考资料；产品与自测结论限于书中所列平台、版本和场景。",
   "en/resources/agent-security-governance.html": "View or download the English translation of Finogeeks’ November 2026 enterprise AI security governance whitepaper, with chapter links covering risks, layered architecture, implementation planning and FinShield practice.",
-  "en/resources/agent-security-governance-full.html": "English full-text translation of the November 2026 Agent-era enterprise information security governance whitepaper, preserving six chapters, tables, diagram labels, 29 references and stated test boundaries."
+  "en/resources/agent-security-governance-full.html": "English full-text translation of the November 2026 Agent-era enterprise information security governance whitepaper, preserving six chapters, tables, diagram labels, 29 references and stated test boundaries.",
+  "en/blog/appcontainer-child-processes.html": "Article outline: How FinShield addresses Python and Node.js child-process compatibility in AppContainer. AgentScope, Hermes, DSH and OpenCode examples, with a plan for native AC, MXC and FinShield comparisons.",
+  "zh-CN/blog/appcontainer-child-processes.html": "文章大纲：FinShield 如何解决 AppContainer 中 Python 和 Node.js 的子进程兼容性问题。AgentScope、Hermes、DSH、OpenCode 调用案例，以及原生 AC、MXC 与 FinShield 的对照验证规划。"
 }

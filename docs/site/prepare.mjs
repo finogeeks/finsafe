@@ -57,6 +57,7 @@ async function writeLlmIndexes(output, pages, metadata) {
     ['overview', 'Product and platform scope', '产品与平台范围'],
     ['development', 'Development and integration', '开发与集成'],
     ['architecture', 'Security mechanisms and architecture', '安全原理与架构'],
+    ['blog', 'Technical blog', '技术博客'],
     ['enterprise', 'Enterprise solutions', '企业方案'],
     ['resources', 'Whitepapers and research', '白皮书与研究'],
     ['reference', 'Reference and support', '参考与支持'],

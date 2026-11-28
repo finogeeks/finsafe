@@ -34,8 +34,11 @@ for (const locale of locales) {
   const topLabels = [...topNavigation.matchAll(/<a\b[^>]*>([\s\S]*?)<\/a>/g)]
     .map(([, content]) => content.replace(/<[^>]+>/g, '').trim())
   const groups = sidebarStructure(home).filter((item) => item.tag === 'h2').map((item) => item.text)
-  assert.equal(groups.length, 6, 'Use six primary sections instead of separate Agent and technical groups')
-  assert.deepEqual(topLabels.slice(0, 6), groups, 'Top navigation and sidebar must share section names and order')
+  assert.equal(groups.length, 7, 'Keep the independent blog alongside the six documentation sections')
+  assert.deepEqual(topLabels.slice(0, 6), groups.slice(1), 'Top navigation follows sidebar order, with the whitepaper in the sidebar')
+  assert.ok(!topLabels.includes(locale === 'zh-CN' ? '白皮书' : 'Whitepaper'), 'Keep the whitepaper out of the top navigation')
+  assert.ok(!topLabels.includes(locale === 'zh-CN' ? '下载' : 'Download'), 'Downloads remain in installation and resources')
+  assert.equal(topLabels.at(-1), locale === 'zh-CN' ? '联系我们' : 'Contact')
   const questions = sidebarStructure(home).find((item) => item.href === `/${locale}/reference/faq.html`)
   assert.equal(questions?.text, locale === 'zh-CN' ? '常见问题' : 'Common questions')
   const landing = await read(`${locale}/resources/agent-security-governance.html`)
@@ -44,11 +47,34 @@ for (const locale of locales) {
     'The primary whitepaper action must open the readable HTML full text')
   for (const route of ['resources/agent-security-governance', 'reference/whitepaper',
     'resources/agent-security-governance-full', 'reference/index', 'enterprise/index',
-    'development/index', 'architecture/index', 'overview/windows', 'getting-started/install', 'reference/faq']) {
+    'development/index', 'architecture/index', 'overview/windows', 'getting-started/install', 'reference/faq',
+    'blog/index', 'blog/appcontainer-child-processes']) {
     assert.deepEqual(sidebarStructure(await read(`${locale}/${route}.html`)), sidebarStructure(home),
       `Sidebar navigation must keep its structure: ${locale}/${route}.html`)
   }
   const sidebar = home.split('<aside')[1].split('</aside>')[0]
+  const content = home.split('<main')[1].split('</main>')[0]
+  assert.ok(content.includes(`href="/${locale}/blog/"`), 'The home page must link to the blog index')
+  for (const slug of ['appcontainer-child-processes']) {
+    assert.ok(content.includes(`href="/${locale}/blog/${slug}.html"`), 'Featured articles must open real blog routes')
+  }
+  assert.ok(sidebar.includes(`href="/${locale}/blog/"`), 'The blog has an independent sidebar entry')
+  const blogIndex = await read(`${locale}/blog/index.html`)
+  assert.deepEqual(catalog.pages.filter((page) => page.route.startsWith(`${locale}/blog/`)).map((page) => page.route).sort(),
+    [`${locale}/blog/appcontainer-child-processes.html`, `${locale}/blog/index.html`],
+    'Keep exactly the approved child-process outline and its blog index in each language')
+  for (const slug of ['appcontainer-child-processes']) {
+    assert.ok(blogIndex.includes(`href="/${locale}/blog/${slug}.html"`), 'The blog index must link to every article outline')
+    assert.ok((await read(`${locale}/blog/llms.txt`)).includes(`/blog/${slug}.md`), 'Blog outlines must appear in the machine-readable topic')
+    const outline = await read(`${locale}/blog/${slug}.html`)
+    assert.ok(outline.includes(locale === 'zh-CN' ? '文章大纲' : 'Article outline'), 'Blog pages must identify their outline status')
+    assert.ok(metadata[`${locale}/blog/${slug}.html`].description.includes(locale === 'zh-CN' ? '大纲' : 'outline'),
+      'Discovery summaries must preserve outline status')
+  }
+  const childOutline = await read(`${locale}/blog/appcontainer-child-processes.html`)
+  for (const name of ['AgentScope', 'Hermes', 'DSH', 'OpenCode', 'MXC']) {
+    assert.ok(childOutline.includes(name), 'The first outline keeps its Agent examples and MXC comparison plan')
+  }
   assert.ok(sidebar.includes(`href="/${locale}/agents/"`), 'Keep one Agent integration entry in user guides')
   for (const agent of agents) {
     assert.ok(!sidebar.includes(`/${locale}/agents/${agent}.html`), 'Individual Agents belong in the integration index')

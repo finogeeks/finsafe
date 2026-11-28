@@ -169,7 +169,7 @@ async function checkDiscovery() {
     for (const page of entries) {
       if (!index.includes(`- [${page.title}](${page.markdownUrl}): ${page.description}`)) errors.push(`${name}: missing page summary: ${page.route}`)
     }
-    for (const directory of ['protection', 'getting-started', 'agents', 'overview', 'development', 'architecture', 'enterprise', 'reference', 'resources']) {
+    for (const directory of ['protection', 'getting-started', 'agents', 'overview', 'development', 'architecture', 'blog', 'enterprise', 'reference', 'resources']) {
       const group = entries.filter((page) => page.kind !== 'historical-reference'
         && (page.route.split('/')[1] === directory || directory === 'overview' && page.route === language + '/index.html'))
       if (!group.length) continue

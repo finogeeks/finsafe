@@ -49,6 +49,11 @@ function sections(language: 'en' | 'zh-CN') {
         item('Redactor example', '脱敏插件示例', 'development/pii-redactor'),
       ] },
     ] },
+    { ...item('Technical blog', '技术博客', 'blog/'),
+      activeMatch: `^${prefix}blog/`, items: [
+      item('All articles', '全部文章', 'blog/'),
+      item('Child-process compatibility outline', '子进程兼容大纲', 'blog/appcontainer-child-processes'),
+    ] },
     { ...item('Enterprise', '企业方案', 'enterprise/'),
       activeMatch: `^${prefix}enterprise/`, items: [
       item('Solutions & pilots', '方案介绍与试点', 'enterprise/'),
@@ -70,8 +75,7 @@ function sections(language: 'en' | 'zh-CN') {
 function navigation(language: 'en' | 'zh-CN') {
   const zh = language === 'zh-CN'
   return [
-    ...sections(language).map(({ text, link, activeMatch }) => ({ text, link, activeMatch })),
-    { text: zh ? '下载' : 'Download', link: `${repo}/releases/latest` },
+    ...sections(language).slice(1).map(({ text, link, activeMatch }) => ({ text, link, activeMatch })),
     { text: zh ? '联系我们' : 'Contact', link: `/${language}/enterprise/#${zh ? '联系我们' : 'contact-us'}` },
   ]
 }
