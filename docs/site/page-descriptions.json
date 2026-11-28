@@ -1,4 +1,14 @@
 {
+  "en/blog/index.html": "Browse FinShield engineering article outlines on AppContainer child processes, network and PII inspection, desktop isolation and evaluation. Full articles and tests will follow.",
+  "en/blog/windows-network-boundaries.html": "Article outline: Trust boundaries in Windows Agent network isolation. Planned analysis and verification of WFP, proxies, local intermediaries and upstream payloads.",
+  "en/blog/pii-inspection-failure-semantics.html": "Article outline: PII inspection coverage, rewriting and failure semantics. Planned coverage of TLS, text selection, finding actions, failures and receiver-based verification.",
+  "en/blog/windows-desktop-isolation.html": "Article outline: AppContainer, Job UI and Windows desktop isolation. Planned coverage of execution identity, object boundaries, compatibility and interaction experiments.",
+  "en/blog/security-evaluation-evidence.html": "Article outline: Attribution and evidence in Agent security evaluations. Planned coverage of controls, execution records, external observations and scoring.",
+  "zh-CN/blog/index.html": "浏览 FinShield 技术博客选题与文章大纲，覆盖 AppContainer 子进程兼容、网络与 PII、桌面隔离及安全测评；正文和实测后续补齐。",
+  "zh-CN/blog/windows-network-boundaries.html": "文章大纲：Windows Agent 网络隔离的信任边界。WFP、代理、本机中介与上游载荷的分析和验证计划。",
+  "zh-CN/blog/pii-inspection-failure-semantics.html": "文章大纲：PII 检查链路的覆盖、改写与失败语义。TLS、文本选择、命中动作、异常处理与接收端验证提纲。",
+  "zh-CN/blog/windows-desktop-isolation.html": "文章大纲：AppContainer、Job UI 与 Windows 桌面隔离。执行身份、对象边界、兼容性配置与交互实验提纲。",
+  "zh-CN/blog/security-evaluation-evidence.html": "文章大纲：Agent 安全测评中的归因与证据。功能对照、执行记录、外部观察与统计口径提纲。",
   "index.html": "Choose English or Simplified Chinese FinShield documentation for Agent installation, protection defaults, integration guides and verification of effective permissions.",
   "en/index.html": "FinShield (智安盾) sandbox documentation: Windows setup for OpenCode and WorkBuddy, macOS and Linux integration routes, file protection, CLI and PII scope.",
   "en/agents/index.html": "Choose a FinShield Agent entry: Windows desktop plugins, protected launchers or CLI guides. Check platform, delivery status and verification scope for each route.",
@@ -101,5 +111,7 @@
   "zh-CN/resources/agent-security-governance.html": "凡泰极客《Agent时代 企业信息安全治理白皮书》2026年11月版：查看六章目录，在线浏览或下载原版PDF，阅读企业AI风险、分层架构、建设路径与FinShield实践。",
   "zh-CN/resources/agent-security-governance-full.html": "《Agent时代 企业信息安全治理白皮书》2026年11月版HTML全文，保留六章正文、图表和29条参考资料；产品与自测结论限于书中所列平台、版本和场景。",
   "en/resources/agent-security-governance.html": "View or download the English translation of Finogeeks’ November 2026 enterprise AI security governance whitepaper, with chapter links covering risks, layered architecture, implementation planning and FinShield practice.",
-  "en/resources/agent-security-governance-full.html": "English full-text translation of the November 2026 Agent-era enterprise information security governance whitepaper, preserving six chapters, tables, diagram labels, 29 references and stated test boundaries."
+  "en/resources/agent-security-governance-full.html": "English full-text translation of the November 2026 Agent-era enterprise information security governance whitepaper, preserving six chapters, tables, diagram labels, 29 references and stated test boundaries.",
+  "en/blog/appcontainer-child-processes.html": "Article outline: How FinShield addresses Python and Node.js child-process compatibility in AppContainer. AgentScope, Hermes, DSH and OpenCode examples, with a plan for native AC, MXC and FinShield comparisons.",
+  "zh-CN/blog/appcontainer-child-processes.html": "文章大纲：FinShield 如何解决 AppContainer 中 Python 和 Node.js 的子进程兼容性问题。AgentScope、Hermes、DSH、OpenCode 调用案例，以及原生 AC、MXC 与 FinShield 的对照验证规划。"
 }

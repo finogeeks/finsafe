@@ -49,6 +49,13 @@ function sections(language: 'en' | 'zh-CN') {
         item('Redactor example', '脱敏插件示例', 'development/pii-redactor'),
       ] },
     ] },
+    { ...item('Technical blog', '技术博客', 'blog/'),
+      activeMatch: `^${prefix}blog/`, items: [
+      item('All articles', '全部文章', 'blog/'),
+      item('Execution isolation', '执行隔离', `blog/#${zh ? '执行隔离' : 'execution-isolation'}`),
+      item('Network & content security', '网络与内容安全', `blog/#${zh ? '网络与内容安全' : 'network-and-content-security'}`),
+      item('Evaluation & verification', '测评与验证', `blog/#${zh ? '测评与验证' : 'evaluation-and-verification'}`),
+    ] },
     { ...item('Enterprise', '企业方案', 'enterprise/'),
       activeMatch: `^${prefix}enterprise/`, items: [
       item('Solutions & pilots', '方案介绍与试点', 'enterprise/'),
@@ -70,8 +77,7 @@ function sections(language: 'en' | 'zh-CN') {
 function navigation(language: 'en' | 'zh-CN') {
   const zh = language === 'zh-CN'
   return [
-    ...sections(language).map(({ text, link, activeMatch }) => ({ text, link, activeMatch })),
-    { text: zh ? '下载' : 'Download', link: `${repo}/releases/latest` },
+    ...sections(language).slice(1).map(({ text, link, activeMatch }) => ({ text, link, activeMatch })),
     { text: zh ? '联系我们' : 'Contact', link: `/${language}/enterprise/#${zh ? '联系我们' : 'contact-us'}` },
   ]
 }
